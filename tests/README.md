@@ -12,6 +12,6 @@ reside inside the `testfiles/` directory. The Markdown package needs to be
 Each time a commit is made to the Git repository of the project, this test
 suite is ran by a continuous integration service.  
 The current status is:
-[![CircleCI](https://circleci.com/gh/Witiko/markdown/tree/master.svg)][CircleCI]
+[![ci](https://github.com/Witiko/markdown/workflows/Test/badge.svg)][ci]
 
- [CircleCI]: https://circleci.com/gh/Witiko/markdown/tree/master (CircleCI)
+ [ci]:       https://github.com/Witiko/markdown/actions          "GitHub Actions"

@@ -2,10 +2,10 @@ Markdown
 ========
 
 [![release](https://img.shields.io/github/release/witiko/markdown.svg)][release]
-[![CircleCI](https://circleci.com/gh/Witiko/markdown/tree/master.svg?style=shield)][CircleCI]
+[![ci](https://github.com/Witiko/markdown/workflows/Test/badge.svg)][ci]
 
- [CircleCI]: https://circleci.com/gh/Witiko/markdown/tree/master "CircleCI"
  [release]:  https://github.com/Witiko/markdown/releases/latest  "Releases · Witiko/markdown"
+ [ci]:       https://github.com/Witiko/markdown/actions          "GitHub Actions"
 
 The Markdown package converts [markdown][] markup to TeX commands. The
 functionality is provided both as a Lua module, and as plain TeX, LaTeX, and
