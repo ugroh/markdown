@@ -93,6 +93,12 @@
 
 % Set up the bibliography.
 \begin{filecontents}[overwrite,nosearch,noheader]{markdown.bib}
+@book{tantau21,
+  author    = {Till Tantau and Joseph Wright and Vedran Miletić},
+  title     = {The Beamer class},
+  date      = {2021-02-10},
+  url       = {http://mirrors.ctan.org/macros/latex/contrib/beamer/doc/beameruserguide.pdf},
+  urldate   = {2021-02-11}}
 @online{sotkov17,
   author    = {Sotkov, Anton},
   title     = {File transclusion syntax for Markdown},
@@ -805,8 +811,9 @@ local md5 = require("md5")
 \NeedsTeXFormat{LaTeX2e}%
 %    \end{macrocode}
 % \begin{markdown}
-% all the plain \TeX{} prerequisites (see Section \ref{sec:texprerequisites}),
-% and the following \Hologo{LaTeX2e} packages:
+% a \TeX{} engine that extends \Hologo{eTeX}, all the plain \TeX{}
+% prerequisites (see Section \ref{sec:texprerequisites}), and the following
+% \Hologo{LaTeX2e} packages:
 %
 % \pkg{keyval}
 %
@@ -10820,6 +10827,76 @@ pdflatex --shell-escape document.tex
 % \par
 % \begin{markdown}
 %
+% The \LaTeX{} option with key `theme` loads a \LaTeX{} package (further
+% referred to as *a theme*) named `markdowntheme`\meta{munged theme
+% name}`.sty`, where the *munged theme name* is the *theme name* after a
+% substitution of all forward slashes (\texttt{/}) for an underscore
+% (\texttt{_}), the theme name is a value that is *qualified* and contains no
+% underscores, and a value is qualified if and only if it contains at least one
+% forward slash. Themes are inspired by the Beamer \LaTeX{} package, which
+% provides similar functionality with its \m{usetheme} macro [@tantau21,
+% Section 15.1].
+%
+% Theme names must be qualified to minimize naming conflicts between different
+% themes intended for a single \LaTeX{} document class or for a single \LaTeX{}
+% package. The preferred format of a theme name is \meta{theme author}`/`^^L
+% \meta{target \LaTeX{} document class or package}`/`\meta{private naming
+% scheme}, where the *private naming scheme* may contain additional forward
+% slashes. For example, a theme by a user `witiko` for the MU theme of the
+% Beamer document class may have the name `witiko/beamer/MU`.
+%
+% Theme names are munged, because \LaTeX{} packages are identified only by
+% their filenames, not by their pathnames. Therefore, we can't store the
+% qualified theme names directly using directories, but we must encode the
+% individual segments of the qualified theme in the filename. For example,
+% loading a theme named `witiko/beamer/MU` would load a \LaTeX{} package named
+% `markdownthemewitiko_beamer_MU.sty`.
+%
+% If the \LaTeX{} option with key `theme` is (repeatedly) specified in the
+% \m{usepackage} macro, the loading of the theme(s) will be postponed in
+% first-in-first-out order until after the Markdown \LaTeX{} package has been
+% loaded. Otherwise, the theme(s) will be loaded immediately. For example,
+% assume that there exists a theme named `witiko/dot`, which typesets fenced
+% code blocks with the `dot` infostring as images of directed graphs rendered
+% by the Graphviz tools. The following code would first load the Markdown
+% package, then the `markdownthemewitiko_beamer_MU.sty` \LaTeX{} package, and
+% finally the `markdownthemewitiko_dot.sty` \LaTeX{} package:
+%
+% ``` latex
+% \usepackage[
+%   theme=witiko/beamer/MU,
+%   theme=witiko/dot,
+% ]{markdown}
+% ```
+%
+% Due to limitations of \Hologo{LaTeX2e}, themes may not be loaded after the
+% beginning of a \LaTeX{} document.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\newif\ifmarkdownLaTeXLoaded\markdownLaTeXLoadedfalse
+\AtEndOfPackage{\markdownLaTeXLoadedtrue}%
+\define@key{markdownOptions}{theme}{%
+  \IfSubStr{#1}{/}{}{%
+    \markdownError
+      {Won't load theme with unqualified name #1}%
+      {Theme names must contain at least one forward slash}}%
+  \StrSubstitute{#1}{/}{_}[\markdownLaTeXThemePackageName]%
+  \edef\markdownLaTeXThemePackageName{%
+    markdowntheme\markdownLaTeXThemePackageName}%
+  \expandafter\ifmarkdownLaTeXLoaded\expandafter\expandafter
+    \expandafter\@gobble\expandafter\fi%  Remove \AtEndOfPackage if loaded
+  \expandafter\AtEndOfPackage\expandafter{\expandafter\RequirePackage
+    \expandafter{\markdownLaTeXThemePackageName}}}%
+\AtBeginDocument{%  Prohibit loading of themes after \begin{document}
+  \define@key{markdownOptions}{theme}{%
+    \markdownError
+      {Won't load themes after the beginning of a document}%
+      {Themes can only be loaded in the preamble of a document}}}%
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
 % The following example \LaTeX{} code showcases a possible configuration of
 % plain \TeX{} interface options \m{markdownOptionHybrid},
 % \m{markdownOptionSmartEllipses}, and \m{markdownOptionCacheDir}.
@@ -17558,8 +17635,6 @@ end
   \fi
   \advance\markdownLaTeXRowCounter by 1\relax
   \ifnum\markdownLaTeXRowCounter>\markdownLaTeXRowTotal\relax
-    \markdownInfo{\the\markdownLaTeXTable}
-    \markdownInfo{\the\markdownLaTeXTableEnd}
     \the\markdownLaTeXTable
     \the\markdownLaTeXTableEnd
     \expandafter\@gobble
