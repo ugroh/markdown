@@ -5,7 +5,6 @@
 set -o errexit
 set -o pipefail
 set -o nounset
-set -o xtrace
 
 BUILDDIR="$(mktemp -d)"
 trap 'rm -rf "$BUILDDIR"' INT TERM
