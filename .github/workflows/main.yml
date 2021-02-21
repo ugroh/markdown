@@ -53,3 +53,22 @@ jobs:
         run: |
           set -ex
           make test
+      - name: Build distribution archives
+        run: |
+          set -ex
+          make dist
+      - name: Upload artifact markdown.tds.zip
+        uses: actions/upload-artifact@v2
+        with:
+          name: markdown.tds.zip
+          path: markdown.tds.zip
+      - name: Upload artifact markdown.ctan.zip
+        uses: actions/upload-artifact@v2
+        with:
+          name: markdown.ctan.zip
+          path: markdown.ctan.zip
+      - name: Upload artifact markdown.zip
+        uses: actions/upload-artifact@v2
+        with:
+          name: markdown.zip
+          path: markdown.zip
