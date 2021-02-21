@@ -1,4 +1,4 @@
-.PHONY: all clean implode dist test examples
+.PHONY: all base clean implode dist test examples
 AUXFILES=markdown.bbl markdown.cb markdown.cb2 markdown.glo markdown.bbl \
   markdown.run.xml markdown.bib markdown.markdown.in markdown.markdown.lua \
   markdown.markdown.out
@@ -36,6 +36,10 @@ EVERYTHING=$(RESOURCES) $(INSTALLABLES)
 # This is the default pseudo-target. It typesets the manual,
 # the examples, and extracts the package files.
 all: $(MAKEABLES)
+	$(MAKE) clean
+
+# This target extracts the source files out of the DTX archive.
+base: $(INSTALLABLES)
 	$(MAKE) clean
 
 # This target extracts the source files out of the DTX archive.

@@ -34,7 +34,7 @@ jobs:
       - name: Install the Markdown package
         run: |
           set -ex
-          xetex markdown.ins
+          make base
           mkdir -p                ~/texmf/tex/luatex/markdown/
           cp -f markdown.lua      ~/texmf/tex/luatex/markdown/
           mkdir -p                ~/texmf/scripts/markdown/

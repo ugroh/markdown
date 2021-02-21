@@ -101,13 +101,15 @@ the documentation, are placed in the `Makefile` file for ease of maintenance.
 
 When the file `markdown.ins` is interpreted using a Unicode-aware TeX engine,
 such as XeTeX (`xetex markdown.ins`) or LuaTeX (`luatex markdown.ins`), several
-files are produced from the `markdown.dtx` document. In `markdown.dtx`, the
-boundaries between the produced files are marked up using an XML-like syntax
-provided by the [DocStrip][] plain TeX package.
+files are produced from the `markdown.dtx` document. The `make base` command
+is provided by `Makefile` for convenience. In `markdown.dtx`, the boundaries
+between the produced files are marked up using an XML-like syntax provided by
+the [DocStrip][] plain TeX package.
 
 Running the [LaTeXMK][] tool on the `markdown.dtx` file
 (`latexmk markdown.dtx`) after the Markdown package has been
-[installed][install] typesets the documentation. In `markdown.dtx`, the
+[installed][install] typesets the documentation. The `make markdown.pdf`
+command is provided by `Makefile` for convenience. In `markdown.dtx`, the
 documentation is placed inside TeX comments and marked up using the
 [ltxdockit][] LaTeX document class. Support for typesetting the documentation
 is provided by the [doc][] LaTeX package.
