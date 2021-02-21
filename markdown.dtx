@@ -159,6 +159,12 @@
   isbn      = {0-201-13447-0},
   pagetotal = {ix, 479},
   publisher = {Addison-Wesley}}
+@online{novotny21,
+  author    = {Novotný, Vít},
+  title     = {\Hologo{LaTeX2e} no longer keys packages by pathnames},
+  date      = {2021-02-20},
+  url       = {https://github.com/latex3/latex2e/issues/510},
+  urldate   = {2021-02-21}}
 \end{filecontents}
 \usepackage[
   backend=biber,
@@ -10846,11 +10852,11 @@ pdflatex --shell-escape document.tex
 % Beamer document class may have the name `witiko/beamer/MU`.
 %
 % Theme names are munged, because \LaTeX{} packages are identified only by
-% their filenames, not by their pathnames. Therefore, we can't store the
-% qualified theme names directly using directories, but we must encode the
-% individual segments of the qualified theme in the filename. For example,
-% loading a theme named `witiko/beamer/MU` would load a \LaTeX{} package named
-% `markdownthemewitiko_beamer_MU.sty`.
+% their filenames, not by their pathnames. [@novotny21] Therefore, we can't
+% store the qualified theme names directly using directories, but we must
+% encode the individual segments of the qualified theme in the filename. For
+% example, loading a theme named `witiko/beamer/MU` would load a \LaTeX{}
+% package named `markdownthemewitiko_beamer_MU.sty`.
 %
 % If the \LaTeX{} option with key `theme` is (repeatedly) specified in the
 % \m{usepackage} macro, the loading of the theme(s) will be postponed in
