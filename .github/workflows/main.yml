@@ -72,3 +72,8 @@ jobs:
         with:
           name: markdown.zip
           path: markdown.zip
+      - name: Upload artifact markdown.pdf
+        uses: actions/upload-artifact@v2
+        with:
+          name: markdown.pdf
+          path: markdown.pdf
