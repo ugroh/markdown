@@ -27,7 +27,8 @@ MARKDOWN_USER_MANUAL=markdown.md markdown.css
 HTML_USER_MANUAL=markdown.html markdown.css
 USER_MANUAL=$(MARKDOWN_USER_MANUAL) $(HTML_USER_MANUAL)
 DOCUMENTATION=$(TECHNICAL_DOCUMENTATION) $(USER_MANUAL) $(ROOT_README)
-INSTALLABLES=markdown.lua markdown-cli.lua markdown.tex markdown.sty t-markdown.tex
+INSTALLABLES=markdown.lua markdown-cli.lua markdown.tex markdown.sty t-markdown.tex \
+	markdownthemewitiko_tilde.sty
 MAKEABLES=$(TECHNICAL_DOCUMENTATION) $(USER_MANUAL) $(INSTALLABLES) $(EXAMPLES)
 RESOURCES=$(DOCUMENTATION) $(EXAMPLES_RESOURCES) $(EXAMPLES_SOURCES) $(EXAMPLES) \
   $(MAKES) $(READMES) $(INSTALLER) $(DTXARCHIVE) $(TESTS)
@@ -71,12 +72,17 @@ examples/example.tex: $(INSTALLABLES)
 	    -e 's#\\TeX{}#<span class="tex">T<sub>e</sub>X</span>#g' \
 	    -e 's#\\LaTeX{}#<span class="latex">L<sup>a</sup>T<sub>e</sub>X</span>#g' \
 	    -e 's#\\Hologo{ConTeXt}#Con<span class="tex">T<sub>e</sub>X</span>t#g' \
-	    -e 's#\\Opt{\([^}]*\)}#**`\1`**#g' -e 's#\\,# #g' \
+	    -e 's#\\Opt{\([^}]*\)}#**`\1`**#g' \
+	    -e 's#\\pkg{\([^}]*\)}#**`\1`**#g' \
+	    -e 's#\\,# #g' \
 	    -e 's#\\meta{\([^}]*\)}#\&LeftAngleBracket;*\1*\&RightAngleBracket;#g' \
 	    -e 's#\\acro{\([^}]*\)}#<abbr>\1</abbr>#g' \
 	    -e 's#;-)#<i class="em em-wink"></i>#g' \
-	    -e 's#\\envm{\([^}]*\)}#`\1`#g' -e 's#\\envmdef{\([^}]*\)}#`\1`#g' \
-	    -e 's#\\m{\([^}]*\)}#`\\\1`#g' -e 's#\\mdef{\([^}]*\)}#`\\\1`#g' | \
+	    -e 's#\\envm{\([^}]*\)}#`\1`#g' \
+	    -e 's#\\envmdef{\([^}]*\)}#`\1`#g' \
+	    -e 's#\\m{\([^}]*\)}#`\\\1`#g' \
+	    -e 's#\\mdef{\([^}]*\)}#`\\\1`#g' \
+	| \
 	pandoc -f markdown -t html -N -s --toc --toc-depth=3 --css=$(word 2, $^) >$@
 
 # This pseudo-target runs all the tests in the `tests/` directory.
@@ -95,7 +101,8 @@ $(TDSARCHIVE): $(DTXARCHIVE) $(INSTALLER) $(INSTALLABLES) $(DOCUMENTATION) $(EXA
 	  tex/context/third/markdown scripts/markdown
 	cp markdown.lua tex/luatex/markdown/
 	cp markdown-cli.lua scripts/markdown/
-	cp markdown.sty tex/latex/markdown/
+	cp markdown.sty markdownthemewitiko_tilde.sty \
+	  tex/latex/markdown/
 	cp markdown.tex tex/generic/markdown/
 	cp t-markdown.tex tex/context/third/markdown/
 	@# Installing the documentation.

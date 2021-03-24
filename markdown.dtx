@@ -58,6 +58,7 @@
   html,
   stripPercentSigns,
   underscores=false,
+  theme=witiko/tilde,
 ]{markdown}
 \markdownSetup{
   renderers = {
@@ -813,9 +814,15 @@ local md5 = require("md5")
 % The \LaTeX{} part of the package requires that the \Hologo{LaTeX2e} format is
 % loaded,
 % \end{markdown}
+% \iffalse
+%<*latex-themes-witiko-tilde>
+% \fi
 %  \begin{macrocode}
 \NeedsTeXFormat{LaTeX2e}%
 %    \end{macrocode}
+% \iffalse
+%</latex-themes-witiko-tilde>
+% \fi
 % \begin{markdown}
 % a \TeX{} engine that extends \Hologo{eTeX}, all the plain \TeX{}
 % prerequisites (see Section \ref{sec:texprerequisites}), and the following
@@ -2701,13 +2708,13 @@ defaultOptions.breakableBlockquotes = false
 %
 :    true
 
-     :  Replace regular spaces with non-breakable spaces inside the prenotes
+     :  Replace regular spaces with non-breaking spaces inside the prenotes
         and postnotes of citations produced via the pandoc citation syntax
         extension.
 
      false
 
-     :  Do not replace regular spaces with non-breakable spaces inside the
+     :  Do not replace regular spaces with non-breaking spaces inside the
         prenotes and postnotes of citations produced via the pandoc citation
         syntax extension.
 
@@ -2753,7 +2760,7 @@ lualatex document.tex
 lualatex document.tex
 ``````
 A PDF document named `document.pdf` should be produced and contain the
-following text, where the middot (`·`) denotes a non-breakable space:
+following text, where the middot (`·`) denotes a non-breaking space:
 
 > The TeXbook [1, p.·123·and·130] is good.
 >
@@ -7086,7 +7093,7 @@ Next, invoke LuaTeX from the terminal:
 luatex document.tex
 ``````
 A PDF document named `document.pdf` should be produced and contain the
-following text, where the middot (`·`) denotes a non-breakable space:
+following text, where the middot (`·`) denotes a non-breaking space:
 
 > Bartel·Leendert van·der·Waerden
 
@@ -7114,7 +7121,7 @@ Next, invoke LuaTeX from the terminal:
 lualatex document.tex
 ``````
 A PDF document named `document.pdf` should be produced and contain the
-following text, where the middot (`·`) denotes a non-breakable space:
+following text, where the middot (`·`) denotes a non-breaking space:
 
 > Bartel·Leendert van·der·Waerden
 
@@ -7137,7 +7144,7 @@ Next, invoke LuaTeX from the terminal:
 context document.tex
 ``````
 A PDF document named `document.pdf` should be produced and contain the
-following text, where the middot (`·`) denotes a non-breakable space:
+following text, where the middot (`·`) denotes a non-breaking space:
 
 > Bartel·Leendert van·der·Waerden
 
@@ -10718,11 +10725,30 @@ pdflatex --shell-escape document.tex
 \newcommand\markdownSetup[1]{%
   \setkeys{markdownOptions}{#1}}%
 %    \end{macrocode}
+% \iffalse
+%</latex>
+%<*manual-options>
+
+### \LaTeX{}
+
+\LaTeX{} options enable the loading of user-contributed themes.
+
+% \fi
 % \par
 % \begin{markdown}
-%
-%#### \LaTeX{} themes
+
+#### \LaTeX{} themes
 % \label{sec:latexthemes}
+% \end{markdown}
+% \iffalse
+
+User-contributed \LaTeX{} themes for the Markdown package provide a
+domain-specific interpretation of some Markdown tokens. Similarly to \LaTeX{}
+packages, themes allow the authors to achieve a specific look and other
+high-level goals without low-level programming.
+
+% \fi
+% \begin{markdown}
 % The \LaTeX{} option with key `theme` loads a \LaTeX{} package (further
 % referred to as *a theme*) named `markdowntheme`\meta{munged theme
 % name}`.sty`, where the *munged theme name* is the *theme name* after a
@@ -10752,20 +10778,33 @@ pdflatex --shell-escape document.tex
 % \m{usepackage} macro, the loading of the theme(s) will be postponed in
 % first-in-first-out order until after the Markdown \LaTeX{} package has been
 % loaded. Otherwise, the theme(s) will be loaded immediately. For example,
-% assume that there exists a theme named `witiko/dot`, which typesets fenced
-% code blocks with the `dot` infostring as images of directed graphs rendered
-% by the Graphviz tools. The following code would first load the Markdown
-% package, then the `markdownthemewitiko_beamer_MU.sty` \LaTeX{} package, and
-% finally the `markdownthemewitiko_dot.sty` \LaTeX{} package:
-%
-% ``` latex
-% \usepackage[
-%   theme=witiko/beamer/MU,
-%   theme=witiko/dot,
-% ]{markdown}
-% ```
-%
+% there is a theme named `witiko/dot`, which typesets fenced code blocks with
+% the `dot` infostring as images of directed graphs rendered by the Graphviz
+% tools. The following code would first load the Markdown package, then the
+% `markdownthemewitiko_beamer_MU.sty` \LaTeX{} package, and finally the
+% `markdownthemewitiko_dot.sty` \LaTeX{} package:
 % \end{markdown}
+% \iffalse
+
+For example, to load themes named `witiko/beamer/MU` and `witiko/dot`, you
+would use the following code in the preamble of your document:
+
+% \fi
+% \par
+% \begin{markdown}
+
+``` tex
+\usepackage[
+  theme=witiko/beamer/MU,
+  theme=witiko/dot,
+]{markdown}
+```````
+
+% \end{markdown}
+% \iffalse
+%</manual-options>
+%<*latex>
+% \fi
 %  \begin{macrocode}
 \newif\ifmarkdownLaTeXLoaded\markdownLaTeXLoadedfalse
 \AtEndOfPackage{\markdownLaTeXLoadedtrue}%
@@ -10782,12 +10821,20 @@ pdflatex --shell-escape document.tex
   \expandafter\AtEndOfPackage\expandafter{\expandafter\RequirePackage
     \expandafter{\markdownLaTeXThemePackageName}}}%
 %    \end{macrocode}
+% \iffalse
+%</latex>
+%<*manual-options>
+% \fi
 % \begin{markdown}
-%
-% Due to limitations of \Hologo{LaTeX2e}, themes may not be loaded after the
-% beginning of a \LaTeX{} document.
-%
+
+Due to limitations of \LaTeX{}, themes may not be loaded after the
+beginning of a \LaTeX{} document.
+
 % \end{markdown}
+% \iffalse
+%</manual-options>
+%<*latex>
+% \fi
 %  \begin{macrocode}
 \AtBeginDocument{%  Prohibit loading of themes after \begin{document}
   \define@key{markdownOptions}{theme}{%
@@ -10795,8 +10842,73 @@ pdflatex --shell-escape document.tex
       {Won't load themes after the beginning of a document}%
       {Themes can only be loaded in the preamble of a document}}}%
 %    \end{macrocode}
+% \iffalse
+%</latex>
+%<*manual-options>
+% \fi
+% \par
+% \markdownBegin
+
+Example themes provided with the Markdown package include:
+
+\pkg{witiko/tilde}
+
+:   A theme that redefines tilde (`~`), so that it always typesets the
+    non-breaking space even when the \Opt{hybrid} Lua option is `false`.
+
+%   ``` tex
+%   \documentclass{article}
+%   \usepackage[theme=witiko/tilde]{markdown}
+%   \begin{document}
+%   \begin{markdown}
+%   Bartel~Leendert van~der~Waerden
+%   \end{markdown}
+%   \end{document}
+%   ```````
+%
+%   Typesetting the above document produces the following output:
+%   “Bartel~Leendert van~der~Waerden”.
+%
+% \markdownEnd
+% \iffalse
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\documentclass{article}
+\usepackage[theme=witiko/tilde]{markdown}
+\begin{document}
+\begin{markdown}
+Bartel~Leendert van~der~Waerden
+\end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text, where the middot (`·`) denotes a non-breaking space:
+
+> Bartel·Leendert van·der·Waerden
+
+%</manual-options>
+%<*latex-themes-witiko-tilde>
+% \fi
+%  \begin{macrocode}
+\ProvidesPackage{markdownthemewitiko_tilde}[2021/03/22]%
+%    \end{macrocode}
+% \iffalse
+%</latex-themes-witiko-tilde>
+%<*latex>
+% \fi
 % \par
 % \begin{markdown}
+%
+% Please, see Section~\ref{sec:latexthemesimplementation} for implementation
+% details of the example themes.
 %
 %#### Plain \TeX{} Interface Options
 % The following options map directly to the option macros exposed by the plain
@@ -17159,7 +17271,6 @@ end
   \expandafter\markdownSetup\expandafter{\CurrentOption}}%
 \ProcessOptions\relax
 %    \end{macrocode}
-% \par
 % \begin{markdown}
 %
 % After processing the options, activate the `renderers` and
@@ -17174,6 +17285,28 @@ end
   \setkeys{markdownRendererPrototypes}{#1}%
   \def\KV@prefix{KV@markdownOptions@}}%
 %    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+%#### \LaTeX{} Themes
+% \label{sec:latexthemesimplementation}
+% This section implements example themes provided with the Markdown package.
+%
+% The `witiko/tilde` theme redefines the `\markdownRendererTildePrototype`
+% token renderer prototype, so that it expands to a non-breaking space.
+%
+% \end{markdown}
+% \iffalse
+%</latex>
+%<*latex-themes-witiko-tilde>
+% \fi
+%  \begin{macrocode}
+\renewcommand\markdownRendererTildePrototype{~}%
+%    \end{macrocode}
+% \iffalse
+%</latex-themes-witiko-tilde>
+%<*latex>
+% \fi
 % \par
 % \begin{markdown}
 %
