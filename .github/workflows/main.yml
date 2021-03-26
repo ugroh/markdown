@@ -43,6 +43,7 @@ jobs:
           cp -f markdown.tex                  ~/texmf/tex/generic/markdown/
           mkdir -p                            ~/texmf/tex/latex/markdown/
           cp -f markdown.sty                  ~/texmf/tex/latex/markdown/
+          cp -f markdownthemewitiko_dot.sty   ~/texmf/tex/latex/markdown/
           cp -f markdownthemewitiko_tilde.sty ~/texmf/tex/latex/markdown/
           mkdir -p                            ~/texmf/tex/context/third/markdown/
           cp -f t-markdown.tex                ~/texmf/tex/context/third/markdown/

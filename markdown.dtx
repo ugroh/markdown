@@ -2,7 +2,7 @@
 %<*driver>
 \documentclass{ltxdockit}
 \usepackage[american]{babel}
-\usepackage{amsmath,btxdockit,doc,fancyvrb,hologo,microtype,minted}
+\usepackage{amsmath,btxdockit,doc,fancyvrb,graphicx,hologo,microtype,minted}
 \usepackage{fontspec}
 \defaultfontfeatures[\rmfamily,\sffamily,\ttfamily]{}
 
@@ -21,6 +21,12 @@
 \hypersetup{citecolor=spot}
 \let\oldCodelineNo\theCodelineNo
 \def\theCodelineNo{\textcolor[gray]{0.5}{\oldCodelineNo}}
+\makeatletter\renewcommand\fps@figure{htbp}\makeatother
+\setkeys{Gin}{
+  width = \columnwidth,
+  height = 0.65\paperheight,
+  keepaspectratio,
+}
 
 % Define some markup.
 \let\pkg\relax % A package name
@@ -58,6 +64,7 @@
   html,
   stripPercentSigns,
   underscores=false,
+  theme=witiko/dot,
   theme=witiko/tilde,
 ]{markdown}
 \markdownSetup{
@@ -815,13 +822,13 @@ local md5 = require("md5")
 % loaded,
 % \end{markdown}
 % \iffalse
-%<*latex-themes-witiko-tilde>
+%<*latex-themes-witiko-dot,latex-themes-witiko-tilde>
 % \fi
 %  \begin{macrocode}
 \NeedsTeXFormat{LaTeX2e}%
 %    \end{macrocode}
 % \iffalse
-%</latex-themes-witiko-tilde>
+%</latex-themes-witiko-dot,latex-themes-witiko-tilde>
 % \fi
 % \begin{markdown}
 % a \TeX{} engine that extends \Hologo{eTeX}, all the plain \TeX{}
@@ -10795,8 +10802,8 @@ would use the following code in the preamble of your document:
 
 ``` tex
 \usepackage[
-  theme=witiko/beamer/MU,
-  theme=witiko/dot,
+  theme = witiko/beamer/MU,
+  theme = witiko/dot,
 ]{markdown}
 ```````
 
@@ -10850,6 +10857,145 @@ beginning of a \LaTeX{} document.
 % \markdownBegin
 
 Example themes provided with the Markdown package include:
+
+\pkg{witiko/dot}
+
+:   A theme that typesets fenced code blocks with the `dot …` infostring
+    as images of directed graphs rendered by the Graphviz tools. The
+    right tail of the infostring is used as the image title.
+
+%   ```` tex
+%   \documentclass{article}
+%   \usepackage[theme=witiko/dot]{markdown}
+%   \setkeys{Gin}{width=\columnwidth,height=0.65\paperheight,keepaspectratio}
+%   \begin{document}
+%   \begin{markdown}
+%   ``` dot Various formats of mathemathical formulae
+%   digraph tree {
+%     margin = 0;
+%     rankdir = "LR";
+%
+%     latex -> pmml;
+%     latex -> cmml;
+%     pmml -> slt;
+%     cmml -> opt;
+%     cmml -> prefix;
+%     cmml -> infix;
+%     pmml -> mterms [style=dashed];
+%     cmml -> mterms;
+%
+%     latex [label = "LaTeX"];
+%     pmml [label = "Presentation MathML"];
+%     cmml [label = "Content MathML"];
+%     slt [label = "Symbol Layout Tree"];
+%     opt [label = "Operator Tree"];
+%     prefix [label = "Prefix"];
+%     infix [label = "Infix"];
+%     mterms [label = "M-Terms"];
+%   }
+%   ```
+%   \end{markdown}
+%   \end{document}
+%   ```````
+%
+%   Typesetting the above document produces the output shown in
+%   Figure~\ref{fig:witiko/dot}.
+%
+%   ``` dot Various formats of mathemathical formulae \label{fig:witiko/dot}
+%   digraph tree {
+%     margin = 0;
+%     rankdir = "LR";
+%
+%     latex -> pmml;
+%     latex -> cmml;
+%     pmml -> slt;
+%     cmml -> opt;
+%     cmml -> prefix;
+%     cmml -> infix;
+%     pmml -> mterms [style=dashed];
+%     cmml -> mterms;
+%
+%     latex [label = "LaTeX"];
+%     pmml [label = "Presentation MathML"];
+%     cmml [label = "Content MathML"];
+%     slt [label = "Symbol Layout Tree"];
+%     opt [label = "Operator Tree"];
+%     prefix [label = "Prefix"];
+%     infix [label = "Infix"];
+%     mterms [label = "M-Terms"];
+%   }
+%   ```
+    
+    The theme requires a Unix-like operating system with GNU Diffutils and
+    Graphviz installed. The theme also requires shell access unless the
+    \m{markdownOptionFrozenCache} plain \TeX{} option is enabled.
+
+% \markdownEnd
+% \iffalse
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\documentclass{article}
+\usepackage[theme=witiko/dot]{markdown}
+\setkeys{Gin}{width=\columnwidth,height=0.65\paperheight,keepaspectratio}
+\begin{document}
+\begin{markdown}
+``` dot Various formats of mathemathical formulae
+digraph tree {
+  margin = 0;
+  rankdir = "LR";
+
+  latex -> pmml;
+  latex -> cmml;
+  pmml -> slt;
+  cmml -> opt;
+  cmml -> prefix;
+  cmml -> infix;
+  pmml -> mterms [style=dashed];
+  cmml -> mterms;
+
+  latex [label = "LaTeX"];
+  pmml [label = "Presentation MathML"];
+  cmml [label = "Content MathML"];
+  slt [label = "Symbol Layout Tree"];
+  opt [label = "Operator Tree"];
+  prefix [label = "Prefix"];
+  infix [label = "Infix"];
+  mterms [label = "M-Terms"];
+}
+```
+\end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain
+a drawing of a directed graph similar to Figure 1 from the following
+conference article:
+
+> NOVOTNÝ, Vít, Petr SOJKA, Michal ŠTEFÁNIK and Dávid LUPTÁK. Three is Better
+> than One: Ensembling Math Information Retrieval Systems. *CEUR Workshop
+> Proceedings*. Thessaloniki, Greece: M. Jeusfeld c/o Redaktion Sun SITE,
+> Informatik V, RWTH Aachen., 2020, vol. 2020, No 2696, p. 1-30. ISSN 1613-0073.
+> <http://ceur-ws.org/Vol-2696/paper_235.pdf>
+
+%</manual-options>
+%<*latex-themes-witiko-dot>
+% \fi
+%  \begin{macrocode}
+\ProvidesPackage{markdownthemewitiko_dot}[2021/03/09]%
+%    \end{macrocode}
+% \iffalse
+%</latex-themes-witiko-dot>
+%<*manual-options>
+% \fi
+% \par
+% \markdownBegin
 
 \pkg{witiko/tilde}
 
@@ -17292,12 +17438,78 @@ end
 % \label{sec:latexthemesimplementation}
 % This section implements example themes provided with the Markdown package.
 %
-% The `witiko/tilde` theme redefines the `\markdownRendererTildePrototype`
-% token renderer prototype, so that it expands to a non-breaking space.
+% The `witiko/dot` theme enables the \Opt{fencedCode} Lua option:
 %
 % \end{markdown}
 % \iffalse
 %</latex>
+%<*latex-themes-witiko-dot>
+% \fi
+%  \begin{macrocode}
+\markdownSetup{fencedCode}%
+%    \end{macrocode}
+% \begin{markdown}
+%
+% We store the previous definition of the
+% \m{markdownRendererInputFencedCodePrototype} token renderer prototype:
+%
+% \end{markdown}
+%  \begin{macrocode}
+\let\markdown@witiko@dot@markdownRendererInputFencedCodePrototype
+  \markdownRendererInputFencedCodePrototype
+%    \end{macrocode}
+% \begin{markdown}
+%
+% If the infostring starts with `dot …`, we redefine the
+% \m{markdownRendererInputFencedCodePrototype} token renderer prototype, so
+% that it typesets the code block via Graphviz tools if and only if the
+% \m{markdownOptionFrozenCache} plain \TeX{} option is disabled and the code
+% block has not been previously typeset:
+%
+% \end{markdown}
+%  \begin{macrocode}
+\renewcommand\markdownRendererInputFencedCode[2]{%
+  \def\next##1 ##2\relax{%
+    \ifthenelse{\equal{##1}{dot}}{%
+      \markdownIfOption{FrozenCache}{}{%
+        \immediate\write18{%
+          if ! test -e #1.pdf.source || ! diff #1 #1.pdf.source;
+          then
+            dot -Tpdf -o #1.pdf #1;
+            cp #1 #1.pdf.source;
+          fi}}%
+%    \end{macrocode}
+% \begin{markdown}
+%
+% The typeset image is included using the \m{markdownRendererImage} token
+% renderer:
+%
+% \end{markdown}
+%  \begin{macrocode}
+      \markdownRendererImage{Graphviz image}{#1.pdf}{#1.pdf}{##2}%
+%    \end{macrocode}
+% \begin{markdown}
+%
+% If the infostring does not start with `dot …`, we use the previous definition
+% of the \m{markdownRendererInputFencedCodePrototype} token renderer prototype:
+%
+% \end{markdown}
+%  \begin{macrocode}
+    }{%
+      \markdown@witiko@dot@markdownRendererInputFencedCodePrototype{#1}{#2}%
+    }%
+  }%
+  \next#2 \relax}%
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% The `witiko/tilde` theme redefines the \m{markdownRendererTildePrototype}
+% token renderer prototype, so that it expands to a non-breaking space:
+%
+% \end{markdown}
+% \iffalse
+%</latex-themes-witiko-dot>
 %<*latex-themes-witiko-tilde>
 % \fi
 %  \begin{macrocode}
