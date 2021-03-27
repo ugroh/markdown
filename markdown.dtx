@@ -10860,75 +10860,74 @@ Example themes provided with the Markdown package include:
 
 \pkg{witiko/dot}
 
-:   A theme that typesets fenced code blocks with the `dot …` infostring
-    as images of directed graphs rendered by the Graphviz tools. The
-    right tail of the infostring is used as the image title.
-
-%   ```` tex
-%   \documentclass{article}
-%   \usepackage[theme=witiko/dot]{markdown}
-%   \setkeys{Gin}{width=\columnwidth,height=0.65\paperheight,keepaspectratio}
-%   \begin{document}
-%   \begin{markdown}
-%   ``` dot Various formats of mathemathical formulae
-%   digraph tree {
-%     margin = 0;
-%     rankdir = "LR";
+:    A theme that typesets fenced code blocks with the `dot …` infostring
+     as images of directed graphs rendered by the Graphviz tools. The
+     right tail of the infostring is used as the image title.
+%    ```` tex
+%    \documentclass{article}
+%    \usepackage[theme=witiko/dot]{markdown}
+%    \setkeys{Gin}{
+%      width = \columnwidth,
+%      height = 0.65\paperheight,
+%      keepaspectratio}
+%    \begin{document}
+%    \begin{markdown}
+%    ``` dot Various formats of mathemathical formulae
+%    digraph tree {
+%      margin = 0;
+%      rankdir = "LR";
 %
-%     latex -> pmml;
-%     latex -> cmml;
-%     pmml -> slt;
-%     cmml -> opt;
-%     cmml -> prefix;
-%     cmml -> infix;
-%     pmml -> mterms [style=dashed];
-%     cmml -> mterms;
+%      latex -> pmml;
+%      latex -> cmml;
+%      pmml -> slt;
+%      cmml -> opt;
+%      cmml -> prefix;
+%      cmml -> infix;
+%      pmml -> mterms [style=dashed];
+%      cmml -> mterms;
 %
-%     latex [label = "LaTeX"];
-%     pmml [label = "Presentation MathML"];
-%     cmml [label = "Content MathML"];
-%     slt [label = "Symbol Layout Tree"];
-%     opt [label = "Operator Tree"];
-%     prefix [label = "Prefix"];
-%     infix [label = "Infix"];
-%     mterms [label = "M-Terms"];
-%   }
-%   ```
-%   \end{markdown}
-%   \end{document}
-%   ```````
+%      latex [label = "LaTeX"];
+%      pmml [label = "Presentation MathML"];
+%      cmml [label = "Content MathML"];
+%      slt [label = "Symbol Layout Tree"];
+%      opt [label = "Operator Tree"];
+%      prefix [label = "Prefix"];
+%      infix [label = "Infix"];
+%      mterms [label = "M-Terms"];
+%    }
+%    ```
+%    \end{markdown}
+%    \end{document}
+%    ````````
+%    Typesetting the above document produces the output shown in
+%    Figure~\ref{fig:witiko/dot}.
+%    ``` dot Various formats of mathemathical formulae \label{fig:witiko/dot}
+%    digraph tree {
+%      margin = 0;
+%      rankdir = "LR";
 %
-%   Typesetting the above document produces the output shown in
-%   Figure~\ref{fig:witiko/dot}.
+%      latex -> pmml;
+%      latex -> cmml;
+%      pmml -> slt;
+%      cmml -> opt;
+%      cmml -> prefix;
+%      cmml -> infix;
+%      pmml -> mterms [style=dashed];
+%      cmml -> mterms;
 %
-%   ``` dot Various formats of mathemathical formulae \label{fig:witiko/dot}
-%   digraph tree {
-%     margin = 0;
-%     rankdir = "LR";
-%
-%     latex -> pmml;
-%     latex -> cmml;
-%     pmml -> slt;
-%     cmml -> opt;
-%     cmml -> prefix;
-%     cmml -> infix;
-%     pmml -> mterms [style=dashed];
-%     cmml -> mterms;
-%
-%     latex [label = "LaTeX"];
-%     pmml [label = "Presentation MathML"];
-%     cmml [label = "Content MathML"];
-%     slt [label = "Symbol Layout Tree"];
-%     opt [label = "Operator Tree"];
-%     prefix [label = "Prefix"];
-%     infix [label = "Infix"];
-%     mterms [label = "M-Terms"];
-%   }
-%   ```
-    
-    The theme requires a Unix-like operating system with GNU Diffutils and
-    Graphviz installed. The theme also requires shell access unless the
-    \m{markdownOptionFrozenCache} plain \TeX{} option is enabled.
+%      latex [label = "LaTeX"];
+%      pmml [label = "Presentation MathML"];
+%      cmml [label = "Content MathML"];
+%      slt [label = "Symbol Layout Tree"];
+%      opt [label = "Operator Tree"];
+%      prefix [label = "Prefix"];
+%      infix [label = "Infix"];
+%      mterms [label = "M-Terms"];
+%    }
+%    ```
+     The theme requires a Unix-like operating system with GNU Diffutils and
+     Graphviz installed. The theme also requires shell access unless the
+     \m{markdownOptionFrozenCache} plain \TeX{} option is enabled.
 
 % \markdownEnd
 % \iffalse
@@ -10937,10 +10936,13 @@ Example themes provided with the Markdown package include:
 
 Using a text editor, create a text document named `document.tex` with the
 following content:
-``` tex
+```` tex
 \documentclass{article}
 \usepackage[theme=witiko/dot]{markdown}
-\setkeys{Gin}{width=\columnwidth,height=0.65\paperheight,keepaspectratio}
+\setkeys{Gin}{
+  width=\columnwidth,
+  height=0.65\paperheight,
+  keepaspectratio}
 \begin{document}
 \begin{markdown}
 ``` dot Various formats of mathemathical formulae
@@ -10969,7 +10971,7 @@ digraph tree {
 ```
 \end{markdown}
 \end{document}
-```````
+````````
 Next, invoke LuaTeX from the terminal:
 ``` sh
 lualatex document.tex
@@ -10999,21 +11001,19 @@ conference article:
 
 \pkg{witiko/tilde}
 
-:   A theme that redefines tilde (`~`), so that it always typesets the
-    non-breaking space even when the \Opt{hybrid} Lua option is `false`.
-
-%   ``` tex
-%   \documentclass{article}
-%   \usepackage[theme=witiko/tilde]{markdown}
-%   \begin{document}
-%   \begin{markdown}
-%   Bartel~Leendert van~der~Waerden
-%   \end{markdown}
-%   \end{document}
-%   ```````
-%
-%   Typesetting the above document produces the following output:
-%   “Bartel~Leendert van~der~Waerden”.
+:    A theme that redefines tilde (`~`), so that it always typesets the
+     non-breaking space even when the \Opt{hybrid} Lua option is `false`.
+%    ``` tex
+%    \documentclass{article}
+%    \usepackage[theme=witiko/tilde]{markdown}
+%    \begin{document}
+%    \begin{markdown}
+%    Bartel~Leendert van~der~Waerden
+%    \end{markdown}
+%    \end{document}
+%    ```````
+%    Typesetting the above document produces the following text:
+%    “Bartel~Leendert van~der~Waerden”.
 %
 % \markdownEnd
 % \iffalse
