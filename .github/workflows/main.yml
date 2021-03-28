@@ -26,7 +26,7 @@ jobs:
         run: |
           set -ex
           apt-get -qy update
-          apt-get -qy install graphviz m4 pandoc parallel python3-pygments ruby
+          apt-get -qy install gawk graphviz m4 pandoc parallel python3-pygments ruby
       - name: Generate the ConTeXt file database
         run: |
           set -ex
