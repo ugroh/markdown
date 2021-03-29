@@ -17455,16 +17455,15 @@ end
 %
 % \end{markdown}
 %  \begin{macrocode}
-\let\markdown@witiko@dot@markdownRendererInputFencedCodePrototype
+\let\markdown@witiko@dot@oldRendererInputFencedCodePrototype
   \markdownRendererInputFencedCodePrototype
 %    \end{macrocode}
 % \begin{markdown}
 %
-% If the infostring starts with `dot …`, we redefine the
-% \m{markdownRendererInputFencedCodePrototype} token renderer prototype, so
-% that it typesets the code block via Graphviz tools if and only if the
-% \m{markdownOptionFrozenCache} plain \TeX{} option is disabled and the code
-% block has not been previously typeset:
+% If the infostring starts with `dot …`, we redefine the fenced code block
+% token renderer prototype, so that it typesets the code block via Graphviz
+% tools if and only if the \m{markdownOptionFrozenCache} plain \TeX{} option is
+% disabled and the code block has not been previously typeset:
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -17481,8 +17480,7 @@ end
 %    \end{macrocode}
 % \begin{markdown}
 %
-% The typeset image is included using the \m{markdownRendererImage} token
-% renderer:
+% We include the typeset image using the image token renderer:
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -17491,12 +17489,12 @@ end
 % \begin{markdown}
 %
 % If the infostring does not start with `dot …`, we use the previous definition
-% of the \m{markdownRendererInputFencedCodePrototype} token renderer prototype:
+% of the fenced code token renderer prototype:
 %
 % \end{markdown}
 %  \begin{macrocode}
     }{%
-      \markdown@witiko@dot@markdownRendererInputFencedCodePrototype{#1}{#2}%
+      \markdown@witiko@dot@oldRendererInputFencedCodePrototype{#1}{#2}%
     }%
   }%
   \next#2 \relax}%
@@ -17504,8 +17502,8 @@ end
 % \par
 % \begin{markdown}
 %
-% The `witiko/tilde` theme redefines the \m{markdownRendererTildePrototype}
-% token renderer prototype, so that it expands to a non-breaking space:
+% The `witiko/tilde` theme redefines the tilde token renderer prototype,
+% so that it expands to a non-breaking space:
 %
 % \end{markdown}
 % \iffalse
