@@ -28,7 +28,8 @@ HTML_USER_MANUAL=markdown.html markdown.css
 USER_MANUAL=$(MARKDOWN_USER_MANUAL) $(HTML_USER_MANUAL)
 DOCUMENTATION=$(TECHNICAL_DOCUMENTATION) $(USER_MANUAL) $(ROOT_README)
 INSTALLABLES=markdown.lua markdown-cli.lua markdown.tex markdown.sty t-markdown.tex \
-	markdownthemewitiko_dot.sty markdownthemewitiko_tilde.sty
+	markdownthemewitiko_dot.sty markdownthemewitiko_graphicx_http.sty \
+	markdownthemewitiko_tilde.sty
 MAKEABLES=$(TECHNICAL_DOCUMENTATION) $(USER_MANUAL) $(INSTALLABLES) $(EXAMPLES)
 RESOURCES=$(DOCUMENTATION) $(EXAMPLES_RESOURCES) $(EXAMPLES_SOURCES) $(EXAMPLES) \
   $(MAKES) $(READMES) $(INSTALLER) $(DTXARCHIVE) $(TESTS)
@@ -101,8 +102,8 @@ $(TDSARCHIVE): $(DTXARCHIVE) $(INSTALLER) $(INSTALLABLES) $(DOCUMENTATION) $(EXA
 	  tex/context/third/markdown scripts/markdown
 	cp markdown.lua tex/luatex/markdown/
 	cp markdown-cli.lua scripts/markdown/
-	cp markdown.sty markdownthemewitiko_dot.sty markdownthemewitiko_tilde.sty \
-	  tex/latex/markdown/
+	cp markdown.sty markdownthemewitiko_dot.sty markdownthemewitiko_graphicx_http.sty \
+	  markdownthemewitiko_tilde.sty tex/latex/markdown/
 	cp markdown.tex tex/generic/markdown/
 	cp t-markdown.tex tex/context/third/markdown/
 	@# Installing the documentation.

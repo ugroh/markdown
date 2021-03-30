@@ -65,6 +65,7 @@
   stripPercentSigns,
   underscores=false,
   theme=witiko/dot,
+  theme=witiko/graphicx/http,
 ]{markdown}
 \markdownSetup{
   renderers = {
@@ -681,6 +682,7 @@ This should produce the following files:
  * `markdown.tex`, the plain \TeX{} macro package,
  * `markdown.sty`, the \LaTeX{} package,
  * `markdownthemewitiko_dot.sty`, the `witiko/dot` \LaTeX{} theme,
+ * `markdownthemewitiko_graphicx_http.sty`, the `witiko/graphicx/http` \LaTeX{} theme,
  * `markdownthemewitiko_tilde.sty`, the `witiko/tilde` \LaTeX{} theme, and
  * `t-markdown.tex`, the \Hologo{ConTeXt} module.
 
@@ -695,6 +697,7 @@ placed:
  * `<TEXMF>/tex/generic/markdown/markdown.tex`
  * `<TEXMF>/tex/latex/markdown/markdown.sty`
  * `<TEXMF>/tex/latex/markdown/markdownthemewitiko_dot.sty`
+ * `<TEXMF>/tex/latex/markdown/markdownthemewitiko_graphicx_http.sty`
  * `<TEXMF>/tex/latex/markdown/markdownthemewitiko_tilde.sty`
  * `<TEXMF>/tex/context/third/markdown/t-markdown.tex`
 
@@ -830,13 +833,13 @@ local md5 = require("md5")
 % loaded,
 % \end{markdown}
 % \iffalse
-%<*latex-themes-witiko-dot,latex-themes-witiko-tilde>
+%<*latex-themes-witiko-dot,latex-themes-witiko-graphicx-http,latex-themes-witiko-tilde>
 % \fi
 %  \begin{macrocode}
 \NeedsTeXFormat{LaTeX2e}%
 %    \end{macrocode}
 % \iffalse
-%</latex-themes-witiko-dot,latex-themes-witiko-tilde>
+%</latex-themes-witiko-dot,latex-themes-witiko-graphicx-http,latex-themes-witiko-tilde>
 % \fi
 % \begin{markdown}
 % a \TeX{} engine that extends \Hologo{eTeX}, all the plain \TeX{}
@@ -11007,6 +11010,70 @@ conference article:
 % \par
 % \markdownBegin
 
+\pkg{witiko/graphicx/http}
+
+:    A theme that adds support for downloading images whose URL has the
+     http or https protocol.
+%    ``` tex
+%    \documentclass{article}
+%    \usepackage[theme=witiko/graphicx/http]{markdown}
+%    \begin{document}
+%    \begin{markdown}
+%    ![img](https://github.com/witiko/markdown/raw/master/banner.png
+%           "The banner of the Markdown package")
+%    \end{markdown}
+%    \end{document}
+%    ```````
+%    Typesetting the above document produces the output shown in
+%    Figure~\ref{fig:witiko/graphicx/http}.
+%    ![img](https://github.com/witiko/markdown/raw/master/banner.png
+%           "The banner of the Markdown package \label{fig:witiko/graphicx/http}")
+     The theme requires the \pkg{catchfile} \LaTeX{} package and a Unix-like
+     operating system with GNU Coreutils `md5sum` and either GNU Wget or cURL
+     installed. The theme also requires shell access unless the
+     \m{markdownOptionFrozenCache} plain \TeX{} option is enabled.
+
+% \markdownEnd
+% \iffalse
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\documentclass{article}
+\usepackage[theme=witiko/graphicx/http]{markdown}
+\begin{document}
+\begin{markdown}
+![img](https://github.com/witiko/markdown/raw/master/banner.png
+       "The banner of the Markdown package")
+\end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following image:
+
+> ![img](https://github.com/witiko/markdown/raw/master/banner.png
+>        "The banner of the Markdown package")
+
+%</manual-options>
+%<*latex-themes-witiko-graphicx-http>
+% \fi
+%  \begin{macrocode}
+\ProvidesPackage{markdownthemewitiko_graphicx_http}[2021/03/22]%
+\RequirePackage{catchfile}
+%    \end{macrocode}
+% \iffalse
+%</latex-themes-witiko-graphicx-http>
+%<*manual-options>
+% \fi
+% \par
+% \markdownBegin
+
 \pkg{witiko/tilde}
 
 :    A theme that makes tilde (`~`) always typeset the non-breaking space even
@@ -17458,8 +17525,7 @@ end
 %    \end{macrocode}
 % \begin{markdown}
 %
-% We store the previous definition of the
-% \m{markdownRendererInputFencedCodePrototype} token renderer prototype:
+% We store the previous definition of the fenced code token renderer prototype:
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -17507,6 +17573,130 @@ end
   }%
   \next#2 \relax}%
 %    \end{macrocode}
+% \iffalse
+%</latex-themes-witiko-dot>
+%<*latex-themes-witiko-graphicx-http>
+% \fi
+% \par
+% \begin{markdown}
+%
+% The `witiko/graphicx/http` theme stores the previous definition of the image
+% token renderer prototype:
+%
+% \end{markdown}
+%  \begin{macrocode}
+\let\markdown@witiko@graphicx@http@oldRendererImagePrototype
+  \markdownRendererImagePrototype
+%    \end{macrocode}
+% \begin{markdown}
+%
+% We define the \m{markdown@witiko@graphicx@http@counter} counter to enumerate
+% the images for caching and the \m{markdown@witiko@graphicx@http@filename}
+% command, which will store the pathname of the file containing the pathname
+% of the downloaded image file.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\newcount\markdown@witiko@graphicx@http@counter
+\markdown@witiko@graphicx@http@counter=0
+\newcommand\markdown@witiko@graphicx@http@filename{%
+  \markdownOptionCacheDir/witiko_graphicx_http%
+  .\the\markdown@witiko@graphicx@http@counter}%
+%    \end{macrocode}
+% \begin{markdown}
+%
+% We define the \m{markdown@witiko@graphicx@http@download} command, which will
+% receive two arguments that correspond to the URL of the online image and to
+% the pathname, where the online image should be downloaded. The command will
+% produce a shell command that tries to downloads the online image to the
+% pathname.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\newcommand\markdown@witiko@graphicx@http@download[2]{%
+  wget -O #2 #1 || curl --location -o #2 #1 || rm -f #2}
+%    \end{macrocode}
+% \begin{markdown}
+%
+% We locally swap the category code of the percentage sign with the line feed
+% control character, so that we can use percentage signs in the shell code:
+%
+% \end{markdown}
+%  \begin{macrocode}
+\begingroup
+\catcode`\%=12
+\catcode`\^^A=14
+%    \end{macrocode}
+% \begin{markdown}
+%
+% We redefine the image token renderer prototype, so that it tries to download
+% an online image.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\global\def\markdownRendererImagePrototype#1#2#3#4{^^A
+  \begingroup
+    \edef\filename{\markdown@witiko@graphicx@http@filename}^^A
+%    \end{macrocode}
+% \begin{markdown}
+%
+% The image be downloaded if and only if the image URL has the http or https
+% protocols and the \m{markdownOptionFrozenCache} plain \TeX{} option is disabled:
+%
+% \end{markdown}
+%  \begin{macrocode}
+    \markdownIfOption{FrozenCache}{}{^^A
+      \immediate\write18{^^A
+        if printf '%s' "#3" | grep -q -E '^https?:';
+        then
+%    \end{macrocode}
+% \begin{markdown}
+%
+% The image will be downloaded to the pathname \m{markdownOptionCacheDir}<!--
+% -->`/`\meta{the MD5 digest of the image URL}`.`\meta{the suffix of the
+% image URL}:
+%
+% \end{markdown}
+%  \begin{macrocode}
+          OUTPUT_PREFIX="\markdownOptionCacheDir";
+          OUTPUT_BODY="$(printf '%s' '#3' | md5sum | cut -d' ' -f1)";
+          OUTPUT_SUFFIX="$(printf '%s' '#3' | sed 's/.*[.]//')";
+          OUTPUT="$OUTPUT_PREFIX/$OUTPUT_BODY.$OUTPUT_SUFFIX";
+          if ! [ -e "$OUTPUT" ];
+          then
+            \markdown@witiko@graphicx@http@download{'#3'}{"$OUTPUT"};
+            printf '%s%%' "$OUTPUT" > "\filename";
+          fi;
+%    \end{macrocode}
+% \begin{markdown}
+%
+% If the image does not have the http or https protocols, the URL will be
+% stored as-is:
+%
+% \end{markdown}
+%  \begin{macrocode}
+        else
+          printf '%s%%' '#3' > "\filename";
+        fi}}^^A
+%    \end{macrocode}
+% \begin{markdown}
+%
+% We load the pathname of the downloaded image and we typeset the image using
+% the previous definition of the image renderer prototype:
+%
+% \end{markdown}
+%  \begin{macrocode}
+    \CatchFileDef{\filename}{\filename}{}^^A
+    \markdown@witiko@graphicx@http@oldRendererImagePrototype^^A
+      {#1}{#2}{\filename}{#4}^^A
+  \endgroup
+  \global\advance\markdown@witiko@graphicx@http@counter by 1\relax}^^A
+\endgroup
+%    \end{macrocode}
+% \iffalse
+%</latex-themes-witiko-graphicx-http>
+%<*latex-themes-witiko-tilde>
+% \fi
 % \par
 % \begin{markdown}
 %
@@ -17514,10 +17704,6 @@ end
 % so that it expands to a non-breaking space:
 %
 % \end{markdown}
-% \iffalse
-%</latex-themes-witiko-dot>
-%<*latex-themes-witiko-tilde>
-% \fi
 %  \begin{macrocode}
 \renewcommand\markdownRendererTildePrototype{~}%
 %    \end{macrocode}
