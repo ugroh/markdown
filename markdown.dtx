@@ -17640,7 +17640,7 @@ end
 %    \end{macrocode}
 % \begin{markdown}
 %
-% The image be downloaded if and only if the image URL has the http or https
+% The image will be downloaded only if the image URL has the http or https
 % protocols and the \m{markdownOptionFrozenCache} plain \TeX{} option is disabled:
 %
 % \end{markdown}
@@ -17662,6 +17662,13 @@ end
           OUTPUT_BODY="$(printf '%s' '#3' | md5sum | cut -d' ' -f1)";
           OUTPUT_SUFFIX="$(printf '%s' '#3' | sed 's/.*[.]//')";
           OUTPUT="$OUTPUT_PREFIX/$OUTPUT_BODY.$OUTPUT_SUFFIX";
+%    \end{macrocode}
+% \begin{markdown}
+%
+% The image will be downloaded only if it has not already been downloaded:
+%
+% \end{markdown}
+%  \begin{macrocode}
           if ! [ -e "$OUTPUT" ];
           then
             \markdown@witiko@graphicx@http@download{'#3'}{"$OUTPUT"};
@@ -17670,8 +17677,8 @@ end
 %    \end{macrocode}
 % \begin{markdown}
 %
-% If the image does not have the http or https protocols, the URL will be
-% stored as-is:
+% If the image does not have the http or https protocols or the image has
+% already been downloaded, the URL will be stored as-is:
 %
 % \end{markdown}
 %  \begin{macrocode}
