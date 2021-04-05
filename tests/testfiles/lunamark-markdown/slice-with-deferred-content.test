@@ -1,0 +1,31 @@
+\def\markdownOptionFootnotes{true}
+\def\markdownOptionHeaderAttributes{true}
+\def\markdownOptionSlice{section-with-deferred-content}
+<<<
+# This is a section
+# This is another section {#section-with-deferred-content}
+Here is a [^footnote], a [link][], and an ![image][].
+
+# This is yet another section
+Here are the definitions:
+
+ [^footnote]: This is the text of the footnote.
+
+ [link]: http://link (This is the title of the link.)
+
+ [image]: http://image (This is the title of the image.)
+>>>
+headingOne: This is another section
+interblockSeparator
+footnote: This is the text of the footnote.
+BEGIN link
+- label: link
+- URI: http://link
+- title: This is the title of the link.
+END link
+BEGIN image
+- label: image
+- URI: http://image
+- title: This is the title of the image.
+END image
+interblockSeparator

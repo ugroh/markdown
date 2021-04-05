@@ -14105,7 +14105,8 @@ M.writer = {}
 %
 % The objects produced by the \luam{writer.new} method expose instance methods
 % and variables of their own. As a convention, I will refer to these
-% \meta{member}s as `writer->`\meta{member}.
+% \meta{member}s as `writer->`\meta{member}. All member variables are
+% immutable unless explicitly stated otherwise.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -14127,7 +14128,8 @@ function M.writer.new(options)
 % \begin{markdown}
 %
 % Parse the \Opt{slice} option and define \luamdef{writer->slice\_begin}
-% \luamdef{writer->slice\_end}, and \luamdef{writer->is\_writing}.
+% \luamdef{writer->slice\_end}, and \luamdef{writer->is\_writing}. The
+% \luamdef{writer->is\_writing} member variable is mutable.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -14704,8 +14706,9 @@ function M.writer.new(options)
 % \par
 % \begin{markdown}
 %
-% Define \luamdef{writer->active_headings} as a stack of identifiers
-% of the headings that are currently active.
+% Define \luamdef{writer->active\_headings} as a stack of identifiers
+% of the headings that are currently active. The
+% \luamdef{writer->active\_headings} member variable is mutable.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -14824,6 +14827,57 @@ function M.writer.new(options)
         cite.prenote or "", "}{", cite.postnote or "", "}{", cite.name, "}"}
     end
     return buffer
+  end
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Define \luamdef{writer->get_state} as a function that returns the current
+% state of the writer, where the state of a writer are its mutable member
+% variables.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  function self.get_state()
+    return {
+      is_writing=self.is_writing,
+      active_headings={table.unpack(self.active_headings)},
+    }
+  end
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Define \luamdef{writer->set_state} as a function that restores the input
+% state `s` and returns the previous state of the writer.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  function self.set_state(s)
+    previous_state = self.get_state()
+    for key, value in pairs(state) do
+      self[key] = value
+    end
+    return previous_state
+  end
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Define \luamdef{writer->defer_call} as a function that will encapsulate the
+% input function `f`, so that `f` is called with the state of the writer at the
+% time of calling \luam{writer->defer_call}.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  function self.defer_call(f)
+    state = self.get_state()
+    return function(...)
+      state = self.set_state(state)
+      local return_value = f(...)
+      self.set_state(state)
+      return return_value
+    end
   end
 
   return self
@@ -15830,14 +15884,14 @@ function M.reader.new(writer, options)
 
   -- like indirect_link
   local function lookup_note(ref)
-    return function()
+    return writer.defer_call(function()
       local found = rawnotes[normalize_tag(ref)]
       if found then
         return writer.note(parse_blocks_toplevel(found))
       else
         return {"[", parse_inlines("^" .. ref), "]"}
       end
-    end
+    end)
   end
 
   local function register_note(ref,rawnote)
@@ -15929,27 +15983,27 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
   -- lookup link reference and return a link, if the reference is found,
   -- or a bracketed label otherwise.
   local function indirect_link(label,sps,tag)
-    return function()
+    return writer.defer_call(function()
       local r,fallback = lookup_reference(label,sps,tag)
       if r then
         return writer.link(parse_inlines_no_link(label), r.url, r.title)
       else
         return fallback
       end
-    end
+    end)
   end
 
   -- lookup image reference and return an image, if the reference is found,
   -- or a bracketed label otherwise.
   local function indirect_image(label,sps,tag)
-    return function()
+    return writer.defer_call(function()
       local r,fallback = lookup_reference(label,sps,tag)
       if r then
         return writer.image(writer.string(label), r.url, r.title)
       else
         return {"!", fallback}
       end
-    end
+    end)
   end
 %    \end{macrocode}
 % \par
