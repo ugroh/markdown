@@ -14408,6 +14408,7 @@ function M.writer.new(options)
 % \end{markdown}
 %  \begin{macrocode}
   function self.table(rows, caption)
+    if not self.is_writing then return "" end
     local buffer = {"\\markdownRendererTable{",
       caption or "", "}{", #rows - 1, "}{", #rows[1], "}"}
     local temp = rows[2] -- put alignments on the first row
