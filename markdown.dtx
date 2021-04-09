@@ -5568,6 +5568,110 @@ defaultOptions.startNumber = true
 %</lua,lua-cli>
 %<*manual-options>
 
+#### Option `stripComments`
+
+`stripComments` (default value: `false`)
+
+% \fi
+% \begin{markdown}
+%
+% \Optitem[false]{stripComments}{\opt{true}, \opt{false}}
+%
+:    true
+
+     :   Strip \TeX{}-style comments.
+
+         ``` tex
+         \documentclass{article}
+         \usepackage[stripComments]{markdown}
+         \begin{document}
+         \begin{markdown}
+         Hel%  this is a comment
+            lo *world*!
+         \end{markdown}
+         \end{document}
+         ```````
+
+:    false
+
+     :   Do not strip \TeX{}-style comments.
+
+% \end{markdown}
+% \iffalse
+
+##### Plain \TeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\input markdown
+\def\markdownOptionStripComments{true}
+\markdownBegin
+Hel%  this is a comment
+   lo *world*!
+\markdownEnd
+\bye
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+luatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the text
+“Hello *world*!”
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\documentclass{article}
+\usepackage[stripComments]{markdown}
+\begin{document}
+\begin{markdown}
+Hel%  this is a comment
+   lo *world*!
+\end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+text “Hello *world*!”
+
+##### \Hologo{ConTeXt} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\usemodule[t][markdown]
+\def\markdownOptionStripComments{true}
+\starttext
+\startmarkdown
+Hel%  this is a comment
+   lo *world*!
+\stopmarkdown
+\stoptext
+````````
+Next, invoke LuaTeX from the terminal:
+``` sh
+context document.tex
+`````
+A PDF document named `document.pdf` should be produced and contain the
+text “Hello *world*!”
+
+%</manual-options>
+%<*lua,lua-cli>
+% \fi
+%  \begin{macrocode}
+defaultOptions.stripComments = false
+%    \end{macrocode}
+% \par
+% \iffalse
+%</lua,lua-cli>
+%<*manual-options>
+
 #### Option `stripIndent`
 
 `stripIndent` (default value: `false`)
@@ -6634,6 +6738,7 @@ bug](https://github.com/witiko/markdown/issues).
 \let\markdownOptionSlice\undefined
 \let\markdownOptionSmartEllipses\undefined
 \let\markdownOptionStartNumber\undefined
+\let\markdownOptionStripComments\undefined
 \let\markdownOptionStripIndent\undefined
 \let\markdownOptionTableCaptions\undefined
 \let\markdownOptionTightLists\undefined
@@ -11298,6 +11403,8 @@ following text, where the middot (`·`) denotes a non-breaking space:
   \def\markdownOptionSlice{#1}}%
 \define@key{markdownOptions}{startNumber}[true]{%
   \def\markdownOptionStartNumber{#1}}%
+\define@key{markdownOptions}{stripComments}[true]{%
+  \def\markdownOptionStripComments{#1}}%
 \define@key{markdownOptions}{stripIndent}[true]{%
   \def\markdownOptionStripIndent{#1}}%
 \define@key{markdownOptions}{tableCaptions}[true]{%
@@ -15037,6 +15144,7 @@ parsers.semicolon              = P(";")
 parsers.exclamation            = P("!")
 parsers.pipe                   = P("|")
 parsers.tilde                  = P("~")
+parsers.backslash              = P("\\")
 parsers.tab                    = P("\t")
 parsers.newline                = P("\n")
 parsers.tightblocksep          = P("\001")
@@ -15059,7 +15167,7 @@ parsers.any                    = P(1)
 parsers.fail                   = parsers.any - 1
 
 parsers.escapable              = S("\\`*_{}[]()+_.!<>#-~:^@;")
-parsers.anyescaped             = P("\\") / "" * parsers.escapable
+parsers.anyescaped             = parsers.backslash / "" * parsers.escapable
                                + parsers.any
 
 parsers.spacechar              = S("\t ")
@@ -15091,6 +15199,26 @@ parsers.spnl                   = parsers.optionalspace
                                * (parsers.newline * parsers.optionalspace)^-1
 parsers.line                   = parsers.linechar^0 * parsers.newline
 parsers.nonemptyline           = parsers.line - parsers.blankline
+
+parsers.commented_line         = C(((parsers.linechar
+                                    - parsers.backslash
+                                    - parsers.percent)^1
+                                   + (parsers.backslash
+                                     * parsers.backslash)^1
+                                   + (parsers.backslash
+                                     * parsers.backslash)^0
+                                   * parsers.backslash
+                                   * (parsers.linechar
+                                     - parsers.backslash)
+                                 )^0)
+                                 * ((parsers.percent
+                                    * parsers.line
+                                    * #parsers.blankline)
+                                    / "\n"
+                                   + parsers.percent
+                                   * parsers.line
+                                   * parsers.optionalspace
+                                   + C(parsers.newline))
 
 parsers.chunk                  = parsers.line * (parsers.optionallyindentedline
                                                 - parsers.blankline)^0
@@ -15902,6 +16030,21 @@ function M.reader.new(writer, options)
           end)
           str = str:gsub('^' .. min_prefix, '')
       end
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% If the parser is top-level and the \Opt{stripComments} Lua option is
+% enabled, we will strip all plain \TeX{} comments from the input string `str`
+% together with the trailing newline characters.
+%
+% \end{markdown}
+%  \begin{macrocode}
+      if toplevel and options.stripComments then
+          str = lpeg.match(Ct(parsers.commented_line^1), str)
+          str = util.rope_to_string(str)
+          print(str)
+      end
       local res = lpeg.match(grammar(), str)
       if res == nil then
         error(format("%s failed on:\n%s", name, str:sub(1,20)))
@@ -16320,7 +16463,7 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
   larsers.UlOrStarLine  = parsers.asterisk^4 + parsers.underscore^4
                         / writer.string
 
-  larsers.EscapedChar   = S("\\") * C(parsers.escapable) / writer.string
+  larsers.EscapedChar   = parsers.backslash * C(parsers.escapable) / writer.string
   
   larsers.InlineHtml    = C(parsers.inlinehtml) / writer.inline_html
   
@@ -17082,6 +17225,9 @@ end
 \fi
 \ifx\markdownOptionStartNumber\undefined\else
   startNumber = \markdownOptionStartNumber,
+\fi
+\ifx\markdownOptionStripComments\undefined\else
+  stripComments = \markdownOptionStripComments,
 \fi
 \ifx\markdownOptionStripIndent\undefined\else
   stripIndent = \markdownOptionStripIndent,

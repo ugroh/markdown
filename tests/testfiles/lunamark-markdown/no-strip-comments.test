@@ -1,0 +1,7 @@
+<<<
+This test ensures that the Lua `stripComments` option is disabled by default.
+The following *emphasi% this is a comment
+  zed text* should be interrupted.
+>>>
+codeSpan: stripComments
+emphasis: emphasi(percentSign) this is a comment zed text
