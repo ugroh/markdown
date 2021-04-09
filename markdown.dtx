@@ -4715,7 +4715,7 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \documentclass{article}
-\usepackage[footnotes, inlineFootnotes]{markdown}
+\usepackage[inlineFootnotes]{markdown}
 \begin{document}
 \begin{markdown}
 Here is an inline note.^[Inlines notes are easier to
@@ -4741,7 +4741,6 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownOptionFootnotes{true}
 \def\markdownOptionInlineFootnotes{true}
 \starttext
 \startmarkdown
