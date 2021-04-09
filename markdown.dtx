@@ -15737,6 +15737,23 @@ function M.reader.new(writer, options)
 % \par
 % \begin{markdown}
 %
+% Define \luamdef{iterlines} as a function that iterates over the lines of
+% the input string `s`, transforms them using an input function `f`, and
+% reassembles them into a new string, which it returns.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  local function iterlines(s, f)
+    rope = {}
+    for line in lpeg.match((parsers.line / f)^1, s) do
+      table.insert(rope, line)
+    end
+    return util.rope_to_string(rope)
+  end
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
 % The \luamdef{larsers} (as in ``local \luam{parsers}'') hash table stores
 % \acro{peg} patterns that depend on the received `options`, which impedes
 % their reuse between different \luam{reader} objects.
@@ -15752,8 +15769,39 @@ function M.reader.new(writer, options)
 %
 % \end{markdown}
 %  \begin{macrocode}
-  local function create_parser(name, grammar)
+  local function create_parser(name, grammar, toplevel)
     return function(str)
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% If the parser is top-level and the \Opt{stripIndent} Lua option is enabled,
+% we will first expand tabs in the input string `str` into spaces and then we
+% will count the minimum indent across all lines, skipping blank lines. Next,
+% we will remove the minimum indent from all lines.
+%
+% \end{markdown}
+%  \begin{macrocode}
+      if toplevel and options.stripIndent then
+          local min_prefix_length = nil
+          local min_prefix = ''
+          str = iterlines(function(line)
+              if lpeg.match(parsers.nonemptyline, line) == nil then
+                  return line
+              end
+              line = expandtabs(line)
+              prefix = line:match('^ *')
+              local prefix_length = #prefix
+              local is_shorter = min_prefix_length == nil
+              is_shorter = is_shorter or prefix_length < min_prefix_length
+              if is_shorter then
+                  min_prefix_length = prefix_length
+                  min_prefix = prefix
+              end
+              return line
+          end)
+          str = str:gsub('^' .. min_prefix)
+      end
       local res = lpeg.match(grammar(), str)
       if res == nil then
         error(format("%s failed on:\n%s", name, str:sub(1,20)))
@@ -15767,37 +15815,37 @@ function M.reader.new(writer, options)
     = create_parser("parse_blocks",
                     function()
                       return larsers.blocks
-                    end)
+                    end, false)
 
   local parse_blocks_toplevel
     = create_parser("parse_blocks_toplevel",
                     function()
                       return larsers.blocks_toplevel
-                    end)
+                    end, true)
 
   local parse_inlines
     = create_parser("parse_inlines",
                     function()
                       return larsers.inlines
-                    end)
+                    end, false)
 
   local parse_inlines_no_link
     = create_parser("parse_inlines_no_link",
                     function()
                       return larsers.inlines_no_link
-                    end)
+                    end, false)
 
   local parse_inlines_no_inline_note
     = create_parser("parse_inlines_no_inline_note",
                     function()
                       return larsers.inlines_no_inline_note
-                    end)
+                    end, false)
 
   local parse_inlines_nbsp
     = create_parser("parse_inlines_nbsp",
                     function()
                       return larsers.inlines_nbsp
-                    end)
+                    end, false)
 %    \end{macrocode}
 % \par
 % \begin{markdown}
