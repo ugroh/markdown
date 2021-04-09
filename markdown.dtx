@@ -15783,20 +15783,18 @@ function M.reader.new(writer, options)
 % \end{markdown}
 %  \begin{macrocode}
       if toplevel and options.stripIndent then
-          local min_prefix_length = nil
-          local min_prefix = ''
+          local min_prefix_length, min_prefix = nil, ''
           str = iterlines(function(line)
               if lpeg.match(parsers.nonemptyline, line) == nil then
                   return line
               end
               line = expandtabs(line)
-              prefix = line:match('^ *')
+              prefix = lpeg.match(C(parsers.optionalspace), line)
               local prefix_length = #prefix
               local is_shorter = min_prefix_length == nil
               is_shorter = is_shorter or prefix_length < min_prefix_length
               if is_shorter then
-                  min_prefix_length = prefix_length
-                  min_prefix = prefix
+                  min_prefix_length, min_prefix = prefix_length, prefix
               end
               return line
           end)
