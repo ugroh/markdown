@@ -4715,7 +4715,7 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \documentclass{article}
-\usepackage[footnotes, inlineFootnotes]{markdown}
+\usepackage[inlineFootnotes]{markdown}
 \begin{document}
 \begin{markdown}
 Here is an inline note.^[Inlines notes are easier to
@@ -4741,7 +4741,6 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownOptionFootnotes{true}
 \def\markdownOptionInlineFootnotes{true}
 \starttext
 \startmarkdown
@@ -5563,6 +5562,109 @@ following text:
 % \fi
 %  \begin{macrocode}
 defaultOptions.startNumber = true
+%    \end{macrocode}
+% \par
+% \iffalse
+%</lua,lua-cli>
+%<*manual-options>
+
+#### Option `stripIndent`
+
+`stripIndent` (default value: `false`)
+
+% \fi
+% \begin{markdown}
+%
+% \Optitem[false]{stripIndent}{\opt{true}, \opt{false}}
+%
+:    true
+
+     :   Strip the minimal indentation of non-blank lines from all
+         lines in a markdown document. Requires that the
+         \Opt{preserveTabs} Lua option is \opt{false}:
+
+         ``` tex
+         \documentclass{article}
+         \usepackage[stripIndent]{markdown}
+         \begin{document}
+             \begin{markdown}
+                 Hello *world*!
+             \end{markdown}
+         \end{document}
+         ```````
+
+:    false
+
+     :   Do not strip any indentation from the lines in a markdown
+         document.
+
+% \end{markdown}
+% \iffalse
+
+##### Plain \TeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\input markdown
+\def\markdownOptionStripIndent{true}
+\markdownBegin
+    Hello *world*!
+\markdownEnd
+\bye
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+luatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the text
+“Hello *world*!”
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\documentclass{article}
+\usepackage[stripIndent]{markdown}
+\begin{document}
+    \begin{markdown}
+        Hello *world*!
+    \end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+text “Hello *world*!”
+
+##### \Hologo{ConTeXt} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\usemodule[t][markdown]
+\def\markdownOptionStripIndent{true}
+\starttext
+    \startmarkdown
+        Hello *world*!
+    \stopmarkdown
+\stoptext
+````````
+Next, invoke LuaTeX from the terminal:
+``` sh
+context document.tex
+`````
+A PDF document named `document.pdf` should be produced and contain the
+text “Hello *world*!”
+
+%</manual-options>
+%<*lua,lua-cli>
+% \fi
+%  \begin{macrocode}
+defaultOptions.stripIndent = false
 %    \end{macrocode}
 % \par
 % \iffalse
@@ -6532,6 +6634,7 @@ bug](https://github.com/witiko/markdown/issues).
 \let\markdownOptionSlice\undefined
 \let\markdownOptionSmartEllipses\undefined
 \let\markdownOptionStartNumber\undefined
+\let\markdownOptionStripIndent\undefined
 \let\markdownOptionTableCaptions\undefined
 \let\markdownOptionTightLists\undefined
 %    \end{macrocode}
@@ -11195,6 +11298,8 @@ following text, where the middot (`·`) denotes a non-breaking space:
   \def\markdownOptionSlice{#1}}%
 \define@key{markdownOptions}{startNumber}[true]{%
   \def\markdownOptionStartNumber{#1}}%
+\define@key{markdownOptions}{stripIndent}[true]{%
+  \def\markdownOptionStripIndent{#1}}%
 \define@key{markdownOptions}{tableCaptions}[true]{%
   \def\markdownOptionTableCaptions{#1}}%
 \define@key{markdownOptions}{tightLists}[true]{%
@@ -15715,8 +15820,22 @@ function M.reader.new(writer, options)
 % \par
 % \begin{markdown}
 %
+% Define \luamdef{iterlines} as a function that iterates over the lines of
+% the input string `s`, transforms them using an input function `f`, and
+% reassembles them into a new string, which it returns.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  local function iterlines(s, f)
+    rope = lpeg.match(Ct((parsers.line / f)^1), s)
+    return util.rope_to_string(rope)
+  end
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
 % Define \luamdef{expandtabs} either as an identity function, when the
-% \Opt{preserveTabs} Lua inrerface option is enabled, or to a function that
+% \Opt{preserveTabs} Lua interface option is enabled, or to a function that
 % expands tabs into spaces otherwise.
 %
 % \end{markdown}
@@ -15727,7 +15846,7 @@ function M.reader.new(writer, options)
   else
     expandtabs = function(s)
                    if s:find("\t") then
-                     return s:gsub("[^\n]*", util.expand_tabs_in_line)
+                     return iterlines(s, util.expand_tabs_in_line)
                    else
                      return s
                    end
@@ -15752,8 +15871,37 @@ function M.reader.new(writer, options)
 %
 % \end{markdown}
 %  \begin{macrocode}
-  local function create_parser(name, grammar)
+  local function create_parser(name, grammar, toplevel)
     return function(str)
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% If the parser is top-level and the \Opt{stripIndent} Lua option is enabled,
+% we will first expand tabs in the input string `str` into spaces and then we
+% will count the minimum indent across all lines, skipping blank lines. Next,
+% we will remove the minimum indent from all lines.
+%
+% \end{markdown}
+%  \begin{macrocode}
+      if toplevel and options.stripIndent then
+          local min_prefix_length, min_prefix = nil, ''
+          str = iterlines(str, function(line)
+              if lpeg.match(parsers.nonemptyline, line) == nil then
+                  return line
+              end
+              line = util.expand_tabs_in_line(line)
+              prefix = lpeg.match(C(parsers.optionalspace), line)
+              local prefix_length = #prefix
+              local is_shorter = min_prefix_length == nil
+              is_shorter = is_shorter or prefix_length < min_prefix_length
+              if is_shorter then
+                  min_prefix_length, min_prefix = prefix_length, prefix
+              end
+              return line
+          end)
+          str = str:gsub('^' .. min_prefix, '')
+      end
       local res = lpeg.match(grammar(), str)
       if res == nil then
         error(format("%s failed on:\n%s", name, str:sub(1,20)))
@@ -15767,37 +15915,37 @@ function M.reader.new(writer, options)
     = create_parser("parse_blocks",
                     function()
                       return larsers.blocks
-                    end)
+                    end, false)
 
   local parse_blocks_toplevel
     = create_parser("parse_blocks_toplevel",
                     function()
                       return larsers.blocks_toplevel
-                    end)
+                    end, true)
 
   local parse_inlines
     = create_parser("parse_inlines",
                     function()
                       return larsers.inlines
-                    end)
+                    end, false)
 
   local parse_inlines_no_link
     = create_parser("parse_inlines_no_link",
                     function()
                       return larsers.inlines_no_link
-                    end)
+                    end, false)
 
   local parse_inlines_no_inline_note
     = create_parser("parse_inlines_no_inline_note",
                     function()
                       return larsers.inlines_no_inline_note
-                    end)
+                    end, false)
 
   local parse_inlines_nbsp
     = create_parser("parse_inlines_nbsp",
                     function()
                       return larsers.inlines_nbsp
-                    end)
+                    end, false)
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -16550,6 +16698,10 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
     syntax.Smart = parsers.fail
   end
 
+  if options.preserveTabs then
+    options.stripIndent = false
+  end
+
   if not options.pipeTables then
     syntax.PipeTable = parsers.fail
   end
@@ -16930,6 +17082,9 @@ end
 \fi
 \ifx\markdownOptionStartNumber\undefined\else
   startNumber = \markdownOptionStartNumber,
+\fi
+\ifx\markdownOptionStripIndent\undefined\else
+  stripIndent = \markdownOptionStripIndent,
 \fi
 \ifx\markdownOptionTableCaptions\undefined\else
   tableCaptions = \markdownOptionTableCaptions,

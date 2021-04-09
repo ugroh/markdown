@@ -1,0 +1,8 @@
+\def\markdownOptionStripIndent{true}
+<<<
+    This test ensures that the Lua `stripIndent` option correctly propagates
+  	through the plain TeX interface. This indented block should have its indent
+ 	stripped and be recognized as a paragraph of text, not a verbatim code
+	block.
+>>>
+codeSpan: stripIndent
