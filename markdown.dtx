@@ -15788,7 +15788,7 @@ function M.reader.new(writer, options)
               if lpeg.match(parsers.nonemptyline, line) == nil then
                   return line
               end
-              line = expandtabs(line)
+              line = util.expand_tabs_in_line(line)
               prefix = lpeg.match(C(parsers.optionalspace), line)
               local prefix_length = #prefix
               local is_shorter = min_prefix_length == nil
