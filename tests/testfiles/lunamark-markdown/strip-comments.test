@@ -1,0 +1,14 @@
+\def\markdownOptionStripComments{true}
+<<<
+This test ensures that the Lua `stripComments` option correctly propagates
+through the plain TeX interface. The following *emphasi% this is a comment
+  zed text* should be uninterrupted.
+
+The following *emphasi% this is a comment
+
+  zed text* should be interrupted.
+>>>
+codeSpan: stripComments
+emphasis: emphasized text
+interblockSeparator
+interblockSeparator
