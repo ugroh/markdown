@@ -15900,7 +15900,7 @@ function M.reader.new(writer, options)
               end
               return line
           end)
-          str = str:gsub('^' .. min_prefix)
+          str = str:gsub('^' .. min_prefix, '')
       end
       local res = lpeg.match(grammar(), str)
       if res == nil then
