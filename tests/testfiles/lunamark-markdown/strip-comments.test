@@ -1,16 +1,24 @@
 \def\markdownOptionStripComments{true}
 <<<
 This test ensures that the Lua `stripComments` option correctly propagates
-through the plain TeX interface. The following *emphasi% this is a comment
-  zed text* should be uninterrupted, whereas this *emphasi\% another one
+through the plain TeX interface.
+
+The following *emphasi%  this is a comment
+  zed text* should be uninterrupted, whereas this *emphasi\%  another one
 zed text* should be interrupted.
 
 The following *emphasi% this is a comment
 
   zed text* should be broken into two paragraphs.
+
+A single backslash at the *end of \
+a line* should be allowed by the preprocessor.
 >>>
 codeSpan: stripComments
+interblockSeparator
 emphasis: emphasized text
 emphasis: emphasi(percentSign) another one zed text
 interblockSeparator
 interblockSeparator
+interblockSeparator
+emphasis: end of (backslash) a line

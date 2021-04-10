@@ -15211,6 +15211,7 @@ parsers.commented_line         = Cs(((parsers.linechar
                                       * parsers.percent
                                       + parsers.backslash
                                       * (parsers.linechar
+                                        + parsers.newline
                                         - parsers.backslash
                                         - parsers.percent))
                                  )^0)
