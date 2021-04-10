@@ -15200,28 +15200,28 @@ parsers.spnl                   = parsers.optionalspace
 parsers.line                   = parsers.linechar^0 * parsers.newline
 parsers.nonemptyline           = parsers.line - parsers.blankline
 
-parsers.commented_line         = Cs(((parsers.linechar
+parsers.commented_line         = Cs(((parsers.linechar  -- initial
                                      - parsers.backslash
                                      - parsers.percent)^1
-                                    + (parsers.backslash
+                                    + (parsers.backslash  -- even backslash
                                       * parsers.backslash)^1
-                                    + (parsers.backslash
+                                    + (parsers.backslash  -- odd backslash
                                       * parsers.backslash)^0
                                     * (parsers.backslash / ""
                                       * parsers.percent
                                       + parsers.backslash
-                                      * (parsers.linechar
+                                      * (parsers.linechar -- initial
                                         + parsers.newline
                                         - parsers.backslash
                                         - parsers.percent))
                                  )^0)
-                                 * ((parsers.percent
+                                 * ((parsers.percent  -- comment
                                     * parsers.line
-                                    * #parsers.blankline)
+                                    * #parsers.blankline) -- blank line
                                     / "\n"
-                                   + parsers.percent
+                                   + parsers.percent  -- comment
                                    * parsers.line
-                                   * parsers.optionalspace
+                                   * parsers.optionalspace  -- leading tabs and spaces
                                    + C(parsers.newline))
 
 parsers.chunk                  = parsers.line * (parsers.optionallyindentedline
