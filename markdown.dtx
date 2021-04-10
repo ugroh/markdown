@@ -15200,16 +15200,19 @@ parsers.spnl                   = parsers.optionalspace
 parsers.line                   = parsers.linechar^0 * parsers.newline
 parsers.nonemptyline           = parsers.line - parsers.blankline
 
-parsers.commented_line         = C(((parsers.linechar
-                                    - parsers.backslash
-                                    - parsers.percent)^1
-                                   + (parsers.backslash
-                                     * parsers.backslash)^1
-                                   + (parsers.backslash
-                                     * parsers.backslash)^0
-                                   * parsers.backslash
-                                   * (parsers.linechar
-                                     - parsers.backslash)
+parsers.commented_line         = Cs(((parsers.linechar
+                                     - parsers.backslash
+                                     - parsers.percent)^1
+                                    + (parsers.backslash
+                                      * parsers.backslash)^1
+                                    + (parsers.backslash
+                                      * parsers.backslash)^0
+                                    * (parsers.backslash / ""
+                                      * parsers.percent
+                                      + parsers.backslash
+                                      * (parsers.linechar
+                                        - parsers.backslash
+                                        - parsers.percent))
                                  )^0)
                                  * ((parsers.percent
                                     * parsers.line
