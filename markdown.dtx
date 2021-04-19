@@ -16931,9 +16931,9 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
         mode = "w"
       end
       file = assert(io.open(options.frozenCacheFileName, mode))
-      assert(file:write([[\expandafter\def\csname markdownFrozenCache]] ..
-        options.frozenCacheCounter .. [[\endcsname{]] .. output .. [[}]] ..
-        "\n"))
+      assert(file:write([[\expandafter\global\expandafter\def\csname ]]
+        .. [[markdownFrozenCache]] .. options.frozenCacheCounter
+        .. [[\endcsname{]] .. output .. [[}]] .. "\n"))
       assert(file:close())
     end
     return output
@@ -17716,7 +17716,7 @@ end
       |markdownInfo{Including markdown document number
         "|the|markdownFrozenCacheCounter" from frozen cache}%
       |csname markdownFrozenCache|the|markdownFrozenCacheCounter|endcsname
-      |advance|markdownFrozenCacheCounter by 1|relax
+      |global|advance|markdownFrozenCacheCounter by 1|relax
     }{%
       |markdownInfo{Including markdown document "#1"}%
 %    \end{macrocode}
@@ -17748,7 +17748,7 @@ end
 % \end{markdown}
 %  \begin{macrocode}
       |markdownIfOption{FinalizeCache}{%
-        |advance|markdownFrozenCacheCounter by 1|relax
+        |global|advance|markdownFrozenCacheCounter by 1|relax
       }%
     }%
   }%
