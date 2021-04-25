@@ -1,5 +1,5 @@
 <<<
-This test ensures that the Lua `stripComments` option is disabled by default.
+This test ensures that the Lua `texComments` option is disabled by default.
 
 The following *emphasi%  this is a comment
   zed text* should be interrupted and this *emphasi\%  another one
@@ -8,7 +8,7 @@ zed text* should also be interrupted.
 A single backslash at the *end of \
 a line* should be allowed by the preprocessor.
 >>>
-codeSpan: stripComments
+codeSpan: texComments
 interblockSeparator
 emphasis: emphasi(percentSign) this is a comment zed text
 emphasis: emphasi(backslash)(percentSign) another one zed text

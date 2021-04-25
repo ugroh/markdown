@@ -1,6 +1,6 @@
-\def\markdownOptionStripComments{true}
+\def\markdownOptionTeXComments{true}
 <<<
-This test ensures that the Lua `stripComments` option correctly propagates
+This test ensures that the Lua `texComments` option correctly propagates
 through the plain TeX interface.
 
 The following *emphasi%  this is a comment
@@ -14,7 +14,7 @@ The following *emphasi% this is a comment
 A single backslash at the *end of \
 a line* should be allowed by the preprocessor.
 >>>
-codeSpan: stripComments
+codeSpan: texComments
 interblockSeparator
 emphasis: emphasized text
 emphasis: emphasi(percentSign) another one zed text
