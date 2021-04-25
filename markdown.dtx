@@ -5568,110 +5568,6 @@ defaultOptions.startNumber = true
 %</lua,lua-cli>
 %<*manual-options>
 
-#### Option `stripComments`
-
-`stripComments` (default value: `false`)
-
-% \fi
-% \begin{markdown}
-%
-% \Optitem[false]{stripComments}{\opt{true}, \opt{false}}
-%
-:    true
-
-     :   Strip \TeX{}-style comments.
-
-         ``` tex
-         \documentclass{article}
-         \usepackage[stripComments]{markdown}
-         \begin{document}
-         \begin{markdown}
-         Hel%  this is a comment
-            lo *world*!
-         \end{markdown}
-         \end{document}
-         ```````
-
-:    false
-
-     :   Do not strip \TeX{}-style comments.
-
-% \end{markdown}
-% \iffalse
-
-##### Plain \TeX{} Example {.unnumbered}
-
-Using a text editor, create a text document named `document.tex` with the
-following content:
-``` tex
-\input markdown
-\def\markdownOptionStripComments{true}
-\markdownBegin
-Hel%  this is a comment
-   lo *world*!
-\markdownEnd
-\bye
-```````
-Next, invoke LuaTeX from the terminal:
-``` sh
-luatex document.tex
-``````
-A PDF document named `document.pdf` should be produced and contain the text
-“Hello *world*!”
-
-##### \LaTeX{} Example {.unnumbered}
-
-Using a text editor, create a text document named `document.tex` with the
-following content:
-``` tex
-\documentclass{article}
-\usepackage[stripComments]{markdown}
-\begin{document}
-\begin{markdown}
-Hel%  this is a comment
-   lo *world*!
-\end{markdown}
-\end{document}
-```````
-Next, invoke LuaTeX from the terminal:
-``` sh
-lualatex document.tex
-``````
-A PDF document named `document.pdf` should be produced and contain the
-text “Hello *world*!”
-
-##### \Hologo{ConTeXt} Example {.unnumbered}
-
-Using a text editor, create a text document named `document.tex` with the
-following content:
-``` tex
-\usemodule[t][markdown]
-\def\markdownOptionStripComments{true}
-\starttext
-\startmarkdown
-Hel%  this is a comment
-   lo *world*!
-\stopmarkdown
-\stoptext
-````````
-Next, invoke LuaTeX from the terminal:
-``` sh
-context document.tex
-`````
-A PDF document named `document.pdf` should be produced and contain the
-text “Hello *world*!”
-
-%</manual-options>
-%<*lua,lua-cli>
-% \fi
-%  \begin{macrocode}
-defaultOptions.stripComments = false
-%    \end{macrocode}
-% \par
-% \iffalse
-%</lua,lua-cli>
-%<*manual-options>
-
 #### Option `stripIndent`
 
 `stripIndent` (default value: `false`)
@@ -5883,6 +5779,110 @@ following text:
 % \fi
 %  \begin{macrocode}
 defaultOptions.tableCaptions = false
+%    \end{macrocode}
+% \par
+% \iffalse
+%</lua,lua-cli>
+%<*manual-options>
+
+#### Option `texComments`
+
+`texComments` (default value: `false`)
+
+% \fi
+% \begin{markdown}
+%
+% \Optitem[false]{texComments}{\opt{true}, \opt{false}}
+%
+:    true
+
+     :   Strip \TeX{}-style comments.
+
+         ``` tex
+         \documentclass{article}
+         \usepackage[texComments]{markdown}
+         \begin{document}
+         \begin{markdown}
+         Hel%  this is a comment
+            lo *world*!
+         \end{markdown}
+         \end{document}
+         ```````
+
+:    false
+
+     :   Do not strip \TeX{}-style comments.
+
+% \end{markdown}
+% \iffalse
+
+##### Plain \TeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\input markdown
+\def\markdownOptionTeXComments{true}
+\markdownBegin
+Hel%  this is a comment
+   lo *world*!
+\markdownEnd
+\bye
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+luatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the text
+“Hello *world*!”
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\documentclass{article}
+\usepackage[texComments]{markdown}
+\begin{document}
+\begin{markdown}
+Hel%  this is a comment
+   lo *world*!
+\end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+text “Hello *world*!”
+
+##### \Hologo{ConTeXt} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\usemodule[t][markdown]
+\def\markdownOptionTeXComments{true}
+\starttext
+\startmarkdown
+Hel%  this is a comment
+   lo *world*!
+\stopmarkdown
+\stoptext
+````````
+Next, invoke LuaTeX from the terminal:
+``` sh
+context document.tex
+`````
+A PDF document named `document.pdf` should be produced and contain the
+text “Hello *world*!”
+
+%</manual-options>
+%<*lua,lua-cli>
+% \fi
+%  \begin{macrocode}
+defaultOptions.texComments = false
 %    \end{macrocode}
 % \par
 % \iffalse
@@ -6738,9 +6738,9 @@ bug](https://github.com/witiko/markdown/issues).
 \let\markdownOptionSlice\undefined
 \let\markdownOptionSmartEllipses\undefined
 \let\markdownOptionStartNumber\undefined
-\let\markdownOptionStripComments\undefined
 \let\markdownOptionStripIndent\undefined
 \let\markdownOptionTableCaptions\undefined
+\let\markdownOptionTeXComments\undefined
 \let\markdownOptionTightLists\undefined
 %    \end{macrocode}
 % \par
@@ -11403,12 +11403,12 @@ following text, where the middot (`·`) denotes a non-breaking space:
   \def\markdownOptionSlice{#1}}%
 \define@key{markdownOptions}{startNumber}[true]{%
   \def\markdownOptionStartNumber{#1}}%
-\define@key{markdownOptions}{stripComments}[true]{%
-  \def\markdownOptionStripComments{#1}}%
 \define@key{markdownOptions}{stripIndent}[true]{%
   \def\markdownOptionStripIndent{#1}}%
 \define@key{markdownOptions}{tableCaptions}[true]{%
   \def\markdownOptionTableCaptions{#1}}%
+\define@key{markdownOptions}{texComments}[true]{%
+  \def\markdownOptionTeXComments{#1}}%
 \define@key{markdownOptions}{tightLists}[true]{%
   \def\markdownOptionTightLists{#1}}%
 \define@key{markdownOptions}{underscores}[true]{%
@@ -16034,13 +16034,13 @@ function M.reader.new(writer, options)
 % \par
 % \begin{markdown}
 %
-% If the parser is top-level and the \Opt{stripComments} Lua option is
+% If the parser is top-level and the \Opt{texComments} Lua option is
 % enabled, we will strip all plain \TeX{} comments from the input string `str`
 % together with the trailing newline characters.
 %
 % \end{markdown}
 %  \begin{macrocode}
-      if toplevel and options.stripComments then
+      if toplevel and options.texComments then
           str = lpeg.match(Ct(parsers.commented_line^1), str)
           str = util.rope_to_string(str)
           print(str)
@@ -17226,14 +17226,14 @@ end
 \ifx\markdownOptionStartNumber\undefined\else
   startNumber = \markdownOptionStartNumber,
 \fi
-\ifx\markdownOptionStripComments\undefined\else
-  stripComments = \markdownOptionStripComments,
-\fi
 \ifx\markdownOptionStripIndent\undefined\else
   stripIndent = \markdownOptionStripIndent,
 \fi
 \ifx\markdownOptionTableCaptions\undefined\else
   tableCaptions = \markdownOptionTableCaptions,
+\fi
+\ifx\markdownOptionTeXComments\undefined\else
+  texComments = \markdownOptionTeXComments,
 \fi
 \ifx\markdownOptionTightLists\undefined\else
   tightLists = \markdownOptionTightLists,
