@@ -3699,6 +3699,43 @@ defaultOptions.fencedCode = false
 %</lua,lua-cli>
 %<*manual-options>
 
+#### Option `jekyllData`
+
+`jekyllData` (default value: `false`)
+
+% \fi
+% \begin{markdown}
+%
+% \Optitem[false]{jekyllData}{\opt{true}, \opt{false}}
+%
+:    true
+
+:  Enable the extension to use Jekyll frontmatter:
+
+~~~~~~~~ md
+---
+title:  Markdown Package User Manual
+author: Vít Novotný
+date:   v\markdownVersion{} (\markdownLastModified{})
+---
+~~~~~~~~~~~
+
+:    false
+
+:  nable the extension to use Jekyll frontmatter.
+
+% \end{markdown}
+%</manual-options>
+%<*lua,lua-cli>
+% \fi
+%  \begin{macrocode}
+defaultOptions.jekyllData = false
+%    \end{macrocode}
+% \par
+% \iffalse
+%</lua,lua-cli>
+%<*manual-options>
+
 #### Option `finalizeCache`
 
 `finalizeCache` (default value: `false`)
