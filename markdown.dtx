@@ -9706,6 +9706,32 @@ following text except for the filename, which may differ:
 %</tex>
 %<*manual-tokens>
 % \fi
+% \begin{markdown}
+
+The \mdef{markdownRendererSetJekyllData} macro represents a fenced code
+block which will not be read verbatim but allows the user to set title information 
+or metadata. It can be extended to create arbitrary variables using the 
+YAML-Syntax. This macro will only be produced, when the \Opt{jekyllData} option is
+enabled. The macro receives two argument where the first one represents the variable
+name whereas the second contains the data.
+
+% \end{markdown}
+%
+% \iffalse
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererSetJekyllData{%
+	\markdownRendererSetJekyllDataPrototype}%
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
 %
 % \begin{markdown}
 
