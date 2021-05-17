@@ -6732,6 +6732,7 @@ bug](https://github.com/witiko/markdown/issues).
 \let\markdownOptionHtml\undefined
 \let\markdownOptionHybrid\undefined
 \let\markdownOptionInlineFootnotes\undefined
+\let\markdownOptionJekyllData\undefined
 \let\markdownOptionPipeTables\undefined
 \let\markdownOptionPreserveTabs\undefined
 \let\markdownOptionShiftHeadings\undefined
@@ -10655,6 +10656,7 @@ following text:
 \def\markdownRendererBlockQuoteEndPrototype{}%
 \def\markdownRendererInputVerbatimPrototype#1{}%
 \def\markdownRendererInputFencedCodePrototype#1#2{}%
+\def\markdownRendererSetJekyllDataPrototype#1#2{}%
 \def\markdownRendererHeadingOnePrototype#1{}%
 \def\markdownRendererHeadingTwoPrototype#1{}%
 \def\markdownRendererHeadingThreePrototype#1{}%
@@ -11381,6 +11383,8 @@ following text, where the middot (`·`) denotes a non-breaking space:
   \def\markdownOptionFootnotes{#1}}%
 \define@key{markdownOptions}{fencedCode}[true]{%
   \def\markdownOptionFencedCode{#1}}%
+\define@key{markdownOptions}{jekyllData}[true]{%
+  \def\markdownOptionJekyllData{#1}}%
 \define@key{markdownOptions}{hashEnumerators}[true]{%
   \def\markdownOptionHashEnumerators{#1}}%
 \define@key{markdownOptions}{headerAttributes}[true]{%
@@ -11573,6 +11577,8 @@ following text, where the middot (`·`) denotes a non-breaking space:
   \renewcommand\markdownRendererInputVerbatim[1]{#1}}%
 \define@key{markdownRenderers}{inputFencedCode}{%
   \renewcommand\markdownRendererInputFencedCode[2]{#1}}%
+\define@key{markdownRenderers}{setJekyllData}{%
+  \renewcommand\markdownRendererSetJekyllData[2]{#1}}%
 \define@key{markdownRenderers}{headingOne}{%
   \renewcommand\markdownRendererHeadingOne[1]{#1}}%
 \define@key{markdownRenderers}{headingTwo}{%
@@ -11716,6 +11722,8 @@ following text, where the middot (`·`) denotes a non-breaking space:
   \renewcommand\markdownRendererInputVerbatimPrototype[1]{#1}}%
 \define@key{markdownRendererPrototypes}{inputFencedCode}{%
   \renewcommand\markdownRendererInputFencedCodePrototype[2]{#1}}%
+\define@key{markdownRendererPrototypes}{setJekyllData}{%
+  \renewcommand\markdownRendererSetJekyllDataPrototype[2]{#1}}%
 \define@key{markdownRendererPrototypes}{headingOne}{%
   \renewcommand\markdownRendererHeadingOnePrototype[1]{#1}}%
 \define@key{markdownRendererPrototypes}{headingTwo}{%
@@ -14915,6 +14923,12 @@ function M.writer.new(options)
     local name = util.cache(options.cacheDir, s, nil, nil, ".verbatim")
     return {"\\markdownRendererInputFencedCode{",name,"}{",i,"}"}
   end
+  function self.jekyllData(s)
+    if not self.is_writing then return "" end
+    s = string.gsub(s, '([^:]+):%s([^\r\n]+)[\r\n]+', '\\markdownRendererSetJekyllData{%1}{%2}')
+    s = string.gsub(s, '[\r\n%s]*$','')
+    return {s}
+    end
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -15834,6 +15848,11 @@ parsers.BacktickFencedCode
                      * Cs(parsers.fencedline(parsers.backtick)^0)
                      * parsers.fencetail(parsers.backtick)
 
+parsers.JekyllFencedCode
+                     = parsers.fencehead(parsers.dash)
+                     * Cs(parsers.fencedline(parsers.dash)^0)
+                     * parsers.fencetail(parsers.dash)
+
 parsers.lineof = function(c)
     return (parsers.leader * (P(c) * parsers.optionalspace)^3
            * (parsers.newline * parsers.blankline^1
@@ -16501,6 +16520,11 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                                                     expandtabs(code))
                          end
 
+  larsers.JekyllData     = (parsers.JekyllFencedCode)
+                       / function(infostring, code)
+                         return writer.jekyllData(expandtabs(code))
+                         end
+
   larsers.Blockquote   = Cs(larsers.blockquote_body^1)
                        / parse_blocks_toplevel / writer.blockquote
 
@@ -16722,6 +16746,7 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                             + V("PipeTable")
                             + V("Verbatim")
                             + V("FencedCode")
+                            + V("JekyllData")
                             + V("HorizontalRule")
                             + V("BulletList")
                             + V("OrderedList")
@@ -16734,6 +16759,7 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
       ContentBlock          = larsers.ContentBlock,
       Blockquote            = larsers.Blockquote,
       Verbatim              = larsers.Verbatim,
+      JekyllData            = larsers.JekyllData,
       FencedCode            = larsers.FencedCode,
       HorizontalRule        = larsers.HorizontalRule,
       BulletList            = larsers.BulletList,
@@ -17132,6 +17158,9 @@ end
   \par{\tt\input#1\relax{}}\par}%
 \def\markdownRendererInputFencedCodePrototype#1#2{%
   \markdownRendererInputVerbatimPrototype{#1}}%
+\def\markdownRendererSetJekyllDataPrototype#1#2{%
+	\def\expandafter\csname markdownData@#1\endcsname{#2}%
+}%
 \def\markdownRendererHeadingOnePrototype#1{#1}%
 \def\markdownRendererHeadingTwoPrototype#1{#1}%
 \def\markdownRendererHeadingThreePrototype#1{#1}%
@@ -18203,6 +18232,7 @@ end
         \inputminted{#2}{#1}%
       \fi
     \fi},
+  setJekyllData = {#1},
   horizontalRule = {\noindent\rule[0.5ex]{\linewidth}{1pt}},
   footnote = {\footnote{#1}}}}
 %    \end{macrocode}
