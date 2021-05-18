@@ -11941,7 +11941,8 @@ function util.cache(dir, string, salt, transform, suffix)
   local name = util.pathname(dir, digest .. suffix)
   local file = io.open(name, "r")
   if file == nil then -- If no cache entry exists, then create a new one.
-    local file = assert(io.open(name, "w"))
+    local file = assert(io.open(name, "w"),
+      [[could not open file "]] .. name .. [[" for writing]])
     local result = string
     if transform ~= nil then
       result = transform(result)
@@ -16931,7 +16932,9 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
       else
         mode = "w"
       end
-      file = assert(io.open(options.frozenCacheFileName, mode))
+      file = assert(io.open(options.frozenCacheFileName, mode),
+        [[could not open file "]] .. options.frozenCacheFileName
+        .. [[" for writing]])
       assert(file:write([[\expandafter\global\expandafter\def\csname ]]
         .. [[markdownFrozenCache]] .. options.frozenCacheCounter
         .. [[\endcsname{]] .. output .. [[}]] .. "\n"))
@@ -16978,7 +16981,8 @@ return M
 
 local input
 if input_filename then
-  local input_file = assert(io.open(input_filename, "r"))
+  local input_file = assert(io.open(input_filename, "r"),
+    [[could not open file "]] .. input_filename .. [[" for reading]])
   input = assert(input_file:read("*a"))
   assert(input_file:close())
 else
@@ -17020,7 +17024,8 @@ local convert = md.new(options)
 local output = convert(input:gsub("\r\n?", "\n") .. "\n")
 
 if output_filename then
-  local output_file = assert(io.open(output_filename, "w"))
+  local output_file = assert(io.open(output_filename, "w"),
+    [[could not open file "]] .. output_filename .. [[" for writing]])
   assert(output_file:write(output))
   assert(output_file:close())
 else
@@ -17731,7 +17736,8 @@ end
       |closein|markdownInputFileStream
       |markdownLuaExecute{%
         |markdownPrepare
-        local file = assert(io.open("#1", "r"))
+        local file = assert(io.open("#1", "r"),
+          [[could not open file "#1" for reading]])
         local input = assert(file:read("*a"))
         assert(file:close())
 %    \end{macrocode}
