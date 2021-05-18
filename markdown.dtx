@@ -18722,12 +18722,12 @@ end
 \def\markdownConTeXtCSV{csv}
 \def\markdownRendererContentBlockPrototype#1#2#3#4{%
   \def\markdownConTeXtCSV@arg{#1}%
-	\ifx\markdownConTeXtCSV@arg\markdownConTeXtCSV
+  \ifx\markdownConTeXtCSV@arg\markdownConTeXtCSV
     \placetable[][tab:#1]{#4}{%
       \processseparatedfile[MarkdownConTeXtCSV][#3]}%
-	\else
-		\markdownInput{#3}%
-	\fi}%
+  \else
+    \markdownInput{#3}%
+  \fi}%
 \def\markdownRendererImagePrototype#1#2#3#4{%
   \placefigure[][fig:#1]{#4}{\externalfigure[#3]}}%
 \def\markdownRendererUlBeginPrototype{\startitemize}%
