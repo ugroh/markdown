@@ -17703,6 +17703,15 @@ end
   |gdef|markdownInput#1{%
 %    \end{macrocode}
 % \begin{markdown}
+% Change the category code of the percent sign (`%`) to other, so that a user
+% of the \Opt{hybrid} Lua option or a malevolent actor can't produce TeX
+% comments in the plain TeX output of the Markdown package.
+% \end{markdown}
+%  \begin{macrocode}
+    |begingroup
+    |catcode`|%=12
+%    \end{macrocode}
+% \begin{markdown}
 % If we are reading from the frozen cache, input it, expand the corresponding
 % `\markdownFrozenCache`\meta{number} macro, and increment
 % \m{markdownFrozenCacheCounter}.
@@ -17752,6 +17761,7 @@ end
         |global|advance|markdownFrozenCacheCounter by 1|relax
       }%
     }%
+    |endgroup
   }%
 |endgroup
 %    \end{macrocode}
