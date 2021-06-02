@@ -14676,20 +14676,34 @@ function M.writer.new(options)
 %
 % The \luamdef{languages_json} table maps programming language filename
 % extensions to fence infostrings. All \luam{options.contentBlocksLanguageMap}
-% files located by \pkg{kpathsea} are loaded into a chain of tables.
+% files located by the KPathSea library are loaded into a chain of tables.
 % \luam{languages_json} corresponds to the first table and is chained with
 % the rest via Lua metatables.
 %
 % \end{markdown}
 %  \begin{macrocode}
   local languages_json = (function()
-    local kpse = require("kpse")
-    kpse.set_program_name("luatex")
+    local ran_ok, kpse = pcall(require, "kpse")
+    if ran_ok then
+      kpse.set_program_name("luatex")
+%    \end{macrocode}
+% \begin{markdown}
+%
+% If the KPathSea library is unavailable, perhaps because we are using
+% LuaMeta\TeX, we will only locate the \luam{options.contentBlocksLanguageMap}
+% in the current working directory:
+%
+% \end{markdown}
+%  \begin{macrocode}
+    else
+      kpse = {lookup=function(filename, options) return filename end}
+    end
     local base, prev, curr
-    for _, file in ipairs{kpse.lookup(options.contentBlocksLanguageMap,
-                                      { all=true })} do
-      json = io.open(file, "r"):read("*all")
-                               :gsub('("[^\n]-"):','[%1]=')
+    for _, filename in ipairs{kpse.lookup(options.contentBlocksLanguageMap,
+                                          { all=true })} do
+      file = io.open(filename, "r")
+      if not file then goto continue end
+      json = file:read("*all"):gsub('("[^\n]-"):','[%1]=')
       curr = (function()
         local _ENV={ json=json, load=load } -- run in sandbox
         return load("return "..json)()
@@ -14702,6 +14716,7 @@ function M.writer.new(options)
         end
         prev = curr
       end
+      ::continue::
     end
     return base or {}
   end)()
