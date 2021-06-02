@@ -757,7 +757,18 @@ local lpeg = require("lpeg")
 %
 % \end{markdown}
 %  \begin{macrocode}
-local unicode = require("unicode")
+local ran_ok, unicode = pcall(require, "unicode")
+%    \end{macrocode}
+% \begin{markdown}
+%
+% If the Selene Unicode library is unavailable and we are using
+% Lua${}\geq{}$5.3, we will use the built-in support for Unicode.
+%
+% \end{markdown}
+%  \begin{macrocode}
+if not ran_ok then
+  unicode = {["utf8"]={char=utf8.char}}
+end
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -1012,8 +1023,8 @@ Using a text editor, create a text document named `hello.lua` with the
 following content:
 ``` lua
 #!/usr/bin/env texlua
-local kpse = require("kpse")
-kpse.set_program_name("luatex")
+local ran_ok, kpse = pcall(require, "kpse")
+if ran_ok then kpse.set_program_name("luatex") end
 local markdown = require("markdown")
 local convert = markdown.new()
 print(convert("Hello *world*!"))
@@ -1269,8 +1280,8 @@ Using a text editor, create a text document named `example.lua` with the
 following content:
 ``` lua
 #!/usr/bin/env texlua
-local kpse = require("kpse")
-kpse.set_program_name("luatex")
+local ran_ok, kpse = pcall(require, "kpse")
+if ran_ok then kpse.set_program_name("luatex") end
 local markdown = require("markdown")
 local input, convert_safe, convert_unsafe, paragraph
 
@@ -10675,27 +10686,9 @@ following text:
 % The \mdef{markdownInfo}, \mdef{markdownWarning}, and \mdef{markdownError}
 % macros perform logging for the Markdown package. Their first argument
 % specifies the text of the info, warning, or error message.
-%
-% \end{markdown}
-%  \begin{macrocode}
-\def\markdownInfo#1{}%
-\def\markdownWarning#1{}%
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
 % The \m{markdownError} macro receives a second argument that provides a help
-% text.
-%
-% \end{markdown}
-%  \begin{macrocode}
-\def\markdownError#1#2{}%
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
-% You may redefine these macros to redirect and process the info, warning, and
-% error messages.
+% text. You may redefine these macros to redirect and process the info,
+% warning, and error messages.
 %
 %### Miscellanea
 % The \mdef{markdownMakeOther} macro is used by the package, when a \TeX{}
@@ -11822,6 +11815,7 @@ texexec --passon=--shell-escape document.tex
 % \end{markdown}
 %  \begin{macrocode}
 \writestatus{loading}{ConTeXt User Module / markdown}%
+\startmodule[markdown]
 \unprotect
 %    \end{macrocode}
 % \par
@@ -14665,20 +14659,34 @@ function M.writer.new(options)
 %
 % The \luamdef{languages_json} table maps programming language filename
 % extensions to fence infostrings. All \luam{options.contentBlocksLanguageMap}
-% files located by \pkg{kpathsea} are loaded into a chain of tables.
+% files located by the KPathSea library are loaded into a chain of tables.
 % \luam{languages_json} corresponds to the first table and is chained with
 % the rest via Lua metatables.
 %
 % \end{markdown}
 %  \begin{macrocode}
   local languages_json = (function()
-    local kpse = require("kpse")
-    kpse.set_program_name("luatex")
+    local ran_ok, kpse = pcall(require, "kpse")
+    if ran_ok then
+      kpse.set_program_name("luatex")
+%    \end{macrocode}
+% \begin{markdown}
+%
+% If the KPathSea library is unavailable, perhaps because we are using
+% LuaMeta\TeX, we will only locate the \luam{options.contentBlocksLanguageMap}
+% in the current working directory:
+%
+% \end{markdown}
+%  \begin{macrocode}
+    else
+      kpse = {lookup=function(filename, options) return filename end}
+    end
     local base, prev, curr
-    for _, file in ipairs{kpse.lookup(options.contentBlocksLanguageMap,
-                                      { all=true })} do
-      json = io.open(file, "r"):read("*all")
-                               :gsub('("[^\n]-"):','[%1]=')
+    for _, filename in ipairs{kpse.lookup(options.contentBlocksLanguageMap,
+                                          { all=true })} do
+      file = io.open(filename, "r")
+      if not file then goto continue end
+      json = file:read("*all"):gsub('("[^\n]-"):','[%1]=')
       curr = (function()
         local _ENV={ json=json, load=load } -- run in sandbox
         return load("return "..json)()
@@ -14691,6 +14699,7 @@ function M.writer.new(options)
         end
         prev = curr
       end
+      ::continue::
     end
     return base or {}
   end)()
@@ -15947,7 +15956,7 @@ function M.reader.new(writer, options)
 % \end{markdown}
 %  \begin{macrocode}
   local function normalize_tag(tag)
-    return unicode.utf8.lower(
+    return string.lower(
       gsub(util.rope_to_string(tag), "[ \n\r\t]+", " "))
   end
 %    \end{macrocode}
@@ -16999,8 +17008,8 @@ if options.cacheDir and not lfs.isdir(options.cacheDir) then
   assert(lfs.mkdir(options["cacheDir"]))
 end
 
-local kpse = require("kpse")
-kpse.set_program_name("luatex")
+local ran_ok, kpse = pcall(require, "kpse")
+if ran_ok then kpse.set_program_name("luatex") end
 local md = require("markdown")
 %    \end{macrocode}
 % \begin{markdown}
@@ -17052,13 +17061,19 @@ end
 %
 % \end{markdown}
 %  \begin{macrocode}
-\def\markdownInfo#1{%
-  \immediate\write-1{(l.\the\inputlineno) markdown.tex info: #1.}}%
-\def\markdownWarning#1{%
-  \immediate\write16{(l.\the\inputlineno) markdown.tex warning: #1}}%
-\def\markdownError#1#2{%
-  \errhelp{#2.}%
-  \errmessage{(l.\the\inputlineno) markdown.tex error: #1}}%
+\ifx\markdownInfo\undefined
+  \def\markdownInfo#1{%
+    \immediate\write-1{(l.\the\inputlineno) markdown.tex info: #1.}}%
+\fi
+\ifx\markdownWarning\undefined
+  \def\markdownWarning#1{%
+    \immediate\write16{(l.\the\inputlineno) markdown.tex warning: #1}}%
+\fi
+\ifx\markdownError\undefined
+  \def\markdownError#1#2{%
+    \errhelp{#2.}%
+    \errmessage{(l.\the\inputlineno) markdown.tex error: #1}}%
+\fi
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -17610,8 +17625,8 @@ end
       "|markdownOptionHelperScriptFileName"}%
     |immediate|write|markdownOutputFileStream{%
       local ran_ok, error = pcall(function()
-        local kpse = require("kpse")
-        kpse.set_program_name("luatex")
+        local ran_ok, kpse = pcall(require, "kpse")
+        if ran_ok then kpse.set_program_name("luatex") end
         #1
       end)
 %    \end{macrocode}
@@ -17786,8 +17801,15 @@ end
 % format~[@latex17, Section 9]. As a consequence, we can directly reuse the
 % existing plain \TeX{} implementation.
 %
+% The \LaTeX{} implementation redefines the plain \TeX{} logging macros (see
+% Section \ref{sec:texinterfacelogging}) to use the \LaTeX{} \m{PackageInfo},
+% \m{PackageWarning}, and \m{PackageError} macros.
+%
 % \end{markdown}
 %  \begin{macrocode}
+\newcommand\markdownInfo[1]{\PackageInfo{markdown}{#1}}%
+\newcommand\markdownWarning[1]{\PackageWarning{markdown}{#1}}%
+\newcommand\markdownError[2]{\PackageError{markdown}{#1}{#2.}}%
 \input markdown/markdown
 \def\markdownVersionSpace{ }%
 \ProvidesPackage{markdown}[\markdownLastModified\markdownVersionSpace v%
@@ -17803,9 +17825,6 @@ end
 %
 % \end{markdown}
 %  \begin{macrocode}
-\renewcommand\markdownInfo[1]{\PackageInfo{markdown}{#1}}%
-\renewcommand\markdownWarning[1]{\PackageWarning{markdown}{#1}}%
-\renewcommand\markdownError[2]{\PackageError{markdown}{#1}{#2.}}%
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -18628,8 +18647,14 @@ end
 % consequence, we can directly reuse the existing plain \TeX{} implementation
 % after supplying the missing plain \TeX{} macros.
 %
+% The \Hologo{ConTeXt} implementation redefines the plain \TeX{} logging macros
+% (see Section \ref{sec:texinterfacelogging}) to use the \Hologo{ConTeXt}
+% \m{writestatus} macro.
+%
 % \end{markdown}
 %  \begin{macrocode}
+\def\markdownInfo#1{\writestatus{markdown}{#1.}}%
+\def\markdownWarning#1{\writestatus{markdown\space warn}{#1.}}%
 \def\dospecials{\do\ \do\\\do\{\do\}\do\$\do\&%
   \do\#\do\^\do\_\do\%\do\~}%
 \input markdown/markdown
@@ -18661,19 +18686,6 @@ end
 % \end{markdown}
 %  \begin{macrocode}
   \catcode`|=12}%
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
-%### Logging Facilities
-% The \Hologo{ConTeXt} implementation redefines the plain \TeX{} logging macros (see
-% Section \ref{sec:texinterfacelogging}) to use the \Hologo{ConTeXt}
-% \m{writestatus} macro.
-%
-% \end{markdown}
-%  \begin{macrocode}
-\def\markdownInfo#1{\writestatus{markdown}{#1.}}%
-\def\markdownWarning#1{\writestatus{markdown\space warn}{#1.}}%
 %    \end{macrocode}
 % \par
 % \begin{markdown}
