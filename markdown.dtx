@@ -14690,7 +14690,7 @@ function M.writer.new(options)
     local base, prev, curr
     for _, filename in ipairs{kpse.lookup(options.contentBlocksLanguageMap,
                                           { all=true })} do
-      file = io.open(filename, "r")
+      local file = io.open(filename, "r")
       if not file then goto continue end
       json = file:read("*all"):gsub('("[^\n]-"):','[%1]=')
       curr = (function()
