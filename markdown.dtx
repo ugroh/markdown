@@ -1368,7 +1368,10 @@ following content:
 \input lmfonts
 \input safe
 
+\begingroup
+\catcode`\%=12
 \input unsafe
+\endgroup
 \bye
 ```````
 Using a text editor, create a text document named `example.md` with the
@@ -4566,7 +4569,10 @@ following content:
 \input lmfonts
 \input optionfalse
 
+\begingroup
+\catcode`\%=12
 \input optiontrue
+\endgroup
 \bye
 ```````
 Using a text editor, create a text document named `content.md` with the
