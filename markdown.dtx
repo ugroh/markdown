@@ -757,7 +757,18 @@ local lpeg = require("lpeg")
 %
 % \end{markdown}
 %  \begin{macrocode}
-local unicode = require("unicode")
+local ran_ok, unicode = pcall(require, "unicode")
+%    \end{macrocode}
+% \begin{markdown}
+%
+% If the Selene Unicode library is unavailable and we are using
+% Lua${}\geq{}$5.3, we will use the built-in support for Unicode.
+%
+% \end{markdown}
+%  \begin{macrocode}
+if not ran_ok then
+  unicode = {["utf8"]={char=utf8.char}}
+end
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -15947,7 +15958,7 @@ function M.reader.new(writer, options)
 % \end{markdown}
 %  \begin{macrocode}
   local function normalize_tag(tag)
-    return unicode.utf8.lower(
+    return string.lower(
       gsub(util.rope_to_string(tag), "[ \n\r\t]+", " "))
   end
 %    \end{macrocode}
