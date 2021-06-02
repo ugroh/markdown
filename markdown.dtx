@@ -10686,27 +10686,9 @@ following text:
 % The \mdef{markdownInfo}, \mdef{markdownWarning}, and \mdef{markdownError}
 % macros perform logging for the Markdown package. Their first argument
 % specifies the text of the info, warning, or error message.
-%
-% \end{markdown}
-%  \begin{macrocode}
-\def\markdownInfo#1{}%
-\def\markdownWarning#1{}%
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
 % The \m{markdownError} macro receives a second argument that provides a help
-% text.
-%
-% \end{markdown}
-%  \begin{macrocode}
-\def\markdownError#1#2{}%
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
-% You may redefine these macros to redirect and process the info, warning, and
-% error messages.
+% text. You may redefine these macros to redirect and process the info,
+% warning, and error messages.
 %
 %### Miscellanea
 % The \mdef{markdownMakeOther} macro is used by the package, when a \TeX{}
@@ -17079,13 +17061,19 @@ end
 %
 % \end{markdown}
 %  \begin{macrocode}
-\def\markdownInfo#1{%
-  \immediate\write-1{(l.\the\inputlineno) markdown.tex info: #1.}}%
-\def\markdownWarning#1{%
-  \immediate\write16{(l.\the\inputlineno) markdown.tex warning: #1}}%
-\def\markdownError#1#2{%
-  \errhelp{#2.}%
-  \errmessage{(l.\the\inputlineno) markdown.tex error: #1}}%
+\ifx\markdownInfo\undefined
+  \def\markdownInfo#1{%
+    \immediate\write-1{(l.\the\inputlineno) markdown.tex info: #1.}}%
+\fi
+\ifx\markdownWarning\undefined
+  \def\markdownWarning#1{%
+    \immediate\write16{(l.\the\inputlineno) markdown.tex warning: #1}}%
+\fi
+\ifx\markdownError\undefined
+  \def\markdownError#1#2{%
+    \errhelp{#2.}%
+    \errmessage{(l.\the\inputlineno) markdown.tex error: #1}}%
+\fi
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -17813,8 +17801,15 @@ end
 % format~[@latex17, Section 9]. As a consequence, we can directly reuse the
 % existing plain \TeX{} implementation.
 %
+% The \LaTeX{} implementation redefines the plain \TeX{} logging macros (see
+% Section \ref{sec:texinterfacelogging}) to use the \LaTeX{} \m{PackageInfo},
+% \m{PackageWarning}, and \m{PackageError} macros.
+%
 % \end{markdown}
 %  \begin{macrocode}
+\newcommand\markdownInfo[1]{\PackageInfo{markdown}{#1}}%
+\newcommand\markdownWarning[1]{\PackageWarning{markdown}{#1}}%
+\newcommand\markdownError[2]{\PackageError{markdown}{#1}{#2.}}%
 \input markdown/markdown
 \def\markdownVersionSpace{ }%
 \ProvidesPackage{markdown}[\markdownLastModified\markdownVersionSpace v%
@@ -17830,9 +17825,6 @@ end
 %
 % \end{markdown}
 %  \begin{macrocode}
-\renewcommand\markdownInfo[1]{\PackageInfo{markdown}{#1}}%
-\renewcommand\markdownWarning[1]{\PackageWarning{markdown}{#1}}%
-\renewcommand\markdownError[2]{\PackageError{markdown}{#1}{#2.}}%
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -18655,8 +18647,14 @@ end
 % consequence, we can directly reuse the existing plain \TeX{} implementation
 % after supplying the missing plain \TeX{} macros.
 %
+% The \Hologo{ConTeXt} implementation redefines the plain \TeX{} logging macros
+% (see Section \ref{sec:texinterfacelogging}) to use the \Hologo{ConTeXt}
+% \m{writestatus} macro.
+%
 % \end{markdown}
 %  \begin{macrocode}
+\def\markdownInfo#1{\writestatus{markdown}{#1.}}%
+\def\markdownWarning#1{\writestatus{markdown\space warn}{#1.}}%
 \def\dospecials{\do\ \do\\\do\{\do\}\do\$\do\&%
   \do\#\do\^\do\_\do\%\do\~}%
 \input markdown/markdown
@@ -18688,19 +18686,6 @@ end
 % \end{markdown}
 %  \begin{macrocode}
   \catcode`|=12}%
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
-%### Logging Facilities
-% The \Hologo{ConTeXt} implementation redefines the plain \TeX{} logging macros (see
-% Section \ref{sec:texinterfacelogging}) to use the \Hologo{ConTeXt}
-% \m{writestatus} macro.
-%
-% \end{markdown}
-%  \begin{macrocode}
-\def\markdownInfo#1{\writestatus{markdown}{#1.}}%
-\def\markdownWarning#1{\writestatus{markdown\space warn}{#1.}}%
 %    \end{macrocode}
 % \par
 % \begin{markdown}
