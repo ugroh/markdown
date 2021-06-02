@@ -16583,7 +16583,7 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                                                     expandtabs(code))
                          end
 
-  larsers.JekyllData     = (parsers.JekyllFencedCode)
+  larsers.JekyllData     = parsers.JekyllFencedCode
                        / function(infostring, code)
                          return writer.jekyllData(expandtabs(code))
                          end
