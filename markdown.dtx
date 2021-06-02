@@ -1023,8 +1023,8 @@ Using a text editor, create a text document named `hello.lua` with the
 following content:
 ``` lua
 #!/usr/bin/env texlua
-local kpse = require("kpse")
-kpse.set_program_name("luatex")
+local ran_ok, kpse = pcall(require, "kpse")
+if ran_ok then kpse.set_program_name("luatex") end
 local markdown = require("markdown")
 local convert = markdown.new()
 print(convert("Hello *world*!"))
@@ -1280,8 +1280,8 @@ Using a text editor, create a text document named `example.lua` with the
 following content:
 ``` lua
 #!/usr/bin/env texlua
-local kpse = require("kpse")
-kpse.set_program_name("luatex")
+local ran_ok, kpse = pcall(require, "kpse")
+if ran_ok then kpse.set_program_name("luatex") end
 local markdown = require("markdown")
 local input, convert_safe, convert_unsafe, paragraph
 
@@ -17025,8 +17025,8 @@ if options.cacheDir and not lfs.isdir(options.cacheDir) then
   assert(lfs.mkdir(options["cacheDir"]))
 end
 
-local kpse = require("kpse")
-kpse.set_program_name("luatex")
+local ran_ok, kpse = pcall(require, "kpse")
+if ran_ok then kpse.set_program_name("luatex") end
 local md = require("markdown")
 %    \end{macrocode}
 % \begin{markdown}
@@ -17636,8 +17636,8 @@ end
       "|markdownOptionHelperScriptFileName"}%
     |immediate|write|markdownOutputFileStream{%
       local ran_ok, error = pcall(function()
-        local kpse = require("kpse")
-        kpse.set_program_name("luatex")
+        local ran_ok, kpse = pcall(require, "kpse")
+        if ran_ok then kpse.set_program_name("luatex") end
         #1
       end)
 %    \end{macrocode}
