@@ -16797,7 +16797,7 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
   local syntax =
     { "Blocks",
 
-      Blocks                = larsers.Blank^0 * parsers.Block^-1
+      Blocks                = larsers.Blank^0 * (V("JekyllData")+parsers.Block)^-1
                             * (larsers.Blank^0 / writer.interblocksep
                               * parsers.Block)^0
                             * larsers.Blank^0 * parsers.eof,
@@ -16809,7 +16809,6 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                             + V("PipeTable")
                             + V("Verbatim")
                             + V("FencedCode")
-                            + V("JekyllData")
                             + V("HorizontalRule")
                             + V("BulletList")
                             + V("OrderedList")
