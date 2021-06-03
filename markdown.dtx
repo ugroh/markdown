@@ -9762,6 +9762,10 @@ name whereas the second contains the data.
 %  \begin{macrocode}
 \def\markdownRendererSetJekyllData{%
   \markdownRendererSetJekyllDataPrototype}%
+\def\markdownRendererSetJekyllDataBegin{%
+  \markdownRendererSetJekyllDataBeginPrototype}%
+\def\markdownRendererSetJekyllDataEnd{%
+  \markdownRendererSetJekyllDataEnd}%
 %    \end{macrocode}
 % \par
 %
@@ -10720,6 +10724,8 @@ following text:
 \def\markdownRendererInputVerbatimPrototype#1{}%
 \def\markdownRendererInputFencedCodePrototype#1#2{}%
 \def\markdownRendererSetJekyllDataPrototype#1#2{}%
+\def\markdownRendererSetJekyllDataBeginPrototype{}%
+\def\markdownRendererSetJekyllDataEndPrototype{}%
 \def\markdownRendererHeadingOnePrototype#1{}%
 \def\markdownRendererHeadingTwoPrototype#1{}%
 \def\markdownRendererHeadingThreePrototype#1{}%
@@ -11787,6 +11793,10 @@ following text, where the middot (`·`) denotes a non-breaking space:
   \renewcommand\markdownRendererInputFencedCodePrototype[2]{#1}}%
 \define@key{markdownRendererPrototypes}{setJekyllData}{%
   \renewcommand\markdownRendererSetJekyllDataPrototype[2]{#1}}%
+\define@key{markdownRendererPrototypes}{setJekyllDataBegin}{%
+	\renewcommand\markdownRendererSetJekyllDataBeginPrototype{#1}}%
+\define@key{markdownRendererPrototypes}{setJekyllDataEnd}{%
+	\renewcommand\markdownRendererSetJekyllDataEndPrototype{#1}}%
 \define@key{markdownRendererPrototypes}{headingOne}{%
   \renewcommand\markdownRendererHeadingOnePrototype[1]{#1}}%
 \define@key{markdownRendererPrototypes}{headingTwo}{%
@@ -14990,7 +15000,8 @@ function M.writer.new(options)
     if not self.is_writing then return "" end
     s = string.gsub(s, '([^:]+):%s([^\r\n]+)[\r\n]+', '\\markdownRendererSetJekyllData{%1}{%2}')
     s = string.gsub(s, '[\r\n%s]*$','')
-    return {s}
+    return {"\\markdownRendererSetJekyllDataBegin\n",s,
+      "\n\\markdownRendererSetJekyllDataEnd"}
     end
 %    \end{macrocode}
 % \par
@@ -17223,6 +17234,8 @@ end
 \def\markdownRendererSetJekyllDataPrototype#1#2{%
   \def\expandafter\csname markdownData@#1\endcsname{#2}%
 }%
+\def\markdownRendererSetJekyllDataBeginPrototype{}
+\def\markdownRendererSetJekyllDataEndPrototype{}
 \def\markdownRendererHeadingOnePrototype#1{#1}%
 \def\markdownRendererHeadingTwoPrototype#1{#1}%
 \def\markdownRendererHeadingThreePrototype#1{#1}%
