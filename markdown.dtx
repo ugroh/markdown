@@ -15000,13 +15000,27 @@ function M.writer.new(options)
     local name = util.cache(options.cacheDir, s, nil, nil, ".verbatim")
     return {"\\markdownRendererInputFencedCode{",name,"}{",i,"}"}
   end
-  function self.jekyllData(s)
+  function self.jekyllData(_, data)
     if not self.is_writing then return "" end
-    s = string.gsub(s, '([^:]+):%s([^\r\n]+)[\r\n]+', '\\markdownRendererSetJekyllData{%1}{%2}')
-    s = string.gsub(s, '[\r\n%s]*$','')
-    return {"\\markdownRendererSetJekyllDataBegin\n",s,
-      "\n\\markdownRendererSetJekyllDataEnd"}
+    local buffer = {}
+    table.insert(buffer,"\\mardownRendererSetJekyllDataBegin")
+    for _, v in ipairs(data) do
+      if type(v) == "table" then
+        table.insert(buffer,"\\mardownRendererSetJekyllDataSequenceBegin{"..v[1].."}{"..#v[2].."}")
+        for i,w in ipairs (v[2]) do
+          s = string.gsub(w, '%s*([^:]+):%s([^\r\n]+)[\r\n]+', '\\markdownRendererSetJekyllDataString{%1}{%2}')
+          s= "\\markdownRendererSetJekyllDataMappingBegin{"..i.."}{"..#v[2].."}"..s.."\\markdownRendererSetJekyllDataMappingEnd"
+         table.insert(buffer,s)
+        end
+      else
+        s = string.gsub(v, '([^:]+):%s([^\r\n]+)[\r\n]+', '\\markdownRendererSetJekyllDataString{%1}{%2}')
+        table.insert(buffer,s)
+      end
+      table.insert(buffer,"\\mardownRendererSetJekyllDataEnd")
     end
+      return table.concat(buffer,"")
+  end
+  
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -15437,6 +15451,20 @@ parsers.fencedline   = function(char)
                          return s:sub(i)
                        end
 end
+
+parsers.jekyllData_mapping  = function(char)
+  return   parsers.dash  * Cs(parsers.space^1 * parsers.fencedline(char)^-1 * (parsers.space * parsers.fencedline(char))^1)
+end
+
+parsers.jekyllData_sequence_start = C((parsers.linechar - parsers.colon)^0)*parsers.colon*parsers.newline
+
+parsers.jekyllData_sequence   = function(char)
+  return  parsers.jekyllData_sequence_start^1*Ct(parsers.jekyllData_mapping(char)^1)
+  / function(sequence,data)
+      return {sequence, data}
+  end
+end
+
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -16598,10 +16626,11 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                                                     expandtabs(code))
                          end
 
-  larsers.JekyllData     = parsers.JekyllFencedCode
-                       / function(infostring, code)
-                         return writer.jekyllData(expandtabs(code))
-                         end
+  larsers.JekyllData     = parsers.fencehead(parsers.dash)
+                           * Ct((parsers.jekyllData_sequence(parsers.dash)
+                             + parsers.fencedline(parsers.dash))^0)
+                           * parsers.fencetail(parsers.dash)
+                       / writer.jekyllData
 
   larsers.Blockquote   = Cs(larsers.blockquote_body^1)
                        / parse_blocks_toplevel / writer.blockquote
