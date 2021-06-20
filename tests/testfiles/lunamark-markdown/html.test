@@ -6,9 +6,9 @@ the plain TeX interface.
 <div>
 *There is block tag support.*
 </div>
-*There is <inline tag="tag"></inline> support.*
-_There is <!-- comment --> support._
-_There is <? HTML instruction ?> support._
+*There is <inline tag="value"></inline> support.*
+_There is <!-- *comment* --> support._
+_There is <? *HTML instruction* ?> support._
 
 Here are several ways to write a pipe:
 
@@ -25,7 +25,7 @@ codeSpan: html
 interblockSeparator
 interblockSeparator
 emphasis: There is support.
-emphasis: There is support.
+emphasis: There is (inlineHtmlComment: (emphasis: comment)) support.
 emphasis: There is support.
 interblockSeparator
 interblockSeparator

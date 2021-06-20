@@ -46,39 +46,39 @@
       \TYPE{pipe}%
       \GOBBLE},
     codeSpan = {%
-      \TYPE{codeSpan:         #1}},
+      \TYPE{codeSpan:          #1}},
     link = {%
       \TYPE{BEGIN link}%
-      \TYPE{- label:          #1}%
-      \TYPE{- URI:            #2}%
-      \TYPE{- title:          #4}%
+      \TYPE{- label:           #1}%
+      \TYPE{- URI:             #2}%
+      \TYPE{- title:           #4}%
       \TYPE{END link}},
     image = {%
       \TYPE{BEGIN image}%
-      \TYPE{- label:          #1}%
-      \TYPE{- URI:            #2}%
-      \TYPE{- title:          #4}%
+      \TYPE{- label:           #1}%
+      \TYPE{- URI:             #2}%
+      \TYPE{- title:           #4}%
       \TYPE{END image}},
     contentBlock = {%
       \TYPE{BEGIN contentBlock}%
-      \TYPE{- suffix:         #1}%
-      \TYPE{- URI:            #2}%
-      \TYPE{- title:          #4}%
+      \TYPE{- suffix:          #1}%
+      \TYPE{- URI:             #2}%
+      \TYPE{- title:           #4}%
       \TYPE{END contentBlock}%
     },
     contentBlockOnlineImage = {%
       \TYPE{BEGIN contentBlockOnlineImage}%
-      \TYPE{- suffix:         #1}%
-      \TYPE{- URI:            #2}%
-      \TYPE{- title:          #4}%
+      \TYPE{- suffix:          #1}%
+      \TYPE{- URI:             #2}%
+      \TYPE{- title:           #4}%
       \TYPE{END contentBlockOnlineImage}%
     },
     contentBlockCode = {%
       \TYPE{BEGIN contentBlockCode}%
-      \TYPE{- suffix:         #1}%
-      \TYPE{- language:       #2}%
-      \TYPE{- URI:            #3}%
-      \TYPE{- title:          #5}%
+      \TYPE{- suffix:          #1}%
+      \TYPE{- language:        #2}%
+      \TYPE{- URI:             #3}%
+      \TYPE{- title:           #5}%
       \TYPE{END contentBlockCode}%
     },
     ulBegin = {%
@@ -102,7 +102,7 @@
     olItemEnd = {%
       \TYPE{olItemEnd}},
     olItemWithNumber = {%
-      \TYPE{olItemWithNumber: #1}},
+      \TYPE{olItemWithNumber:  #1}},
     olEnd = {%
       \TYPE{olEnd}},
     olEndTight = {%
@@ -112,7 +112,7 @@
     dlBeginTight = {%
       \TYPE{dlBeginTight}},
     dlItem = {%
-      \TYPE{dlItem:           #1}},
+      \TYPE{dlItem:            #1}},
     dlItemEnd = {%
       \TYPE{dlItemEnd}},
     dlDefinitionBegin = {%
@@ -124,41 +124,43 @@
     dlEndTight = {%
       \TYPE{dlEndTight}},
     emphasis = {%
-      \TYPE{emphasis:         #1}},
+      \TYPE{emphasis:          #1}},
     strongEmphasis = {%
-      \TYPE{strongEmphasis:   #1}},
+      \TYPE{strongEmphasis:    #1}},
     blockQuoteBegin = {%
       \TYPE{blockQuoteBegin}},
     blockQuoteEnd = {%
       \TYPE{blockQuoteEnd}},
     inputVerbatim = {%
-      \TYPE{inputVerbatim:    #1}},
+      \TYPE{inputVerbatim:     #1}},
     inputFencedCode = {%
       \TYPE{BEGIN fencedCode}%
-      \TYPE{- src:            #1}%
-      \TYPE{- infostring:     #2}%
+      \TYPE{- src:             #1}%
+      \TYPE{- infostring:      #2}%
       \TYPE{END fencedCode}},
     headingOne = {%
-      \TYPE{headingOne:       #1}},
+      \TYPE{headingOne:        #1}},
     headingTwo = {%
-      \TYPE{headingTwo:       #1}},
+      \TYPE{headingTwo:        #1}},
     headingThree = {%
-      \TYPE{headingThree:     #1}},
+      \TYPE{headingThree:      #1}},
     headingFour = {%
-      \TYPE{headingFour:      #1}},
+      \TYPE{headingFour:       #1}},
     headingFive = {%
-      \TYPE{headingFive:      #1}},
+      \TYPE{headingFive:       #1}},
     headingSix = {%
-      \TYPE{headingSix:       #1}},
+      \TYPE{headingSix:        #1}},
     horizontalRule = {%
       \TYPE{horizontalRule}},
     footnote = {%
-      \TYPE{footnote:         #1}},
+      \TYPE{footnote:          #1}},
     cite = {%
       \CITATIONS{#1}},
     textCite = {%
       \TEXTCITATIONS{#1}},
     table = {%
-      \TABLE{#1}{#2}{#3}}
+      \TABLE{#1}{#2}{#3}},
+    inlineHtmlComment = {%
+      \TYPE{inlineHtmlComment: #1}},
   }%
 }%

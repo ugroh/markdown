@@ -10454,8 +10454,6 @@ following content:
   : Demonstration of pipe table syntax
 \end{markdown}
 \end{document}
-\end{markdown}
-\end{document}
 ```````
 Next, invoke LuaTeX from the terminal:
 ``` sh
@@ -10484,6 +10482,69 @@ following text:
 %  \begin{macrocode}
 \def\markdownRendererTable{%
   \markdownRendererTablePrototype}%
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
+#### Inline HTML Comment Renderer
+The \mdef{markdownRendererInlineHtmlComment} macro represents the contents of an
+inline \acro{HTML} comment. This macro will only be produced, when the
+\Opt{html} option is enabled. The macro receives a single argument that
+corresponds to the contents of the \acro{HTML} comment.
+
+% \end{markdown}
+%
+% \iffalse
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\documentclass{article}
+\usepackage[html]{markdown}
+\usepackage{marginnote}
+\markdownSetup{
+  renderers = {
+    inlineHtmlComment = {\marginnote{#1}},
+  },
+}
+\begin{document}
+\begin{markdown}
+A useful use of HTML comments are side notes.
+<!-- Side notes are displayed in the horizontal margins next to the relevant
+passages, which makes them easier for the reader to find than footnotes. -->
+\end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex document.tex
+lualatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following body text:
+
+> A useful use of HTML comments are side notes.
+
+The horizontal margins should contain the following text:
+
+> Side notes are displayed in the horizontal margins next to the relevant
+> passages, which makes them easier for the reader to find than footnotes.
+
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererInlineHtmlComment{%
+  \markdownRendererInlineHtmlCommentPrototype}%
 %    \end{macrocode}
 % \par
 %
@@ -10684,6 +10745,7 @@ following text:
 \def\markdownRendererCitePrototype#1{}%
 \def\markdownRendererTextCitePrototype#1{}%
 \def\markdownRendererTablePrototype#1#2#3{}%
+\def\markdownRendererInlineHtmlCommentPrototype#1{}%
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -11595,6 +11657,8 @@ following text, where the middot (`·`) denotes a non-breaking space:
   \renewcommand\markdownRendererTextCite[1]{#1}}%
 \define@key{markdownRenderers}{table}{%
   \renewcommand\markdownRendererTable[3]{#1}}%
+\define@key{markdownRenderers}{inlineHtmlComment}{%
+  \renewcommand\markdownRendererInlineHtmlComment[1]{#1}}%
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -11738,6 +11802,8 @@ following text, where the middot (`·`) denotes a non-breaking space:
   \renewcommand\markdownRendererTextCitePrototype[1]{#1}}%
 \define@key{markdownRendererPrototypes}{table}{%
   \renewcommand\markdownRendererTablePrototype[3]{#1}}%
+\define@key{markdownRendererPrototypes}{inlineHtmlComment}{%
+  \renewcommand\markdownRendererInlineHtmlCommentPrototype[1]{#1}}%
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -14818,15 +14884,15 @@ function M.writer.new(options)
 % \par
 % \begin{markdown}
 %
-% Define \luamdef{writer->inline_html} and \luamdef{writer->display_html}
-% as functions that will transform an inline or block \acro{html} element
-% respectively to the output format, where `html` is the \acro{html}
-% input.
+% Define \luamdef{writer->inline_html_comment} as a function that will
+% transform the contents of an inline \acro{HTML} comment, to the output
+% format, where `contents` are the contents of the \acro{HTML} comment.
 %
 % \end{markdown}
 %  \begin{macrocode}
-  function self.inline_html(html)  return "" end
-  function self.display_html(html) return "" end
+  function self.inline_html_comment(contents)
+    return {"\\markdownRendererInlineHtmlComment{",contents,"}"}
+  end
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -15717,9 +15783,13 @@ parsers.htmlattribute     = parsers.spacing^1
                           * parsers.sp * parsers.equal * parsers.sp
                           * parsers.htmlattributevalue
 
-parsers.htmlcomment       = P("<!--") * (parsers.any - P("-->"))^0 * P("-->")
+parsers.htmlcomment       = P("<!--")
+                          * parsers.optionalspace
+                          * Cs((parsers.any - parsers.optionalspace * P("-->"))^0)
+                          * parsers.optionalspace
+                          * P("-->")
 
-parsers.htmlinstruction   = P("<?")   * (parsers.any - P("?>" ))^0 * P("?>" )
+parsers.htmlinstruction   = P("<?") * (parsers.any - P("?>"))^0 * P("?>")
 
 parsers.openelt_any = parsers.less * parsers.keyword * parsers.htmlattribute^0
                     * parsers.sp * parsers.more
@@ -15766,17 +15836,11 @@ end
 parsers.in_matched_block_tags = parsers.less
                               * Cmt(#parsers.openelt_block, parse_matched_tags)
 
-parsers.displayhtml = parsers.htmlcomment
+parsers.displayhtml = parsers.htmlcomment / ""
                     + parsers.emptyelt_block
                     + parsers.openelt_exact("hr")
                     + parsers.in_matched_block_tags
                     + parsers.htmlinstruction
-
-parsers.inlinehtml  = parsers.emptyelt_any
-                    + parsers.htmlcomment
-                    + parsers.htmlinstruction
-                    + parsers.openelt_any
-                    + parsers.closeelt_any
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -16103,6 +16167,12 @@ function M.reader.new(writer, options)
     = create_parser("parse_inlines_no_inline_note",
                     function()
                       return larsers.inlines_no_inline_note
+                    end, false)
+
+  local parse_inlines_no_html
+    = create_parser("parse_inlines_no_html",
+                    function()
+                      return larsers.inlines_no_html
                     end, false)
 
   local parse_inlines_nbsp
@@ -16486,7 +16556,12 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
 
   larsers.EscapedChar   = parsers.backslash * C(parsers.escapable) / writer.string
   
-  larsers.InlineHtml    = C(parsers.inlinehtml) / writer.inline_html
+  larsers.InlineHtml    = parsers.emptyelt_any
+                        + (parsers.htmlcomment / parse_inlines_no_html)
+                        / writer.inline_html_comment
+                        + parsers.htmlinstruction
+                        + parsers.openelt_any
+                        + parsers.closeelt_any
   
   larsers.HtmlEntity    = parsers.hexentity / entities.hex_entity  / writer.string
                         + parsers.decentity / entities.dec_entity  / writer.string
@@ -16504,8 +16579,7 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                        * parsers.contentblock_tail
                        / writer.contentblock
 
-  larsers.DisplayHtml  = C(parsers.displayhtml)
-                       / expandtabs / writer.display_html
+  larsers.DisplayHtml  = parsers.displayhtml
 
   larsers.Verbatim     = Cs( (parsers.blanklines
                            * ((parsers.indentedline - parsers.blankline))^1)^1
@@ -16888,6 +16962,12 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
   local inlines_no_inline_note_t = util.table_copy(inlines_t)
   inlines_no_inline_note_t.InlineNote = parsers.fail
   larsers.inlines_no_inline_note = Ct(inlines_no_inline_note_t)
+
+  local inlines_no_html_t = util.table_copy(inlines_t)
+  inlines_no_html_t.DisplayHtml = parsers.fail
+  inlines_no_html_t.InlineHtml = parsers.fail
+  inlines_no_html_t.HtmlEntity = parsers.fail
+  larsers.inlines_no_html = Ct(inlines_no_html_t)
 
   local inlines_nbsp_t = util.table_copy(inlines_t)
   inlines_nbsp_t.Endline = larsers.NonbreakingEndline
