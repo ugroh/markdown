@@ -5590,7 +5590,7 @@ defaultOptions.startNumber = true
 `stripIndent` (default value: `false`)
 
 % \fi
-% \begin{markdown}
+% \markdownBegin
 %
 % \Optitem[false]{stripIndent}{\opt{true}, \opt{false}}
 %
@@ -5615,7 +5615,7 @@ defaultOptions.startNumber = true
      :   Do not strip any indentation from the lines in a markdown
          document.
 
-% \end{markdown}
+% \markdownEnd
 % \iffalse
 
 ##### Plain \TeX{} Example {.unnumbered}
@@ -5807,7 +5807,7 @@ defaultOptions.tableCaptions = false
 `texComments` (default value: `false`)
 
 % \fi
-% \begin{markdown}
+% \markdownBegin
 %
 % \Optitem[false]{texComments}{\opt{true}, \opt{false}}
 %
@@ -5830,7 +5830,7 @@ defaultOptions.tableCaptions = false
 
      :   Do not strip \TeX{}-style comments.
 
-% \end{markdown}
+% \markdownEnd
 % \iffalse
 
 ##### Plain \TeX{} Example {.unnumbered}
@@ -18154,7 +18154,7 @@ end
           if ! [ -e "$OUTPUT" ];
           then
             \markdown@witiko@graphicx@http@download{'#3'}{"$OUTPUT"};
-            printf '%s%%' "$OUTPUT" > "\filename";
+            printf '%s' "$OUTPUT" > "\filename";
           fi;
 %    \end{macrocode}
 % \begin{markdown}
@@ -18165,7 +18165,7 @@ end
 % \end{markdown}
 %  \begin{macrocode}
         else
-          printf '%s%%' '#3' > "\filename";
+          printf '%s' '#3' > "\filename";
         fi}}^^A
 %    \end{macrocode}
 % \begin{markdown}

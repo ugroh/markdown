@@ -51,6 +51,7 @@ $(INSTALLABLES) $(MARKDOWN_USER_MANUAL): $(INSTALLER) $(DTXARCHIVE)
 # This target typesets the manual.
 $(TECHNICAL_DOCUMENTATION): $(DTXARCHIVE) $(INSTALLABLES)
 	latexmk -interaction=nonstopmode $<
+	test `tail $(basename $<).log | sed -rn 's/.*\(([0-9]*) pages.*/\1/p'` -gt 150
 
 # These targets typeset the examples.
 $(EXAMPLES): $(EXAMPLE_SOURCES) examples/example.tex $(INSTALLABLES)
