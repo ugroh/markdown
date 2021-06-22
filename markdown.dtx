@@ -18154,7 +18154,7 @@ end
           if ! [ -e "$OUTPUT" ];
           then
             \markdown@witiko@graphicx@http@download{'#3'}{"$OUTPUT"};
-            printf '%s%%' "$OUTPUT" > "\filename";
+            printf '%s' "$OUTPUT" > "\filename";
           fi;
 %    \end{macrocode}
 % \begin{markdown}
@@ -18165,7 +18165,7 @@ end
 % \end{markdown}
 %  \begin{macrocode}
         else
-          printf '%s%%' '#3' > "\filename";
+          printf '%s' '#3' > "\filename";
         fi}}^^A
 %    \end{macrocode}
 % \begin{markdown}
