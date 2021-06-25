@@ -11104,10 +11104,14 @@ would use the following code in the preamble of your document:
   \StrSubstitute{#1}{/}{_}[\markdownLaTeXThemePackageName]%
   \edef\markdownLaTeXThemePackageName{%
     markdowntheme\markdownLaTeXThemePackageName}%
-  \expandafter\ifmarkdownLaTeXLoaded\expandafter\expandafter
-    \expandafter\@gobble\expandafter\fi%  Remove \AtEndOfPackage if loaded
-  \expandafter\AtEndOfPackage\expandafter{\expandafter\RequirePackage
-    \expandafter{\markdownLaTeXThemePackageName}}}%
+  \ifmarkdownLaTeXLoaded
+    \expandafter\RequirePackage\expandafter{%
+      \markdownLaTeXThemePackageName}%
+  \else
+    \expandafter\AtEndOfPackage\expandafter{%
+      \expandafter\RequirePackage\expandafter{%
+        \markdownLaTeXThemePackageName}}%
+  \fi}%
 %    \end{macrocode}
 % \iffalse
 %</latex>
