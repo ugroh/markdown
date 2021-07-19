@@ -9,5 +9,5 @@
 \input TEST_SETUP_FILENAME\relax
 \begin{document}
 % Perform the test.
-\markdownInput{TEST_INPUT_FILENAME}%
+\markdownInput[snippet=witiko/markdown/test/snippet]{TEST_INPUT_FILENAME}%
 \end{document}

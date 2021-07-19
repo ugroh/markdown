@@ -10969,29 +10969,55 @@ pdflatex --shell-escape document.tex
 % if the `=`\meta{value} part has been omitted.
 %
 % Except for the `plain` option described in Section \ref{sec:latexplain}, and
-% the \LaTeX{} themes described in Section \ref{sec:latexthemes}, the
+% the \LaTeX{} themes described in Section \ref{sec:latexthemes}, and the
+% \LaTeX{} setup snippets described in Section \ref{sec:latexsetupsnippets},
 % \LaTeX{} options map directly to the options recognized by the plain
 % \TeX{} interface (see Section \ref{sec:texoptions}) and to the markdown token
 % renderers and their prototypes recognized by the plain \TeX{} interface (see
 % Sections \ref{sec:texrenderersuser} and \ref{sec:texrendererprototypes}).
 %
-% The \LaTeX{} options may be specified when loading the \LaTeX{} package (see
-% Section \ref{sec:latexinterface}), when using the \envm{markdown*} \LaTeX{}
-% environment, or via the \mdef{markdownSetup} macro. The \m{markdownSetup}
-% macro receives the options to set up as its only argument.
+% The \LaTeX{} options may be specified when loading the \LaTeX{} package, when
+% using the \envm{markdown*} \LaTeX{} environment or the \m{markdownInput}
+% macro (see Section \ref{sec:latexinterface}), or via the \mdef{markdownSetup}
+% macro. The \m{markdownSetup} macro receives the options to set up as its only
+% argument:
 %
 % \markdownEnd
 %  \begin{macrocode}
 \newcommand\markdownSetup[1]{%
   \setkeys{markdownOptions}{#1}}%
 %    \end{macrocode}
+% \begin{markdown}
+%
+% We may also store \LaTeX{} options as *setup snippets* and invoke them later
+% using the \mdef{markdownSetupSnippet} macro. The \m{markdownSetupSnippet}
+% macro receives two arguments: the name of the setup snippet and the options
+% to store:
+%
+% \end{markdown}
+%  \begin{macrocode}
+\newcommand\markdownSetupSnippet[2]{%
+  \newtoks\next
+    \next={#2}%
+  \expandafter\let\csname markdownLaTeXSetupSnippet%
+    \markdownLaTeXThemeName#1\endcsname=\next}%
+%    \end{macrocode}
+% \begin{markdown}
+%
+% See Section \ref{sec:latexthemes} for information on interactions between
+% setup snippets and \LaTeX{} themes. See Section \ref{sec:latexsetupsnippets}
+% for information about invoking the stored setup snippets.
+%
+% \end{markdown}
 % \iffalse
 %</latex>
 %<*manual-options>
 
 ### \LaTeX{}
 
-\LaTeX{} options enable the loading of user-contributed themes.
+\LaTeX{} options allow us to disable the redefinition of the default renderer
+prototypes from plain \TeX{}, load user-contributed themes, and invoke
+user-defined setup snippets.
 
 % \fi
 % \par
@@ -11035,16 +11061,12 @@ prerequisites in Section \ref{sec:latexprerequisites} from being loaded:
 
 #### \LaTeX{} themes
 % \label{sec:latexthemes}
-% \end{markdown}
-% \iffalse
 
 User-contributed \LaTeX{} themes for the Markdown package provide a
 domain-specific interpretation of some Markdown tokens. Similarly to \LaTeX{}
 packages, themes allow the authors to achieve a specific look and other
 high-level goals without low-level programming.
 
-% \fi
-% \begin{markdown}
 % The \LaTeX{} option with key `theme` loads a \LaTeX{} package (further
 % referred to as *a theme*) named `markdowntheme`\meta{munged theme
 % name}`.sty`, where the *munged theme name* is the *theme name* after a
@@ -11113,15 +11135,32 @@ would use the following code in the preamble of your document:
   \StrSubstitute{#1}{/}{_}[\markdownLaTeXThemePackageName]%
   \edef\markdownLaTeXThemePackageName{%
     markdowntheme\markdownLaTeXThemePackageName}%
+  \expandafter\markdownLaTeXThemeLoad\expandafter{%
+    \markdownLaTeXThemePackageName}{#1/}}%
+\newcommand\markdownLaTeXThemeName{}%
+\newcommand\markdownLaTeXThemeLoad[2]{%
   \ifmarkdownLaTeXLoaded
-    \expandafter\RequirePackage\expandafter{%
-      \markdownLaTeXThemePackageName}%
+    \def\markdownLaTeXThemeName{#2}%
+    \RequirePackage{#1}%
+    \def\markdownLaTeXThemeName{}%
   \else
-    \expandafter\AtEndOfPackage\expandafter{%
-      \expandafter\RequirePackage\expandafter{%
-        \markdownLaTeXThemePackageName}}%
+    \AtEndOfPackage{%
+      \def\markdownLaTeXThemeName{#2}%
+      \RequirePackage{#1}%
+      \def\markdownLaTeXThemeName{}}%
   \fi}%
 %    \end{macrocode}
+% \begin{markdown}
+%
+% The \LaTeX{} themes have a useful synergy with the setup snippets (see
+% Section \ref{sec:latexoptions}): To make it less likely that different
+% themes will define setup snippets with the same name, we will prepend
+% \meta{theme name}`/` before the snippet name and use the result as the
+% snippet name. For example, if the `witiko/dot` theme defines the `product`
+% setup snippet, the setup snippet will be available under the name
+% `witiko/dot/product`.
+%
+% \end{markdown}
 % \iffalse
 %</latex>
 %<*manual-options>
@@ -11406,19 +11445,82 @@ following text, where the middot (`·`) denotes a non-breaking space:
 %    \end{macrocode}
 % \iffalse
 %</latex-themes-witiko-tilde>
-%<*latex>
+%<*manual-options>
 % \fi
 % \par
 % \begin{markdown}
 %
 % Please, see Section~\ref{sec:latexthemesimplementation} for implementation
 % details of the example themes.
-%
+
+#### \LaTeX{} setup snippets
+% \label{sec:latexsetupsnippets}
+% \end{markdown}
+% \iffalse
+
+User-contributed \LaTeX{} themes provide global control over high-level goals.
+However, it is often desirable to change only some local aspects of a document.
+\LaTeX{} setup snippets provide syntactic sugar for defining and invoking
+various options locally.
+
+% \fi
+% \begin{markdown}
+% The \LaTeX{} option with key `snippet` invokes a snippet named \meta{value}:
+% \end{markdown}
+% \iffalse
+%</manual-options>
+%<*latex>
+% \fi
+%  \begin{macrocode}
+\define@key{markdownOptions}{snippet}{%
+  \expandafter\markdownSetup\expandafter{%
+    \the\csname markdownLaTeXSetupSnippet#1\endcsname}}%
+%    \end{macrocode}
+% \iffalse
+%</latex>
+%<*manual-options>
+% \fi
+% \par
+% \markdownBegin
+
+Here is how we can use setup snippets to store options and invoke them later:
+
+``` tex
+\markdownSetupSnippet{romanNumerals}{
+  renderers = {
+      olItemWithNumber = {%
+          \item[\romannumeral#1\relax.]%
+      },
+  },
+}
+\begin{markdown}
+
+The following ordered list will be preceded by arabic numerals:
+
+1. wahid
+2. aithnayn
+
+\end{markdown}
+\begin{markdown*}{snippet=romanNumerals}
+
+The following ordered list will be preceded by roman numerals:
+
+3. tres
+4. quattuor
+
+\end{markdown*}
+
+```````
+
 %#### Plain \TeX{} Interface Options
 % The following options map directly to the option macros exposed by the plain
 % \TeX{} interface (see Section \ref{sec:texoptions}).
 %
-% \end{markdown}
+% \markdownEnd
+% \iffalse
+%</manual-options>
+%<*latex>
+% \fi
 %  \begin{macrocode}
 \define@key{markdownOptions}{helperScriptFileName}{%
   \def\markdownOptionHelperScriptFileName{#1}}%

@@ -9,7 +9,7 @@
 \input TEST_SETUP_FILENAME\relax
 \begin{document}
 % Perform the test.
-\begin{markdown}
+\begin{markdown*}{snippet=witiko/markdown/test/snippet}
 undivert(TEST_INPUT_FILENAME)dnl
-\end{markdown}
+\end{markdown*}
 \end{document}
