@@ -10997,10 +10997,16 @@ pdflatex --shell-escape document.tex
 % \end{markdown}
 %  \begin{macrocode}
 \newcommand\markdownSetupSnippet[2]{%
-  \newtoks\next
-    \next={#2}%
-  \expandafter\let\csname markdownLaTeXSetupSnippet%
-    \markdownLaTeXThemeName#1\endcsname=\next}%
+  \@ifundefined
+    {markdownLaTeXSetupSnippet\markdownLaTeXThemeName#1}{%
+      \newtoks\next
+        \next={#2}%
+      \expandafter\let\csname markdownLaTeXSetupSnippet%
+        \markdownLaTeXThemeName#1\endcsname=\next
+    }{%
+      \csname markdownLaTeXSetupSnippet%
+        \markdownLaTeXThemeName#1\endcsname={#2}%
+    }}%
 %    \end{macrocode}
 % \begin{markdown}
 %
