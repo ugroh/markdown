@@ -11182,11 +11182,7 @@ beginning of a \LaTeX{} document.
 %<*latex>
 % \fi
 %  \begin{macrocode}
-\AtBeginDocument{%  Prohibit loading of themes after \begin{document}
-  \define@key{markdownOptions}{theme}{%
-    \markdownError
-      {Won't load themes after the beginning of a document}%
-      {Themes can only be loaded in the preamble of a document}}}%
+\@onlypreamble\KV@markdownOptions@theme
 %    \end{macrocode}
 % \iffalse
 %</latex>
@@ -18346,13 +18342,13 @@ end
 % \end{markdown}
 %  \begin{macrocode}
 \RequirePackage{ifthen}
-\ifx\markdownOptionTightLists\undefined
-  \@ifclassloaded{beamer}{}{
-    \RequirePackage{paralist}}
-\else
-  \ifthenelse{\equal{\markdownOptionTightLists}{false}}{}{
-    \RequirePackage{paralist}}
-\fi
+\@ifundefined{markdownOptionTightLists}{%
+  \@ifclassloaded{beamer}{}{%
+    \RequirePackage{paralist}}%
+}{%
+  \ifthenelse{\equal{\markdownOptionTightLists}{false}}{}{%
+    \RequirePackage{paralist}}%
+}%
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -18433,8 +18429,8 @@ end
     \ifx\relax#2\relax
       \VerbatimInput{#1}%
     \else
-      \ifx\minted@code\undefined
-        \ifx\lst@version\undefined
+      \@ifundefined{minted@code}{%
+        \@ifundefined{lst@version}{%
           \markdownRendererInputFencedCode{#1}{}%
 %    \end{macrocode}
 % \par
@@ -18444,9 +18440,9 @@ end
 %
 % \end{markdown}
 %  \begin{macrocode}
-        \else
+        }{%
           \lstinputlisting[language=#2]{#1}%
-        \fi
+        }%
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -18456,9 +18452,9 @@ end
 %
 % \end{markdown}
 %  \begin{macrocode}
-      \else
+      }{%
         \inputminted{#2}{#1}%
-      \fi
+      }%
     \fi},
   horizontalRule = {\noindent\rule[0.5ex]{\linewidth}{1pt}},
   footnote = {\footnote{#1}}}}
@@ -18482,14 +18478,14 @@ end
 %
 % \end{markdown}
 %  \begin{macrocode}
-\ifx\chapter\undefined
+\@ifundefined{chapter}{%
   \markdownSetup{rendererPrototypes = {
     headingOne = {\section{#1}},
     headingTwo = {\subsection{#1}},
     headingThree = {\subsubsection{#1}},
     headingFour = {\paragraph{#1}\leavevmode},
     headingFive = {\subparagraph{#1}\leavevmode}}}
-\else
+}{%
   \markdownSetup{rendererPrototypes = {
     headingOne = {\chapter{#1}},
     headingTwo = {\section{#1}},
@@ -18497,7 +18493,7 @@ end
     headingFour = {\subsubsection{#1}},
     headingFive = {\paragraph{#1}\leavevmode},
     headingSix = {\subparagraph{#1}\leavevmode}}}
-\fi
+}%
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -18688,47 +18684,47 @@ end
   cite = {%
     \markdownLaTeXCitationsCounter=1%
     \def\markdownLaTeXCitationsTotal{#1}%
-    \ifx\autocites\undefined
-      \ifx\citep\undefined
+    \@ifundefined{autocites}{%
+      \@ifundefined{citep}{%
         \expandafter\expandafter\expandafter
         \markdownLaTeXBasicCitations
         \expandafter\expandafter\expandafter{%
         \expandafter\expandafter\expandafter}%
         \expandafter\expandafter\expandafter{%
         \expandafter\expandafter\expandafter}%
-      \else
+      }{%
         \expandafter\expandafter\expandafter
         \markdownLaTeXNatbibCitations
         \expandafter\expandafter\expandafter{%
         \expandafter\expandafter\expandafter}%
-      \fi
-    \else
+      }%
+    }{%
       \expandafter\expandafter\expandafter
       \markdownLaTeXBibLaTeXCitations
       \expandafter{\expandafter}%
-    \fi},
+    }},
   textCite = {%
     \markdownLaTeXCitationsCounter=1%
     \def\markdownLaTeXCitationsTotal{#1}%
-    \ifx\autocites\undefined
-      \ifx\citep\undefined
+    \@ifundefined{autocites}{%
+      \@ifundefined{citep}{%
         \expandafter\expandafter\expandafter
         \markdownLaTeXBasicTextCitations
         \expandafter\expandafter\expandafter{%
         \expandafter\expandafter\expandafter}%
         \expandafter\expandafter\expandafter{%
         \expandafter\expandafter\expandafter}%
-      \else
+      }{%
         \expandafter\expandafter\expandafter
         \markdownLaTeXNatbibTextCitations
         \expandafter\expandafter\expandafter{%
         \expandafter\expandafter\expandafter}%
-      \fi
-    \else
+      }%
+    }{%
       \expandafter\expandafter\expandafter
       \markdownLaTeXBibLaTeXTextCitations
       \expandafter{\expandafter}%
-    \fi}}}
+    }}}}
 %    \end{macrocode}
 % \par
 % \begin{markdown}
