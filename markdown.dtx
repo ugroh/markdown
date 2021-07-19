@@ -11004,6 +11004,8 @@ pdflatex --shell-escape document.tex
       \expandafter\let\csname markdownLaTeXSetupSnippet%
         \markdownLaTeXThemeName#1\endcsname=\next
     }{%
+      \markdownWarning
+        {Redefined setup snippet \markdownLaTeXThemeName#1}%
       \csname markdownLaTeXSetupSnippet%
         \markdownLaTeXThemeName#1\endcsname={#2}%
     }}%
