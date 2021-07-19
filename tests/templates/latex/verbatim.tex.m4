@@ -1,7 +1,7 @@
 \documentclass{minimal}
 \csname UseRawInputEncoding\endcsname
 % Load the package.
-\usepackage{markdown}
+\usepackage[plain]{markdown}
 \markdownSetup{theme=witiko/markdown/test}
 % Load the support files.
 \input setup\relax

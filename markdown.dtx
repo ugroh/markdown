@@ -871,80 +871,6 @@ local md5 = require("md5")
 % \par
 % \begin{markdown}
 %
-% \pkg{url}
-%
-%:    A package that provides the \m{url} macro for the typesetting of
-%     \acro{url}s. It is used to provide the default token renderer prototype
-%     (see Section \ref{sec:texrendererprototypes}) for links.
-%
-% \end{markdown}
-%  \begin{macrocode}
-\RequirePackage{url}
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
-% \pkg{graphicx}
-%
-%:    A package that provides the \m{includegraphics} macro for the typesetting
-%     of images. It is used to provide the corresponding default token renderer
-%     prototype (see Section \ref{sec:texrendererprototypes}).
-%
-% \end{markdown}
-%  \begin{macrocode}
-\RequirePackage{graphicx}
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
-% \pkg{paralist}
-%
-%:    A package that provides the \envm{compactitem}, \envm{compactenum}, and
-%     \envm{compactdesc} macros for the typesetting of tight bulleted lists,
-%     ordered lists, and definition lists.  It is used to provide the
-%     corresponding default token renderer prototypes (see Section
-%     \ref{sec:texrendererprototypes}).
-%
-% \pkg{ifthen}
-%
-%:    A package that provides a concise syntax for the inspection of macro
-%     values. It is used to determine whether or not the \pkg{paralist} package
-%     should be loaded based on the user options.
-%
-% \end{markdown}
-%  \begin{macrocode}
-\RequirePackage{ifthen}
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
-% \pkg{fancyvrb}
-%
-%:    A package that provides the \m{VerbatimInput} macros for the verbatim
-%     inclusion of files containing code. It is used to provide the
-%     corresponding default token renderer prototype (see Section
-%     \ref{sec:texrendererprototypes}).
-%
-% \end{markdown}
-%  \begin{macrocode}
-\RequirePackage{fancyvrb}
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
-% \pkg{csvsimple}
-%
-%:    A package that provides the default token renderer prototype for
-%     iA\,Writer content blocks with the \acro{csv} filename extension (see
-%     Section \ref{sec:texrendererprototypes}).
-%
-% \end{markdown}
-%  \begin{macrocode}
-\RequirePackage{csvsimple}
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
 % \pkg{xstring}
 %
 %:    A package that provides useful macros for manipulating strings of tokens.
@@ -956,14 +882,58 @@ local md5 = require("md5")
 % \par
 % \begin{markdown}
 %
+% The following packages are soft prerequisites and will not be loaded
+% if the `plain` package option has been enabled (see Section
+% \ref{sec:latexplain}):
+%
+% \pkg{url}
+%
+%:    A package that provides the \m{url} macro for the typesetting of
+%     \acro{url}s. It is used to provide the default token renderer
+%     prototype (see Section \ref{sec:texrendererprototypes}) for links.
+%
+% \pkg{graphicx}
+%
+%:    A package that provides the \m{includegraphics} macro for the typesetting
+%     of images. It is used to provide the corresponding default token renderer
+%     prototype (see Section \ref{sec:texrendererprototypes}).
+%
+% \pkg{paralist}
+%
+%:    A package that provides the \envm{compactitem}, \envm{compactenum}, and
+%     \envm{compactdesc} macros for the typesetting of tight bulleted lists,
+%     ordered lists, and definition lists. It is used to provide the
+%     corresponding default token renderer prototypes (see Section
+%     \ref{sec:texrendererprototypes}).
+%
+% \pkg{ifthen}
+%
+%:    A package that provides a concise syntax for the inspection of macro
+%     values. It is used to determine whether or not the \pkg{paralist} package
+%     should be loaded based on the user options, in the `witiko/dot` \LaTeX{}
+%     theme (see Section \ref{sec:latexthemes}), and to provide default token
+%     renderer prototypes (see Section \ref{sec:texrendererprototypes}).
+%
+% \pkg{fancyvrb}
+%
+%:    A package that provides the \m{VerbatimInput} macros for the verbatim
+%     inclusion of files containing code. It is used to provide the
+%     corresponding default token renderer prototype (see Section
+%     \ref{sec:texrendererprototypes}).
+%
+% \pkg{csvsimple}
+%
+%:    A package that provides the default token renderer prototype for
+%     iA\,Writer content blocks with the \acro{csv} filename extension (see
+%     Section \ref{sec:texrendererprototypes}).
+%
 % \pkg{gobble}
 %
-%:    A package that provides the \m{\@gobblethree} \TeX{} command.
+%:    A package that provides the \m{\@gobblethree} \TeX{} command that
+%     is used in the default renderer prototype for citations (see
+%     Section \ref{sec:texrendererprototypes}).
 %
 % \end{markdown}
-%  \begin{macrocode}
-\RequirePackage{gobble}
-%    \end{macrocode}
 % \iffalse
 %</latex>
 %<*context>
@@ -10995,10 +10965,12 @@ pdflatex --shell-escape document.tex
 %
 % The \LaTeX{} options are represented by a comma-delimited list of
 % \meta{key}`=`\meta{value} pairs. For boolean options, the `=`\meta{value}
-% part is optional, and \meta{key} will be interpreted as \meta{key}`=true`.
+% part is optional, and \meta{key} will be interpreted as \meta{key}`=true`
+% if the `=`\meta{value} part has been omitted.
 %
-% Except for the \LaTeX{} themes described in Section \ref{sec:latexthemes},
-% the \LaTeX{} options map directly to the options recognized by the plain
+% Except for the `plain` option described in Section \ref{sec:latexplain}, and
+% the \LaTeX{} themes described in Section \ref{sec:latexthemes}, the
+% \LaTeX{} options map directly to the options recognized by the plain
 % \TeX{} interface (see Section \ref{sec:texoptions}) and to the markdown token
 % renderers and their prototypes recognized by the plain \TeX{} interface (see
 % Sections \ref{sec:texrenderersuser} and \ref{sec:texrendererprototypes}).
@@ -11023,6 +10995,42 @@ pdflatex --shell-escape document.tex
 
 % \fi
 % \par
+% \begin{markdown}
+
+#### No default token renderer prototypes
+% \label{sec:latexplain}
+Default token renderer prototypes require \LaTeX{} packages that may clash with
+other packages used in a document.  Additionally, if we redefine token
+renderers and renderer prototypes ourselves, the default definitions will bring
+no benefit to us. Using the `plain` package option, we can keep the default
+definitions from the plain \TeX{} implementation (see Section
+\ref{sec:textokenrendererprototypes}) and prevent the soft \LaTeX{}
+prerequisites in Section \ref{sec:latexprerequisites} from being loaded:
+
+``` tex
+\usepackage[plain]{markdown}
+```````
+
+% \end{markdown}
+% \iffalse
+%</manual-options>
+%<*latex>
+% \fi
+%  \begin{macrocode}
+\newif\ifmarkdownLaTeXPlain
+  \markdownLaTeXPlainfalse
+\define@key{markdownOptions}{plain}[true]{%
+  \ifmarkdownLaTeXLoaded
+    \markdownWarning
+      {The plain option must be specified when loading the package}%
+  \else
+    \markdownLaTeXPlaintrue
+  \fi}
+%    \end{macrocode}
+% \iffalse
+%</latex>
+%<*manual-options>
+% \fi
 % \begin{markdown}
 
 #### \LaTeX{} themes
@@ -11094,7 +11102,8 @@ would use the following code in the preamble of your document:
 %<*latex>
 % \fi
 %  \begin{macrocode}
-\newif\ifmarkdownLaTeXLoaded\markdownLaTeXLoadedfalse
+\newif\ifmarkdownLaTeXLoaded
+  \markdownLaTeXLoadedfalse
 \AtEndOfPackage{\markdownLaTeXLoadedtrue}%
 \define@key{markdownOptions}{theme}{%
   \IfSubStr{#1}{/}{}{%
@@ -17186,6 +17195,7 @@ end
 % \begin{markdown}
 %
 %### Token Renderer Prototypes
+% \label{sec:textokenrendererprototypes}
 % The following definitions should be considered placeholder.
 %
 % \end{markdown}
@@ -18027,6 +18037,7 @@ end
 %
 % \end{markdown}
 %  \begin{macrocode}
+\RequirePackage{ifthen}
 \renewcommand\markdownRendererInputFencedCode[2]{%
   \def\next##1 ##2\relax{%
     \ifthenelse{\equal{##1}{dot}}{%
@@ -18208,7 +18219,15 @@ end
 % \begin{markdown}
 %
 %### Token Renderer Prototypes
-% The following configuration should be considered placeholder.
+% The following configuration should be considered placeholder. If the `plain`
+% package option has been enabled (see Section \ref{sec:latexplain}), none of
+% it will take effect.
+% \end{markdown}
+%  \begin{macrocode}
+\ifmarkdownLaTeXPlain\else
+%    \end{macrocode}
+% \par
+% \begin{markdown}
 %
 % If the \m{markdownOptionTightLists} macro expands to `false`, do not load
 % the \pkg{paralist} package. This is necessary for \Hologo{LaTeX2e} document
@@ -18218,6 +18237,7 @@ end
 %
 % \end{markdown}
 %  \begin{macrocode}
+\RequirePackage{ifthen}
 \ifx\markdownOptionTightLists\undefined
   \@ifclassloaded{beamer}{}{
     \RequirePackage{paralist}}
@@ -18252,6 +18272,9 @@ end
     olEndTight = {\markdownRendererOlEnd},
     dlBeginTight = {\markdownRendererDlBegin},
     dlEndTight = {\markdownRendererDlEnd}}}}
+\RequirePackage{csvsimple}
+\RequirePackage{fancyvrb}
+\RequirePackage{graphicx}
 \markdownSetup{rendererPrototypes={
   lineBreak = {\\},
   leftBrace = {\textbraceleft},
@@ -18382,6 +18405,7 @@ end
 \newcount\markdownLaTeXCitationsCounter
 
 % Basic implementation
+\RequirePackage{gobble}
 \def\markdownLaTeXBasicCitations#1#2#3#4#5#6{%
   \advance\markdownLaTeXCitationsCounter by 1\relax
   \ifx\relax#4\relax
@@ -18608,6 +18632,7 @@ end
 %
 % \end{markdown}
 %  \begin{macrocode}
+\RequirePackage{url}
 \def\markdownRendererLinkPrototype{%
   \begingroup
   \catcode`\#=12
@@ -18701,6 +18726,7 @@ end
     \addto@hook\markdownLaTeXTable{#1\\}%
     \expandafter\@gobble
   \fi\markdownLaTeXRenderTableCell}
+\fi
 %    \end{macrocode}
 % \par
 % \begin{markdown}
