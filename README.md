@@ -42,8 +42,9 @@ For further information, consult one of the following:
     - [Using Markdown in LaTeX documents][overleaf-6].
 4. My journal articles published by [TUGboat][]:
     - [Using Markdown inside TeX documents][tb119],
-    - [Markdown 2.7.0: Towards lightweight markup in TeX][tb124], and
-    - [Making Markdown into a Microwave Meal][tb129].
+    - [Markdown 2.7.0: Towards lightweight markup in TeX][tb124],
+    - [Making Markdown into a Microwave Meal][tb129], and
+    - Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX ([preprint][tb131-preprint], [slides][tb131-slides]).
 5. My journal articles published by [CSTUG][] (in Czech):
     - [Rendering Markdown inside TeX Documents][10.5300/2016-1-4/78], and
     - [Markdown 2.8.1: Boldly Unto the Throne of Lightweight Markup in TeX][10.5300/2020-1-2/48].
@@ -60,6 +61,9 @@ For further information, consult one of the following:
  [tb119]: https://www.tug.org/TUGboat/tb38-2/tb119novotny.pdf           "Using Markdown inside TeX documents"
  [tb124]: https://www.tug.org/TUGboat/tb40-1/tb124novotny-markdown.pdf  "Markdown 2.7.0: Towards lightweight markup in TeX"
  [tb129]: https://www.tug.org/TUGboat/tb41-3/tb129novotny-frozen.pdf    "Making Markdown into a Microwave Meal"
+
+ [tb131-preprint]: https://tug.org/tug2021/assets-arthur/pdf/novotny-tug2021-preprint.pdf  "Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX"
+ [tb131-slides]:   https://tug.org/tug2021/assets-arthur/pdf/tug2021-novotny-slides.pdf    "Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX"
 
  [10.5300/2016-1-4/78]: https://bulletin.cstug.cz/pdf/2016-1-4.pdf#page=80 "Rendering Markdown inside TeX Documents"
  [10.5300/2020-1-2/48]: https://bulletin.cstug.cz/pdf/2020-1-2.pdf#page=50 "Markdown 2.8.1: Boldly Unto the Throne of Lightweight Markup in TeX"
