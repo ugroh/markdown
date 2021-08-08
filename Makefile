@@ -1,7 +1,8 @@
 .PHONY: all base clean implode dist test examples
 AUXFILES=markdown.bbl markdown.cb markdown.cb2 markdown.glo markdown.bbl \
   markdown.run.xml markdown.bib markdown.markdown.in markdown.markdown.lua \
-  markdown.markdown.out
+  markdown.markdown.out markdown-interfaces.md markdown-miscellanea.md \
+	markdown-options.md markdown-tokens.md
 AUXDIRS=_minted-markdown _markdown_markdown
 TDSARCHIVE=markdown.tds.zip
 CTANARCHIVE=markdown.ctan.zip
