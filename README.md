@@ -23,7 +23,7 @@ Using Markdown
 For a quick introduction to the Markdown package, you can use
 [our official Docker image][docker-witiko/markdown].
 
-### Typesetting a Document
+### Typesetting a document
 
 Using a text editor, create a text document named `document.tex` with the
 following content:
@@ -64,7 +64,7 @@ following output:
 
 Congratulations, You just typeset your first Markdown document!
 
-### Continuous Integration
+### Continuous integration
 
 If you need the latest features of the Markdown package in your continuous
 integration pipelines, you can use
