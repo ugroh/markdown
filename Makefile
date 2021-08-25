@@ -1,4 +1,4 @@
-.PHONY: all base clean implode dist test examples
+.PHONY: all base clean implode dist test examples docker-image
 AUXFILES=markdown.bbl markdown.cb markdown.cb2 markdown.glo markdown.bbl \
   markdown.run.xml markdown.bib markdown.markdown.in markdown.markdown.lua \
   markdown.markdown.out markdown-interfaces.md markdown-miscellanea.md \
@@ -44,6 +44,11 @@ all: $(MAKEABLES)
 # This target extracts the source files out of the DTX archive.
 base: $(INSTALLABLES)
 	$(MAKE) clean
+
+# This target builds a witiko/markdown Docker image.
+docker-image:
+	docker build -t witiko/markdown:latest .
+	docker tag witiko/markdown:latest witiko/markdown:$(shell git describe --tags --always --long)
 
 # This target extracts the source files out of the DTX archive.
 $(INSTALLABLES) $(MARKDOWN_USER_MANUAL): $(INSTALLER) $(DTXARCHIVE)

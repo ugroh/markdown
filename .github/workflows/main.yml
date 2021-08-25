@@ -17,49 +17,15 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
-    container:
-      image: texlive/texlive:latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Install additional packages
-        run: |
-          set -ex
-          apt-get -qy update
-          apt-get -qy install curl gawk graphviz m4 pandoc parallel python3-pygments ruby wget
-      - name: Generate the ConTeXt file database
-        run: |
-          set -ex
-          mtxrun --generate
-      - name: Install the Markdown package
-        run: |
-          set -ex
-          make base
-          mkdir -p                                     ~/texmf/tex/luatex/markdown/
-          cp -f markdown.lua                           ~/texmf/tex/luatex/markdown/
-          mkdir -p                                     ~/texmf/scripts/markdown/
-          cp -f markdown-cli.lua                       ~/texmf/scripts/markdown/
-          mkdir -p                                     ~/texmf/tex/generic/markdown/
-          cp -f markdown.tex                           ~/texmf/tex/generic/markdown/
-          mkdir -p                                     ~/texmf/tex/latex/markdown/
-          cp -f markdown.sty                           ~/texmf/tex/latex/markdown/
-          cp -f markdownthemewitiko_dot.sty            ~/texmf/tex/latex/markdown/
-          cp -f markdownthemewitiko_graphicx_http.sty  ~/texmf/tex/latex/markdown/
-          cp -f markdownthemewitiko_tilde.sty          ~/texmf/tex/latex/markdown/
-          mkdir -p                                     ~/texmf/tex/context/third/markdown/
-          cp -f t-markdown.tex                         ~/texmf/tex/context/third/markdown/
-      - name: Typeset documentation and example documents
-        run: |
-          set -ex
-          make -j `nproc` all
+      - name: Build Docker image
+        run: make docker-image
       - name: Run tests
-        run: |
-          set -ex
-          make test
+        run: docker run -v "$PWD":/git-repo -w /git-repo witiko/markdown make test
       - name: Build distribution archives
-        run: |
-          set -ex
-          make dist
+        run: docker run -v "$PWD":/git-repo -w /git-repo witiko/markdown make dist
       - name: Upload artifact markdown.tds.zip
         uses: actions/upload-artifact@v2
         with:
@@ -80,3 +46,12 @@ jobs:
         with:
           name: markdown.pdf
           path: markdown.pdf
+      - name: Authenticate registry
+        if: github.ref == 'refs/heads/main'
+        uses: azure/docker-login@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USER }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+      - name: Publish Docker image
+        if: github.ref == 'refs/heads/main'
+        run: docker push witiko/markdown --all-tags
