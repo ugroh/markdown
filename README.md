@@ -78,11 +78,9 @@ If you need the latest features of the Markdown package in your continuous
 integration pipelines, you can use
 [our official Docker image][docker-witiko/markdown] as a drop-in replacement
 for [the `texlive/texlive:latest` Docker image][docker-texlive/texlive].
-
-The following example shows a [GitHub Actions][github-actions] workflow. If you
-create a Github repository with a text document named `document.tex`, this
-workflow will automatically typeset and prerelease a PDF document named
-`document.pdf` using the latest development version of the Markdown package:
+The following example shows a [GitHub Actions][github-actions] pipeline, which
+will automatically typeset and prerelease a PDF document named using the latest
+development version of the Markdown package:
 
 ``` yaml
 name: Typeset and prerelease the book
