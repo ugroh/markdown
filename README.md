@@ -2,7 +2,7 @@ Markdown
 ========
 
 [![release](https://img.shields.io/github/release/witiko/markdown.svg)][release]
-[![ci](https://github.com/Witiko/markdown/workflows/Test/badge.svg)][ci]
+[![ci](https://github.com/witiko/markdown/actions/workflows/main.yml/badge.svg)][ci]
 
  [release]:  https://github.com/Witiko/markdown/releases/latest  "Releases · Witiko/markdown"
  [ci]:       https://github.com/Witiko/markdown/actions          "GitHub Actions"
@@ -17,7 +17,94 @@ is encouraged. 😉
 
  [markdown]: https://daringfireball.net/projects/markdown/basics  "Daring Fireball: Markdown Basics"
 
+Using Markdown
+--------------
+
+For a quick introduction to the Markdown package, you can use
+[our official Docker image][docker-witiko/markdown].
+
+### Typesetting a Document
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+
+``` latex
+\documentclass{book}
+\usepackage{markdown}
+\markdownSetup{pipeTables,tableCaptions}
+\begin{document}
+\begin{markdown}
+Introduction
+============
+## Section
+### Subsection
+Hello *Markdown*!
+
+| Right | Left | Default | Center |
+|------:|:-----|---------|:------:|
+|   12  |  12  |    12   |    12  |
+|  123  |  123 |   123   |   123  |
+|    1  |    1 |     1   |     1  |
+
+: Table
+\end{markdown}
+\end{document}
+```
+
+Next, run LuaLaTeX from [our official Docker image][docker-witiko/markdown]:
+
+```
+$ docker run --rm -v "$PWD":/workdir -w /workdir witiko/markdown latexmk -lualatex document.tex
+```
+
+A PDF document named `document.pdf` should be produced and contain the
+following output:
+
  ![banner](banner.png "An example LaTeX document using the Markdown package")
+
+Congratulations, You just typeset your first Markdown document!
+
+### Continuous Integration
+
+If you need the latest features of the Markdown package in your continuous
+integration pipelines, you can use
+[our official Docker image][docker-witiko/markdown] as a drop-in replacement
+for [the `texlive/texlive:latest` Docker image][docker-texlive/texlive].
+
+The following example shows a [GitHub Actions][github-actions] workflow. If you
+create a Github repository with a text document named `document.tex`, this
+workflow will automatically typeset and prerelease a PDF document named
+`document.pdf` using the latest development version of the Markdown package:
+
+``` yaml
+name: Typeset and prerelease the book
+on:
+  push:
+jobs:
+  typeset:
+    runs-on: ubuntu-latest
+    container:
+      image: witiko/markdown:latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: latexmk -lualatex document.tex
+      - uses: marvinpinto/action-automatic-releases@latest
+        with:
+          title: The latest typeset book
+          automatic_release_tag: latest
+          prerelease: true
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          files: document.pdf
+```
+
+In fact, this is how we automatically produce
+[the latest documentation][latest-release] for the Markdown package.
+
+ [docker-witiko/markdown]: https://hub.docker.com/r/witiko/markdown  "witiko/markdown - Docker Image"
+ [docker-texlive/texlive]: https://hub.docker.com/r/texlive/texlive  "texlive/texlive - Docker Image"
+
+ [github-actions]: https://docs.github.com/actions  "GitHub Actions Documentation"
+ [latest-release]: https://github.com/witiko/markdown/releases/tag/latest
 
 Further information
 -------------------
@@ -103,7 +190,7 @@ Contributing
 ------------
 
 Apart from the example markdown documents, tests, and continuous integration,
-which are placed in the `examples/`, `tests/`, and `.circleci/` directories,
+which are placed in the `examples/`, `tests/`, and `.github/` directories,
 the complete source code and documentation of the package are placed in the
 `markdown.dtx` document following the [literate programming][] paradigm.
 Some useful commands, such as building the release archives and typesetting
@@ -123,6 +210,12 @@ command is provided by `Makefile` for convenience. In `markdown.dtx`, the
 documentation is placed inside TeX comments and marked up using the
 [ltxdockit][] LaTeX document class. Support for typesetting the documentation
 is provided by the [doc][] LaTeX package.
+
+To facilitate continuous integration and sharing of the Markdown package,
+there exists an [official Docker image][docker-witiko/markdown], which can be
+reproduced by running the `docker build` command on `Dockerfile` (`docker build
+-t witiko/markdown .`). The `make docker-image` command is provided by
+`Makefile` for convenience.
 
  [doc]:                  https://ctan.org/pkg/doc                           "doc – Format LaTeX documentation"
  [DocStrip]:             https://ctan.org/pkg/docstrip                      "docstrip – Remove comments from file"
