@@ -81,6 +81,11 @@
   },
 }
 
+% Set up Unicode characters.
+\usepackage{newunicodechar}
+\newunicodechar{☒}{\markdownRendererTickedBox}
+\newunicodechar{☐}{\markdownRendererUntickedBox}
+
 % Set up the catcodes.
 \catcode`\_=12 % We won't be typesetting much math and Lua contains lots of `_`.
 \catcode`\^^B=8 % When we occasionally need subscripts , we will use `^^B` (STX).
@@ -882,29 +887,26 @@ local md5 = require("md5")
 % \par
 % \begin{markdown}
 %
-% The following packages are soft prerequisites and will not be loaded
-% if the `plain` package option has been enabled (see Section
-% \ref{sec:latexplain}):
+% The following packages are soft prerequisites. They are only used to provide
+% default token renderer prototype (see Section
+% \ref{sec:texrendererprototypes}) and will not be loaded if the `plain`
+% package option has been enabled (see Section \ref{sec:latexplain}):
 %
 % \pkg{url}
 %
 %:    A package that provides the \m{url} macro for the typesetting of
-%     \acro{url}s. It is used to provide the default token renderer
-%     prototype (see Section \ref{sec:texrendererprototypes}) for links.
+%     links.
 %
 % \pkg{graphicx}
 %
 %:    A package that provides the \m{includegraphics} macro for the typesetting
-%     of images. It is used to provide the corresponding default token renderer
-%     prototype (see Section \ref{sec:texrendererprototypes}).
+%     of images.
 %
 % \pkg{paralist}
 %
 %:    A package that provides the \envm{compactitem}, \envm{compactenum}, and
 %     \envm{compactdesc} macros for the typesetting of tight bulleted lists,
-%     ordered lists, and definition lists. It is used to provide the
-%     corresponding default token renderer prototypes (see Section
-%     \ref{sec:texrendererprototypes}).
+%     ordered lists, and definition lists.
 %
 % \pkg{ifthen}
 %
@@ -912,26 +914,27 @@ local md5 = require("md5")
 %     values. It is used to determine whether or not the \pkg{paralist} package
 %     should be loaded based on the user options, in the `witiko/dot` \LaTeX{}
 %     theme (see Section \ref{sec:latexthemes}), and to provide default token
-%     renderer prototypes (see Section \ref{sec:texrendererprototypes}).
+%     renderer prototypes.
 %
 % \pkg{fancyvrb}
 %
 %:    A package that provides the \m{VerbatimInput} macros for the verbatim
-%     inclusion of files containing code. It is used to provide the
-%     corresponding default token renderer prototype (see Section
-%     \ref{sec:texrendererprototypes}).
+%     inclusion of files containing code.
 %
 % \pkg{csvsimple}
 %
-%:    A package that provides the default token renderer prototype for
-%     iA\,Writer content blocks with the \acro{csv} filename extension (see
-%     Section \ref{sec:texrendererprototypes}).
+%:    A package that provides the \m{csvautotabular} macro for typesetting
+%     \acro{csv} files.
 %
 % \pkg{gobble}
 %
 %:    A package that provides the \m{\@gobblethree} \TeX{} command that
-%     is used in the default renderer prototype for citations (see
-%     Section \ref{sec:texrendererprototypes}).
+%     is used in the default renderer prototype for citations.
+%
+% \pkg{amsmath} and \pkg{amssymb}
+%
+%:    A package that provides symbols used for drawing ticked and unticked
+%     boxes.
 %
 % \end{markdown}
 % \iffalse
@@ -5687,7 +5690,7 @@ defaultOptions.stripIndent = false
 
 :    false
 
-     :  Enable the Pandoc `table_captions` syntax extension.
+     :  Disable the Pandoc `table_captions` syntax extension.
 
 % \end{markdown}
 % \iffalse
@@ -5766,6 +5769,99 @@ following text:
 % \fi
 %  \begin{macrocode}
 defaultOptions.tableCaptions = false
+%    \end{macrocode}
+% \par
+% \iffalse
+%</lua,lua-cli>
+%<*manual-options>
+
+#### Option `taskLists`
+
+`taskLists` (default value: `false`)
+
+% \fi
+% \begin{markdown}
+%
+% \Optitem[false]{taskLists}{\opt{true}, \opt{false}}
+%
+:    true
+
+     :   Enable the Pandoc `task_lists` syntax extension.
+       
+
+        ``` md
+        - [ ] an unchecked task list item
+        - [x] checked item
+        ``````
+
+:    false
+
+     :  Disable the Pandoc `task_lists` syntax extension.
+
+% \end{markdown}
+% \iffalse
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\documentclass{article}
+\usepackage[taskLists]{markdown}
+\markdownSetup{
+  renderers = {
+    untickedBox = No,
+    tickedBox = Yes,
+  },
+}
+\begin{document}
+\begin{markdown}
+- [ ] you can't.
+- [x] I can!
+\end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> - No you can't.
+> - Yes I can!
+
+##### \Hologo{ConTeXt} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\usemodule[t][markdown]
+\def\markdownOptionTaskLists{true}
+\def\markdownRendererUntickedBox{No}
+\def\markdownRendererTickedBox{Yes}
+\starttext
+\startmarkdown
+- [ ] you can't.
+- [x] I can!
+\stopmarkdown
+\stoptext
+````````
+Next, invoke LuaTeX from the terminal:
+``` sh
+context document.tex
+`````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> - No you can't.
+> - Yes I can!
+
+%</manual-options>
+%<*lua,lua-cli>
+% \fi
+%  \begin{macrocode}
+defaultOptions.taskLists = false
 %    \end{macrocode}
 % \par
 % \iffalse
@@ -6727,6 +6823,7 @@ bug](https://github.com/witiko/markdown/issues).
 \let\markdownOptionStartNumber\undefined
 \let\markdownOptionStripIndent\undefined
 \let\markdownOptionTableCaptions\undefined
+\let\markdownOptionTaskLists\undefined
 \let\markdownOptionTeXComments\undefined
 \let\markdownOptionTightLists\undefined
 %    \end{macrocode}
@@ -6821,6 +6918,93 @@ In this section, I will describe the individual token renderers.
 % macros are intended to be redefined by the user who is typesetting a
 % document. By default, they point to the corresponding prototypes (see Section
 % \ref{sec:texrendererprototypes}).
+
+#### Tickbox Renderers
+The macros named \mdef{markdownRendererTickedBox} and
+\mdef{markdownRendererUntickedBox} represent ticked and unticked boxes,
+respectively. These macros will either be produced, when the \Opt{taskLists}
+option is enabled, or when the Ballot Box with X (☒, U+2612) or Ballot Box
+(☐, U+2610) Unicode characters are encountered in the markdown input,
+respectively.
+
+% \end{markdown}
+%
+% \iffalse
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\documentclass{article}
+\usepackage[taskLists]{markdown}
+\markdownSetup{
+  renderers = {
+    untickedBox = No,
+    tickedBox = Yes,
+  },
+}
+\begin{document}
+\begin{markdown}
+- [ ] you can't.
+- [x] I can!
+\end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> - No you can't.
+> - Yes I can!
+
+##### \Hologo{ConTeXt} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\usemodule[t][markdown]
+\def\markdownOptionTaskLists{true}
+\def\markdownRendererUntickedBox{No}
+\def\markdownRendererTickedBox{Yes}
+\starttext
+\startmarkdown
+- [ ] you can't.
+- [x] I can!
+\stopmarkdown
+\stoptext
+````````
+Next, invoke LuaTeX from the terminal:
+``` sh
+context document.tex
+`````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> - No you can't.
+> - Yes I can!
+
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererTickedBox{%
+  \markdownRendererTickedBoxPrototype}%
+\def\markdownRendererUntickedBox{%
+  \markdownRendererUntickedBoxPrototype}%
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
 
 #### Interblock Separator Renderer
 The \mdef{markdownRendererInterblockSeparator} macro represents a separator
@@ -10716,6 +10900,8 @@ following text:
 \def\markdownRendererTextCitePrototype#1{}%
 \def\markdownRendererTablePrototype#1#2#3{}%
 \def\markdownRendererInlineHtmlCommentPrototype#1{}%
+\def\markdownRendererTickedBoxPrototype{}%
+\def\markdownRendererUntickedBoxPrototype{}%
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -11588,6 +11774,8 @@ The following ordered list will be preceded by roman numerals:
   \def\markdownOptionStripIndent{#1}}%
 \define@key{markdownOptions}{tableCaptions}[true]{%
   \def\markdownOptionTableCaptions{#1}}%
+\define@key{markdownOptions}{taskLists}[true]{%
+  \def\markdownOptionTaskLists{#1}}%
 \define@key{markdownOptions}{texComments}[true]{%
   \def\markdownOptionTeXComments{#1}}%
 \define@key{markdownOptions}{tightLists}[true]{%
@@ -11778,6 +11966,10 @@ The following ordered list will be preceded by roman numerals:
   \renewcommand\markdownRendererTable[3]{#1}}%
 \define@key{markdownRenderers}{inlineHtmlComment}{%
   \renewcommand\markdownRendererInlineHtmlComment[1]{#1}}%
+\define@key{markdownRenderers}{tickedBox}{%
+  \renewcommand\markdownRendererTickedBox{#1}}%
+\define@key{markdownRenderers}{untickedBox}{%
+  \renewcommand\markdownRendererUntickedBox{#1}}%
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -11923,6 +12115,10 @@ The following ordered list will be preceded by roman numerals:
   \renewcommand\markdownRendererTablePrototype[3]{#1}}%
 \define@key{markdownRendererPrototypes}{inlineHtmlComment}{%
   \renewcommand\markdownRendererInlineHtmlCommentPrototype[1]{#1}}%
+\define@key{markdownRendererPrototypes}{tickedBox}{%
+  \renewcommand\markdownRendererTickedBoxPrototype{#1}}%
+\define@key{markdownRendererPrototypes}{untickedBox}{%
+  \renewcommand\markdownRendererUntickedBoxPrototype{#1}}%
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -14717,6 +14913,8 @@ function M.writer.new(options)
    }
    local escaped_minimal_strings = {
      ["^^"] = "\\markdownRendererCircumflex\\markdownRendererCircumflex ",
+     ["☒"] = "\\markdownRendererTickedBox{}",
+     ["☐"] = "\\markdownRendererUntickedBox{}",
    }
 %    \end{macrocode}
 % \par
@@ -14729,7 +14927,7 @@ function M.writer.new(options)
 %
 % \end{markdown}
 %  \begin{macrocode}
-  local escape = util.escaper(escaped_chars)
+  local escape = util.escaper(escaped_chars, escaped_minimal_strings)
   local escape_citation = util.escaper(escaped_citation_chars,
     escaped_minimal_strings)
   local escape_uri = util.escaper(escaped_uri_chars, escaped_minimal_strings)
@@ -15059,6 +15257,22 @@ function M.writer.new(options)
 %  \begin{macrocode}
   function self.emphasis(s)
     return {"\\markdownRendererEmphasis{",s,"}"}
+  end
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Define \luamdef{writer->tickbox} as a function that will transform a
+% boolean `b` to the output format.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  function self.tickbox(b)
+    if b then
+      return "☒ "
+    else
+      return "☐ "
+    end
   end
 %    \end{macrocode}
 % \par
@@ -15472,6 +15686,15 @@ parsers.bullet = ( parsers.bulletchar * #parsers.spacing
                  + parsers.space * parsers.space * parsers.space
                                  * parsers.bulletchar * #parsers.spacing
                  )
+
+parsers.ticked_box = parsers.optionalspace * parsers.lbracket
+                   * S("xX") * parsers.rbracket
+                   * parsers.spacechar^1 * Cc(true)
+
+parsers.unticked_box = parsers.optionalspace * parsers.lbracket
+                     * parsers.spacechar^1 * parsers.rbracket
+                     * parsers.spacechar^1 * Cc(false)
+
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -16752,6 +16975,14 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
 %  \begin{macrocode}
   larsers.starter = parsers.bullet + larsers.enumerator
 
+  if options.taskLists then
+    larsers.tickbox = ( parsers.ticked_box
+                      + parsers.unticked_box
+                      ) / writer.tickbox
+  else
+     larsers.tickbox = parsers.fail
+  end
+
   -- we use \001 as a separator between a tight list item and a
   -- nested list under it.
   larsers.NestedList            = Cs((parsers.optionallyindentedline
@@ -16769,14 +17000,14 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
 
   larsers.TightListItem = function(starter)
       return -larsers.HorizontalRule
-             * (Cs(starter / "" * larsers.ListBlock * larsers.NestedList^-1)
+             * (Cs(starter / "" * larsers.tickbox^-1 * larsers.ListBlock * larsers.NestedList^-1)
                / parse_blocks)
              * -(parsers.blanklines * parsers.indent)
   end
 
   larsers.LooseListItem = function(starter)
       return -larsers.HorizontalRule
-             * Cs( starter / "" * larsers.ListBlock * Cc("\n")
+             * Cs( starter / "" * larsers.tickbox^-1 * larsers.ListBlock * Cc("\n")
                * (larsers.NestedList + larsers.ListContinuationBlock^0)
                * (parsers.blanklines / "\n\n")
                ) / parse_blocks
@@ -17369,6 +17600,8 @@ end
 \def\markdownRendererFootnotePrototype#1{#1}%
 \def\markdownRendererCitePrototype#1{}%
 \def\markdownRendererTextCitePrototype#1{}%
+\def\markdownRendererTickedBoxPrototype{[x]}%
+\def\markdownRendererUntickedBoxPrototype{[ ]}%
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -17462,6 +17695,9 @@ end
 \fi
 \ifx\markdownOptionTableCaptions\undefined\else
   tableCaptions = \markdownOptionTableCaptions,
+\fi
+\ifx\markdownOptionTaskLists\undefined\else
+  taskLists = \markdownOptionTaskLists,
 \fi
 \ifx\markdownOptionTeXComments\undefined\else
   texComments = \markdownOptionTeXComments,
@@ -18378,6 +18614,8 @@ end
     olEndTight = {\markdownRendererOlEnd},
     dlBeginTight = {\markdownRendererDlBegin},
     dlEndTight = {\markdownRendererDlEnd}}}}
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
 \RequirePackage{csvsimple}
 \RequirePackage{fancyvrb}
 \RequirePackage{graphicx}
@@ -18414,7 +18652,6 @@ end
       \label{fig:#1}%
     \end{figure}},
   ulBegin = {\begin{itemize}},
-  ulItem = {\item{}},
   ulEnd = {\end{itemize}},
   olBegin = {\begin{enumerate}},
   olItem = {\item{}},
@@ -18424,6 +18661,8 @@ end
   dlItem = {\item[#1]},
   dlEnd = {\end{description}},
   emphasis = {\emph{#1}},
+  tickedBox = {\ensuremath{\text{\rlap{$\checkmark$}}\square}},
+  untickedBox = {\ensuremath{\square}},
   blockQuoteBegin = {\begin{quotation}},
   blockQuoteEnd = {\end{quotation}},
   inputVerbatim = {\VerbatimInput{#1}},
@@ -18496,6 +18735,35 @@ end
     headingFive = {\paragraph{#1}\leavevmode},
     headingSix = {\subparagraph{#1}\leavevmode}}}
 }%
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% If the \Opt{taskLists} option is enabled, we will hide bullets in unordered
+% list items with tickboxes.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\markdownSetup{
+  rendererPrototypes = {
+    ulItem = {%
+      \futurelet\markdownLaTeXCheckbox\markdownLaTeXUlItem
+    },
+  },
+}
+\def\markdownLaTeXUlItem{%
+  \ifx\markdownLaTeXCheckbox\markdownRendererTickedBox
+    \item[$\markdownLaTeXCheckbox$]\expandafter\expandafter
+    \expandafter\@gobble
+  \else
+    \ifx\markdownLaTeXCheckbox\markdownRendererUntickedBox
+      \item[$\markdownLaTeXCheckbox$]\expandafter\expandafter
+      \expandafter\@gobble
+    \else
+      \item{}%
+    \fi
+  \fi
+}
 %    \end{macrocode}
 % \par
 % \begin{markdown}
