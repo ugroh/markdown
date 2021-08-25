@@ -51,10 +51,15 @@ Hello *Markdown*!
 \end{document}
 ```
 
-Next, run LuaLaTeX from [our official Docker image][docker-witiko/markdown]:
+Next, run the [LaTeXMK][] tool from
+[our official Docker image][docker-witiko/markdown] on `document.tex`:
 
 ```
-$ docker run --rm -v "$PWD":/workdir -w /workdir witiko/markdown latexmk -lualatex document.tex
+docker run --rm -dit --name my-first-markdown-document witiko/markdown
+docker cp document.tex my-first-markdown-document:/
+docker exec my-first-markdown-document latexmk -lualatex document.tex
+docker cp my-first-markdown-document:/document.pdf .
+docker stop my-first-markdown-document
 ```
 
 A PDF document named `document.pdf` should be produced and contain the
@@ -62,7 +67,7 @@ following output:
 
  ![banner](banner.png "An example LaTeX document using the Markdown package")
 
-Congratulations, You just typeset your first Markdown document!
+Congratulations, you have just typeset your first Markdown document! 🥳
 
 ### Continuous integration
 
