@@ -49,10 +49,10 @@ tickedBox
 emphasis: here is loose nested item with a ticked box
 olItemEnd
 olItemWithNumber: 4
-emphasis: some item with a Unicode unticked box (untickedBox){}
+emphasis: some item with a Unicode unticked box (untickedBox)
 olItemEnd
 olItemWithNumber: 5
-emphasis: some item with a Unicode ticked box (tickedBox){}
+emphasis: some item with a Unicode ticked box (tickedBox)
 olItemEnd
 olEnd
 ulItemEnd
