@@ -1,8 +1,11 @@
 Markdown
 ========
 
+[![license](https://img.shields.io/github/license/witiko/markdown)](LICENSE)
 [![release](https://img.shields.io/github/release/witiko/markdown.svg)][release]
 [![ci](https://github.com/witiko/markdown/actions/workflows/main.yml/badge.svg)][ci]
+[![docker pulls](https://img.shields.io/docker/pulls/witiko/markdown)][docker-witiko/markdown]
+[![docker image size](https://img.shields.io/docker/image-size/witiko/markdown)][docker-witiko/markdown]
 
  [release]:  https://github.com/Witiko/markdown/releases/latest  "Releases · Witiko/markdown"
  [ci]:       https://github.com/Witiko/markdown/actions          "GitHub Actions"
