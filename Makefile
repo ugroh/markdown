@@ -41,11 +41,11 @@ EVERYTHING=$(RESOURCES) $(INSTALLABLES)
 all: $(MAKEABLES)
 	$(MAKE) clean
 
-# This target extracts the source files out of the DTX archive.
+# This pseudo-target extracts the source files out of the DTX archive.
 base: $(INSTALLABLES)
 	$(MAKE) clean
 
-# This target builds a witiko/markdown Docker image.
+# This pseudo-target builds a witiko/markdown Docker image.
 docker-image:
 	docker build -t witiko/markdown:latest .
 	docker tag witiko/markdown:latest witiko/markdown:$(shell git describe --tags --always --long)
