@@ -2,7 +2,7 @@ Markdown
 ========
 
 [![release](https://img.shields.io/github/release/witiko/markdown.svg)][release]
-[![ci](https://github.com/Witiko/markdown/workflows/Test/badge.svg)][ci]
+[![ci](https://github.com/witiko/markdown/actions/workflows/main.yml/badge.svg)][ci]
 
  [release]:  https://github.com/Witiko/markdown/releases/latest  "Releases · Witiko/markdown"
  [ci]:       https://github.com/Witiko/markdown/actions          "GitHub Actions"
@@ -97,10 +97,14 @@ jobs:
           files: document.pdf
 ```
 
+In fact, this is how we automatically produce
+[the latest documentation][latest-release] for the Markdown package.
+
  [docker-witiko/markdown]: https://hub.docker.com/r/witiko/markdown  "witiko/markdown - Docker Image"
  [docker-texlive/texlive]: https://hub.docker.com/r/texlive/texlive  "texlive/texlive - Docker Image"
 
- [github-actions]: https://docs.github.com/actions
+ [github-actions]: https://docs.github.com/actions  "GitHub Actions Documentation"
+ [latest-release]: https://github.com/witiko/markdown/releases/tag/latest
 
 Further information
 -------------------
