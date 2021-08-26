@@ -2,11 +2,11 @@
 %<*driver>
 \documentclass{ltxdockit}
 \usepackage[american]{babel}
-\usepackage{amsmath,btxdockit,doc,emoji,fancyvrb,graphicx,hologo,microtype,minted}
-\usepackage{fontspec}
-\defaultfontfeatures[\rmfamily,\sffamily,\ttfamily]{}
+\usepackage{amsmath,btxdockit,doc,emoji,fancyvrb,graphicx,hologo,microtype,minted,varioref}
 
 % Set up the style.
+\usepackage{fontspec}
+\defaultfontfeatures[\rmfamily,\sffamily,\ttfamily]{}
 \emergencystretch=1em
 \fvset{gobble=0,frame=single}
 \setcounter{secnumdepth}{4}
@@ -775,8 +775,8 @@ syntax is encouraged. 😉
 
 % This document is a technical documentation for the \pkg{Markdown} package. It
 % consists of three sections. This section introduces the package and outlines
-% its prerequisites. Section \ref{sec:interfaces} describes the interfaces
-% exposed by the package. Section \ref{sec:implementation} describes the
+% its prerequisites. Section \vref{sec:interfaces} describes the interfaces
+% exposed by the package. Section \vref{sec:implementation} describes the
 % implementation of the package. The technical documentation contains only a
 % limited number of tutorials and code examples. You can find more of these in
 % the [user manual.][manual]
@@ -1005,7 +1005,7 @@ local md5 = require("md5")
 % \label{sec:texprerequisites}
 % The plain \TeX{} part of the package requires that the plain \TeX{}
 % format (or its superset) is loaded, all the Lua prerequisites (see
-% Section \ref{sec:luaprerequisites}), and the following Lua module:
+% Section \vref{sec:luaprerequisites}), and the following Lua module:
 %
 % \pkg{Lua File System}
 %
@@ -1023,7 +1023,7 @@ local md5 = require("md5")
 % engine~[@luatex17, Section~3.3].
 %
 % Unless you convert markdown documents to \TeX{} manually using the Lua
-% command-line interface (see Section~\ref{sec:lua-cli-interface}), the plain
+% command-line interface (see Section \vref{sec:lua-cli-interface}), the plain
 % \TeX{} part of the package will require that either the Lua\TeX{}
 % \m{directlua} primitive or the shell access file stream 18 is available in
 % your \TeX{} engine. If only the shell access file stream is available in your
@@ -1057,7 +1057,7 @@ local md5 = require("md5")
 % \fi
 % \begin{markdown}
 % a \TeX{} engine that extends \Hologo{eTeX}, all the plain \TeX{}
-% prerequisites (see Section \ref{sec:texprerequisites}), and the following
+% prerequisites (see Section \vref{sec:texprerequisites}), and the following
 % \Hologo{LaTeX2e} packages:
 %
 % \pkg{keyval}
@@ -1087,8 +1087,8 @@ local md5 = require("md5")
 %
 % The following packages are soft prerequisites. They are only used to provide
 % default token renderer prototype (see Section
-% \ref{sec:texrendererprototypes}) and will not be loaded if the `plain`
-% package option has been enabled (see Section \ref{sec:latexplain}):
+% \vref{sec:texrendererprototypes}) and will not be loaded if the `plain`
+% package option has been enabled (see Section \vref{sec:latexplain}):
 %
 % \pkg{url}
 %
@@ -1111,7 +1111,7 @@ local md5 = require("md5")
 %:    A package that provides a concise syntax for the inspection of macro
 %     values. It is used to determine whether or not the \pkg{paralist} package
 %     should be loaded based on the user options, in the `witiko/dot` \LaTeX{}
-%     theme (see Section \ref{sec:latexthemes}), and to provide default token
+%     theme (see Section \vref{sec:latexthemes}), and to provide default token
 %     renderer prototypes.
 %
 % \pkg{fancyvrb}
@@ -1145,14 +1145,14 @@ local md5 = require("md5")
 %### \Hologo{ConTeXt} Prerequisites
 % The \Hologo{ConTeXt} part of the package requires that either the Mark II or
 % the Mark IV format is loaded, all the plain \TeX{} prerequisites (see
-% Section \ref{sec:texprerequisites}), and the following \Hologo{ConTeXt}
+% Section \vref{sec:texprerequisites}), and the following \Hologo{ConTeXt}
 % modules:
 %
 % \pkg{m-database}
 %
 %:    A module that provides the default token renderer prototype for
 %     iA\,Writer content blocks with the \acro{csv} filename extension (see
-%     Section \ref{sec:texrendererprototypes}).
+%     Section \vref{sec:texrendererprototypes}).
 %
 % Interfaces
 %===========
@@ -1166,19 +1166,19 @@ local md5 = require("md5")
 % user that if they only access the package through the interface, the future
 % minor versions of the package should remain backwards compatible.
 %
-% Figure~\ref{fig:block-diagram-interfaces} shows the high-level structure of
-% the Markdown package: The translation from markdown to \TeX{} *token
-% renderers* is exposed by the Lua layer. The plain \TeX{} layer exposes the
-% conversion capabilities of Lua as \TeX{} macros. The \LaTeX{} and
-% \Hologo{ConTeXt} layers provide syntactic sugar on top of plain \TeX{}
-% macros. The user can interface with any and all layers.
+% Figure \vref{fig:block-diagram} shows the high-level structure of the Markdown
+% package: The translation from markdown to \TeX{} *token renderers* is exposed
+% by the Lua layer. The plain \TeX{} layer exposes the conversion capabilities
+% of Lua as \TeX{} macros. The \LaTeX{} and \Hologo{ConTeXt} layers provide
+% syntactic sugar on top of plain \TeX{} macros. The user can interface with
+% any and all layers.
 %
 % \end{markdown}
 % \begin{figure}
 % \centering
 % \input markdown-figure-block-diagram
 % \caption{A block diagram of the \pkg{Markdown} package.}
-% \label{fig:block-diagram-interfaces}
+% \label{fig:block-diagram}
 % \end{figure}
 % \iffalse
 %</context>
@@ -1414,7 +1414,7 @@ module and a command-line interface (CLI).
 %
 % The Lua interface provides the conversion from \acro{utf}-\oldstylenums8
 % encoded markdown to plain \TeX{}. This interface is used by the plain \TeX{}
-% implementation (see Section \ref{sec:teximplementation}) and will be of
+% implementation (see Section \vref{sec:teximplementation}) and will be of
 % interest to the developers of other packages and Lua modules.
 %
 % The Lua interface is implemented by the `markdown` Lua module.
@@ -1431,7 +1431,7 @@ local M = {metadata = metadata}
 % The Lua interface exposes the \luamdef{new}`(options)` method.  This
 % method creates converter functions that perform the conversion from markdown
 % to plain \TeX{} according to the table `options` that contains options
-% recognized by the Lua interface.  (see Section \ref{sec:luaoptions}). The
+% recognized by the Lua interface.  (see Section \vref{sec:luaoptions}). The
 % `options` parameter is optional; when unspecified, the behaviour will be
 % the same as if `options` were an empty table.
 %
@@ -3480,7 +3480,7 @@ defaultOptions.contentBlocks = false
 %
 :    The filename of the JSON file that maps filename extensions to
      programming language names in the iA\,Writer content blocks.
-%    See Section~\ref{sec:texcontentblockrenderers} for more information.
+%    See Section \vref{sec:texcontentblockrenderers} for more information.
 
 % \end{markdown}
 % \iffalse
@@ -6437,7 +6437,7 @@ defaultOptions.underscores = true
 % between several programming layers: the plain \TeX{} layer hands markdown
 % documents to the Lua layer. Lua converts the documents to \TeX{}, and hands
 % the converted documents back to plain \TeX{} layer for typesetting, see
-% Figure~\ref{fig:sequence-diagram-tex-interface}.
+% Figure \vref{fig:sequence-diagram-tex-interface}.
 %
 % This procedure has the advantage of being fully automated. However, it also
 % has several important disadvantages: The converted \TeX{} documents are
@@ -6449,7 +6449,7 @@ defaultOptions.underscores = true
 % A solution to the above problems is to decouple the conversion from the
 % typesetting. For this reason, a command-line Lua interface for converting a
 % markdown document to \TeX{} is also provided, see
-% Figure~\ref{fig:sequence-diagram-lua-cli}.
+% Figure \vref{fig:sequence-diagram-lua-cli}.
 %
 % \end{markdown}
 % \begin{figure}
@@ -6537,7 +6537,7 @@ for i = 1, #arg do
 % Unless the `-`{}`-` argument has been specified before, an argument
 % containing the equals sign (`=`) is assumed to be an option specification in
 % a \meta{key}`=`\meta{value} format. The available options are listed in
-% Section~\ref{sec:luaoptions}.
+% Section \vref{sec:luaoptions}.
 % \end{markdown}
 %  \begin{macrocode}
     elseif arg[i]:match("=") then
@@ -6695,7 +6695,7 @@ pdftex --shell-escape document.tex
 %
 % The plain \TeX{} interface provides macros for the typesetting of markdown
 % input from within plain \TeX{}, for setting the Lua interface options (see
-% Section \ref{sec:luaoptions}) used during the conversion from markdown to
+% Section \vref{sec:luaoptions}) used during the conversion from markdown to
 % plain \TeX{} and for changing the way markdown the tokens are rendered.
 %
 % \end{markdown}
@@ -6803,7 +6803,7 @@ pdftex --shell-escape document.tex
 %
 % The plain \TeX{} options are represented by \TeX{} commands. Some of them map
 % directly to the options recognized by the Lua interface (see
-% Section~\ref{sec:luaoptions}), while some of them are specific to the plain
+% Section \vref{sec:luaoptions}), while some of them are specific to the plain
 % \TeX{} interface.
 %
 % \end{markdown}
@@ -7055,7 +7055,7 @@ bug](https://github.com/witiko/markdown/issues).
 %
 %#### Lua Interface Options
 % The following macros map directly to the options recognized by the Lua
-% interface (see Section \ref{sec:luaoptions}) and are not processed by the
+% interface (see Section \vref{sec:luaoptions}) and are not processed by the
 % plain \TeX{} implementation, only passed along to Lua. They are undefined, which
 % makes them fall back to the default values provided by the Lua interface.
 %
@@ -7142,7 +7142,7 @@ A PDF document named `document.pdf` should be produced and contain the text
 %
 % The \mdef{markdownOptionStripPercentSigns} macro controls whether a percent
 % sign (`%`) at the beginning of a line will be discarded when buffering
-% Markdown input (see Section~\ref{sec:buffering}) or not. Notably, this
+% Markdown input (see Section \vref{sec:buffering}) or not. Notably, this
 % enables the use of markdown when writing \TeX{} package documentation using
 % the \pkg{Doc} \LaTeX{}~package~[@mittelbach17] or similar. The recognized
 % values of the macro are `true` (discard) and `false` (retain). It defaults
@@ -7180,10 +7180,10 @@ In this section, I will describe the individual token renderers.
 %
 % The following \TeX{} macros may occur inside the output of the
 % converter functions exposed by the Lua interface (see Section
-% \ref{sec:luaconversion}) and represent the parsed markdown tokens. These
+% \vref{sec:luaconversion}) and represent the parsed markdown tokens. These
 % macros are intended to be redefined by the user who is typesetting a
 % document. By default, they point to the corresponding prototypes (see Section
-% \ref{sec:texrendererprototypes}).
+% \vref{sec:texrendererprototypes}).
 
 #### Tickbox Renderers
 The macros named \mdef{markdownRendererTickedBox} and
@@ -11098,11 +11098,11 @@ following text:
 % \begin{markdown}
 %
 % The following \TeX{} macros provide definitions for the token renderers (see
-% Section \ref{sec:texrenderersuser}) that have not been redefined by the
+% Section \vref{sec:texrenderersuser}) that have not been redefined by the
 % user. These macros are intended to be redefined by macro package authors
 % who wish to provide sensible default token renderers. They are also redefined
 % by the \LaTeX{} and \Hologo{ConTeXt} implementations (see sections
-% \ref{sec:lateximplementation} and \ref{sec:contextimplementation}).
+% \vref{sec:lateximplementation} and \vref{sec:contextimplementation}).
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -11225,7 +11225,7 @@ following text:
 % \begin{markdown}
 % The macro is exposed in the interface, so that the user can create their own
 % markdown environments. Due to the way the arguments are passed to Lua (see
-% Section \ref{sec:directlua}), the first argument may not contain the
+% Section \vref{sec:directlua}), the first argument may not contain the
 % string `]]` (regardless of the category code of the bracket symbol (`]`)).
 %
 % The \mdef{markdownMode} macro specifies how the plain \TeX{} implementation
@@ -11329,10 +11329,10 @@ pdflatex --shell-escape document.tex
 %
 % The \LaTeX{} interface provides \LaTeX{} environments for the typesetting of
 % markdown input from within \LaTeX{}, facilities for setting Lua interface
-% options (see Section \ref{sec:luaoptions}) used during the conversion from
+% options (see Section \vref{sec:luaoptions}) used during the conversion from
 % markdown to plain \TeX{}, and facilities for changing the way markdown tokens
 % are rendered. The rest of the interface is inherited from the plain \TeX{}
-% interface (see Section \ref{sec:texinterface}).
+% interface (see Section \vref{sec:texinterface}).
 %
 % The \LaTeX{} interface is implemented by the `markdown.sty` file, which
 % can be loaded from the \LaTeX{} document preamble as follows:
@@ -11342,10 +11342,10 @@ pdflatex --shell-escape document.tex
 % \end{Verbatim}
 % \begin{markdown}
 % where \meta{options} are the \LaTeX{} interface options (see Section
-% \ref{sec:latexoptions}). Note that \meta{options} inside the \m{usepackage}
+% \vref{sec:latexoptions}). Note that \meta{options} inside the \m{usepackage}
 % macro may not set the `markdownRenderers` (see Section
-% \ref{sec:latexrenderers}) and `markdownRendererPrototypes` (see Section
-% \ref{sec:latexrendererprototypes}) keys. This limitation is due to the way
+% \vref{sec:latexrenderers}) and `markdownRendererPrototypes` (see Section
+% \vref{sec:latexrendererprototypes}) keys. This limitation is due to the way
 % \Hologo{LaTeX2e} parses package options.
 %
 % \end{markdown}
@@ -11359,7 +11359,7 @@ pdflatex --shell-escape document.tex
 % The \envm{markdown} and \envm{markdown*} \LaTeX{} environments are used to
 % typeset markdown document fragments. The starred version of the
 % \envm{markdown} environment accepts \LaTeX{} interface options (see
-% Section \ref{sec:latexoptions}) as its only argument. These options will
+% Section \vref{sec:latexoptions}) as its only argument. These options will
 % only influence this markdown document fragment.
 %
 % \end{markdown}
@@ -11396,7 +11396,7 @@ pdflatex --shell-escape document.tex
 % the filename of a markdown document and expands to the result of the
 % conversion of the input markdown document to plain \TeX{}.  Unlike the
 % \m{markdownInput} macro provided by the plain \TeX{} interface, this macro
-% also accepts \LaTeX{} interface options (see Section \ref{sec:latexoptions})
+% also accepts \LaTeX{} interface options (see Section \vref{sec:latexoptions})
 % as its optional argument. These options will only influnce this markdown
 % document.
 %
@@ -11420,17 +11420,17 @@ pdflatex --shell-escape document.tex
 % part is optional, and \meta{key} will be interpreted as \meta{key}`=true`
 % if the `=`\meta{value} part has been omitted.
 %
-% Except for the `plain` option described in Section \ref{sec:latexplain}, and
-% the \LaTeX{} themes described in Section \ref{sec:latexthemes}, and the
-% \LaTeX{} setup snippets described in Section \ref{sec:latexsetupsnippets},
+% Except for the `plain` option described in Section \vref{sec:latexplain}, and
+% the \LaTeX{} themes described in Section \vref{sec:latexthemes}, and the
+% \LaTeX{} setup snippets described in Section \vref{sec:latexsetupsnippets},
 % \LaTeX{} options map directly to the options recognized by the plain
-% \TeX{} interface (see Section \ref{sec:texoptions}) and to the markdown token
+% \TeX{} interface (see Section \vref{sec:texoptions}) and to the markdown token
 % renderers and their prototypes recognized by the plain \TeX{} interface (see
-% Sections \ref{sec:texrenderersuser} and \ref{sec:texrendererprototypes}).
+% Sections \vref{sec:texrenderersuser} and \vref{sec:texrendererprototypes}).
 %
 % The \LaTeX{} options may be specified when loading the \LaTeX{} package, when
 % using the \envm{markdown*} \LaTeX{} environment or the \m{markdownInput}
-% macro (see Section \ref{sec:latexinterface}), or via the \mdef{markdownSetup}
+% macro (see Section \vref{sec:latexinterface}), or via the \mdef{markdownSetup}
 % macro. The \m{markdownSetup} macro receives the options to set up as its only
 % argument:
 %
@@ -11464,8 +11464,8 @@ pdflatex --shell-escape document.tex
 %    \end{macrocode}
 % \begin{markdown}
 %
-% See Section \ref{sec:latexthemes} for information on interactions between
-% setup snippets and \LaTeX{} themes. See Section \ref{sec:latexsetupsnippets}
+% See Section \vref{sec:latexthemes} for information on interactions between
+% setup snippets and \LaTeX{} themes. See Section \vref{sec:latexsetupsnippets}
 % for information about invoking the stored setup snippets.
 %
 % \end{markdown}
@@ -11490,8 +11490,8 @@ other packages used in a document.  Additionally, if we redefine token
 renderers and renderer prototypes ourselves, the default definitions will bring
 no benefit to us. Using the `plain` package option, we can keep the default
 definitions from the plain \TeX{} implementation (see Section
-\ref{sec:textokenrendererprototypes}) and prevent the soft \LaTeX{}
-prerequisites in Section \ref{sec:latexprerequisites} from being loaded:
+\vref{sec:textokenrendererprototypes}) and prevent the soft \LaTeX{}
+prerequisites in Section \vref{sec:latexprerequisites} from being loaded:
 
 ``` tex
 \usepackage[plain]{markdown}
@@ -11613,7 +11613,7 @@ would use the following code in the preamble of your document:
 % \begin{markdown}
 %
 % The \LaTeX{} themes have a useful synergy with the setup snippets (see
-% Section \ref{sec:latexoptions}): To make it less likely that different
+% Section \vref{sec:latexoptions}): To make it less likely that different
 % themes will define setup snippets with the same name, we will prepend
 % \meta{theme name}`/` before the snippet name and use the result as the
 % snippet name. For example, if the `witiko/dot` theme defines the `product`
@@ -11689,7 +11689,7 @@ Example themes provided with the Markdown package include:
 %    \end{document}
 %    ````````
 %    Typesetting the above document produces the output shown in
-%    Figure~\ref{fig:witiko/dot}.
+%    Figure \vref{fig:witiko/dot}.
 %    ``` dot Various formats of mathemathical formulae \label{fig:witiko/dot}
 %    digraph tree {
 %      margin = 0;
@@ -11803,7 +11803,7 @@ conference article:
 %    \end{document}
 %    ```````
 %    Typesetting the above document produces the output shown in
-%    Figure~\ref{fig:witiko/graphicx/http}.
+%    Figure \vref{fig:witiko/graphicx/http}.
 %    ![img](https://github.com/witiko/markdown/raw/main/banner.png
 %           "The banner of the Markdown package \label{fig:witiko/graphicx/http}")
      The theme requires the \pkg{catchfile} \LaTeX{} package and a Unix-like
@@ -11906,7 +11906,7 @@ following text, where the middot (`·`) denotes a non-breaking space:
 % \par
 % \begin{markdown}
 %
-% Please, see Section~\ref{sec:latexthemesimplementation} for implementation
+% Please, see Section \vref{sec:latexthemesimplementation} for implementation
 % details of the example themes.
 
 #### \LaTeX{} setup snippets
@@ -11970,7 +11970,7 @@ The following ordered list will be preceded by roman numerals:
 
 %#### Plain \TeX{} Interface Options
 % The following options map directly to the option macros exposed by the plain
-% \TeX{} interface (see Section \ref{sec:texoptions}).
+% \TeX{} interface (see Section \vref{sec:texoptions}).
 %
 % \markdownEnd
 % \iffalse
@@ -12108,7 +12108,7 @@ The following ordered list will be preceded by roman numerals:
 % The \LaTeX{} interface recognizes an option with the `renderers` key,
 % whose value must be a list of options that map directly to the markdown token
 % renderer macros exposed by the plain \TeX{} interface (see Section
-% \ref{sec:texrenderersuser}).
+% \vref{sec:texrenderersuser}).
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -12257,7 +12257,7 @@ The following ordered list will be preceded by roman numerals:
 % The \LaTeX{} interface recognizes an option with the `rendererPrototypes`
 % key, whose value must be a list of options that map directly to the markdown
 % token renderer prototype macros exposed by the plain \TeX{} interface (see
-% Section \ref{sec:texrendererprototypes}).
+% Section \vref{sec:texrendererprototypes}).
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -12463,7 +12463,7 @@ texexec --passon=--shell-escape document.tex
 % The \Hologo{ConTeXt} interface provides a start-stop macro pair for the
 % typesetting of markdown input from within \Hologo{ConTeXt}. The rest of the
 % interface is inherited from the plain \TeX{} interface (see Section
-% \ref{sec:texinterface}).
+% \vref{sec:texinterface}).
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -12517,24 +12517,17 @@ texexec --passon=--shell-escape document.tex
 %===============
 % \label{sec:implementation}
 % This part of the documentation describes the implementation of the interfaces
-% exposed by the package (see Section \ref{sec:interfaces}) and is aimed at the
+% exposed by the package (see Section \vref{sec:interfaces}) and is aimed at the
 % developers of the package, as well as the curious users.
 %
-% Figure~\ref{fig:block-diagram-implementation} shows the high-level structure
-% of the Markdown package: The translation from markdown to \TeX{} *token
-% renderers* is performed by the Lua layer. The plain \TeX{} layer provides
-% default definitions for the token renderers. The \LaTeX{} and
-% \Hologo{ConTeXt} layers correct idiosyncrasies of the respective \TeX{}
-% formats, and provide format-specific default definitions for the token
-% renderers.
+% Figure \vref{fig:block-diagram} shows the high-level structure of the Markdown
+% package: The translation from markdown to \TeX{} *token renderers* is
+% performed by the Lua layer. The plain \TeX{} layer provides default
+% definitions for the token renderers. The \LaTeX{} and \Hologo{ConTeXt} layers
+% correct idiosyncrasies of the respective \TeX{} formats, and provide
+% format-specific default definitions for the token renderers.
 %
 % \end{markdown}
-% \begin{figure}
-% \centering
-% \input markdown-figure-block-diagram
-% \caption{A block diagram of the \pkg{Markdown} package.}
-% \label{fig:block-diagram-implementation}
-% \end{figure}
 % \iffalse
 %</context>
 %<*lua>
@@ -12551,7 +12544,7 @@ texexec --passon=--shell-escape document.tex
 % other formats, such as DocBook, Groff, or \acro{HTML}. These were stripped
 % from the module and the remaining markdown reader and plain \TeX{} writer
 % were hidden behind the converter functions exposed by the Lua interface (see
-% Section \ref{sec:luainterface}).
+% Section \vref{sec:luainterface}).
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -14963,7 +14956,7 @@ end
 % `lunamark/writer/latex.lua` files in the Lunamark Lua module.
 %
 % Although not specified in the Lua interface (see Section
-% \ref{sec:luainterface}), the \luam{writer} object is exported, so that the
+% \vref{sec:luainterface}), the \luam{writer} object is exported, so that the
 % curious user could easily tinker with the methods of the objects produced by
 % the \luam{writer.new} method described below. The user should be aware,
 % however, that the implementation may change in a future revision.
@@ -14977,7 +14970,7 @@ M.writer = {}
 %
 % The \luamdef{writer.new} method creates and returns a new \TeX{} writer
 % object associated with the Lua interface options (see Section
-% \ref{sec:luaoptions}) `options`. When `options` are unspecified, it is
+% \vref{sec:luaoptions}) `options`. When `options` are unspecified, it is
 % assumed that an empty table was passed to the method.
 %
 % The objects produced by the \luam{writer.new} method expose instance methods
@@ -16607,14 +16600,14 @@ end
 % `lunamark/reader/markdown.lua` file in the Lunamark Lua module.
 %
 % Although not specified in the Lua interface (see Section
-% \ref{sec:luainterface}), the \luam{reader} object is exported, so that the
+% \vref{sec:luainterface}), the \luam{reader} object is exported, so that the
 % curious user could easily tinker with the methods of the objects produced by
 % the \luam{reader.new} method described below. The user should be aware,
 % however, that the implementation may change in a future revision.
 %
 % The \luamdef{reader.new} method creates and returns a new \TeX{} reader
 % object associated with the Lua interface options (see Section
-% \ref{sec:luaoptions}) `options` and with a writer object `writer`. When
+% \vref{sec:luaoptions}) `options` and with a writer object `writer`. When
 % `options` are unspecified, it is assumed that an empty table was passed to
 % the method.
 %
@@ -17621,7 +17614,7 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
 % \begin{markdown}
 % When determining the name of the cache file, create salt for the hashing
 % function out of the package version and the passed options recognized by the
-% Lua interface (see Section \ref{sec:luaoptions}). The \Opt{cacheDir} option
+% Lua interface (see Section \vref{sec:luaoptions}). The \Opt{cacheDir} option
 % is disregarded.
 % \end{markdown}
 %  \begin{macrocode}
@@ -17677,7 +17670,7 @@ end
 %### Conversion from Markdown to Plain \TeX{}
 % The \luam{new} method returns the \luam{reader->convert} function of a reader
 % object associated with the Lua interface options (see Section
-% \ref{sec:luaoptions}) `options` and with a writer object associated with
+% \vref{sec:luaoptions}) `options` and with a writer object associated with
 % `options`.
 %
 % \end{markdown}
@@ -17700,7 +17693,7 @@ return M
 %### Command-Line Implementation
 % \label{sec:lua-cli-implementation}
 % The command-line implementation provides the actual conversion routine for
-% the command-line interface described in Section~\ref{sec:lua-cli-interface}.
+% the command-line interface described in Section~\vref{sec:lua-cli-interface}.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -17771,7 +17764,7 @@ end
 % The plain \TeX{} implementation provides macros for the interfacing between
 % \TeX{} and Lua and for the buffering of input text. These macros are then
 % used to implement the macros for the conversion from markdown to plain \TeX{}
-% exposed by the plain \TeX{} interface (see Section \ref{sec:texinterface}).
+% exposed by the plain \TeX{} interface (see Section \vref{sec:texinterface}).
 %
 %### Logging Facilities
 % \label{sec:texinterfacelogging}
@@ -17889,8 +17882,8 @@ end
 %
 %### Lua Snippets
 % The \mdef{markdownLuaOptions} macro expands to a Lua table that
-% contains the plain \TeX{} options (see Section \ref{sec:texoptions}) in a
-% format recognized by Lua (see Section \ref{sec:luaoptions}).
+% contains the plain \TeX{} options (see Section \vref{sec:texoptions}) in a
+% format recognized by Lua (see Section \vref{sec:luaoptions}).
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -18233,7 +18226,7 @@ end
 % corresponds to the \m{markdownMode} values of `0` and `1`.
 %
 % The \m{markdownLuaExecute} macro defined here and in Section
-% \ref{sec:directlua} are meant to be indistinguishable to the remaining code.
+% \vref{sec:directlua} are meant to be indistinguishable to the remaining code.
 %
 % The package assumes that although the user is not using the Lua\TeX{} engine,
 % their \TeX{} distribution contains it, and uses shell access to produce and
@@ -18401,7 +18394,7 @@ end
 % \label{sec:directlua}
 % The following \TeX{} code is intended for \TeX{} engines that provide
 % direct access to Lua (Lua\TeX{}). The macro \m{markdownLuaExecute} defined
-% here and in Section \ref{sec:luabridge} are meant to be indistinguishable to
+% here and in Section \vref{sec:luabridge} are meant to be indistinguishable to
 % the remaining code. This corresponds to the \m{markdownMode} value of `2`.
 %
 % \end{markdown}
@@ -18415,7 +18408,7 @@ end
 % The direct Lua access version of the \m{markdownLuaExecute} macro is defined
 % in terms of the \m{directlua} primitive. The \luam{print} function is set as
 % an alias to the \m{tex.print} method in order to mimic the behaviour of the
-% \m{markdownLuaExecute} definition from Section \ref{sec:luabridge},
+% \m{markdownLuaExecute} definition from Section \vref{sec:luabridge},
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -18525,7 +18518,7 @@ end
 % existing plain \TeX{} implementation.
 %
 % The \LaTeX{} implementation redefines the plain \TeX{} logging macros (see
-% Section \ref{sec:texinterfacelogging}) to use the \LaTeX{} \m{PackageInfo},
+% Section \vref{sec:texinterfacelogging}) to use the \LaTeX{} \m{PackageInfo},
 % \m{PackageWarning}, and \m{PackageError} macros.
 %
 % \end{markdown}
@@ -18543,7 +18536,7 @@ end
 %
 %### Logging Facilities
 % The \LaTeX{} implementation redefines the plain \TeX{} logging macros (see
-% Section \ref{sec:texinterfacelogging}) to use the \LaTeX{} \m{PackageInfo},
+% Section \vref{sec:texinterfacelogging}) to use the \LaTeX{} \m{PackageInfo},
 % \m{PackageWarning}, and \m{PackageError} macros.
 %
 % \end{markdown}
@@ -18556,7 +18549,7 @@ end
 % The \mdef{markdownInputPlainTeX} macro is used to store the original plain
 % \TeX{} implementation of the \m{markdownInput} macro. The \m{markdownInput}
 % is then redefined to accept an optional argument with options recognized by
-% the \LaTeX{} interface (see Section \ref{sec:latexoptions}).
+% the \LaTeX{} interface (see Section \vref{sec:latexoptions}).
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -18843,7 +18836,7 @@ end
 %
 %### Token Renderer Prototypes
 % The following configuration should be considered placeholder. If the `plain`
-% package option has been enabled (see Section \ref{sec:latexplain}), none of
+% package option has been enabled (see Section \vref{sec:latexplain}), none of
 % it will take effect.
 % \end{markdown}
 %  \begin{macrocode}
@@ -19419,7 +19412,7 @@ end
 % after supplying the missing plain \TeX{} macros.
 %
 % The \Hologo{ConTeXt} implementation redefines the plain \TeX{} logging macros
-% (see Section \ref{sec:texinterfacelogging}) to use the \Hologo{ConTeXt}
+% (see Section \vref{sec:texinterfacelogging}) to use the \Hologo{ConTeXt}
 % \m{writestatus} macro.
 %
 % \end{markdown}
