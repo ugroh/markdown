@@ -24,7 +24,7 @@ ARG BUILD_DIR=/git-repo
 ARG DIST_DIR=${BUILD_DIR}/dist
 ARG INSTALL_DIR=/usr/local/texlive/texmf-local
 
-FROM texlive/texlive:latest as build
+FROM texlive/texlive:latest-with-cache as build
 ARG DEPENDENCIES
 ARG BUILD_DIR
 ARG DIST_DIR
@@ -57,7 +57,7 @@ RUN set -o errexit \
  && mkdir ${DIST_DIR} \
  && unzip ${BUILD_DIR}/markdown.tds.zip -d ${DIST_DIR}
 
-FROM texlive/texlive:latest
+FROM texlive/texlive:latest-with-cache
 ARG AUXILIARY_FILES
 ARG DEPENDENCIES
 ARG DIST_DIR
