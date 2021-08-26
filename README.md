@@ -167,15 +167,15 @@ For further information, consult one of the following:
 
  [pv212-fall2020]: https://is.muni.cz/el/fi/podzim2020/PV212/index.qwarp?prejit=5595952
 
- [install]:  http://mirrors.ctan.org/macros/generic/markdown/markdown.html#installation "Markdown Package User Manual"
- [liantze]:  http://liantze.penguinattack.org/                                          "Rants from the Lab"
- [manual]:   http://mirrors.ctan.org/macros/generic/markdown/markdown.html              "Markdown Package User Manual"
- [overleaf]: https://www.overleaf.com/                                                  "Overleaf: Real-time Collaborative Writing and Publishing Tools with Integrated PDF Preview"
- [tugboat]:  https://www.tug.org/tugboat/                                               "TUGboat - Communications of the TeX Users Group"
- [cstug]:    https://www.cstug.cz/                                                      "Československé sdružení uživatelů TeXu"
+ [install]:  https://mirrors.ctan.org/macros/generic/markdown/markdown.html#installation "Markdown Package User Manual"
+ [liantze]:  https://liantze.penguinattack.org/                                          "Rants from the Lab"
+ [manual]:   https://mirrors.ctan.org/macros/generic/markdown/markdown.html              "Markdown Package User Manual"
+ [overleaf]: https://www.overleaf.com/                                                   "Overleaf: Real-time Collaborative Writing and Publishing Tools with Integrated PDF Preview"
+ [tugboat]:  https://www.tug.org/tugboat/                                                "TUGboat - Communications of the TeX Users Group"
+ [cstug]:    https://www.cstug.cz/                                                       "Československé sdružení uživatelů TeXu"
 
  [techdoc-latest]:    https://github.com/Witiko/markdown/releases/download/latest/markdown.pdf  "A Markdown Interpreter for TeX"
- [techdoc-tex-live]:  http://mirrors.ctan.org/macros/generic/markdown/markdown.pdf              "A Markdown Interpreter for TeX"
+ [techdoc-tex-live]:  https://mirrors.ctan.org/macros/generic/markdown/markdown.pdf             "A Markdown Interpreter for TeX"
 
 Acknowledgements
 ----------------
@@ -191,10 +191,10 @@ Acknowledgements
  [mu]:     https://www.muni.cz/en               "Masaryk University"
  [Omedym]: https://www.omedym.com/              "Omedym"
 
- [option-pipe-tables]:    http://mirrors.ctan.org/macros/generic/markdown/markdown.html#pipe-tables          "Markdown Package User Manual"
- [option-shift-headings]: http://mirrors.ctan.org/macros/generic/markdown/markdown.html#option-shiftheadings "Markdown Package User Manual"
- [option-slice]:          http://mirrors.ctan.org/macros/generic/markdown/markdown.html#slice                "Markdown Package User Manual"
- [option-table-captions]: http://mirrors.ctan.org/macros/generic/markdown/markdown.html#option-tablecaptions "Markdown Package User Manual"
+ [option-pipe-tables]:    https://mirrors.ctan.org/macros/generic/markdown/markdown.html#pipe-tables          "Markdown Package User Manual"
+ [option-shift-headings]: https://mirrors.ctan.org/macros/generic/markdown/markdown.html#option-shiftheadings "Markdown Package User Manual"
+ [option-slice]:          https://mirrors.ctan.org/macros/generic/markdown/markdown.html#slice                "Markdown Package User Manual"
+ [option-table-captions]: https://mirrors.ctan.org/macros/generic/markdown/markdown.html#option-tablecaptions "Markdown Package User Manual"
 
 Contributing
 ------------
