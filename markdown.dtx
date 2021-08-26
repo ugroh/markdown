@@ -814,33 +814,6 @@ local metadata = {
 if not modules then modules = { } end
 modules['markdown'] = metadata
 %    \end{macrocode}
-% \par
-% \begin{markdown}
-%
-% Feedback
-%---------
-% Please use the \pkg{Markdown} project page on
-% [GitHub](https://github.com/witiko/markdown/issues) to report bugs and submit
-% feature requests. If you do not want to report a bug or request a feature but
-% are simply in need of assistance, you might want to consider posting your
-% question on the [\TeX-\LaTeX{} Stack Exchange.](https://tex.stackexchange.com)
-%
-% Acknowledgements
-%-----------------
-% The Lunamark Lua module provides speedy markdown parsing for the package. I
-% would like to thank John Macfarlane, the creator of Lunamark, for releasing
-% Lunamark under a permissive license.
-%
-% Funding by the the Faculty of Informatics at the Masaryk~University
-% in~Brno~[@novotny15] is gratefully acknowledged.
-%
-% The \TeX{} implementation of the package draws inspiration from several
-% sources including the source code of \Hologo{LaTeX2e}, the \pkg{minted}
-% package by Geoffrey M. Poore, which likewise tackles the issue of
-% interfacing with an external interpreter from \TeX{}, the \pkg{filecontents}
-% package by Scott Pakin and others.
-%
-% \end{markdown}
 % \iffalse
 %</lua>
 %<*manual>
@@ -1151,6 +1124,38 @@ local md5 = require("md5")
 %:    A module that provides the default token renderer prototype for
 %     iA\,Writer content blocks with the \acro{csv} filename extension (see
 %     Section \vref{sec:texrendererprototypes}).
+%
+% Feedback
+%---------
+% Please use the \pkg{Markdown} project page on
+% [GitHub](https://github.com/witiko/markdown/issues) to report bugs and submit
+% feature requests. If you do not want to report a bug or request a feature but
+% are simply in need of assistance, you might want to consider posting your
+% question to the [\TeX-\LaTeX{} Stack Exchange.](https://tex.stackexchange.com)
+% community question answering web site under the `markdown` tag.
+%
+% Acknowledgements
+%-----------------
+% The Lunamark Lua module provides speedy markdown parsing for the package. I
+% would like to thank John Macfarlane, the creator of Lunamark, for releasing
+% Lunamark under a permissive license, which enabled its use in the Markdown
+% package.
+%
+% Extensive user documentation for the Markdown package was kindly written by
+% Lian Tze Lim and published by Overleaf.
+%
+% Funding by the the Faculty of Informatics at the Masaryk~University
+% in~Brno~[@novotny15] is gratefully acknowledged.
+%
+% Support for content slicing (Lua options \Opt{shiftHeadings} and \Opt{slice})
+% and pipe tables (Lua options \Opt{pipeTables} and \Opt{tableCaptions}) was
+% graciously sponsored by David Vins and Omedym.
+%
+% The \TeX{} implementation of the package draws inspiration from several
+% sources including the source code of \Hologo{LaTeX2e}, the \pkg{minted}
+% package by Geoffrey M. Poore, which likewise tackles the issue of
+% interfacing with an external interpreter from \TeX{}, the \pkg{filecontents}
+% package by Scott Pakin and others.
 %
 % Interfaces
 %===========
