@@ -37,11 +37,8 @@
 
 % Set up index.
 \DisableCrossrefs
-\IndexPrologue{%
-  \section*{\indexname}%
-  \addcontentsline{toc}{section}{\indexname}}
-\makeatletter\c@IndexColumns=2\makeatother
 \usepackage{makeidx}
+\usepackage[columns=1, totoc]{idxlayout}
 \makeindex
 
 \newcommand\mdef[1]{% A TeX macro definition
@@ -15322,7 +15319,7 @@ function M.writer.new(options)
 % \begin{markdown}
 %
 % The \luamdef{languages_json} table maps programming language filename
-% extensions to fence infostrings. All \luam{options.contentBlocksLanguageMap}
+% extensions to fence infostrings. All `options.`\luam{contentBlocksLanguageMap}
 % files located by the KPathSea library are loaded into a chain of tables.
 % \luam{languages_json} corresponds to the first table and is chained with
 % the rest via Lua metatables.
@@ -15337,7 +15334,7 @@ function M.writer.new(options)
 % \begin{markdown}
 %
 % If the KPathSea library is unavailable, perhaps because we are using
-% LuaMeta\TeX, we will only locate the \luam{options.contentBlocksLanguageMap}
+% LuaMeta\TeX, we will only locate the `options.`\luam{contentBlocksLanguageMap}
 % in the current working directory:
 %
 % \end{markdown}
