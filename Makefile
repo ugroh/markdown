@@ -37,7 +37,7 @@ RESOURCES=$(DOCUMENTATION) $(EXAMPLES_RESOURCES) $(EXAMPLES_SOURCES) $(EXAMPLES)
   $(MAKES) $(READMES) $(INSTALLER) $(DTXARCHIVE) $(TESTS)
 EVERYTHING=$(RESOURCES) $(INSTALLABLES)
 
-DOCKER_IMAGE_TAG=$(shell git describe --tags --always --long --exclude latest)
+GIT_TAG=$(shell git describe --tags --always --long --exclude latest)
 
 # This is the default pseudo-target. It typesets the manual,
 # the examples, and extracts the package files.
@@ -51,11 +51,12 @@ base: $(INSTALLABLES)
 # This pseudo-target builds a witiko/markdown Docker image.
 docker-image:
 	docker build -t witiko/markdown:latest .
-	docker tag witiko/markdown:latest witiko/markdown:$(DOCKER_IMAGE_TAG)
+	docker tag witiko/markdown:latest witiko/markdown:$(GIT_TAG)
 
 # This target extracts the source files out of the DTX archive.
 $(INSTALLABLES) $(MARKDOWN_USER_MANUAL): $(INSTALLER) $(DTXARCHIVE)
 	xetex $<
+	sed -i 's/\$$GitTag\$$/$(GIT_TAG)/g' $(INSTALLABLES) $(MARKDOWN_USER_MANUAL)
 
 # This target typesets the manual.
 $(TECHNICAL_DOCUMENTATION): $(DTXARCHIVE) $(INSTALLABLES)
