@@ -6399,11 +6399,59 @@ defaultOptions.underscores = true
 %
 %### Command-Line Interface
 % \label{sec:lua-cli-interface}
-% To provide finer control over the conversion and to simplify debugging, a
-% command-line Lua interface for converting a Markdown document to \TeX{} is
-% also provided.
+% The high-level operation of the Markdown package involves the communication
+% between several programming layers: the plain \TeX{} layer hands markdown
+% documents to the Lua layer. Lua converts the documents to \TeX{}, and hands
+% the converted documents back to plain \TeX{} layer for typesetting, see
+% Figure~\ref{fig:sequence-diagram-tex-interface}.
+%
+% This procedure has the advantage of being fully automated. However, it also
+% has several important disadvantages: The converted \TeX{} documents are
+% cached on the file system, taking up increasing amount of space. Unless the
+% \TeX{} engine includes a Lua interpreter, the package also requires shell
+% access, which opens the door for a malicious actor to access the system.
+% Last, but not least, the complexity of the procedure impedes debugging.
+%
+% A solution to the above problems is to decouple the conversion from the
+% typesetting. For this reason, a command-line Lua interface for converting a
+% markdown document to \TeX{} is also provided, see
+% Figure~\ref{fig:sequence-diagram-lua-cli}.
 %
 % \end{markdown}
+% \begin{figure}
+% \centering
+% \begin{sequencediagram}
+%   \newthread{user}{User}{}
+%   \newinst[0.7]{tex}{\TeX{}}{}
+%   \newinst[2.1]{lua}{Lua}{}
+%   \begin{call}{user}{\footnotesize\cs{jobname.tex}}{tex}{\footnotesize\cs{jobname.pdf}}
+%   \begin{call}{tex}{\footnotesize\cs{jobname.markdown.in}}{lua}{\footnotesize\cs{jobname.markdown.out}}
+%   \end{call}
+%   \begin{call}{tex}{\footnotesize\cs{input}\cs{jobname.markdown.out}}{tex}{}
+%   \end{call}
+%   \end{call}
+% \end{sequencediagram}
+% \caption{A sequence diagram of the Markdown package typesetting a markdown
+%   document using the \TeX{} interface.}
+% \label{fig:sequence-diagram-tex-interface}
+% \end{figure}
+% \begin{figure}
+% \centering
+% \begin{sequencediagram}
+%   \newthread{user}{User}{}
+%   \newinst[1.4]{tex}{\TeX{}}{}
+%   \newinst[1.4]{lua}{Lua}{}
+%   \begin{call}{user}{\footnotesize$\langle$\textit{document}$\rangle$\texttt{.md}}{lua}{\footnotesize$\langle$\textit{document}$\rangle$\texttt{.tex}}
+%   \end{call}
+%   \begin{call}{user}{\footnotesize\cs{jobname.tex}}{tex}{\footnotesize\cs{jobname.pdf}}
+%   \begin{call}{tex}{\footnotesize\cs{input} $\langle$\textit{document}$\rangle$}{tex}{}
+%   \end{call}
+%   \end{call}
+% \end{sequencediagram}
+% \caption{A sequence diagram of the Markdown package typesetting a markdown
+%   document using the Lua command-line interface.}
+% \label{fig:sequence-diagram-lua-cli}
+% \end{figure}
 %  \begin{macrocode}
 
 HELP_STRING = [[
@@ -6545,10 +6593,6 @@ end
 % ``` tex
 % \input hello
 % ```````
-%
-% This shows another advantage of using the command-line interface compared to
-% using a higher-level \TeX{} interface: it is unnecessary to provide shell
-% access for the \TeX{} engine.
 %
 % \end{markdown}
 % \iffalse
