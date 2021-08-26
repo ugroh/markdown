@@ -142,7 +142,7 @@
 \draw (-5.055135\du,-3.788555\du)--(-5.055135\du,-1.888555\du)--(2.894865\du,-1.888555\du)--(2.894865\du,-3.788555\du)--cycle;
 \definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
 \pgfsetstrokecolor{dialinecolor}
-\node at (-1.080135\du,-2.743555\du){\ConTeXt{} layer};
+\node at (-1.080135\du,-2.743555\du){\Hologo{ConTeXt} layer};
 \definecolor{dialinecolor}{rgb}{1.000000, 1.000000, 1.000000}
 \pgfsetfillcolor{dialinecolor}
 \fill (-8.200000\du,-0.224996\du)--(-8.200000\du,1.675004\du)--(11.870000\du,1.675004\du)--(11.870000\du,-0.224996\du)--cycle;
@@ -1142,9 +1142,9 @@ local md5 = require("md5")
 % Figure~\ref{fig:block-diagram} shows the high-level structure of the Markdown
 % package: The translation from markdown to \TeX{} *token renderers* is exposed
 % by the Lua layer. The plain \TeX{} layer exposes the conversion capabilities
-% of Lua as \TeX{} macros. The \LaTeX{} and \ConTeXt{} layers provide syntactic
-% sugar on top of plain \TeX{} macros. The user can interface with any and all
-% layers.
+% of Lua as \TeX{} macros. The \LaTeX{} and \Hologo{ConTeXt} layers provide
+% syntactic sugar on top of plain \TeX{} macros. The user can interface with
+% any and all layers.
 %
 % \end{markdown}
 % \begin{figure}
@@ -12489,7 +12489,7 @@ texexec --passon=--shell-escape document.tex
 % Figure~\ref{fig:block-diagram} shows the high-level structure of the Markdown
 % package: The translation from markdown to \TeX{} *token renderers* is
 % performed by the Lua layer. The plain \TeX{} layer provides default
-% definitions for the token renderers. The \LaTeX{} and \ConTeXt{} layers
+% definitions for the token renderers. The \LaTeX{} and \Hologo{ConTeXt} layers
 % correct idiosyncrasies of the respective \TeX{} formats, and provide
 % format-specific default definitions for the token renderers.
 %
