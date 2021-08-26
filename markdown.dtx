@@ -109,8 +109,10 @@
 \usepackage{tikz}
 \usepackage{pgf-umlsd}
 \begin{filecontents}[overwrite,nosearch,noheader]{markdown-figure-block-diagram.tex}
+\begingroup
 \ifx\du\undefined\newlength{\du}\fi
-\setlength{\du}{9.7\unitlength}
+\setlength{\du}{15\unitlength}
+\begin{tikzpicture}
 \pgftransformxscale{1.000000}
 \pgftransformyscale{-1.23800}
 \definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
@@ -273,6 +275,8 @@
 \pgfsetstrokecolor{dialinecolor}
 \draw (1.689638\du,1.881695\du)--(1.689638\du,3.081693\du);
 }
+\end{tikzpicture}
+\endgroup
 \end{filecontents}
 
 % Set up the bibliography.
@@ -1149,12 +1153,10 @@ local md5 = require("md5")
 %
 % \end{markdown}
 % \begin{figure}
-% \begin{tikzpicture}
 % \centering
-% \begingroup\input markdown-figure-block-diagram\endgroup
+% \input markdown-figure-block-diagram
 % \caption{A block diagram of the \pkg{Markdown} package.}
 % \label{fig:block-diagram}
-% \end{tikzpicture}
 % \end{figure}
 % \iffalse
 %</context>
@@ -12505,12 +12507,10 @@ texexec --passon=--shell-escape document.tex
 %
 % \end{markdown}
 % \begin{figure}
-% \begin{tikzpicture}
 % \centering
-% \begingroup\input markdown-figure-block-diagram\endgroup
+% \input markdown-figure-block-diagram
 % \caption{A block diagram of the \pkg{Markdown} package.}
 % \label{fig:block-diagram}
-% \end{tikzpicture}
 % \end{figure}
 % \iffalse
 %</context>
