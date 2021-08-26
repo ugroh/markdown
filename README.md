@@ -52,7 +52,7 @@ Hello *Markdown*!
 Next, run the [LaTeXMK][] tool from [our official Docker
 image][docker-witiko/markdown]:
 
-    docker run --rm -u $(id -u):$(id -g) -v "$PWD"/workdir:/workdir -w /workdir witiko/markdown \
+    docker run --rm -v "$PWD"/workdir:/workdir -w /workdir witiko/markdown \
       latexmk -lualatex -silent document.tex
 
 Alternatively, you can install [TeX Live][tex-live] (can take up to several
