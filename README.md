@@ -23,8 +23,8 @@ is encouraged. 😉
 Your first Markdown document
 ----------------------------
 
-Using a text editor, create a text document named `workdir/document.tex` with
-the following content:
+Using a text editor, create an empty directory named `workdir/`. In it, create
+a text document named `workdir/document.tex` with the following content:
 
 ``` latex
 \documentclass{book}
