@@ -20,7 +20,7 @@ is encouraged. 😉
 
  [markdown]: https://daringfireball.net/projects/markdown/basics  "Daring Fireball: Markdown Basics"
 
-Typesetting a first document
+Your first Markdown document
 ----------------------------
 
 Using a text editor, create a text document named `workdir/document.tex` with
@@ -73,8 +73,8 @@ Congratulations, you have just typeset your first Markdown document! 🥳
 
  [tex-live]: https://www.tug.org/texlive/  "TeX Live - TeX Users Group"
 
-Continuous integration
-----------------------
+Using Markdown for continuous integration
+-----------------------------------------
 
 Can't live without the latest features of the Markdown package in your
 continuous integration pipelines? It's ok, you can use
