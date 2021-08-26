@@ -383,6 +383,7 @@
 \begin{document}
 \printtitlepage
 \tableofcontents
+{\def\addcontentsline#1#2#3{}\listoffigures}
 \DocInput{markdown.dtx}
 \printbibliography[heading=bibintoc]
 \printindex
@@ -6462,8 +6463,9 @@ defaultOptions.underscores = true
 %   \end{call}
 %   \end{call}
 % \end{sequencediagram}
-% \caption{A sequence diagram of the Markdown package typesetting a markdown
-%   document using the \TeX{} interface.}
+% \caption[A sequence diagram of typesetting a document using the \TeX{}
+%   interface]{A sequence diagram of the Markdown package typesetting a
+%   markdown document using the \TeX{} interface.}
 % \label{fig:sequence-diagram-tex-interface}
 % \end{figure}
 % \begin{figure}
@@ -6479,8 +6481,9 @@ defaultOptions.underscores = true
 %   \end{call}
 %   \end{call}
 % \end{sequencediagram}
-% \caption{A sequence diagram of the Markdown package typesetting a markdown
-%   document using the Lua command-line interface.}
+% \caption[A sequence diagram of typesetting a document using the Lua CLI]%
+%   {A sequence diagram of the Markdown package typesetting a markdown document
+%   using the Lua command-line interface.}
 % \label{fig:sequence-diagram-lua-cli}
 % \end{figure}
 %  \begin{macrocode}
