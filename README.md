@@ -101,13 +101,12 @@ jobs:
 ```
 
 In fact, this is how we automatically produce
-[the latest documentation][latest-release] for the Markdown package.
+[the latest documentation][techdoc-latest] for the Markdown package.
 
  [docker-witiko/markdown]: https://hub.docker.com/r/witiko/markdown/tags  "witiko/markdown - Docker Image"
  [docker-texlive/texlive]: https://hub.docker.com/r/texlive/texlive/tags  "texlive/texlive - Docker Image"
 
  [github-actions]: https://docs.github.com/actions  "GitHub Actions Documentation"
- [latest-release]: https://github.com/witiko/markdown/releases/tag/latest
 
 Further information
 -------------------
