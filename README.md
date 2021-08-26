@@ -112,8 +112,7 @@ Peeking under the hood
 ----------------------
 
 Remember how we said that the Markdown package converts [markdown][] markup to
-TeX commands? Let's see what that means and how we can use this knowledge to
-our advantage.
+TeX commands? Let's see what that means and what we can do with this knowledge.
 
 Using a text editor, create an empty text document named `document.md` with
 the following markdown content:
@@ -136,8 +135,8 @@ $a\markdownRendererEmphasis{x + b}x = c_x$\relax
 ```
 
 We can see right away that the Markdown package has incorrectly interpreted
-`_x + b_` as an emphasized text, which was not our intent. We can fix this
-issue by passing in the `underscores=false` option:
+`_x + b_` as an emphasized text. We can fix this by passing in the
+`underscores=false` option:
 
     docker run --rm -i witiko/markdown markdown-cli hybrid=true underscores=false < document.md
 
@@ -146,8 +145,8 @@ Hello \markdownRendererEmphasis{Markdown}!
 $a_x + b_x = c_x$\relax
 ```
 
-If the Markdown package ever produces strange results, you can use
-the Lua CLI to peek under the hood and inspect the results of the conversion.
+Much better! If the Markdown package ever surprises you, use the Lua CLI to
+peek under the hood and inspect the results of the conversion.
 
  [lua-cli]: https://mirrors.ctan.org/macros/generic/markdown/markdown.html#lua-command-line-interface "Markdown Package User Manual"
 
