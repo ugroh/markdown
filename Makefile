@@ -88,7 +88,7 @@ examples/example.tex: $(INSTALLABLES)
 	    -e 's#\\,# #g' \
 	    -e 's#\\meta{\([^}]*\)}#\&LeftAngleBracket;*\1*\&RightAngleBracket;#g' \
 	    -e 's#\\acro{\([^}]*\)}#<abbr>\1</abbr>#g' \
-	    -e 's#;-)#<i class="em em-wink"></i>#g' \
+	    -e 's#😉#<i class="em em-wink"></i>#g' \
 	    -e 's#\\envm{\([^}]*\)}#`\1`#g' \
 	    -e 's#\\envmdef{\([^}]*\)}#`\1`#g' \
 	    -e 's#\\m{\([^}]*\)}#`\\\1`#g' \
