@@ -122,11 +122,12 @@ For further information, consult one of the following:
    `markdown.ins` file using a Unicode-aware TeX engine, such as XeTeX
    (`xetex markdown.ins`) or LuaTeX (`luatex markdown.ins`). The manual will
    reside in the file `markdown.md` and the CSS stylesheet `markdown.css`.
-2. The [technical documentation][techdoc], which can be typeset by running the
-   [LaTeXMK][] tool on the `markdown.dtx` file
-   (`latexmk markdown.dtx`) after [installing the Markdown package][install].
-   [LaTeXMK][] should be included in your TeX distribution. The typeset
-   documentation will reside in the file `markdown.pdf`.
+2. The technical documentation for either [the released version][techdoc-tex-live]
+   or [the latest development version][techdoc-latest], which can be typeset by
+   running the [LaTeXMK][] tool on the `markdown.dtx` file (`latexmk
+   markdown.dtx`) after [installing the Markdown package][install].
+   [LaTeXMK][] should be included in your TeX distribution.
+   The typeset documentation will reside in the file `markdown.pdf`.
 3. Tutorials and example documents by [Lian Tze Lim][liantze] at [Overleaf][]:
     - [How to write in Markdown on Overleaf][overleaf-1],
     - [Markdown into LaTeX with Style][overleaf-2],
@@ -170,9 +171,11 @@ For further information, consult one of the following:
  [liantze]:  http://liantze.penguinattack.org/                                          "Rants from the Lab"
  [manual]:   http://mirrors.ctan.org/macros/generic/markdown/markdown.html              "Markdown Package User Manual"
  [overleaf]: https://www.overleaf.com/                                                  "Overleaf: Real-time Collaborative Writing and Publishing Tools with Integrated PDF Preview"
- [techdoc]:  http://mirrors.ctan.org/macros/generic/markdown/markdown.pdf               "A Markdown Interpreter for TeX"
  [tugboat]:  https://www.tug.org/tugboat/                                               "TUGboat - Communications of the TeX Users Group"
  [cstug]:    https://www.cstug.cz/                                                      "Československé sdružení uživatelů TeXu"
+
+ [techdoc-latest]:    https://github.com/Witiko/markdown/releases/download/latest/markdown.pdf  "A Markdown Interpreter for TeX"
+ [techdoc-tex-live]:  http://mirrors.ctan.org/macros/generic/markdown/markdown.pdf              "A Markdown Interpreter for TeX"
 
 Acknowledgements
 ----------------
