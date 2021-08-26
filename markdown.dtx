@@ -1150,7 +1150,7 @@ local md5 = require("md5")
 % \begin{figure}
 % \begin{tikzpicture}
 % \centering
-% {\input markdown-figure-block-diagram.tex}
+% \begingroup\input markdown-figure-block-diagram\endgroup
 % \caption{A block diagram of the \pkg{Markdown} package.}
 % \label{fig:block-diagram}
 % \end{tikzpicture}
@@ -12497,7 +12497,7 @@ texexec --passon=--shell-escape document.tex
 % \begin{figure}
 % \begin{tikzpicture}
 % \centering
-% {\input markdown-figure-block-diagram.tex}
+% \begingroup\input markdown-figure-block-diagram\endgroup
 % \caption{A block diagram of the \pkg{Markdown} package.}
 % \label{fig:block-diagram}
 % \end{tikzpicture}
