@@ -74,12 +74,12 @@ Congratulations, you have just typeset your first Markdown document! 🥳
 
 ### Continuous integration
 
-If you need the latest features of the Markdown package in your continuous
-integration pipelines, you can use
+Can't live without the latest features of the Markdown package in your
+continuous integration pipelines? It's ok, you can use
 [our official Docker image][docker-witiko/markdown] as a drop-in replacement
-for [the `texlive/texlive:latest` Docker image][docker-texlive/texlive].
+for [the `texlive/texlive:latest` Docker image][docker-texlive/texlive]!
 The following example shows a [GitHub Actions][github-actions] pipeline, which
-will automatically typeset and prerelease a PDF document named using the latest
+will automatically typeset and prerelease a PDF document named the latest
 development version of the Markdown package:
 
 ``` yaml
