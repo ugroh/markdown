@@ -81,8 +81,7 @@ continuous integration pipelines? It's ok, you can use
 [our official Docker image][docker-witiko/markdown] as a drop-in replacement
 for [the `texlive/texlive:latest` Docker image][docker-texlive/texlive]!
 The following example shows a [GitHub Actions][github-actions] pipeline, which
-will automatically typeset and prerelease a PDF document named the latest
-development version of the Markdown package:
+will automatically typeset and prerelease a PDF document:
 
 ``` yaml
 name: Typeset and prerelease the book
