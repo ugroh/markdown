@@ -5893,6 +5893,8 @@ defaultOptions.taskLists = false
          \end{document}
          ```````
 
+         Always enabled when \Opt{hybrid} is enabled.
+
 :    false
 
      :   Do not strip \TeX{}-style comments.
@@ -16462,16 +16464,15 @@ function M.reader.new(writer, options)
 % \par
 % \begin{markdown}
 %
-% If the parser is top-level and the \Opt{texComments} Lua option is
-% enabled, we will strip all plain \TeX{} comments from the input string `str`
-% together with the trailing newline characters.
+% If the parser is top-level and the \Opt{texComments} or \Opt{hybrid} Lua
+% options are enabled, we will strip all plain \TeX{} comments from the input
+% string `str` together with the trailing newline characters.
 %
 % \end{markdown}
 %  \begin{macrocode}
-      if toplevel and options.texComments then
+      if toplevel and (options.texComments or options.hybrid) then
           str = lpeg.match(Ct(parsers.commented_line^1), str)
           str = util.rope_to_string(str)
-          print(str)
       end
       local res = lpeg.match(grammar(), str)
       if res == nil then
