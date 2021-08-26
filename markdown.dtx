@@ -824,23 +824,24 @@ modules['markdown'] = metadata
 Requirements
 ------------
 
-The package requires a working \TeX{} distribution. [\TeX{} Live][tl] ≥ 2013 is
-known to work and so are recent installation of [Mik\TeX{}][mik]. If you are
-using a minimal installation of a \TeX{} distribution, please consult the
-[technical documentation][techdoc] for a detailed list of required packages.
+The package requires either [our official Docker image][docker], which contains
+the latest development version of the Markdown package, or a \TeX{}
+distribution: [\TeX{} Live][tl] ≥ 2013 is known to work and so are recent
+versions of [Mik\TeX{}][mik]. If you are using a minimal installation of a
+\TeX{} distribution, please consult the [technical documentation][techdoc] for
+a detailed list of required packages.
 
+ [docker]: https://hub.docker.com/r/witiko/markdown/tags (witiko/markdown - Docker Image)
  [tl]: https://www.tug.org/texlive/ (TeX Live - TeX Users Group)
  [mik]: https://miktex.org/ (Home - MiKTeXorg)
 
 Installation
 ------------
 
-The package comes pre-installed with [\TeX{} Live][tl] ≥ 2016 and with recent
-installations of [MikTeX][mik]. Unless you explicitly wish to use the latest
-version of the package, you are encouraged to skip this step.
+If you are using an older \TeX{} distribution such as [\TeX{} Live][tl] < 2016,
+you will need to install the Markdown package.
 
-To install the package, first download the package from the repository
-using Git:
+First, download the package from the repository using Git:
 ``` sh
 git clone https://github.com/witiko/markdown
 ``````
@@ -1165,6 +1166,15 @@ First Document
 In this section, we will take the necessary steps to typeset our first markdown
 document in \TeX{}. This will serve as our first hands-on experience with the
 package and also as a reassurance that the package has been correctly installed.
+
+If you are using [our official Docker image][docker], you need to prefix all
+commands in this section with `docker run --rm -v "$PWD"/workdir:/workdir -w
+/workdir witiko/markdown`. For example, instead of `luatex document.tex`, you
+would execute the following command:
+``` sh
+docker run --rm -v "$PWD"/workdir:/workdir -w /workdir witiko/markdown \
+  luatex document.tex
+``````
 
 ### Using Lua
 
