@@ -20,16 +20,11 @@ is encouraged. 😉
 
  [markdown]: https://daringfireball.net/projects/markdown/basics  "Daring Fireball: Markdown Basics"
 
-Using Markdown
---------------
+Typesetting a first document
+----------------------------
 
-For a quick introduction to the Markdown package, you can use
-[our official Docker image][docker-witiko/markdown].
-
-### Typesetting a document
-
-Using a text editor, create a text document named `document.tex` with the
-following content:
+Using a text editor, create a text document named `workdir/document.tex` with
+the following content:
 
 ``` latex
 \documentclass{book}
@@ -54,25 +49,32 @@ Hello *Markdown*!
 \end{document}
 ```
 
-Next, run the [LaTeXMK][] tool from
-[our official Docker image][docker-witiko/markdown] on `document.tex`:
+Next, run the [LaTeXMK][] tool from [our official Docker
+image][docker-witiko/markdown]:
 
 ```
-docker run --rm -dit --name my-first-markdown-document witiko/markdown
-docker cp document.tex my-first-markdown-document:/
-docker exec my-first-markdown-document latexmk -lualatex document.tex
-docker cp my-first-markdown-document:/document.pdf .
-docker stop my-first-markdown-document
+docker run --rm -u $(id -u):$(id -g) -v "$PWD"/workdir:/workdir -w /workdir witiko/markdown \
+  latexmk -lualatex -silent document.tex
 ```
 
-A PDF document named `document.pdf` should be produced and contain the
+Alternatively, you can install [TeX Live][tex-live] (can take up to several
+hours) and use its [LaTeXMK][] tool:
+
+```
+latexmk -cd -lualatex -silent workdir/document.tex
+```
+
+A PDF document named `workdir/document.pdf` should be produced and contain the
 following output:
 
  ![banner](banner.png "An example LaTeX document using the Markdown package")
 
 Congratulations, you have just typeset your first Markdown document! 🥳
 
-### Continuous integration
+ [tex-live]: https://www.tug.org/texlive/  "TeX Live - TeX Users Group"
+
+Continuous integration
+----------------------
 
 Can't live without the latest features of the Markdown package in your
 continuous integration pipelines? It's ok, you can use
