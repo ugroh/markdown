@@ -1144,19 +1144,19 @@ local md5 = require("md5")
 % user that if they only access the package through the interface, the future
 % minor versions of the package should remain backwards compatible.
 %
-% Figure~\ref{fig:block-diagram} shows the high-level structure of the Markdown
-% package: The translation from markdown to \TeX{} *token renderers* is exposed
-% by the Lua layer. The plain \TeX{} layer exposes the conversion capabilities
-% of Lua as \TeX{} macros. The \LaTeX{} and \Hologo{ConTeXt} layers provide
-% syntactic sugar on top of plain \TeX{} macros. The user can interface with
-% any and all layers.
+% Figure~\ref{fig:block-diagram-interfaces} shows the high-level structure of
+% the Markdown package: The translation from markdown to \TeX{} *token
+% renderers* is exposed by the Lua layer. The plain \TeX{} layer exposes the
+% conversion capabilities of Lua as \TeX{} macros. The \LaTeX{} and
+% \Hologo{ConTeXt} layers provide syntactic sugar on top of plain \TeX{}
+% macros. The user can interface with any and all layers.
 %
 % \end{markdown}
 % \begin{figure}
 % \centering
 % \input markdown-figure-block-diagram
 % \caption{A block diagram of the \pkg{Markdown} package.}
-% \label{fig:block-diagram}
+% \label{fig:block-diagram-interfaces}
 % \end{figure}
 % \iffalse
 %</context>
@@ -12498,19 +12498,20 @@ texexec --passon=--shell-escape document.tex
 % exposed by the package (see Section \ref{sec:interfaces}) and is aimed at the
 % developers of the package, as well as the curious users.
 %
-% Figure~\ref{fig:block-diagram} shows the high-level structure of the Markdown
-% package: The translation from markdown to \TeX{} *token renderers* is
-% performed by the Lua layer. The plain \TeX{} layer provides default
-% definitions for the token renderers. The \LaTeX{} and \Hologo{ConTeXt} layers
-% correct idiosyncrasies of the respective \TeX{} formats, and provide
-% format-specific default definitions for the token renderers.
+% Figure~\ref{fig:block-diagram-implementation} shows the high-level structure
+% of the Markdown package: The translation from markdown to \TeX{} *token
+% renderers* is performed by the Lua layer. The plain \TeX{} layer provides
+% default definitions for the token renderers. The \LaTeX{} and
+% \Hologo{ConTeXt} layers correct idiosyncrasies of the respective \TeX{}
+% formats, and provide format-specific default definitions for the token
+% renderers.
 %
 % \end{markdown}
 % \begin{figure}
 % \centering
 % \input markdown-figure-block-diagram
 % \caption{A block diagram of the \pkg{Markdown} package.}
-% \label{fig:block-diagram}
+% \label{fig:block-diagram-implementation}
 % \end{figure}
 % \iffalse
 %</context>
