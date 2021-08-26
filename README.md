@@ -7,8 +7,8 @@ Markdown
 [![docker image size](https://img.shields.io/docker/image-size/witiko/markdown)][docker-witiko/markdown]
 [![ci](https://github.com/witiko/markdown/actions/workflows/main.yml/badge.svg)][ci]
 
- [release]:  https://github.com/Witiko/markdown/releases/latest  "Releases · Witiko/markdown"
- [ci]:       https://github.com/Witiko/markdown/actions          "GitHub Actions"
+ [release]:  https://github.com/Witiko/markdown/releases/latest "Releases · Witiko/markdown"
+ [ci]:       https://github.com/Witiko/markdown/actions         "GitHub Actions"
 
 The Markdown package converts [markdown][] markup to TeX commands. The
 functionality is provided both as a Lua module, and as plain TeX, LaTeX, and
@@ -18,7 +18,7 @@ does not require any external programs, and makes it easy to redefine how each
 and every markdown element is rendered. Creative abuse of the markdown syntax
 is encouraged. 😉
 
- [markdown]: https://daringfireball.net/projects/markdown/basics  "Daring Fireball: Markdown Basics"
+ [markdown]: https://daringfireball.net/projects/markdown/basics "Daring Fireball: Markdown Basics"
 
 Your first Markdown document
 ----------------------------
@@ -49,8 +49,8 @@ Hello *Markdown*!
 \end{document}
 ```
 
-Next, run the [LaTeXMK][] tool from [our official Docker
-image][docker-witiko/markdown]:
+Next, run the [LaTeXMK][] tool from
+[our official Docker image][docker-witiko/markdown] on `document.tex`:
 
     docker run --rm -v "$PWD"/workdir:/workdir -w /workdir witiko/markdown \
       latexmk -lualatex -silent document.tex
@@ -67,7 +67,7 @@ following output:
 
 Congratulations, you have just typeset your first Markdown document! 🥳
 
- [tex-live]: https://www.tug.org/texlive/  "TeX Live - TeX Users Group"
+ [tex-live]: https://www.tug.org/texlive/ "TeX Live - TeX Users Group"
 
 Using Markdown for continuous integration
 -----------------------------------------
@@ -103,10 +103,53 @@ jobs:
 In fact, this is how we automatically produce
 [the latest documentation][techdoc-latest] for the Markdown package.
 
- [docker-witiko/markdown]: https://hub.docker.com/r/witiko/markdown/tags  "witiko/markdown - Docker Image"
- [docker-texlive/texlive]: https://hub.docker.com/r/texlive/texlive/tags  "texlive/texlive - Docker Image"
+ [docker-witiko/markdown]: https://hub.docker.com/r/witiko/markdown/tags "witiko/markdown - Docker Image"
+ [docker-texlive/texlive]: https://hub.docker.com/r/texlive/texlive/tags "texlive/texlive - Docker Image"
 
- [github-actions]: https://docs.github.com/actions  "GitHub Actions Documentation"
+ [github-actions]: https://docs.github.com/actions "GitHub Actions Documentation"
+
+Peeking under the hood
+----------------------
+
+Remember how we said that the Markdown package converts [markdown][] markup to
+TeX commands? Let's see what that means and how we can use this knowledge to
+our advantage.
+
+Using a text editor, create an empty text document named `document.md` with
+the following markdown content:
+
+``` markdown
+Hello *Markdown*! $a_x + b_x = c_x$
+```
+
+Next, run [the Lua command-line interface (CLI)][lua-cli] from
+[our official Docker image][docker-witiko/markdown] on `document.md`:
+
+    docker run --rm -i witiko/markdown markdown-cli hybrid=true < document.md
+
+We will receive the following output, where the markdown markup has been
+replaced by TeX commands:
+
+``` tex
+Hello \markdownRendererEmphasis{Markdown}!
+$a\markdownRendererEmphasis{x + b}x = c_x$\relax
+```
+
+We can see right away that the Markdown package has incorrectly interpreted
+`_x + b_` as an emphasized text, which was not our intent. We can fix this
+issue by passing in the `underscores=false` option:
+
+    docker run --rm -i witiko/markdown markdown-cli hybrid=true underscores=false < document.md
+
+``` tex
+Hello \markdownRendererEmphasis{Markdown}!
+$a_x + b_x = c_x$\relax
+```
+
+If the Markdown package ever produces strange results, you can use
+the Lua CLI to peek under the hood and inspect the results of the conversion.
+
+ [lua-cli]: https://mirrors.ctan.org/macros/generic/markdown/markdown.html#lua-command-line-interface "Markdown Package User Manual"
 
 Further information
 -------------------
@@ -234,7 +277,7 @@ Citing Markdown
 When citing Markdown in academic papers and theses, please use the following
 BibTeX entry:
 
-```bib
+``` bib
 @article{novotny17markdown,
   author  = {V\'{i}t Novotn\'{y}},
   year    = {2017},
