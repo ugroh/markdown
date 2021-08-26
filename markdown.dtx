@@ -30,29 +30,50 @@
 
 % Define some markup.
 \let\pkg\relax % A package name
-\newcommand\mdef[1]{% A TeX macro definition
-  \phantomsection\label{macro:#1}\textcolor{spot}{\cs{#1}}}
-\newcommand\m[1]{% A TeX macro reference
-  \hyperref[macro:#1]{\textcolor{spot}{\cs{#1}}}}
-\newcommand\envmdef[1]{% A TeX macro definition
-  \phantomsection\label{environment:#1}\t`#1`}
-\newcommand\envm[1]{% A LaTeX environment reference
-  \hyperref[environment:#1]{\t`#1`}}
-\newcommand\luamdef[1]{% A Lua object / method definition
-  \phantomsection\label{lua:#1}\t`#1`}
-\newcommand\luam[1]{% A Lua object / method reference
-  \hyperref[lua:#1]{\t`#1`}}
 \def\inline#1{% Inline code
   \textcolor{spot}{\text{\texttt{#1}}}}
-\def\t`#1`{\inline{#1}}
-\newcommand\Optitem[2][]{\penalty -1000\relax % An option item definition
-  \phantomsection\label{opt:#2}\optitem[#1]{#2}}
-\newcommand\Valitem[2][]{\penalty -1000\relax % A value item definition
-  \phantomsection\label{opt:#2}\valitem[#1]{#2}}
-\newcommand\Opt[1]{% An option / value item reference
-  \hyperref[opt:#1]{\t`#1`}}
 \newcommand\acro[1]{% An acronym
   \textsc{\MakeLowercase{#1}}}
+
+% Set up index.
+\DisableCrossrefs
+\IndexPrologue{%
+  \section*{\indexname}%
+  \addcontentsline{toc}{section}{\indexname}}
+\makeatletter\c@IndexColumns=2\makeatother
+\usepackage{makeidx}
+\makeindex
+
+\newcommand\mdef[1]{% A TeX macro definition
+  \index{#1@\cs{#1}|textit}%
+  \phantomsection\label{macro:#1}\textcolor{spot}{\cs{#1}}}
+\newcommand\m[1]{% A TeX macro reference
+  \index{#1@\cs{#1}}%
+  \hyperref[macro:#1]{\textcolor{spot}{\cs{#1}}}}
+
+\newcommand\envmdef[1]{% A LaTeX environment definition
+  \index{#1@\texttt{#1}|textit}%
+  \phantomsection\label{environment:#1}\inline{#1}}
+\newcommand\envm[1]{% A LaTeX environment reference
+  \index{#1@\texttt{#1}}%
+  \hyperref[environment:#1]{\inline{#1}}}
+
+\newcommand\luamdef[1]{% A Lua object / method definition
+  \index{#1@\texttt{#1}|textit}%
+  \phantomsection\label{lua:#1}\inline{#1}}
+\newcommand\luam[1]{% A Lua object / method reference
+  \index{#1@\texttt{#1}}%
+  \hyperref[lua:#1]{\inline{#1}}}
+
+\newcommand\Optitem[2][]{\penalty -1000\relax % An option item definition
+  \index{#2@\texttt{#2}|textit}%
+  \phantomsection\label{opt:#2}\optitem[#1]{#2}}
+\newcommand\Valitem[2][]{\penalty -1000\relax % A value item definition
+  \index{#2@\texttt{#2}}%
+  \phantomsection\label{opt:#2}\valitem[#1]{#2}}
+\newcommand\Opt[1]{% An option / value item reference
+  \index{#1@\texttt{#1}}%
+  \hyperref[opt:#1]{\inline{#1}}}
 
 % Set up markdown.
 \usepackage[
@@ -366,7 +387,8 @@
 \printtitlepage
 \tableofcontents
 \DocInput{markdown.dtx}
-\printbibliography
+\printbibliography[heading=bibintoc]
+\printindex
 \end{document}
 %</driver>
 %<*manual-css>
