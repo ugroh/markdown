@@ -50,7 +50,7 @@ base: $(INSTALLABLES)
 
 # This pseudo-target builds a witiko/markdown Docker image.
 docker-image:
-	docker build -t witiko/markdown:latest .
+	DOCKER_BUILDKIT=1 docker build -t witiko/markdown:latest .
 	docker tag witiko/markdown:latest witiko/markdown:$(GIT_TAG)
 
 # This target extracts the source files out of the DTX archive.
