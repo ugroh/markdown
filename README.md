@@ -69,8 +69,8 @@ Congratulations, you have just typeset your first Markdown document! 🥳
 
  [tex-live]: https://www.tug.org/texlive/ "TeX Live - TeX Users Group"
 
-Using Markdown for continuous integration
------------------------------------------
+Use Markdown for continuous integration
+---------------------------------------
 
 Can't live without the latest features of the Markdown package in your
 continuous integration pipelines? It's ok, you can use
@@ -108,8 +108,8 @@ In fact, this is how we automatically produce
 
  [github-actions]: https://docs.github.com/actions "GitHub Actions Documentation"
 
-Peeking under the hood
-----------------------
+Peek under the hood
+-------------------
 
 Remember how we said that the Markdown package converts [markdown][] markup to
 TeX commands? Let's see what that means and what we can do with this knowledge.
