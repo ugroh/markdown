@@ -1,7 +1,9 @@
-.PHONY: all base clean implode dist test examples
+.PHONY: all base clean implode dist test examples docker-image
+
 AUXFILES=markdown.bbl markdown.cb markdown.cb2 markdown.glo markdown.bbl \
   markdown.run.xml markdown.bib markdown.markdown.in markdown.markdown.lua \
-  markdown.markdown.out
+  markdown.markdown.out markdown-interfaces.md markdown-miscellanea.md \
+	markdown-options.md markdown-tokens.md markdown-figure-block-diagram.tex
 AUXDIRS=_minted-markdown _markdown_markdown
 TDSARCHIVE=markdown.tds.zip
 CTANARCHIVE=markdown.ctan.zip
@@ -35,22 +37,31 @@ RESOURCES=$(DOCUMENTATION) $(EXAMPLES_RESOURCES) $(EXAMPLES_SOURCES) $(EXAMPLES)
   $(MAKES) $(READMES) $(INSTALLER) $(DTXARCHIVE) $(TESTS)
 EVERYTHING=$(RESOURCES) $(INSTALLABLES)
 
+GIT_TAG=$(shell git describe --tags --always --long --exclude latest)
+
 # This is the default pseudo-target. It typesets the manual,
 # the examples, and extracts the package files.
 all: $(MAKEABLES)
 	$(MAKE) clean
 
-# This target extracts the source files out of the DTX archive.
+# This pseudo-target extracts the source files out of the DTX archive.
 base: $(INSTALLABLES)
 	$(MAKE) clean
+
+# This pseudo-target builds a witiko/markdown Docker image.
+docker-image:
+	DOCKER_BUILDKIT=1 docker build -t witiko/markdown:latest .
+	docker tag witiko/markdown:latest witiko/markdown:$(GIT_TAG)
 
 # This target extracts the source files out of the DTX archive.
 $(INSTALLABLES) $(MARKDOWN_USER_MANUAL): $(INSTALLER) $(DTXARCHIVE)
 	xetex $<
+	sed -i 's/\$$GitTag\$$/$(GIT_TAG)/g' $(INSTALLABLES) $(MARKDOWN_USER_MANUAL)
 
 # This target typesets the manual.
 $(TECHNICAL_DOCUMENTATION): $(DTXARCHIVE) $(INSTALLABLES)
 	latexmk -interaction=nonstopmode $<
+	test `tail $(basename $<).log | sed -rn 's/.*\(([0-9]*) pages.*/\1/p'` -gt 150
 
 # These targets typeset the examples.
 $(EXAMPLES): $(EXAMPLE_SOURCES) examples/example.tex $(INSTALLABLES)
@@ -78,7 +89,7 @@ examples/example.tex: $(INSTALLABLES)
 	    -e 's#\\,# #g' \
 	    -e 's#\\meta{\([^}]*\)}#\&LeftAngleBracket;*\1*\&RightAngleBracket;#g' \
 	    -e 's#\\acro{\([^}]*\)}#<abbr>\1</abbr>#g' \
-	    -e 's#;-)#<i class="em em-wink"></i>#g' \
+	    -e 's#😉#<i class="em em-wink"></i>#g' \
 	    -e 's#\\envm{\([^}]*\)}#`\1`#g' \
 	    -e 's#\\envmdef{\([^}]*\)}#`\1`#g' \
 	    -e 's#\\m{\([^}]*\)}#`\\\1`#g' \

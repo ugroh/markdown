@@ -32,7 +32,7 @@ for TESTFILE; do
 
         # Run the test, filter the output and concatenate adjacent lines.
         eval "$COMMAND" >/dev/null 2>&1 ||
-          { cat test.markdown.err 1>&2 2>/dev/null; exit 1; }
+          { cat test.log 1>&2 2>/dev/null; exit 1; }
         sed -nr '/^\s*TEST INPUT BEGIN\s*$/,/^\s*TEST INPUT END\s*$/{
           /^\s*TEST INPUT (BEGIN|END)\s*$/!H
           /^\s*TEST INPUT END\s*$/{s/.*//;x;s/\n//g;p}
@@ -44,13 +44,17 @@ for TESTFILE; do
           cp test-actual.log test-expected.log
           (cat "${TESTFILE##*/}" && printf '>>>\n'
             cat test-expected.log) >"$OLDPWD"/"$TESTFILE"
-          printf '      Added the expected test outcome to the testfile.\n'
+          printf '        Added the expected test outcome to the testfile.\n'
         fi
 
         # Compare the expected outcome against the actual outcome.
-        diff -a -c "$BUILDDIR"/test-expected.log "$BUILDDIR"/test-actual.log # ||
+        diff -a -c test-expected.log test-actual.log ||
+        # Uncomment the below lines to update the testfile with the actual
+        # outcome whenever the expected outcome and the actual outcome
+        # mismatch.
 #          (sed -n '1,/^\s*>>>\s*$/p' <"${TESTFILE##*/}" &&
-#            cat test-actual.log) >"$OLDPWD"/"$TESTFILE"
+#            cat test-actual.log) >"$OLDPWD"/"$TESTFILE" ||
+           false
 
         # Clean up the testing directory.
         cd "$OLDPWD"

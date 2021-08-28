@@ -2,11 +2,11 @@
 %<*driver>
 \documentclass{ltxdockit}
 \usepackage[american]{babel}
-\usepackage{amsmath,btxdockit,doc,fancyvrb,graphicx,hologo,microtype,minted}
-\usepackage{fontspec}
-\defaultfontfeatures[\rmfamily,\sffamily,\ttfamily]{}
+\usepackage{amsmath,btxdockit,doc,emoji,fancyvrb,graphicx,hologo,microtype,minted,varioref}
 
 % Set up the style.
+\usepackage{fontspec}
+\defaultfontfeatures[\rmfamily,\sffamily,\ttfamily]{}
 \emergencystretch=1em
 \fvset{gobble=0,frame=single}
 \setcounter{secnumdepth}{4}
@@ -30,29 +30,47 @@
 
 % Define some markup.
 \let\pkg\relax % A package name
-\newcommand\mdef[1]{% A TeX macro definition
-  \phantomsection\label{macro:#1}\textcolor{spot}{\cs{#1}}}
-\newcommand\m[1]{% A TeX macro reference
-  \hyperref[macro:#1]{\textcolor{spot}{\cs{#1}}}}
-\newcommand\envmdef[1]{% A TeX macro definition
-  \phantomsection\label{environment:#1}\t`#1`}
-\newcommand\envm[1]{% A LaTeX environment reference
-  \hyperref[environment:#1]{\t`#1`}}
-\newcommand\luamdef[1]{% A Lua object / method definition
-  \phantomsection\label{lua:#1}\t`#1`}
-\newcommand\luam[1]{% A Lua object / method reference
-  \hyperref[lua:#1]{\t`#1`}}
 \def\inline#1{% Inline code
   \textcolor{spot}{\text{\texttt{#1}}}}
-\def\t`#1`{\inline{#1}}
-\newcommand\Optitem[2][]{\penalty -1000\relax % An option item definition
-  \phantomsection\label{opt:#2}\optitem[#1]{#2}}
-\newcommand\Valitem[2][]{\penalty -1000\relax % A value item definition
-  \phantomsection\label{opt:#2}\valitem[#1]{#2}}
-\newcommand\Opt[1]{% An option / value item reference
-  \hyperref[opt:#1]{\t`#1`}}
 \newcommand\acro[1]{% An acronym
   \textsc{\MakeLowercase{#1}}}
+
+% Set up index.
+\DisableCrossrefs
+\usepackage{makeidx}
+\usepackage[columns=1, totoc]{idxlayout}
+\makeindex
+
+\newcommand\mdef[1]{% A TeX macro definition
+  \index{#1@\cs{#1}|textit}%
+  \phantomsection\label{macro:#1}\textcolor{spot}{\cs{#1}}}
+\newcommand\m[1]{% A TeX macro reference
+  \index{#1@\cs{#1}}%
+  \hyperref[macro:#1]{\textcolor{spot}{\cs{#1}}}}
+
+\newcommand\envmdef[1]{% A LaTeX environment definition
+  \index{#1@\texttt{#1}|textit}%
+  \phantomsection\label{environment:#1}\inline{#1}}
+\newcommand\envm[1]{% A LaTeX environment reference
+  \index{#1@\texttt{#1}}%
+  \hyperref[environment:#1]{\inline{#1}}}
+
+\newcommand\luamdef[1]{% A Lua object / method definition
+  \index{#1@\texttt{#1}|textit}%
+  \phantomsection\label{lua:#1}\inline{#1}}
+\newcommand\luam[1]{% A Lua object / method reference
+  \index{#1@\texttt{#1}}%
+  \hyperref[lua:#1]{\inline{#1}}}
+
+\newcommand\Optitem[2][]{\penalty -1000\relax % An option item definition
+  \index{#2@\texttt{#2}|textit}%
+  \phantomsection\label{opt:#2}\optitem[#1]{#2}}
+\newcommand\Valitem[2][]{\penalty -1000\relax % A value item definition
+  \index{#2@\texttt{#2}}%
+  \phantomsection\label{opt:#2}\valitem[#1]{#2}}
+\newcommand\Opt[1]{% An option / value item reference
+  \index{#1@\texttt{#1}}%
+  \hyperref[opt:#1]{\inline{#1}}}
 
 % Set up markdown.
 \usepackage[
@@ -81,6 +99,12 @@
   },
 }
 
+% Set up Unicode characters.
+\usepackage{newunicodechar}
+\newunicodechar{☒}{\markdownRendererTickedBox}
+\newunicodechar{☐}{\markdownRendererUntickedBox}
+\newunicodechar{😉}{\emoji{winking-face}}
+
 % Set up the catcodes.
 \catcode`\_=12 % We won't be typesetting much math and Lua contains lots of `_`.
 \catcode`\^^B=8 % When we occasionally need subscripts , we will use `^^B` (STX).
@@ -99,13 +123,187 @@
   pdfauthor={Vít Novotný}}
 \CodelineIndex
 
+% Set up the figures.
+\usepackage{tikz}
+\usepackage{pgf-umlsd}
+\begin{filecontents}[overwrite,nosearch,noheader]{markdown-figure-block-diagram.tex}
+\begingroup
+\ifx\du\undefined\newlength{\du}\fi
+\setlength{\du}{15\unitlength}
+\begin{tikzpicture}
+\pgftransformxscale{1.000000}
+\pgftransformyscale{-1.23800}
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\definecolor{dialinecolor}{rgb}{1.000000, 1.000000, 1.000000}
+\pgfsetfillcolor{dialinecolor}
+\definecolor{dialinecolor}{rgb}{1.000000, 1.000000, 1.000000}
+\pgfsetfillcolor{dialinecolor}
+\fill (4.282853\du,-3.750000\du)--(4.282853\du,-1.850000\du)--(11.971656\du,-1.850000\du)--(11.971656\du,-3.750000\du)--cycle;
+\pgfsetlinewidth{0.040000\du}
+\pgfsetdash{}{0pt}
+\pgfsetdash{}{0pt}
+\pgfsetmiterjoin
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\draw (4.282853\du,-3.750000\du)--(4.282853\du,-1.850000\du)--(11.971656\du,-1.850000\du)--(11.971656\du,-3.750000\du)--cycle;
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\node at (8.127254\du,-2.705000\du){\LaTeX{} layer};
+\definecolor{dialinecolor}{rgb}{1.000000, 1.000000, 1.000000}
+\pgfsetfillcolor{dialinecolor}
+\fill (-5.055135\du,-3.788555\du)--(-5.055135\du,-1.888555\du)--(2.894865\du,-1.888555\du)--(2.894865\du,-3.788555\du)--cycle;
+\pgfsetlinewidth{0.040000\du}
+\pgfsetdash{}{0pt}
+\pgfsetdash{}{0pt}
+\pgfsetmiterjoin
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\draw (-5.055135\du,-3.788555\du)--(-5.055135\du,-1.888555\du)--(2.894865\du,-1.888555\du)--(2.894865\du,-3.788555\du)--cycle;
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\node at (-1.080135\du,-2.743555\du){\Hologo{ConTeXt} layer};
+\definecolor{dialinecolor}{rgb}{1.000000, 1.000000, 1.000000}
+\pgfsetfillcolor{dialinecolor}
+\fill (-8.200000\du,-0.224996\du)--(-8.200000\du,1.675004\du)--(11.870000\du,1.675004\du)--(11.870000\du,-0.224996\du)--cycle;
+\pgfsetlinewidth{0.040000\du}
+\pgfsetdash{}{0pt}
+\pgfsetdash{}{0pt}
+\pgfsetmiterjoin
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\draw (-8.200000\du,-0.224996\du)--(-8.200000\du,1.675004\du)--(11.870000\du,1.675004\du)--(11.870000\du,-0.224996\du)--cycle;
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\node at (1.835000\du,0.820004\du){Plain \TeX{} layer};
+\definecolor{dialinecolor}{rgb}{1.000000, 1.000000, 1.000000}
+\pgfsetfillcolor{dialinecolor}
+\fill (-11.150000\du,3.325006\du)--(-11.150000\du,5.225006\du)--(11.800000\du,5.225006\du)--(11.800000\du,3.325006\du)--cycle;
+\pgfsetlinewidth{0.040000\du}
+\pgfsetdash{}{0pt}
+\pgfsetdash{}{0pt}
+\pgfsetmiterjoin
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\draw (-11.150000\du,3.325006\du)--(-11.150000\du,5.225006\du)--(11.800000\du,5.225006\du)--(11.800000\du,3.325006\du)--cycle;
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\node at (0.325000\du,4.370006\du){Lua layer};
+\pgfsetlinewidth{0.040000\du}
+\pgfsetdash{}{0pt}
+\pgfsetdash{}{0pt}
+\pgfsetbuttcap
+{
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetfillcolor{dialinecolor}
+\pgfsetarrowsstart{stealth}
+\pgfsetarrowsend{stealth}
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\draw (-9.906400\du,-5.181570\du)--(-9.937836\du,3.024193\du);
+}
+\pgfsetlinewidth{0.040000\du}
+\pgfsetdash{}{0pt}
+\pgfsetdash{}{0pt}
+\pgfsetbuttcap
+{
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetfillcolor{dialinecolor}
+\pgfsetarrowsstart{stealth}
+\pgfsetarrowsend{stealth}
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\draw (-6.919693\du,-5.181570\du)--(-6.938734\du,-0.450800\du);
+}
+\pgfsetlinewidth{0.040000\du}
+\pgfsetdash{}{0pt}
+\pgfsetdash{}{0pt}
+\pgfsetbuttcap
+{
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetfillcolor{dialinecolor}
+\pgfsetarrowsstart{stealth}
+\pgfsetarrowsend{stealth}
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\draw (-1.063746\du,-5.175791\du)--(-1.063746\du,-3.975793\du);
+}
+\definecolor{dialinecolor}{rgb}{1.000000, 1.000000, 1.000000}
+\pgfsetfillcolor{dialinecolor}
+\fill (-10.972500\du,-7.267480\du)--(-10.972500\du,-5.367480\du)--(11.977500\du,-5.367480\du)--(11.977500\du,-7.267480\du)--cycle;
+\pgfsetlinewidth{0.040000\du}
+\pgfsetdash{}{0pt}
+\pgfsetdash{}{0pt}
+\pgfsetmiterjoin
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\draw (-10.972500\du,-7.267480\du)--(-10.972500\du,-5.367480\du)--(11.977500\du,-5.367480\du)--(11.977500\du,-7.267480\du)--cycle;
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\node at (0.502500\du,-6.322480\du){User code};
+\pgfsetlinewidth{0.040000\du}
+\pgfsetdash{}{0pt}
+\pgfsetdash{}{0pt}
+\pgfsetbuttcap
+{
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetfillcolor{dialinecolor}
+\pgfsetarrowsstart{stealth}
+\pgfsetarrowsend{stealth}
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\draw (8.149986\du,-5.159541\du)--(8.149986\du,-3.959543\du);
+}
+\pgfsetlinewidth{0.040000\du}
+\pgfsetdash{}{0pt}
+\pgfsetdash{}{0pt}
+\pgfsetbuttcap
+{
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetfillcolor{dialinecolor}
+\pgfsetarrowsstart{stealth}
+\pgfsetarrowsend{stealth}
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\draw (-1.074995\du,-1.634548\du)--(-1.074995\du,-0.434550\du);
+}
+\pgfsetlinewidth{0.040000\du}
+\pgfsetdash{}{0pt}
+\pgfsetdash{}{0pt}
+\pgfsetbuttcap
+{
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetfillcolor{dialinecolor}
+\pgfsetarrowsstart{stealth}
+\pgfsetarrowsend{stealth}
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\draw (8.138736\du,-1.618298\du)--(8.138736\du,-0.418300\du);
+}
+\pgfsetlinewidth{0.040000\du}
+\pgfsetdash{}{0pt}
+\pgfsetdash{}{0pt}
+\pgfsetbuttcap
+{
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetfillcolor{dialinecolor}
+\pgfsetarrowsstart{stealth}
+\pgfsetarrowsend{stealth}
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\draw (1.689638\du,1.881695\du)--(1.689638\du,3.081693\du);
+}
+\end{tikzpicture}
+\endgroup
+\end{filecontents}
+
 % Set up the bibliography.
 \begin{filecontents}[overwrite,nosearch,noheader]{markdown.bib}
 @book{tantau21,
   author    = {Till Tantau and Joseph Wright and Vedran Miletić},
   title     = {The Beamer class},
   date      = {2021-02-10},
-  url       = {http://mirrors.ctan.org/macros/latex/contrib/beamer/doc/beameruserguide.pdf},
+  url       = {https://mirrors.ctan.org/macros/latex/contrib/beamer/doc/beameruserguide.pdf},
   urldate   = {2021-02-11}}
 @online{sotkov17,
   author    = {Sotkov, Anton},
@@ -126,13 +324,13 @@
                Schöpf, Rainer},
   title     = {The \Hologo{LaTeX2e} Sources},
   date      = {2017-04-15},
-  url       = {http://mirrors.ctan.org/macros/latex/base/source2e.pdf},
+  url       = {https://mirrors.ctan.org/macros/latex/base/source2e.pdf},
   urldate   = {2018-01-08}}
 @book{mittelbach17,
   author    = {Mittelbach, Frank},
   title     = {The \texttt{doc} and \texttt{shortvrb} Packages},
   date      = {2017-04-15},
-  url       = {http://mirrors.ctan.org/macros/latex/base/doc.pdf},
+  url       = {https://mirrors.ctan.org/macros/latex/base/doc.pdf},
   urldate   = {2018-02-19}}
 @book{poore17,
   author    = {Poore, Geoffrey M.},
@@ -140,7 +338,7 @@
   subtitle  = {Highlighted source code in \LaTeX},
   date      = {2017-07-19},
   version   = {v2.5},
-  url       = {http://mirrors.ctan.org/macros/latex/contrib/minted/minted.pdf},
+  url       = {https://mirrors.ctan.org/macros/latex/contrib/minted/minted.pdf},
   urldate   = {2020-09-01}}
 @online{novotny15,
   author    = {Novotný, Vít},
@@ -185,8 +383,10 @@
 \begin{document}
 \printtitlepage
 \tableofcontents
+{\def\addcontentsline#1#2#3{}\listoffigures}
 \DocInput{markdown.dtx}
-\printbibliography
+\printbibliography[heading=bibintoc]
+\printindex
 \end{document}
 %</driver>
 %<*manual-css>
@@ -564,7 +764,7 @@ functionality is provided both as a Lua module and as plain \TeX{}, \LaTeX{}, an
 containing markdown markup. Unlike other convertors, the Markdown package
 does not require any external programs, and makes it easy to redefine how each
 and every markdown element is rendered.  Creative abuse of the markdown
-syntax is encouraged. ;-)
+syntax is encouraged. 😉
 
  [markdown]: https://daringfireball.net/projects/markdown/basics
              (Daring Fireball: Markdown Basics)
@@ -573,8 +773,8 @@ syntax is encouraged. ;-)
 
 % This document is a technical documentation for the \pkg{Markdown} package. It
 % consists of three sections. This section introduces the package and outlines
-% its prerequisites. Section \ref{sec:interfaces} describes the interfaces
-% exposed by the package. Section \ref{sec:implementation} describes the
+% its prerequisites. Section \vref{sec:interfaces} describes the interfaces
+% exposed by the package. Section \vref{sec:implementation} describes the
 % implementation of the package. The technical documentation contains only a
 % limited number of tutorials and code examples. You can find more of these in
 % the [user manual.][manual]
@@ -597,12 +797,12 @@ documentation][techdoc].
 % \fi
 %  \begin{macrocode}
 local metadata = {
-    version   = "2.9.0",
+    version   = "$GitTag$",
     comment   = "A module for the conversion from markdown to plain TeX",
     author    = "John MacFarlane, Hans Hagen, Vít Novotný",
     copyright = {"2009-2016 John MacFarlane, Hans Hagen",
-                 "2016-2020 Vít Novotný"},
-    license   = "LPPL 1.3"
+                 "2016-2021 Vít Novotný"},
+    license   = "LPPL 1.3c"
 }
 
 %    \end{macrocode}
@@ -614,33 +814,6 @@ local metadata = {
 if not modules then modules = { } end
 modules['markdown'] = metadata
 %    \end{macrocode}
-% \par
-% \begin{markdown}
-%
-% Feedback
-%---------
-% Please use the \pkg{Markdown} project page on
-% [GitHub](https://github.com/witiko/markdown/issues) to report bugs and submit
-% feature requests. If you do not want to report a bug or request a feature but
-% are simply in need of assistance, you might want to consider posting your
-% question on the [\TeX-\LaTeX{} Stack Exchange.](https://tex.stackexchange.com)
-%
-% Acknowledgements
-%-----------------
-% The Lunamark Lua module provides speedy markdown parsing for the package. I
-% would like to thank John Macfarlane, the creator of Lunamark, for releasing
-% Lunamark under a permissive license.
-%
-% Funding by the the Faculty of Informatics at the Masaryk~University
-% in~Brno~[@novotny15] is gratefully acknowledged.
-%
-% The \TeX{} implementation of the package draws inspiration from several
-% sources including the source code of \Hologo{LaTeX2e}, the \pkg{minted}
-% package by Geoffrey M. Poore, which likewise tackles the issue of
-% interfacing with an external interpreter from \TeX{}, the \pkg{filecontents}
-% package by Scott Pakin and others.
-%
-% \end{markdown}
 % \iffalse
 %</lua>
 %<*manual>
@@ -648,23 +821,24 @@ modules['markdown'] = metadata
 Requirements
 ------------
 
-The package requires a working \TeX{} distribution. [\TeX{} Live][tl] ≥ 2013 is
-known to work and so are recent installation of [Mik\TeX{}][mik]. If you are
-using a minimal installation of a \TeX{} distribution, please consult the
-[technical documentation][techdoc] for a detailed list of required packages.
+The package requires either [our official Docker image][docker], which contains
+the latest development version of the Markdown package, or a \TeX{}
+distribution: [\TeX{} Live][tl] ≥ 2013 is known to work and so are recent
+versions of [Mik\TeX{}][mik]. If you are using a minimal installation of a
+\TeX{} distribution, please consult the [technical documentation][techdoc] for
+a detailed list of required packages.
 
+ [docker]: https://hub.docker.com/r/witiko/markdown/tags (witiko/markdown - Docker Image)
  [tl]: https://www.tug.org/texlive/ (TeX Live - TeX Users Group)
  [mik]: https://miktex.org/ (Home - MiKTeXorg)
 
 Installation
 ------------
 
-The package comes pre-installed with [\TeX{} Live][tl] ≥ 2016 and with recent
-installations of [MikTeX][mik]. Unless you explicitly wish to use the latest
-version of the package, you are encouraged to skip this step.
+If you are using an older \TeX{} distribution such as [\TeX{} Live][tl] < 2016,
+you will need to install the Markdown package.
 
-To install the package, first download the package from the repository
-using Git:
+First, download the package from the repository using Git:
 ``` sh
 git clone https://github.com/witiko/markdown
 ``````
@@ -692,16 +866,16 @@ To perform a local installation, place the above files into your \TeX{}
 directory structure. This is generally where the individual files should be
 placed:
 
- * `<TEXMF>/tex/luatex/markdown/markdown.lua`
- * `<TEXMF>/scripts/markdown/markdown-cli.lua`
- * `<TEXMF>/tex/generic/markdown/markdown.tex`
- * `<TEXMF>/tex/latex/markdown/markdown.sty`
- * `<TEXMF>/tex/latex/markdown/markdownthemewitiko_dot.sty`
- * `<TEXMF>/tex/latex/markdown/markdownthemewitiko_graphicx_http.sty`
- * `<TEXMF>/tex/latex/markdown/markdownthemewitiko_tilde.sty`
- * `<TEXMF>/tex/context/third/markdown/t-markdown.tex`
+ * `⟨TEXMF⟩/tex/luatex/markdown/markdown.lua`
+ * `⟨TEXMF⟩/scripts/markdown/markdown-cli.lua`
+ * `⟨TEXMF⟩/tex/generic/markdown/markdown.tex`
+ * `⟨TEXMF⟩/tex/latex/markdown/markdown.sty`
+ * `⟨TEXMF⟩/tex/latex/markdown/markdownthemewitiko_dot.sty`
+ * `⟨TEXMF⟩/tex/latex/markdown/markdownthemewitiko_graphicx_http.sty`
+ * `⟨TEXMF⟩/tex/latex/markdown/markdownthemewitiko_tilde.sty`
+ * `⟨TEXMF⟩/tex/context/third/markdown/t-markdown.tex`
 
-where `<TEXMF>` corresponds to a root of your \TeX{} distribution, such as
+where `⟨TEXMF⟩` corresponds to a root of your \TeX{} distribution, such as
 `/usr/share/texmf` and `~/texmf` on UN\*X systems or
 `C:\Users\`\meta{Your username}`\texmf` on Windows systems. When in doubt,
 consult the manual of your \TeX{} distribution.
@@ -757,7 +931,18 @@ local lpeg = require("lpeg")
 %
 % \end{markdown}
 %  \begin{macrocode}
-local unicode = require("unicode")
+local ran_ok, unicode = pcall(require, "unicode")
+%    \end{macrocode}
+% \begin{markdown}
+%
+% If the Selene Unicode library is unavailable and we are using
+% Lua${}\geq{}$5.3, we will use the built-in support for Unicode.
+%
+% \end{markdown}
+%  \begin{macrocode}
+if not ran_ok then
+  unicode = {["utf8"]={char=utf8.char}}
+end
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -791,7 +976,7 @@ local md5 = require("md5")
 % \label{sec:texprerequisites}
 % The plain \TeX{} part of the package requires that the plain \TeX{}
 % format (or its superset) is loaded, all the Lua prerequisites (see
-% Section \ref{sec:luaprerequisites}), and the following Lua module:
+% Section \vref{sec:luaprerequisites}), and the following Lua module:
 %
 % \pkg{Lua File System}
 %
@@ -809,7 +994,7 @@ local md5 = require("md5")
 % engine~[@luatex17, Section~3.3].
 %
 % Unless you convert markdown documents to \TeX{} manually using the Lua
-% command-line interface (see Section~\ref{sec:lua-cli-interface}), the plain
+% command-line interface (see Section \vref{sec:lua-cli-interface}), the plain
 % \TeX{} part of the package will require that either the Lua\TeX{}
 % \m{directlua} primitive or the shell access file stream 18 is available in
 % your \TeX{} engine. If only the shell access file stream is available in your
@@ -843,7 +1028,7 @@ local md5 = require("md5")
 % \fi
 % \begin{markdown}
 % a \TeX{} engine that extends \Hologo{eTeX}, all the plain \TeX{}
-% prerequisites (see Section \ref{sec:texprerequisites}), and the following
+% prerequisites (see Section \vref{sec:texprerequisites}), and the following
 % \Hologo{LaTeX2e} packages:
 %
 % \pkg{keyval}
@@ -860,80 +1045,6 @@ local md5 = require("md5")
 % \par
 % \begin{markdown}
 %
-% \pkg{url}
-%
-%:    A package that provides the \m{url} macro for the typesetting of
-%     \acro{url}s. It is used to provide the default token renderer prototype
-%     (see Section \ref{sec:texrendererprototypes}) for links.
-%
-% \end{markdown}
-%  \begin{macrocode}
-\RequirePackage{url}
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
-% \pkg{graphicx}
-%
-%:    A package that provides the \m{includegraphics} macro for the typesetting
-%     of images. It is used to provide the corresponding default token renderer
-%     prototype (see Section \ref{sec:texrendererprototypes}).
-%
-% \end{markdown}
-%  \begin{macrocode}
-\RequirePackage{graphicx}
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
-% \pkg{paralist}
-%
-%:    A package that provides the \envm{compactitem}, \envm{compactenum}, and
-%     \envm{compactdesc} macros for the typesetting of tight bulleted lists,
-%     ordered lists, and definition lists.  It is used to provide the
-%     corresponding default token renderer prototypes (see Section
-%     \ref{sec:texrendererprototypes}).
-%
-% \pkg{ifthen}
-%
-%:    A package that provides a concise syntax for the inspection of macro
-%     values. It is used to determine whether or not the \pkg{paralist} package
-%     should be loaded based on the user options.
-%
-% \end{markdown}
-%  \begin{macrocode}
-\RequirePackage{ifthen}
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
-% \pkg{fancyvrb}
-%
-%:    A package that provides the \m{VerbatimInput} macros for the verbatim
-%     inclusion of files containing code. It is used to provide the
-%     corresponding default token renderer prototype (see Section
-%     \ref{sec:texrendererprototypes}).
-%
-% \end{markdown}
-%  \begin{macrocode}
-\RequirePackage{fancyvrb}
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
-% \pkg{csvsimple}
-%
-%:    A package that provides the default token renderer prototype for
-%     iA\,Writer content blocks with the \acro{csv} filename extension (see
-%     Section \ref{sec:texrendererprototypes}).
-%
-% \end{markdown}
-%  \begin{macrocode}
-\RequirePackage{csvsimple}
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
 % \pkg{xstring}
 %
 %:    A package that provides useful macros for manipulating strings of tokens.
@@ -945,14 +1056,56 @@ local md5 = require("md5")
 % \par
 % \begin{markdown}
 %
+% The following packages are soft prerequisites. They are only used to provide
+% default token renderer prototype (see Section
+% \vref{sec:texrendererprototypes}) and will not be loaded if the `plain`
+% package option has been enabled (see Section \vref{sec:latexplain}):
+%
+% \pkg{url}
+%
+%:    A package that provides the \m{url} macro for the typesetting of
+%     links.
+%
+% \pkg{graphicx}
+%
+%:    A package that provides the \m{includegraphics} macro for the typesetting
+%     of images.
+%
+% \pkg{paralist}
+%
+%:    A package that provides the \envm{compactitem}, \envm{compactenum}, and
+%     \envm{compactdesc} macros for the typesetting of tight bulleted lists,
+%     ordered lists, and definition lists.
+%
+% \pkg{ifthen}
+%
+%:    A package that provides a concise syntax for the inspection of macro
+%     values. It is used to determine whether or not the \pkg{paralist} package
+%     should be loaded based on the user options, in the `witiko/dot` \LaTeX{}
+%     theme (see Section \vref{sec:latexthemes}), and to provide default token
+%     renderer prototypes.
+%
+% \pkg{fancyvrb}
+%
+%:    A package that provides the \m{VerbatimInput} macros for the verbatim
+%     inclusion of files containing code.
+%
+% \pkg{csvsimple}
+%
+%:    A package that provides the \m{csvautotabular} macro for typesetting
+%     \acro{csv} files.
+%
 % \pkg{gobble}
 %
-%:    A package that provides the \m{\@gobblethree} \TeX{} command.
+%:    A package that provides the \m{\@gobblethree} \TeX{} command that
+%     is used in the default renderer prototype for citations.
+%
+% \pkg{amsmath} and \pkg{amssymb}
+%
+%:    Packages that provide symbols used for drawing ticked and unticked
+%     boxes.
 %
 % \end{markdown}
-%  \begin{macrocode}
-\RequirePackage{gobble}
-%    \end{macrocode}
 % \iffalse
 %</latex>
 %<*context>
@@ -963,14 +1116,46 @@ local md5 = require("md5")
 %### \Hologo{ConTeXt} Prerequisites
 % The \Hologo{ConTeXt} part of the package requires that either the Mark II or
 % the Mark IV format is loaded, all the plain \TeX{} prerequisites (see
-% Section \ref{sec:texprerequisites}), and the following \Hologo{ConTeXt}
+% Section \vref{sec:texprerequisites}), and the following \Hologo{ConTeXt}
 % modules:
 %
 % \pkg{m-database}
 %
 %:    A module that provides the default token renderer prototype for
 %     iA\,Writer content blocks with the \acro{csv} filename extension (see
-%     Section \ref{sec:texrendererprototypes}).
+%     Section \vref{sec:texrendererprototypes}).
+%
+% Feedback
+%---------
+% Please use the \pkg{Markdown} project page on
+% [GitHub](https://github.com/witiko/markdown/issues) to report bugs and submit
+% feature requests. If you do not want to report a bug or request a feature but
+% are simply in need of assistance, you might want to consider posting your
+% question to the [\TeX-\LaTeX{} Stack Exchange.](https://tex.stackexchange.com)
+% community question answering web site under the `markdown` tag.
+%
+% Acknowledgements
+%-----------------
+% The Lunamark Lua module provides speedy markdown parsing for the package. I
+% would like to thank John Macfarlane, the creator of Lunamark, for releasing
+% Lunamark under a permissive license, which enabled its use in the Markdown
+% package.
+%
+% Extensive user documentation for the Markdown package was kindly written by
+% Lian Tze Lim and published by Overleaf.
+%
+% Funding by the the Faculty of Informatics at the Masaryk~University
+% in~Brno~[@novotny15] is gratefully acknowledged.
+%
+% Support for content slicing (Lua options \Opt{shiftHeadings} and \Opt{slice})
+% and pipe tables (Lua options \Opt{pipeTables} and \Opt{tableCaptions}) was
+% graciously sponsored by David Vins and Omedym.
+%
+% The \TeX{} implementation of the package draws inspiration from several
+% sources including the source code of \Hologo{LaTeX2e}, the \pkg{minted}
+% package by Geoffrey M. Poore, which likewise tackles the issue of
+% interfacing with an external interpreter from \TeX{}, the \pkg{filecontents}
+% package by Scott Pakin and others.
 %
 % Interfaces
 %===========
@@ -979,12 +1164,25 @@ local md5 = require("md5")
 % along with usage notes and examples. It is aimed at the user of the package.
 %
 % Since neither \TeX{} nor Lua provide interfaces as a language construct, the
-% separation to interfaces and implementations is purely abstract. It serves as
-% a means of structuring this documentation and as a promise to the user that
-% if they only access the package through the interface, the future minor
-% versions of the package should remain backwards compatible.
+% separation to interfaces and implementations is a *gentlemen's agreement*. It
+% serves as a means of structuring this documentation and as a promise to the
+% user that if they only access the package through the interface, the future
+% minor versions of the package should remain backwards compatible.
+%
+% Figure \vref{fig:block-diagram} shows the high-level structure of the Markdown
+% package: The translation from markdown to \TeX{} *token renderers* is exposed
+% by the Lua layer. The plain \TeX{} layer exposes the conversion capabilities
+% of Lua as \TeX{} macros. The \LaTeX{} and \Hologo{ConTeXt} layers provide
+% syntactic sugar on top of plain \TeX{} macros. The user can interface with
+% any and all layers.
 %
 % \end{markdown}
+% \begin{figure}
+% \centering
+% \input markdown-figure-block-diagram
+% \caption{A block diagram of the \pkg{Markdown} package.}
+% \label{fig:block-diagram}
+% \end{figure}
 % \iffalse
 %</context>
 %<*manual>
@@ -995,6 +1193,15 @@ First Document
 In this section, we will take the necessary steps to typeset our first markdown
 document in \TeX{}. This will serve as our first hands-on experience with the
 package and also as a reassurance that the package has been correctly installed.
+
+If you are using [our official Docker image][docker], you need to prefix all
+commands in this section with `docker run --rm -v "$PWD"/workdir:/workdir -w
+/workdir witiko/markdown`. For example, instead of `luatex document.tex`, you
+would execute the following command:
+``` sh
+docker run --rm -v "$PWD"/workdir:/workdir -w /workdir witiko/markdown \
+  luatex document.tex
+``````
 
 ### Using Lua
 
@@ -1012,8 +1219,8 @@ Using a text editor, create a text document named `hello.lua` with the
 following content:
 ``` lua
 #!/usr/bin/env texlua
-local kpse = require("kpse")
-kpse.set_program_name("luatex")
+local ran_ok, kpse = pcall(require, "kpse")
+if ran_ok then kpse.set_program_name("luatex") end
 local markdown = require("markdown")
 local convert = markdown.new()
 print(convert("Hello *world*!"))
@@ -1164,7 +1371,7 @@ In this section, I will describe the individual parts of the Markdown package.
 Each part will be shown by example, leaving the implementation details to the
 [technical documentation][techdoc].
 
- [techdoc]: http://mirrors.ctan.org/macros/generic/markdown/markdown.pdf
+ [techdoc]: https://mirrors.ctan.org/macros/generic/markdown/markdown.pdf
             (A Markdown Interpreter for \TeX{})
 
 /markdown-interfaces.md
@@ -1210,7 +1417,7 @@ module and a command-line interface (CLI).
 %
 % The Lua interface provides the conversion from \acro{utf}-\oldstylenums8
 % encoded markdown to plain \TeX{}. This interface is used by the plain \TeX{}
-% implementation (see Section \ref{sec:teximplementation}) and will be of
+% implementation (see Section \vref{sec:teximplementation}) and will be of
 % interest to the developers of other packages and Lua modules.
 %
 % The Lua interface is implemented by the `markdown` Lua module.
@@ -1227,7 +1434,7 @@ local M = {metadata = metadata}
 % The Lua interface exposes the \luamdef{new}`(options)` method.  This
 % method creates converter functions that perform the conversion from markdown
 % to plain \TeX{} according to the table `options` that contains options
-% recognized by the Lua interface.  (see Section \ref{sec:luaoptions}). The
+% recognized by the Lua interface.  (see Section \vref{sec:luaoptions}). The
 % `options` parameter is optional; when unspecified, the behaviour will be
 % the same as if `options` were an empty table.
 %
@@ -1269,8 +1476,8 @@ Using a text editor, create a text document named `example.lua` with the
 following content:
 ``` lua
 #!/usr/bin/env texlua
-local kpse = require("kpse")
-kpse.set_program_name("luatex")
+local ran_ok, kpse = pcall(require, "kpse")
+if ran_ok then kpse.set_program_name("luatex") end
 local markdown = require("markdown")
 local input, convert_safe, convert_unsafe, paragraph
 
@@ -1357,7 +1564,10 @@ following content:
 \input lmfonts
 \input safe
 
+\begingroup
+\catcode`\%=12
 \input unsafe
+\endgroup
 \bye
 ```````
 Using a text editor, create a text document named `example.md` with the
@@ -3273,7 +3483,7 @@ defaultOptions.contentBlocks = false
 %
 :    The filename of the JSON file that maps filename extensions to
      programming language names in the iA\,Writer content blocks.
-%    See Section~\ref{sec:texcontentblockrenderers} for more information.
+%    See Section \vref{sec:texcontentblockrenderers} for more information.
 
 % \end{markdown}
 % \iffalse
@@ -4592,7 +4802,10 @@ following content:
 \input lmfonts
 \input optionfalse
 
+\begingroup
+\catcode`\%=12
 \input optiontrue
+\endgroup
 \bye
 ```````
 Using a text editor, create a text document named `content.md` with the
@@ -5610,7 +5823,7 @@ defaultOptions.startNumber = true
 `stripIndent` (default value: `false`)
 
 % \fi
-% \begin{markdown}
+% \markdownBegin
 %
 % \Optitem[false]{stripIndent}{\opt{true}, \opt{false}}
 %
@@ -5635,7 +5848,7 @@ defaultOptions.startNumber = true
      :   Do not strip any indentation from the lines in a markdown
          document.
 
-% \end{markdown}
+% \markdownEnd
 % \iffalse
 
 ##### Plain \TeX{} Example {.unnumbered}
@@ -5737,7 +5950,7 @@ defaultOptions.stripIndent = false
 
 :    false
 
-     :  Enable the Pandoc `table_captions` syntax extension.
+     :  Disable the Pandoc `table_captions` syntax extension.
 
 % \end{markdown}
 % \iffalse
@@ -5822,12 +6035,105 @@ defaultOptions.tableCaptions = false
 %</lua,lua-cli>
 %<*manual-options>
 
+#### Option `taskLists`
+
+`taskLists` (default value: `false`)
+
+% \fi
+% \begin{markdown}
+%
+% \Optitem[false]{taskLists}{\opt{true}, \opt{false}}
+%
+:    true
+
+     :   Enable the Pandoc `task_lists` syntax extension.
+       
+
+        ``` md
+        - [ ] an unchecked task list item
+        - [x] checked item
+        ``````
+
+:    false
+
+     :  Disable the Pandoc `task_lists` syntax extension.
+
+% \end{markdown}
+% \iffalse
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\documentclass{article}
+\usepackage[taskLists]{markdown}
+\markdownSetup{
+  renderers = {
+    untickedBox = No,
+    tickedBox = Yes,
+  },
+}
+\begin{document}
+\begin{markdown}
+- [ ] you can't.
+- [x] I can!
+\end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> - No you can't.
+> - Yes I can!
+
+##### \Hologo{ConTeXt} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\usemodule[t][markdown]
+\def\markdownOptionTaskLists{true}
+\def\markdownRendererUntickedBox{No}
+\def\markdownRendererTickedBox{Yes}
+\starttext
+\startmarkdown
+- [ ] you can't.
+- [x] I can!
+\stopmarkdown
+\stoptext
+````````
+Next, invoke LuaTeX from the terminal:
+``` sh
+context document.tex
+`````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> - No you can't.
+> - Yes I can!
+
+%</manual-options>
+%<*lua,lua-cli>
+% \fi
+%  \begin{macrocode}
+defaultOptions.taskLists = false
+%    \end{macrocode}
+% \par
+% \iffalse
+%</lua,lua-cli>
+%<*manual-options>
+
 #### Option `texComments`
 
 `texComments` (default value: `false`)
 
 % \fi
-% \begin{markdown}
+% \markdownBegin
 %
 % \Optitem[false]{texComments}{\opt{true}, \opt{false}}
 %
@@ -5846,11 +6152,13 @@ defaultOptions.tableCaptions = false
          \end{document}
          ```````
 
+         Always enabled when \Opt{hybrid} is enabled.
+
 :    false
 
      :   Do not strip \TeX{}-style comments.
 
-% \end{markdown}
+% \markdownEnd
 % \iffalse
 
 ##### Plain \TeX{} Example {.unnumbered}
@@ -6165,11 +6473,61 @@ defaultOptions.underscores = true
 %
 %### Command-Line Interface
 % \label{sec:lua-cli-interface}
-% To provide finer control over the conversion and to simplify debugging, a
-% command-line Lua interface for converting a Markdown document to \TeX{} is
-% also provided.
+% The high-level operation of the Markdown package involves the communication
+% between several programming layers: the plain \TeX{} layer hands markdown
+% documents to the Lua layer. Lua converts the documents to \TeX{}, and hands
+% the converted documents back to plain \TeX{} layer for typesetting, see
+% Figure \vref{fig:sequence-diagram-tex-interface}.
+%
+% This procedure has the advantage of being fully automated. However, it also
+% has several important disadvantages: The converted \TeX{} documents are
+% cached on the file system, taking up increasing amount of space. Unless the
+% \TeX{} engine includes a Lua interpreter, the package also requires shell
+% access, which opens the door for a malicious actor to access the system.
+% Last, but not least, the complexity of the procedure impedes debugging.
+%
+% A solution to the above problems is to decouple the conversion from the
+% typesetting. For this reason, a command-line Lua interface for converting a
+% markdown document to \TeX{} is also provided, see
+% Figure \vref{fig:sequence-diagram-lua-cli}.
 %
 % \end{markdown}
+% \begin{figure}
+% \centering
+% \begin{sequencediagram}
+%   \newthread{user}{User}{}
+%   \newinst[4]{tex}{\TeX{}}{}
+%   \newinst[4]{lua}{Lua}{}
+%   \begin{call}{user}{\footnotesize\cs{jobname.tex}}{tex}{\footnotesize\cs{jobname.pdf}}
+%   \begin{call}{tex}{\footnotesize\cs{jobname.markdown.in}}{lua}{\footnotesize\cs{jobname.markdown.out}}
+%   \end{call}
+%   \begin{call}{tex}{\footnotesize\cs{input}\cs{jobname.markdown.out}}{tex}{}
+%   \end{call}
+%   \end{call}
+% \end{sequencediagram}
+% \caption[A sequence diagram of typesetting a document using the \TeX{}
+%   interface]{A sequence diagram of the Markdown package typesetting a
+%   markdown document using the \TeX{} interface.}
+% \label{fig:sequence-diagram-tex-interface}
+% \end{figure}
+% \begin{figure}
+% \centering
+% \begin{sequencediagram}
+%   \newthread{user}{User}{}
+%   \newinst[4]{tex}{\TeX{}}{}
+%   \newinst[4]{lua}{Lua}{}
+%   \begin{call}{user}{\footnotesize$\langle$\textit{document}$\rangle$\texttt{.md}}{lua}{\footnotesize$\langle$\textit{document}$\rangle$\texttt{.tex}}
+%   \end{call}
+%   \begin{call}{user}{\footnotesize\cs{jobname.tex}}{tex}{\footnotesize\cs{jobname.pdf}}
+%   \begin{call}{tex}{\footnotesize\cs{input} $\langle$\textit{document}$\rangle$}{tex}{}
+%   \end{call}
+%   \end{call}
+% \end{sequencediagram}
+% \caption[A sequence diagram of typesetting a document using the Lua CLI]%
+%   {A sequence diagram of the Markdown package typesetting a markdown document
+%   using the Lua command-line interface.}
+% \label{fig:sequence-diagram-lua-cli}
+% \end{figure}
 %  \begin{macrocode}
 
 HELP_STRING = [[
@@ -6221,7 +6579,7 @@ for i = 1, #arg do
 % Unless the `-`{}`-` argument has been specified before, an argument
 % containing the equals sign (`=`) is assumed to be an option specification in
 % a \meta{key}`=`\meta{value} format. The available options are listed in
-% Section~\ref{sec:luaoptions}.
+% Section \vref{sec:luaoptions}.
 % \end{markdown}
 %  \begin{macrocode}
     elseif arg[i]:match("=") then
@@ -6312,10 +6670,6 @@ end
 % \input hello
 % ```````
 %
-% This shows another advantage of using the command-line interface compared to
-% using a higher-level \TeX{} interface: it is unnecessary to provide shell
-% access for the \TeX{} engine.
-%
 % \end{markdown}
 % \iffalse
 %</lua-cli>
@@ -6383,13 +6737,13 @@ pdftex --shell-escape document.tex
 %
 % The plain \TeX{} interface provides macros for the typesetting of markdown
 % input from within plain \TeX{}, for setting the Lua interface options (see
-% Section \ref{sec:luaoptions}) used during the conversion from markdown to
+% Section \vref{sec:luaoptions}) used during the conversion from markdown to
 % plain \TeX{} and for changing the way markdown the tokens are rendered.
 %
 % \end{markdown}
 %  \begin{macrocode}
-\def\markdownLastModified{2020/09/14}%
-\def\markdownVersion{2.9.0}%
+\def\markdownLastModified{2021/08/06}%
+\def\markdownVersion{$GitTag$}%
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -6491,7 +6845,7 @@ pdftex --shell-escape document.tex
 %
 % The plain \TeX{} options are represented by \TeX{} commands. Some of them map
 % directly to the options recognized by the Lua interface (see
-% Section~\ref{sec:luaoptions}), while some of them are specific to the plain
+% Section \vref{sec:luaoptions}), while some of them are specific to the plain
 % \TeX{} interface.
 %
 % \end{markdown}
@@ -6743,7 +7097,7 @@ bug](https://github.com/witiko/markdown/issues).
 %
 %#### Lua Interface Options
 % The following macros map directly to the options recognized by the Lua
-% interface (see Section \ref{sec:luaoptions}) and are not processed by the
+% interface (see Section \vref{sec:luaoptions}) and are not processed by the
 % plain \TeX{} implementation, only passed along to Lua. They are undefined, which
 % makes them fall back to the default values provided by the Lua interface.
 %
@@ -6778,6 +7132,7 @@ bug](https://github.com/witiko/markdown/issues).
 \let\markdownOptionStartNumber\undefined
 \let\markdownOptionStripIndent\undefined
 \let\markdownOptionTableCaptions\undefined
+\let\markdownOptionTaskLists\undefined
 \let\markdownOptionTeXComments\undefined
 \let\markdownOptionTightLists\undefined
 %    \end{macrocode}
@@ -6830,7 +7185,7 @@ A PDF document named `document.pdf` should be produced and contain the text
 %
 % The \mdef{markdownOptionStripPercentSigns} macro controls whether a percent
 % sign (`%`) at the beginning of a line will be discarded when buffering
-% Markdown input (see Section~\ref{sec:buffering}) or not. Notably, this
+% Markdown input (see Section \vref{sec:buffering}) or not. Notably, this
 % enables the use of markdown when writing \TeX{} package documentation using
 % the \pkg{Doc} \LaTeX{}~package~[@mittelbach17] or similar. The recognized
 % values of the macro are `true` (discard) and `false` (retain). It defaults
@@ -6868,10 +7223,97 @@ In this section, I will describe the individual token renderers.
 %
 % The following \TeX{} macros may occur inside the output of the
 % converter functions exposed by the Lua interface (see Section
-% \ref{sec:luaconversion}) and represent the parsed markdown tokens. These
+% \vref{sec:luaconversion}) and represent the parsed markdown tokens. These
 % macros are intended to be redefined by the user who is typesetting a
 % document. By default, they point to the corresponding prototypes (see Section
-% \ref{sec:texrendererprototypes}).
+% \vref{sec:texrendererprototypes}).
+
+#### Tickbox Renderers
+The macros named \mdef{markdownRendererTickedBox} and
+\mdef{markdownRendererUntickedBox} represent ticked and unticked boxes,
+respectively. These macros will either be produced, when the \Opt{taskLists}
+option is enabled, or when the Ballot Box with X (☒, U+2612) or Ballot Box
+(☐, U+2610) Unicode characters are encountered in the markdown input,
+respectively.
+
+% \end{markdown}
+%
+% \iffalse
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\documentclass{article}
+\usepackage[taskLists]{markdown}
+\markdownSetup{
+  renderers = {
+    untickedBox = No,
+    tickedBox = Yes,
+  },
+}
+\begin{document}
+\begin{markdown}
+- [ ] you can't.
+- [x] I can!
+\end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> - No you can't.
+> - Yes I can!
+
+##### \Hologo{ConTeXt} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\usemodule[t][markdown]
+\def\markdownOptionTaskLists{true}
+\def\markdownRendererUntickedBox{No}
+\def\markdownRendererTickedBox{Yes}
+\starttext
+\startmarkdown
+- [ ] you can't.
+- [x] I can!
+\stopmarkdown
+\stoptext
+````````
+Next, invoke LuaTeX from the terminal:
+``` sh
+context document.tex
+`````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> - No you can't.
+> - Yes I can!
+
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererTickedBox{%
+  \markdownRendererTickedBoxPrototype}%
+\def\markdownRendererUntickedBox{%
+  \markdownRendererUntickedBoxPrototype}%
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
 
 #### Interblock Separator Renderer
 The \mdef{markdownRendererInterblockSeparator} macro represents a separator
@@ -8465,7 +8907,8 @@ an ordered list. The macro receives no arguments.
 
 The \mdef{markdownRendererOlItemWithNumber} macro represents an item in an
 ordered list.  This macro will only be produced, when the \Opt{startNumber}
-option is enabled.  The macro receives no arguments.
+option is enabled.  The macro receives a single numeric argument that
+corresponds to the item number.
 
 % \end{markdown}
 %
@@ -10504,8 +10947,6 @@ following content:
   : Demonstration of pipe table syntax
 \end{markdown}
 \end{document}
-\end{markdown}
-\end{document}
 ```````
 Next, invoke LuaTeX from the terminal:
 ``` sh
@@ -10534,6 +10975,69 @@ following text:
 %  \begin{macrocode}
 \def\markdownRendererTable{%
   \markdownRendererTablePrototype}%
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
+#### Inline HTML Comment Renderer
+The \mdef{markdownRendererInlineHtmlComment} macro represents the contents of an
+inline \acro{HTML} comment. This macro will only be produced, when the
+\Opt{html} option is enabled. The macro receives a single argument that
+corresponds to the contents of the \acro{HTML} comment.
+
+% \end{markdown}
+%
+% \iffalse
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\documentclass{article}
+\usepackage[html]{markdown}
+\usepackage{marginnote}
+\markdownSetup{
+  renderers = {
+    inlineHtmlComment = {\marginnote{#1}},
+  },
+}
+\begin{document}
+\begin{markdown}
+A useful use of HTML comments are side notes.
+<!-- Side notes are displayed in the horizontal margins next to the relevant
+passages, which makes them easier for the reader to find than footnotes. -->
+\end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex document.tex
+lualatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following body text:
+
+> A useful use of HTML comments are side notes.
+
+The horizontal margins should contain the following text:
+
+> Side notes are displayed in the horizontal margins next to the relevant
+> passages, which makes them easier for the reader to find than footnotes.
+
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererInlineHtmlComment{%
+  \markdownRendererInlineHtmlCommentPrototype}%
 %    \end{macrocode}
 % \par
 %
@@ -10667,11 +11171,11 @@ following text:
 % \begin{markdown}
 %
 % The following \TeX{} macros provide definitions for the token renderers (see
-% Section \ref{sec:texrenderersuser}) that have not been redefined by the
+% Section \vref{sec:texrenderersuser}) that have not been redefined by the
 % user. These macros are intended to be redefined by macro package authors
 % who wish to provide sensible default token renderers. They are also redefined
 % by the \LaTeX{} and \Hologo{ConTeXt} implementations (see sections
-% \ref{sec:lateximplementation} and \ref{sec:contextimplementation}).
+% \vref{sec:lateximplementation} and \vref{sec:contextimplementation}).
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -10737,6 +11241,9 @@ following text:
 \def\markdownRendererCitePrototype#1{}%
 \def\markdownRendererTextCitePrototype#1{}%
 \def\markdownRendererTablePrototype#1#2#3{}%
+\def\markdownRendererInlineHtmlCommentPrototype#1{}%
+\def\markdownRendererTickedBoxPrototype{}%
+\def\markdownRendererUntickedBoxPrototype{}%
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -10745,27 +11252,9 @@ following text:
 % The \mdef{markdownInfo}, \mdef{markdownWarning}, and \mdef{markdownError}
 % macros perform logging for the Markdown package. Their first argument
 % specifies the text of the info, warning, or error message.
-%
-% \end{markdown}
-%  \begin{macrocode}
-\def\markdownInfo#1{}%
-\def\markdownWarning#1{}%
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
 % The \m{markdownError} macro receives a second argument that provides a help
-% text.
-%
-% \end{markdown}
-%  \begin{macrocode}
-\def\markdownError#1#2{}%
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
-% You may redefine these macros to redirect and process the info, warning, and
-% error messages.
+% text. You may redefine these macros to redirect and process the info,
+% warning, and error messages.
 %
 %### Miscellanea
 % The \mdef{markdownMakeOther} macro is used by the package, when a \TeX{}
@@ -10812,7 +11301,7 @@ following text:
 % \begin{markdown}
 % The macro is exposed in the interface, so that the user can create their own
 % markdown environments. Due to the way the arguments are passed to Lua (see
-% Section \ref{sec:directlua}), the first argument may not contain the
+% Section \vref{sec:directlua}), the first argument may not contain the
 % string `]]` (regardless of the category code of the bracket symbol (`]`)).
 %
 % The \mdef{markdownMode} macro specifies how the plain \TeX{} implementation
@@ -10916,10 +11405,10 @@ pdflatex --shell-escape document.tex
 %
 % The \LaTeX{} interface provides \LaTeX{} environments for the typesetting of
 % markdown input from within \LaTeX{}, facilities for setting Lua interface
-% options (see Section \ref{sec:luaoptions}) used during the conversion from
+% options (see Section \vref{sec:luaoptions}) used during the conversion from
 % markdown to plain \TeX{}, and facilities for changing the way markdown tokens
 % are rendered. The rest of the interface is inherited from the plain \TeX{}
-% interface (see Section \ref{sec:texinterface}).
+% interface (see Section \vref{sec:texinterface}).
 %
 % The \LaTeX{} interface is implemented by the `markdown.sty` file, which
 % can be loaded from the \LaTeX{} document preamble as follows:
@@ -10929,10 +11418,10 @@ pdflatex --shell-escape document.tex
 % \end{Verbatim}
 % \begin{markdown}
 % where \meta{options} are the \LaTeX{} interface options (see Section
-% \ref{sec:latexoptions}). Note that \meta{options} inside the \m{usepackage}
+% \vref{sec:latexoptions}). Note that \meta{options} inside the \m{usepackage}
 % macro may not set the `markdownRenderers` (see Section
-% \ref{sec:latexrenderers}) and `markdownRendererPrototypes` (see Section
-% \ref{sec:latexrendererprototypes}) keys. This limitation is due to the way
+% \vref{sec:latexrenderers}) and `markdownRendererPrototypes` (see Section
+% \vref{sec:latexrendererprototypes}) keys. This limitation is due to the way
 % \Hologo{LaTeX2e} parses package options.
 %
 % \end{markdown}
@@ -10946,7 +11435,7 @@ pdflatex --shell-escape document.tex
 % The \envm{markdown} and \envm{markdown*} \LaTeX{} environments are used to
 % typeset markdown document fragments. The starred version of the
 % \envm{markdown} environment accepts \LaTeX{} interface options (see
-% Section \ref{sec:latexoptions}) as its only argument. These options will
+% Section \vref{sec:latexoptions}) as its only argument. These options will
 % only influence this markdown document fragment.
 %
 % \end{markdown}
@@ -10983,7 +11472,7 @@ pdflatex --shell-escape document.tex
 % the filename of a markdown document and expands to the result of the
 % conversion of the input markdown document to plain \TeX{}.  Unlike the
 % \m{markdownInput} macro provided by the plain \TeX{} interface, this macro
-% also accepts \LaTeX{} interface options (see Section \ref{sec:latexoptions})
+% also accepts \LaTeX{} interface options (see Section \vref{sec:latexoptions})
 % as its optional argument. These options will only influnce this markdown
 % document.
 %
@@ -11004,48 +11493,116 @@ pdflatex --shell-escape document.tex
 %
 % The \LaTeX{} options are represented by a comma-delimited list of
 % \meta{key}`=`\meta{value} pairs. For boolean options, the `=`\meta{value}
-% part is optional, and \meta{key} will be interpreted as \meta{key}`=true`.
+% part is optional, and \meta{key} will be interpreted as \meta{key}`=true`
+% if the `=`\meta{value} part has been omitted.
 %
-% Except for the \LaTeX{} themes described in Section \ref{sec:latexthemes},
-% the \LaTeX{} options map directly to the options recognized by the plain
-% \TeX{} interface (see Section \ref{sec:texoptions}) and to the markdown token
+% Except for the `plain` option described in Section \vref{sec:latexplain}, and
+% the \LaTeX{} themes described in Section \vref{sec:latexthemes}, and the
+% \LaTeX{} setup snippets described in Section \vref{sec:latexsetupsnippets},
+% \LaTeX{} options map directly to the options recognized by the plain
+% \TeX{} interface (see Section \vref{sec:texoptions}) and to the markdown token
 % renderers and their prototypes recognized by the plain \TeX{} interface (see
-% Sections \ref{sec:texrenderersuser} and \ref{sec:texrendererprototypes}).
+% Sections \vref{sec:texrenderersuser} and \vref{sec:texrendererprototypes}).
 %
-% The \LaTeX{} options may be specified when loading the \LaTeX{} package (see
-% Section \ref{sec:latexinterface}), when using the \envm{markdown*} \LaTeX{}
-% environment, or via the \mdef{markdownSetup} macro. The \m{markdownSetup}
-% macro receives the options to set up as its only argument.
+% The \LaTeX{} options may be specified when loading the \LaTeX{} package, when
+% using the \envm{markdown*} \LaTeX{} environment or the \m{markdownInput}
+% macro (see Section \vref{sec:latexinterface}), or via the \mdef{markdownSetup}
+% macro. The \m{markdownSetup} macro receives the options to set up as its only
+% argument:
 %
 % \markdownEnd
 %  \begin{macrocode}
 \newcommand\markdownSetup[1]{%
   \setkeys{markdownOptions}{#1}}%
 %    \end{macrocode}
+% \begin{markdown}
+%
+% We may also store \LaTeX{} options as *setup snippets* and invoke them later
+% using the \mdef{markdownSetupSnippet} macro. The \m{markdownSetupSnippet}
+% macro receives two arguments: the name of the setup snippet and the options
+% to store:
+%
+% \end{markdown}
+%  \begin{macrocode}
+\newcommand\markdownSetupSnippet[2]{%
+  \@ifundefined
+    {markdownLaTeXSetupSnippet\markdownLaTeXThemeName#1}{%
+      \newtoks\next
+        \next={#2}%
+      \expandafter\let\csname markdownLaTeXSetupSnippet%
+        \markdownLaTeXThemeName#1\endcsname=\next
+    }{%
+      \markdownWarning
+        {Redefined setup snippet \markdownLaTeXThemeName#1}%
+      \csname markdownLaTeXSetupSnippet%
+        \markdownLaTeXThemeName#1\endcsname={#2}%
+    }}%
+%    \end{macrocode}
+% \begin{markdown}
+%
+% See Section \vref{sec:latexthemes} for information on interactions between
+% setup snippets and \LaTeX{} themes. See Section \vref{sec:latexsetupsnippets}
+% for information about invoking the stored setup snippets.
+%
+% \end{markdown}
 % \iffalse
 %</latex>
 %<*manual-options>
 
 ### \LaTeX{}
 
-\LaTeX{} options enable the loading of user-contributed themes.
+\LaTeX{} options allow us to disable the redefinition of the default renderer
+prototypes from plain \TeX{}, load user-contributed themes, and invoke
+user-defined setup snippets.
 
 % \fi
 % \par
 % \begin{markdown}
 
-#### \LaTeX{} themes
-% \label{sec:latexthemes}
+#### No default token renderer prototypes
+% \label{sec:latexplain}
+Default token renderer prototypes require \LaTeX{} packages that may clash with
+other packages used in a document.  Additionally, if we redefine token
+renderers and renderer prototypes ourselves, the default definitions will bring
+no benefit to us. Using the `plain` package option, we can keep the default
+definitions from the plain \TeX{} implementation (see Section
+\vref{sec:textokenrendererprototypes}) and prevent the soft \LaTeX{}
+prerequisites in Section \vref{sec:latexprerequisites} from being loaded:
+
+``` tex
+\usepackage[plain]{markdown}
+```````
+
 % \end{markdown}
 % \iffalse
+%</manual-options>
+%<*latex>
+% \fi
+%  \begin{macrocode}
+\newif\ifmarkdownLaTeXPlain
+  \markdownLaTeXPlainfalse
+\define@key{markdownOptions}{plain}[true]{%
+  \ifmarkdownLaTeXLoaded
+    \markdownWarning
+      {The plain option must be specified when loading the package}%
+  \else
+    \markdownLaTeXPlaintrue
+  \fi}
+%    \end{macrocode}
+% \iffalse
+%</latex>
+%<*manual-options>
+% \fi
+% \begin{markdown}
+
+#### \LaTeX{} themes
+% \label{sec:latexthemes}
 
 User-contributed \LaTeX{} themes for the Markdown package provide a
 domain-specific interpretation of some Markdown tokens. Similarly to \LaTeX{}
 packages, themes allow the authors to achieve a specific look and other
 high-level goals without low-level programming.
 
-% \fi
-% \begin{markdown}
 % The \LaTeX{} option with key `theme` loads a \LaTeX{} package (further
 % referred to as *a theme*) named `markdowntheme`\meta{munged theme
 % name}`.sty`, where the *munged theme name* is the *theme name* after a
@@ -11103,7 +11660,8 @@ would use the following code in the preamble of your document:
 %<*latex>
 % \fi
 %  \begin{macrocode}
-\newif\ifmarkdownLaTeXLoaded\markdownLaTeXLoadedfalse
+\newif\ifmarkdownLaTeXLoaded
+  \markdownLaTeXLoadedfalse
 \AtEndOfPackage{\markdownLaTeXLoadedtrue}%
 \define@key{markdownOptions}{theme}{%
   \IfSubStr{#1}{/}{}{%
@@ -11113,11 +11671,32 @@ would use the following code in the preamble of your document:
   \StrSubstitute{#1}{/}{_}[\markdownLaTeXThemePackageName]%
   \edef\markdownLaTeXThemePackageName{%
     markdowntheme\markdownLaTeXThemePackageName}%
-  \expandafter\ifmarkdownLaTeXLoaded\expandafter\expandafter
-    \expandafter\@gobble\expandafter\fi%  Remove \AtEndOfPackage if loaded
-  \expandafter\AtEndOfPackage\expandafter{\expandafter\RequirePackage
-    \expandafter{\markdownLaTeXThemePackageName}}}%
+  \expandafter\markdownLaTeXThemeLoad\expandafter{%
+    \markdownLaTeXThemePackageName}{#1/}}%
+\newcommand\markdownLaTeXThemeName{}%
+\newcommand\markdownLaTeXThemeLoad[2]{%
+  \ifmarkdownLaTeXLoaded
+    \def\markdownLaTeXThemeName{#2}%
+    \RequirePackage{#1}%
+    \def\markdownLaTeXThemeName{}%
+  \else
+    \AtEndOfPackage{%
+      \def\markdownLaTeXThemeName{#2}%
+      \RequirePackage{#1}%
+      \def\markdownLaTeXThemeName{}}%
+  \fi}%
 %    \end{macrocode}
+% \begin{markdown}
+%
+% The \LaTeX{} themes have a useful synergy with the setup snippets (see
+% Section \vref{sec:latexoptions}): To make it less likely that different
+% themes will define setup snippets with the same name, we will prepend
+% \meta{theme name}`/` before the snippet name and use the result as the
+% snippet name. For example, if the `witiko/dot` theme defines the `product`
+% setup snippet, the setup snippet will be available under the name
+% `witiko/dot/product`.
+%
+% \end{markdown}
 % \iffalse
 %</latex>
 %<*manual-options>
@@ -11133,11 +11712,7 @@ beginning of a \LaTeX{} document.
 %<*latex>
 % \fi
 %  \begin{macrocode}
-\AtBeginDocument{%  Prohibit loading of themes after \begin{document}
-  \define@key{markdownOptions}{theme}{%
-    \markdownError
-      {Won't load themes after the beginning of a document}%
-      {Themes can only be loaded in the preamble of a document}}}%
+\@onlypreamble\KV@markdownOptions@theme
 %    \end{macrocode}
 % \iffalse
 %</latex>
@@ -11190,7 +11765,7 @@ Example themes provided with the Markdown package include:
 %    \end{document}
 %    ````````
 %    Typesetting the above document produces the output shown in
-%    Figure~\ref{fig:witiko/dot}.
+%    Figure \vref{fig:witiko/dot}.
 %    ``` dot Various formats of mathemathical formulae \label{fig:witiko/dot}
 %    digraph tree {
 %      margin = 0;
@@ -11298,14 +11873,14 @@ conference article:
 %    \usepackage[theme=witiko/graphicx/http]{markdown}
 %    \begin{document}
 %    \begin{markdown}
-%    ![img](https://github.com/witiko/markdown/raw/master/banner.png
+%    ![img](https://github.com/witiko/markdown/raw/main/banner.png
 %           "The banner of the Markdown package")
 %    \end{markdown}
 %    \end{document}
 %    ```````
 %    Typesetting the above document produces the output shown in
-%    Figure~\ref{fig:witiko/graphicx/http}.
-%    ![img](https://github.com/witiko/markdown/raw/master/banner.png
+%    Figure \vref{fig:witiko/graphicx/http}.
+%    ![img](https://github.com/witiko/markdown/raw/main/banner.png
 %           "The banner of the Markdown package \label{fig:witiko/graphicx/http}")
      The theme requires the \pkg{catchfile} \LaTeX{} package and a Unix-like
      operating system with GNU Coreutils `md5sum` and either GNU Wget or cURL
@@ -11324,7 +11899,7 @@ following content:
 \usepackage[theme=witiko/graphicx/http]{markdown}
 \begin{document}
 \begin{markdown}
-![img](https://github.com/witiko/markdown/raw/master/banner.png
+![img](https://github.com/witiko/markdown/raw/main/banner.png
        "The banner of the Markdown package")
 \end{markdown}
 \end{document}
@@ -11336,7 +11911,7 @@ lualatex document.tex
 A PDF document named `document.pdf` should be produced and contain the
 following image:
 
-> ![img](https://github.com/witiko/markdown/raw/master/banner.png
+> ![img](https://github.com/witiko/markdown/raw/main/banner.png
 >        "The banner of the Markdown package")
 
 %</manual-options>
@@ -11402,19 +11977,82 @@ following text, where the middot (`·`) denotes a non-breaking space:
 %    \end{macrocode}
 % \iffalse
 %</latex-themes-witiko-tilde>
-%<*latex>
+%<*manual-options>
 % \fi
 % \par
 % \begin{markdown}
 %
-% Please, see Section~\ref{sec:latexthemesimplementation} for implementation
+% Please, see Section \vref{sec:latexthemesimplementation} for implementation
 % details of the example themes.
-%
+
+#### \LaTeX{} setup snippets
+% \label{sec:latexsetupsnippets}
+% \end{markdown}
+% \iffalse
+
+User-contributed \LaTeX{} themes provide global control over high-level goals.
+However, it is often desirable to change only some local aspects of a document.
+\LaTeX{} setup snippets provide syntactic sugar for defining and invoking
+various options locally.
+
+% \fi
+% \begin{markdown}
+% The \LaTeX{} option with key `snippet` invokes a snippet named \meta{value}:
+% \end{markdown}
+% \iffalse
+%</manual-options>
+%<*latex>
+% \fi
+%  \begin{macrocode}
+\define@key{markdownOptions}{snippet}{%
+  \expandafter\markdownSetup\expandafter{%
+    \the\csname markdownLaTeXSetupSnippet#1\endcsname}}%
+%    \end{macrocode}
+% \iffalse
+%</latex>
+%<*manual-options>
+% \fi
+% \par
+% \markdownBegin
+
+Here is how we can use setup snippets to store options and invoke them later:
+
+``` tex
+\markdownSetupSnippet{romanNumerals}{
+  renderers = {
+      olItemWithNumber = {%
+          \item[\romannumeral#1\relax.]%
+      },
+  },
+}
+\begin{markdown}
+
+The following ordered list will be preceded by arabic numerals:
+
+1. wahid
+2. aithnayn
+
+\end{markdown}
+\begin{markdown*}{snippet=romanNumerals}
+
+The following ordered list will be preceded by roman numerals:
+
+3. tres
+4. quattuor
+
+\end{markdown*}
+
+```````
+
 %#### Plain \TeX{} Interface Options
 % The following options map directly to the option macros exposed by the plain
-% \TeX{} interface (see Section \ref{sec:texoptions}).
+% \TeX{} interface (see Section \vref{sec:texoptions}).
 %
-% \end{markdown}
+% \markdownEnd
+% \iffalse
+%</manual-options>
+%<*latex>
+% \fi
 %  \begin{macrocode}
 \define@key{markdownOptions}{helperScriptFileName}{%
   \def\markdownOptionHelperScriptFileName{#1}}%
@@ -11480,6 +12118,8 @@ following text, where the middot (`·`) denotes a non-breaking space:
   \def\markdownOptionStripIndent{#1}}%
 \define@key{markdownOptions}{tableCaptions}[true]{%
   \def\markdownOptionTableCaptions{#1}}%
+\define@key{markdownOptions}{taskLists}[true]{%
+  \def\markdownOptionTaskLists{#1}}%
 \define@key{markdownOptions}{texComments}[true]{%
   \def\markdownOptionTeXComments{#1}}%
 \define@key{markdownOptions}{tightLists}[true]{%
@@ -11546,7 +12186,7 @@ following text, where the middot (`·`) denotes a non-breaking space:
 % The \LaTeX{} interface recognizes an option with the `renderers` key,
 % whose value must be a list of options that map directly to the markdown token
 % renderer macros exposed by the plain \TeX{} interface (see Section
-% \ref{sec:texrenderersuser}).
+% \vref{sec:texrenderersuser}).
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -11674,6 +12314,12 @@ following text, where the middot (`·`) denotes a non-breaking space:
   \renewcommand\markdownRendererTextCite[1]{#1}}%
 \define@key{markdownRenderers}{table}{%
   \renewcommand\markdownRendererTable[3]{#1}}%
+\define@key{markdownRenderers}{inlineHtmlComment}{%
+  \renewcommand\markdownRendererInlineHtmlComment[1]{#1}}%
+\define@key{markdownRenderers}{tickedBox}{%
+  \renewcommand\markdownRendererTickedBox{#1}}%
+\define@key{markdownRenderers}{untickedBox}{%
+  \renewcommand\markdownRendererUntickedBox{#1}}%
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -11695,7 +12341,7 @@ following text, where the middot (`·`) denotes a non-breaking space:
 % The \LaTeX{} interface recognizes an option with the `rendererPrototypes`
 % key, whose value must be a list of options that map directly to the markdown
 % token renderer prototype macros exposed by the plain \TeX{} interface (see
-% Section \ref{sec:texrendererprototypes}).
+% Section \vref{sec:texrendererprototypes}).
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -11823,6 +12469,12 @@ following text, where the middot (`·`) denotes a non-breaking space:
   \renewcommand\markdownRendererTextCitePrototype[1]{#1}}%
 \define@key{markdownRendererPrototypes}{table}{%
   \renewcommand\markdownRendererTablePrototype[3]{#1}}%
+\define@key{markdownRendererPrototypes}{inlineHtmlComment}{%
+  \renewcommand\markdownRendererInlineHtmlCommentPrototype[1]{#1}}%
+\define@key{markdownRendererPrototypes}{tickedBox}{%
+  \renewcommand\markdownRendererTickedBoxPrototype{#1}}%
+\define@key{markdownRendererPrototypes}{untickedBox}{%
+  \renewcommand\markdownRendererUntickedBoxPrototype{#1}}%
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -11901,11 +12553,12 @@ texexec --passon=--shell-escape document.tex
 % The \Hologo{ConTeXt} interface provides a start-stop macro pair for the
 % typesetting of markdown input from within \Hologo{ConTeXt}. The rest of the
 % interface is inherited from the plain \TeX{} interface (see Section
-% \ref{sec:texinterface}).
+% \vref{sec:texinterface}).
 %
 % \end{markdown}
 %  \begin{macrocode}
 \writestatus{loading}{ConTeXt User Module / markdown}%
+\startmodule[markdown]
 \unprotect
 %    \end{macrocode}
 % \par
@@ -11954,13 +12607,22 @@ texexec --passon=--shell-escape document.tex
 %===============
 % \label{sec:implementation}
 % This part of the documentation describes the implementation of the interfaces
-% exposed by the package (see Section \ref{sec:interfaces}) and is aimed at the
+% exposed by the package (see Section \vref{sec:interfaces}) and is aimed at the
 % developers of the package, as well as the curious users.
 %
+% Figure \vref{fig:block-diagram} shows the high-level structure of the Markdown
+% package: The translation from markdown to \TeX{} *token renderers* is
+% performed by the Lua layer. The plain \TeX{} layer provides default
+% definitions for the token renderers. The \LaTeX{} and \Hologo{ConTeXt} layers
+% correct idiosyncrasies of the respective \TeX{} formats, and provide
+% format-specific default definitions for the token renderers.
+%
+% \end{markdown}
 % \iffalse
 %</context>
 %<*lua>
 % \fi
+% \begin{markdown}
 %
 % Lua Implementation
 %-------------------
@@ -11972,7 +12634,7 @@ texexec --passon=--shell-escape document.tex
 % other formats, such as DocBook, Groff, or \acro{HTML}. These were stripped
 % from the module and the remaining markdown reader and plain \TeX{} writer
 % were hidden behind the converter functions exposed by the Lua interface (see
-% Section \ref{sec:luainterface}).
+% Section \vref{sec:luainterface}).
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -12025,7 +12687,8 @@ function util.cache(dir, string, salt, transform, suffix)
   local name = util.pathname(dir, digest .. suffix)
   local file = io.open(name, "r")
   if file == nil then -- If no cache entry exists, then create a new one.
-    local file = assert(io.open(name, "w"))
+    local file = assert(io.open(name, "w"),
+      [[could not open file "]] .. name .. [[" for writing]])
     local result = string
     if transform ~= nil then
       result = transform(result)
@@ -14383,7 +15046,7 @@ end
 % `lunamark/writer/latex.lua` files in the Lunamark Lua module.
 %
 % Although not specified in the Lua interface (see Section
-% \ref{sec:luainterface}), the \luam{writer} object is exported, so that the
+% \vref{sec:luainterface}), the \luam{writer} object is exported, so that the
 % curious user could easily tinker with the methods of the objects produced by
 % the \luam{writer.new} method described below. The user should be aware,
 % however, that the implementation may change in a future revision.
@@ -14397,7 +15060,7 @@ M.writer = {}
 %
 % The \luamdef{writer.new} method creates and returns a new \TeX{} writer
 % object associated with the Lua interface options (see Section
-% \ref{sec:luaoptions}) `options`. When `options` are unspecified, it is
+% \vref{sec:luaoptions}) `options`. When `options` are unspecified, it is
 % assumed that an empty table was passed to the method.
 %
 % The objects produced by the \luam{writer.new} method expose instance methods
@@ -14426,7 +15089,7 @@ function M.writer.new(options)
 %
 % Parse the \Opt{slice} option and define \luamdef{writer->slice\_begin}
 % \luamdef{writer->slice\_end}, and \luamdef{writer->is\_writing}. The
-% \luamdef{writer->is\_writing} member variable is mutable.
+% \luam{writer->is\_writing} member variable is mutable.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -14615,6 +15278,8 @@ function M.writer.new(options)
    }
    local escaped_minimal_strings = {
      ["^^"] = "\\markdownRendererCircumflex\\markdownRendererCircumflex ",
+     ["☒"] = "\\markdownRendererTickedBox{}",
+     ["☐"] = "\\markdownRendererUntickedBox{}",
    }
 %    \end{macrocode}
 % \par
@@ -14627,7 +15292,7 @@ function M.writer.new(options)
 %
 % \end{markdown}
 %  \begin{macrocode}
-  local escape = util.escaper(escaped_chars)
+  local escape = util.escaper(escaped_chars, escaped_minimal_strings)
   local escape_citation = util.escaper(escaped_citation_chars,
     escaped_minimal_strings)
   local escape_uri = util.escaper(escaped_uri_chars, escaped_minimal_strings)
@@ -14719,10 +15384,10 @@ function M.writer.new(options)
         end
         table.insert(buffer, column)
         if i > 1 then
-          table.insert(buffer, "}%\n")
+          table.insert(buffer, "}")
         end
       end
-      table.insert(buffer, "}%\n")
+      table.insert(buffer, "}")
     end
     return buffer
   end
@@ -14747,21 +15412,35 @@ function M.writer.new(options)
 % \begin{markdown}
 %
 % The \luamdef{languages_json} table maps programming language filename
-% extensions to fence infostrings. All \luam{options.contentBlocksLanguageMap}
-% files located by \pkg{kpathsea} are loaded into a chain of tables.
+% extensions to fence infostrings. All `options.`\luam{contentBlocksLanguageMap}
+% files located by the KPathSea library are loaded into a chain of tables.
 % \luam{languages_json} corresponds to the first table and is chained with
 % the rest via Lua metatables.
 %
 % \end{markdown}
 %  \begin{macrocode}
   local languages_json = (function()
-    local kpse = require("kpse")
-    kpse.set_program_name("luatex")
+    local ran_ok, kpse = pcall(require, "kpse")
+    if ran_ok then
+      kpse.set_program_name("luatex")
+%    \end{macrocode}
+% \begin{markdown}
+%
+% If the KPathSea library is unavailable, perhaps because we are using
+% LuaMeta\TeX, we will only locate the `options.`\luam{contentBlocksLanguageMap}
+% in the current working directory:
+%
+% \end{markdown}
+%  \begin{macrocode}
+    else
+      kpse = {lookup=function(filename, options) return filename end}
+    end
     local base, prev, curr
-    for _, file in ipairs{kpse.lookup(options.contentBlocksLanguageMap,
-                                      { all=true })} do
-      json = io.open(file, "r"):read("*all")
-                               :gsub('("[^\n]-"):','[%1]=')
+    for _, filename in ipairs{kpse.lookup(options.contentBlocksLanguageMap,
+                                          { all=true })} do
+      local file = io.open(filename, "r")
+      if not file then goto continue end
+      json = file:read("*all"):gsub('("[^\n]-"):','[%1]=')
       curr = (function()
         local _ENV={ json=json, load=load } -- run in sandbox
         return load("return "..json)()
@@ -14774,6 +15453,7 @@ function M.writer.new(options)
         end
         prev = curr
       end
+      ::continue::
     end
     return base or {}
   end)()
@@ -14886,15 +15566,15 @@ function M.writer.new(options)
 % \par
 % \begin{markdown}
 %
-% Define \luamdef{writer->inline_html} and \luamdef{writer->display_html}
-% as functions that will transform an inline or block \acro{html} element
-% respectively to the output format, where `html` is the \acro{html}
-% input.
+% Define \luamdef{writer->inline_html_comment} as a function that will
+% transform the contents of an inline \acro{HTML} comment, to the output
+% format, where `contents` are the contents of the \acro{HTML} comment.
 %
 % \end{markdown}
 %  \begin{macrocode}
-  function self.inline_html(html)  return "" end
-  function self.display_html(html) return "" end
+  function self.inline_html_comment(contents)
+    return {"\\markdownRendererInlineHtmlComment{",contents,"}"}
+  end
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -14942,6 +15622,22 @@ function M.writer.new(options)
 %  \begin{macrocode}
   function self.emphasis(s)
     return {"\\markdownRendererEmphasis{",s,"}"}
+  end
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Define \luamdef{writer->tickbox} as a function that will transform a
+% boolean `b` to the output format.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  function self.tickbox(b)
+    if b then
+      return "☒ "
+    else
+      return "☐ "
+    end
   end
 %    \end{macrocode}
 % \par
@@ -15027,7 +15723,7 @@ function M.writer.new(options)
 %
 % Define \luamdef{writer->active\_headings} as a stack of identifiers
 % of the headings that are currently active. The
-% \luamdef{writer->active\_headings} member variable is mutable.
+% \luam{writer->active\_headings} member variable is mutable.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -15376,6 +16072,15 @@ parsers.bullet = ( parsers.bulletchar * #parsers.spacing
                  + parsers.space * parsers.space * parsers.space
                                  * parsers.bulletchar * #parsers.spacing
                  )
+
+parsers.ticked_box = parsers.optionalspace * parsers.lbracket
+                   * S("xX") * parsers.rbracket
+                   * parsers.spacechar^1 * Cc(true)
+
+parsers.unticked_box = parsers.optionalspace * parsers.lbracket
+                     * parsers.spacechar^1 * parsers.rbracket
+                     * parsers.spacechar^1 * Cc(false)
+
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -15820,9 +16525,13 @@ parsers.htmlattribute     = parsers.spacing^1
                           * parsers.sp * parsers.equal * parsers.sp
                           * parsers.htmlattributevalue
 
-parsers.htmlcomment       = P("<!--") * (parsers.any - P("-->"))^0 * P("-->")
+parsers.htmlcomment       = P("<!--")
+                          * parsers.optionalspace
+                          * Cs((parsers.any - parsers.optionalspace * P("-->"))^0)
+                          * parsers.optionalspace
+                          * P("-->")
 
-parsers.htmlinstruction   = P("<?")   * (parsers.any - P("?>" ))^0 * P("?>" )
+parsers.htmlinstruction   = P("<?") * (parsers.any - P("?>"))^0 * P("?>")
 
 parsers.openelt_any = parsers.less * parsers.keyword * parsers.htmlattribute^0
                     * parsers.sp * parsers.more
@@ -15869,17 +16578,11 @@ end
 parsers.in_matched_block_tags = parsers.less
                               * Cmt(#parsers.openelt_block, parse_matched_tags)
 
-parsers.displayhtml = parsers.htmlcomment
+parsers.displayhtml = parsers.htmlcomment / ""
                     + parsers.emptyelt_block
                     + parsers.openelt_exact("hr")
                     + parsers.in_matched_block_tags
                     + parsers.htmlinstruction
-
-parsers.inlinehtml  = parsers.emptyelt_any
-                    + parsers.htmlcomment
-                    + parsers.htmlinstruction
-                    + parsers.openelt_any
-                    + parsers.closeelt_any
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -16027,14 +16730,14 @@ end
 % `lunamark/reader/markdown.lua` file in the Lunamark Lua module.
 %
 % Although not specified in the Lua interface (see Section
-% \ref{sec:luainterface}), the \luam{reader} object is exported, so that the
+% \vref{sec:luainterface}), the \luam{reader} object is exported, so that the
 % curious user could easily tinker with the methods of the objects produced by
 % the \luam{reader.new} method described below. The user should be aware,
 % however, that the implementation may change in a future revision.
 %
 % The \luamdef{reader.new} method creates and returns a new \TeX{} reader
 % object associated with the Lua interface options (see Section
-% \ref{sec:luaoptions}) `options` and with a writer object `writer`. When
+% \vref{sec:luaoptions}) `options` and with a writer object `writer`. When
 % `options` are unspecified, it is assumed that an empty table was passed to
 % the method.
 %
@@ -16070,7 +16773,7 @@ function M.reader.new(writer, options)
 % \end{markdown}
 %  \begin{macrocode}
   local function normalize_tag(tag)
-    return unicode.utf8.lower(
+    return string.lower(
       gsub(util.rope_to_string(tag), "[ \n\r\t]+", " "))
   end
 %    \end{macrocode}
@@ -16163,16 +16866,15 @@ function M.reader.new(writer, options)
 % \par
 % \begin{markdown}
 %
-% If the parser is top-level and the \Opt{texComments} Lua option is
-% enabled, we will strip all plain \TeX{} comments from the input string `str`
-% together with the trailing newline characters.
+% If the parser is top-level and the \Opt{texComments} or \Opt{hybrid} Lua
+% options are enabled, we will strip all plain \TeX{} comments from the input
+% string `str` together with the trailing newline characters.
 %
 % \end{markdown}
 %  \begin{macrocode}
-      if toplevel and options.texComments then
+      if toplevel and (options.texComments or options.hybrid) then
           str = lpeg.match(Ct(parsers.commented_line^1), str)
           str = util.rope_to_string(str)
-          print(str)
       end
       local res = lpeg.match(grammar(), str)
       if res == nil then
@@ -16211,6 +16913,12 @@ function M.reader.new(writer, options)
     = create_parser("parse_inlines_no_inline_note",
                     function()
                       return larsers.inlines_no_inline_note
+                    end, false)
+
+  local parse_inlines_no_html
+    = create_parser("parse_inlines_no_html",
+                    function()
+                      return larsers.inlines_no_html
                     end, false)
 
   local parse_inlines_nbsp
@@ -16594,7 +17302,12 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
 
   larsers.EscapedChar   = parsers.backslash * C(parsers.escapable) / writer.string
   
-  larsers.InlineHtml    = C(parsers.inlinehtml) / writer.inline_html
+  larsers.InlineHtml    = parsers.emptyelt_any
+                        + (parsers.htmlcomment / parse_inlines_no_html)
+                        / writer.inline_html_comment
+                        + parsers.htmlinstruction
+                        + parsers.openelt_any
+                        + parsers.closeelt_any
   
   larsers.HtmlEntity    = parsers.hexentity / entities.hex_entity  / writer.string
                         + parsers.decentity / entities.dec_entity  / writer.string
@@ -16612,8 +17325,7 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                        * parsers.contentblock_tail
                        / writer.contentblock
 
-  larsers.DisplayHtml  = C(parsers.displayhtml)
-                       / expandtabs / writer.display_html
+  larsers.DisplayHtml  = parsers.displayhtml
 
   larsers.Verbatim     = Cs( (parsers.blanklines
                            * ((parsers.indentedline - parsers.blankline))^1)^1
@@ -16673,6 +17385,14 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
 %  \begin{macrocode}
   larsers.starter = parsers.bullet + larsers.enumerator
 
+  if options.taskLists then
+    larsers.tickbox = ( parsers.ticked_box
+                      + parsers.unticked_box
+                      ) / writer.tickbox
+  else
+     larsers.tickbox = parsers.fail
+  end
+
   -- we use \001 as a separator between a tight list item and a
   -- nested list under it.
   larsers.NestedList            = Cs((parsers.optionallyindentedline
@@ -16690,14 +17410,14 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
 
   larsers.TightListItem = function(starter)
       return -larsers.HorizontalRule
-             * (Cs(starter / "" * larsers.ListBlock * larsers.NestedList^-1)
+             * (Cs(starter / "" * larsers.tickbox^-1 * larsers.ListBlock * larsers.NestedList^-1)
                / parse_blocks)
              * -(parsers.blanklines * parsers.indent)
   end
 
   larsers.LooseListItem = function(starter)
       return -larsers.HorizontalRule
-             * Cs( starter / "" * larsers.ListBlock * Cc("\n")
+             * Cs( starter / "" * larsers.tickbox^-1 * larsers.ListBlock * Cc("\n")
                * (larsers.NestedList + larsers.ListContinuationBlock^0)
                * (parsers.blanklines / "\n\n")
                ) / parse_blocks
@@ -17005,6 +17725,12 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
   inlines_no_inline_note_t.InlineNote = parsers.fail
   larsers.inlines_no_inline_note = Ct(inlines_no_inline_note_t)
 
+  local inlines_no_html_t = util.table_copy(inlines_t)
+  inlines_no_html_t.DisplayHtml = parsers.fail
+  inlines_no_html_t.InlineHtml = parsers.fail
+  inlines_no_html_t.HtmlEntity = parsers.fail
+  larsers.inlines_no_html = Ct(inlines_no_html_t)
+
   local inlines_nbsp_t = util.table_copy(inlines_t)
   inlines_nbsp_t.Endline = larsers.NonbreakingEndline
   inlines_nbsp_t.Space = larsers.NonbreakingSpace
@@ -17026,7 +17752,7 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
 % \begin{markdown}
 % When determining the name of the cache file, create salt for the hashing
 % function out of the package version and the passed options recognized by the
-% Lua interface (see Section \ref{sec:luaoptions}). The \Opt{cacheDir} option
+% Lua interface (see Section \vref{sec:luaoptions}). The \Opt{cacheDir} option
 % is disregarded.
 % \end{markdown}
 %  \begin{macrocode}
@@ -17063,7 +17789,9 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
       else
         mode = "w"
       end
-      file = assert(io.open(options.frozenCacheFileName, mode))
+      file = assert(io.open(options.frozenCacheFileName, mode),
+        [[could not open file "]] .. options.frozenCacheFileName
+        .. [[" for writing]])
       assert(file:write([[\expandafter\global\expandafter\def\csname ]]
         .. [[markdownFrozenCache]] .. options.frozenCacheCounter
         .. [[\endcsname{]] .. output .. [[}]] .. "\n"))
@@ -17080,7 +17808,7 @@ end
 %### Conversion from Markdown to Plain \TeX{}
 % The \luam{new} method returns the \luam{reader->convert} function of a reader
 % object associated with the Lua interface options (see Section
-% \ref{sec:luaoptions}) `options` and with a writer object associated with
+% \vref{sec:luaoptions}) `options` and with a writer object associated with
 % `options`.
 %
 % \end{markdown}
@@ -17103,14 +17831,15 @@ return M
 %### Command-Line Implementation
 % \label{sec:lua-cli-implementation}
 % The command-line implementation provides the actual conversion routine for
-% the command-line interface described in Section~\ref{sec:lua-cli-interface}.
+% the command-line interface described in Section~\vref{sec:lua-cli-interface}.
 %
 % \end{markdown}
 %  \begin{macrocode}
 
 local input
 if input_filename then
-  local input_file = assert(io.open(input_filename, "r"))
+  local input_file = assert(io.open(input_filename, "r"),
+    [[could not open file "]] .. input_filename .. [[" for reading]])
   input = assert(input_file:read("*a"))
   assert(input_file:close())
 else
@@ -17127,8 +17856,8 @@ if options.cacheDir and not lfs.isdir(options.cacheDir) then
   assert(lfs.mkdir(options["cacheDir"]))
 end
 
-local kpse = require("kpse")
-kpse.set_program_name("luatex")
+local ran_ok, kpse = pcall(require, "kpse")
+if ran_ok then kpse.set_program_name("luatex") end
 local md = require("markdown")
 %    \end{macrocode}
 % \begin{markdown}
@@ -17152,7 +17881,8 @@ local convert = md.new(options)
 local output = convert(input:gsub("\r\n?", "\n") .. "\n")
 
 if output_filename then
-  local output_file = assert(io.open(output_filename, "w"))
+  local output_file = assert(io.open(output_filename, "w"),
+    [[could not open file "]] .. output_filename .. [[" for writing]])
   assert(output_file:write(output))
   assert(output_file:close())
 else
@@ -17172,20 +17902,26 @@ end
 % The plain \TeX{} implementation provides macros for the interfacing between
 % \TeX{} and Lua and for the buffering of input text. These macros are then
 % used to implement the macros for the conversion from markdown to plain \TeX{}
-% exposed by the plain \TeX{} interface (see Section \ref{sec:texinterface}).
+% exposed by the plain \TeX{} interface (see Section \vref{sec:texinterface}).
 %
 %### Logging Facilities
 % \label{sec:texinterfacelogging}
 %
 % \end{markdown}
 %  \begin{macrocode}
-\def\markdownInfo#1{%
-  \immediate\write-1{(l.\the\inputlineno) markdown.tex info: #1.}}%
-\def\markdownWarning#1{%
-  \immediate\write16{(l.\the\inputlineno) markdown.tex warning: #1}}%
-\def\markdownError#1#2{%
-  \errhelp{#2.}%
-  \errmessage{(l.\the\inputlineno) markdown.tex error: #1}}%
+\ifx\markdownInfo\undefined
+  \def\markdownInfo#1{%
+    \immediate\write-1{(l.\the\inputlineno) markdown.tex info: #1.}}%
+\fi
+\ifx\markdownWarning\undefined
+  \def\markdownWarning#1{%
+    \immediate\write16{(l.\the\inputlineno) markdown.tex warning: #1}}%
+\fi
+\ifx\markdownError\undefined
+  \def\markdownError#1#2{%
+    \errhelp{#2.}%
+    \errmessage{(l.\the\inputlineno) markdown.tex error: #1}}%
+\fi
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -17208,6 +17944,7 @@ end
 % \begin{markdown}
 %
 %### Token Renderer Prototypes
+% \label{sec:textokenrendererprototypes}
 % The following definitions should be considered placeholder.
 %
 % \end{markdown}
@@ -17280,14 +18017,16 @@ end
 \def\markdownRendererFootnotePrototype#1{#1}%
 \def\markdownRendererCitePrototype#1{}%
 \def\markdownRendererTextCitePrototype#1{}%
+\def\markdownRendererTickedBoxPrototype{[x]}%
+\def\markdownRendererUntickedBoxPrototype{[ ]}%
 %    \end{macrocode}
 % \par
 % \begin{markdown}
 %
 %### Lua Snippets
 % The \mdef{markdownLuaOptions} macro expands to a Lua table that
-% contains the plain \TeX{} options (see Section \ref{sec:texoptions}) in a
-% format recognized by Lua (see Section \ref{sec:luaoptions}).
+% contains the plain \TeX{} options (see Section \vref{sec:texoptions}) in a
+% format recognized by Lua (see Section \vref{sec:luaoptions}).
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -17373,6 +18112,9 @@ end
 \fi
 \ifx\markdownOptionTableCaptions\undefined\else
   tableCaptions = \markdownOptionTableCaptions,
+\fi
+\ifx\markdownOptionTaskLists\undefined\else
+  taskLists = \markdownOptionTaskLists,
 \fi
 \ifx\markdownOptionTeXComments\undefined\else
   texComments = \markdownOptionTeXComments,
@@ -17627,7 +18369,7 @@ end
 % corresponds to the \m{markdownMode} values of `0` and `1`.
 %
 % The \m{markdownLuaExecute} macro defined here and in Section
-% \ref{sec:directlua} are meant to be indistinguishable to the remaining code.
+% \vref{sec:directlua} are meant to be indistinguishable to the remaining code.
 %
 % The package assumes that although the user is not using the Lua\TeX{} engine,
 % their \TeX{} distribution contains it, and uses shell access to produce and
@@ -17742,8 +18484,8 @@ end
       "|markdownOptionHelperScriptFileName"}%
     |immediate|write|markdownOutputFileStream{%
       local ran_ok, error = pcall(function()
-        local kpse = require("kpse")
-        kpse.set_program_name("luatex")
+        local ran_ok, kpse = pcall(require, "kpse")
+        if ran_ok then kpse.set_program_name("luatex") end
         #1
       end)
 %    \end{macrocode}
@@ -17795,7 +18537,7 @@ end
 % \label{sec:directlua}
 % The following \TeX{} code is intended for \TeX{} engines that provide
 % direct access to Lua (Lua\TeX{}). The macro \m{markdownLuaExecute} defined
-% here and in Section \ref{sec:luabridge} are meant to be indistinguishable to
+% here and in Section \vref{sec:luabridge} are meant to be indistinguishable to
 % the remaining code. This corresponds to the \m{markdownMode} value of `2`.
 %
 % \end{markdown}
@@ -17809,7 +18551,7 @@ end
 % The direct Lua access version of the \m{markdownLuaExecute} macro is defined
 % in terms of the \m{directlua} primitive. The \luam{print} function is set as
 % an alias to the \m{tex.print} method in order to mimic the behaviour of the
-% \m{markdownLuaExecute} definition from Section \ref{sec:luabridge},
+% \m{markdownLuaExecute} definition from Section \vref{sec:luabridge},
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -17840,6 +18582,15 @@ end
   |gdef|markdownInput#1{%
 %    \end{macrocode}
 % \begin{markdown}
+% Change the category code of the percent sign (`%`) to other, so that a user
+% of the \Opt{hybrid} Lua option or a malevolent actor can't produce TeX
+% comments in the plain TeX output of the Markdown package.
+% \end{markdown}
+%  \begin{macrocode}
+    |begingroup
+    |catcode`|%=12
+%    \end{macrocode}
+% \begin{markdown}
 % If we are reading from the frozen cache, input it, expand the corresponding
 % `\markdownFrozenCache`\meta{number} macro, and increment
 % \m{markdownFrozenCacheCounter}.
@@ -17868,7 +18619,8 @@ end
       |closein|markdownInputFileStream
       |markdownLuaExecute{%
         |markdownPrepare
-        local file = assert(io.open("#1", "r"))
+        local file = assert(io.open("#1", "r"),
+          [[could not open file "#1" for reading]])
         local input = assert(file:read("*a"))
         assert(file:close())
 %    \end{macrocode}
@@ -17889,6 +18641,7 @@ end
         |global|advance|markdownFrozenCacheCounter by 1|relax
       }%
     }%
+    |endgroup
   }%
 |endgroup
 %    \end{macrocode}
@@ -17907,8 +18660,15 @@ end
 % format~[@latex17, Section 9]. As a consequence, we can directly reuse the
 % existing plain \TeX{} implementation.
 %
+% The \LaTeX{} implementation redefines the plain \TeX{} logging macros (see
+% Section \vref{sec:texinterfacelogging}) to use the \LaTeX{} \m{PackageInfo},
+% \m{PackageWarning}, and \m{PackageError} macros.
+%
 % \end{markdown}
 %  \begin{macrocode}
+\newcommand\markdownInfo[1]{\PackageInfo{markdown}{#1}}%
+\newcommand\markdownWarning[1]{\PackageWarning{markdown}{#1}}%
+\newcommand\markdownError[2]{\PackageError{markdown}{#1}{#2.}}%
 \input markdown/markdown
 \def\markdownVersionSpace{ }%
 \ProvidesPackage{markdown}[\markdownLastModified\markdownVersionSpace v%
@@ -17919,14 +18679,11 @@ end
 %
 %### Logging Facilities
 % The \LaTeX{} implementation redefines the plain \TeX{} logging macros (see
-% Section \ref{sec:texinterfacelogging}) to use the \LaTeX{} \m{PackageInfo},
+% Section \vref{sec:texinterfacelogging}) to use the \LaTeX{} \m{PackageInfo},
 % \m{PackageWarning}, and \m{PackageError} macros.
 %
 % \end{markdown}
 %  \begin{macrocode}
-\renewcommand\markdownInfo[1]{\PackageInfo{markdown}{#1}}%
-\renewcommand\markdownWarning[1]{\PackageWarning{markdown}{#1}}%
-\renewcommand\markdownError[2]{\PackageError{markdown}{#1}{#2.}}%
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -17935,7 +18692,7 @@ end
 % The \mdef{markdownInputPlainTeX} macro is used to store the original plain
 % \TeX{} implementation of the \m{markdownInput} macro. The \m{markdownInput}
 % is then redefined to accept an optional argument with options recognized by
-% the \LaTeX{} interface (see Section \ref{sec:latexoptions}).
+% the \LaTeX{} interface (see Section \vref{sec:latexoptions}).
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -18039,6 +18796,7 @@ end
 %
 % \end{markdown}
 %  \begin{macrocode}
+\RequirePackage{ifthen}
 \renewcommand\markdownRendererInputFencedCode[2]{%
   \def\next##1 ##2\relax{%
     \ifthenelse{\equal{##1}{dot}}{%
@@ -18170,7 +18928,7 @@ end
           if ! [ -e "$OUTPUT" ];
           then
             \markdown@witiko@graphicx@http@download{'#3'}{"$OUTPUT"};
-            printf '%s%%' "$OUTPUT" > "\filename";
+            printf '%s' "$OUTPUT" > "\filename";
           fi;
 %    \end{macrocode}
 % \begin{markdown}
@@ -18181,7 +18939,7 @@ end
 % \end{markdown}
 %  \begin{macrocode}
         else
-          printf '%s%%' '#3' > "\filename";
+          printf '%s' '#3' > "\filename";
         fi}}^^A
 %    \end{macrocode}
 % \begin{markdown}
@@ -18220,7 +18978,15 @@ end
 % \begin{markdown}
 %
 %### Token Renderer Prototypes
-% The following configuration should be considered placeholder.
+% The following configuration should be considered placeholder. If the `plain`
+% package option has been enabled (see Section \vref{sec:latexplain}), none of
+% it will take effect.
+% \end{markdown}
+%  \begin{macrocode}
+\ifmarkdownLaTeXPlain\else
+%    \end{macrocode}
+% \par
+% \begin{markdown}
 %
 % If the \m{markdownOptionTightLists} macro expands to `false`, do not load
 % the \pkg{paralist} package. This is necessary for \Hologo{LaTeX2e} document
@@ -18230,13 +18996,14 @@ end
 %
 % \end{markdown}
 %  \begin{macrocode}
-\ifx\markdownOptionTightLists\undefined
-  \@ifclassloaded{beamer}{}{
-    \RequirePackage{paralist}}
-\else
-  \ifthenelse{\equal{\markdownOptionTightLists}{false}}{}{
-    \RequirePackage{paralist}}
-\fi
+\RequirePackage{ifthen}
+\@ifundefined{markdownOptionTightLists}{%
+  \@ifclassloaded{beamer}{}{%
+    \RequirePackage{paralist}}%
+}{%
+  \ifthenelse{\equal{\markdownOptionTightLists}{false}}{}{%
+    \RequirePackage{paralist}}%
+}%
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -18264,6 +19031,11 @@ end
     olEndTight = {\markdownRendererOlEnd},
     dlBeginTight = {\markdownRendererDlBegin},
     dlEndTight = {\markdownRendererDlEnd}}}}
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+\RequirePackage{csvsimple}
+\RequirePackage{fancyvrb}
+\RequirePackage{graphicx}
 \markdownSetup{rendererPrototypes={
   lineBreak = {\\},
   leftBrace = {\textbraceleft},
@@ -18297,16 +19069,17 @@ end
       \label{fig:#1}%
     \end{figure}},
   ulBegin = {\begin{itemize}},
-  ulItem = {\item},
   ulEnd = {\end{itemize}},
   olBegin = {\begin{enumerate}},
-  olItem = {\item},
+  olItem = {\item{}},
   olItemWithNumber = {\item[#1.]},
   olEnd = {\end{enumerate}},
   dlBegin = {\begin{description}},
   dlItem = {\item[#1]},
   dlEnd = {\end{description}},
   emphasis = {\emph{#1}},
+  tickedBox = {\ensuremath{\text{\rlap{$\checkmark$}}\square}},
+  untickedBox = {\ensuremath{\square}},
   blockQuoteBegin = {\begin{quotation}},
   blockQuoteEnd = {\end{quotation}},
   inputVerbatim = {\VerbatimInput{#1}},
@@ -18314,8 +19087,8 @@ end
     \ifx\relax#2\relax
       \VerbatimInput{#1}%
     \else
-      \ifx\minted@code\undefined
-        \ifx\lst@version\undefined
+      \@ifundefined{minted@code}{%
+        \@ifundefined{lst@version}{%
           \markdownRendererInputFencedCode{#1}{}%
 %    \end{macrocode}
 % \par
@@ -18325,9 +19098,9 @@ end
 %
 % \end{markdown}
 %  \begin{macrocode}
-        \else
+        }{%
           \lstinputlisting[language=#2]{#1}%
-        \fi
+        }%
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -18337,9 +19110,9 @@ end
 %
 % \end{markdown}
 %  \begin{macrocode}
-      \else
+      }{%
         \inputminted{#2}{#1}%
-      \fi
+      }%
     \fi},
   setJekyllData = {#1},
   horizontalRule = {\noindent\rule[0.5ex]{\linewidth}{1pt}},
@@ -18364,14 +19137,14 @@ end
 %
 % \end{markdown}
 %  \begin{macrocode}
-\ifx\chapter\undefined
+\@ifundefined{chapter}{%
   \markdownSetup{rendererPrototypes = {
     headingOne = {\section{#1}},
     headingTwo = {\subsection{#1}},
     headingThree = {\subsubsection{#1}},
     headingFour = {\paragraph{#1}\leavevmode},
     headingFive = {\subparagraph{#1}\leavevmode}}}
-\else
+}{%
   \markdownSetup{rendererPrototypes = {
     headingOne = {\chapter{#1}},
     headingTwo = {\section{#1}},
@@ -18379,7 +19152,36 @@ end
     headingFour = {\subsubsection{#1}},
     headingFive = {\paragraph{#1}\leavevmode},
     headingSix = {\subparagraph{#1}\leavevmode}}}
-\fi
+}%
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% If the \Opt{taskLists} option is enabled, we will hide bullets in unordered
+% list items with tickboxes.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\markdownSetup{
+  rendererPrototypes = {
+    ulItem = {%
+      \futurelet\markdownLaTeXCheckbox\markdownLaTeXUlItem
+    },
+  },
+}
+\def\markdownLaTeXUlItem{%
+  \ifx\markdownLaTeXCheckbox\markdownRendererTickedBox
+    \item[$\markdownLaTeXCheckbox$]\expandafter\expandafter
+    \expandafter\@gobble
+  \else
+    \ifx\markdownLaTeXCheckbox\markdownRendererUntickedBox
+      \item[$\markdownLaTeXCheckbox$]\expandafter\expandafter
+      \expandafter\@gobble
+    \else
+      \item{}%
+    \fi
+  \fi
+}
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -18395,6 +19197,7 @@ end
 \newcount\markdownLaTeXCitationsCounter
 
 % Basic implementation
+\RequirePackage{gobble}
 \def\markdownLaTeXBasicCitations#1#2#3#4#5#6{%
   \advance\markdownLaTeXCitationsCounter by 1\relax
   \ifx\relax#4\relax
@@ -18569,47 +19372,47 @@ end
   cite = {%
     \markdownLaTeXCitationsCounter=1%
     \def\markdownLaTeXCitationsTotal{#1}%
-    \ifx\autocites\undefined
-      \ifx\citep\undefined
+    \@ifundefined{autocites}{%
+      \@ifundefined{citep}{%
         \expandafter\expandafter\expandafter
         \markdownLaTeXBasicCitations
         \expandafter\expandafter\expandafter{%
         \expandafter\expandafter\expandafter}%
         \expandafter\expandafter\expandafter{%
         \expandafter\expandafter\expandafter}%
-      \else
+      }{%
         \expandafter\expandafter\expandafter
         \markdownLaTeXNatbibCitations
         \expandafter\expandafter\expandafter{%
         \expandafter\expandafter\expandafter}%
-      \fi
-    \else
+      }%
+    }{%
       \expandafter\expandafter\expandafter
       \markdownLaTeXBibLaTeXCitations
       \expandafter{\expandafter}%
-    \fi},
+    }},
   textCite = {%
     \markdownLaTeXCitationsCounter=1%
     \def\markdownLaTeXCitationsTotal{#1}%
-    \ifx\autocites\undefined
-      \ifx\citep\undefined
+    \@ifundefined{autocites}{%
+      \@ifundefined{citep}{%
         \expandafter\expandafter\expandafter
         \markdownLaTeXBasicTextCitations
         \expandafter\expandafter\expandafter{%
         \expandafter\expandafter\expandafter}%
         \expandafter\expandafter\expandafter{%
         \expandafter\expandafter\expandafter}%
-      \else
+      }{%
         \expandafter\expandafter\expandafter
         \markdownLaTeXNatbibTextCitations
         \expandafter\expandafter\expandafter{%
         \expandafter\expandafter\expandafter}%
-      \fi
-    \else
+      }%
+    }{%
       \expandafter\expandafter\expandafter
       \markdownLaTeXBibLaTeXTextCitations
       \expandafter{\expandafter}%
-    \fi}}}
+    }}}}
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -18621,6 +19424,7 @@ end
 %
 % \end{markdown}
 %  \begin{macrocode}
+\RequirePackage{url}
 \def\markdownRendererLinkPrototype{%
   \begingroup
   \catcode`\#=12
@@ -18714,6 +19518,7 @@ end
     \addto@hook\markdownLaTeXTable{#1\\}%
     \expandafter\@gobble
   \fi\markdownLaTeXRenderTableCell}
+\fi
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -18750,8 +19555,14 @@ end
 % consequence, we can directly reuse the existing plain \TeX{} implementation
 % after supplying the missing plain \TeX{} macros.
 %
+% The \Hologo{ConTeXt} implementation redefines the plain \TeX{} logging macros
+% (see Section \vref{sec:texinterfacelogging}) to use the \Hologo{ConTeXt}
+% \m{writestatus} macro.
+%
 % \end{markdown}
 %  \begin{macrocode}
+\def\markdownInfo#1{\writestatus{markdown}{#1.}}%
+\def\markdownWarning#1{\writestatus{markdown\space warn}{#1.}}%
 \def\dospecials{\do\ \do\\\do\{\do\}\do\$\do\&%
   \do\#\do\^\do\_\do\%\do\~}%
 \input markdown/markdown
@@ -18783,19 +19594,6 @@ end
 % \end{markdown}
 %  \begin{macrocode}
   \catcode`|=12}%
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
-%### Logging Facilities
-% The \Hologo{ConTeXt} implementation redefines the plain \TeX{} logging macros (see
-% Section \ref{sec:texinterfacelogging}) to use the \Hologo{ConTeXt}
-% \m{writestatus} macro.
-%
-% \end{markdown}
-%  \begin{macrocode}
-\def\markdownInfo#1{\writestatus{markdown}{#1.}}%
-\def\markdownWarning#1{\writestatus{markdown\space warn}{#1.}}%
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -18854,12 +19652,12 @@ end
 \def\markdownConTeXtCSV{csv}
 \def\markdownRendererContentBlockPrototype#1#2#3#4{%
   \def\markdownConTeXtCSV@arg{#1}%
-	\ifx\markdownConTeXtCSV@arg\markdownConTeXtCSV
+  \ifx\markdownConTeXtCSV@arg\markdownConTeXtCSV
     \placetable[][tab:#1]{#4}{%
       \processseparatedfile[MarkdownConTeXtCSV][#3]}%
-	\else
-		\markdownInput{#3}%
-	\fi}%
+  \else
+    \markdownInput{#3}%
+  \fi}%
 \def\markdownRendererImagePrototype#1#2#3#4{%
   \placefigure[][fig:#1]{#4}{\externalfigure[#3]}}%
 \def\markdownRendererUlBeginPrototype{\startitemize}%
