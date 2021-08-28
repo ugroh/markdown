@@ -16165,18 +16165,28 @@ parsers.fencedline   = function(char)
                          return s:sub(i)
                        end
 end
-
-parsers.jekyllData_mapping  = function(char)
-  return   parsers.dash  * Cs(parsers.space^1 * parsers.fencedline(char)^-1 * (parsers.space * parsers.fencedline(char))^1)
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+%#### Parsers Used for YAML Metadata
+%
+% \end{markdown}
+%  \begin{macrocode}
+parsers.jekyll_data_mapping  = function(char)
+  return parsers.dash * Cs(parsers.space^1 * parsers.fencedline(char)^-1
+       * (parsers.space * parsers.fencedline(char))^1)
 end
 
-parsers.jekyllData_sequence_start = C((parsers.linechar - parsers.colon)^0)*parsers.colon*parsers.newline
+parsers.jekyll_data_sequence_start = C((parsers.linechar - parsers.colon)^0)
+                                   * parsers.colon * parsers.newline
 
-parsers.jekyllData_sequence   = function(char)
-  return  parsers.jekyllData_sequence_start^1*Ct(parsers.jekyllData_mapping(char)^1)
-  / function(sequence,data)
+parsers.jekyll_data_sequence = function(char)
+  return parsers.jekyll_data_sequence_start^1
+  * Ct(parsers.jekyll_data_mapping(char)^1)
+  / function(sequence, data)
       return {sequence, data}
-  end
+    end
 end
 
 %    \end{macrocode}
@@ -17347,10 +17357,10 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                                                     expandtabs(code))
                          end
 
-  larsers.JekyllData     = parsers.fencehead(parsers.dash)
-                           * Ct((parsers.jekyllData_sequence(parsers.dash)
-                             + parsers.fencedline(parsers.dash))^0)
-                           * parsers.fencetail(parsers.dash)
+  larsers.JekyllData   = parsers.fencehead(parsers.dash)
+                       * Ct((parsers.jekyll_data_sequence(parsers.dash)
+                         + parsers.fencedline(parsers.dash))^0)
+                       * parsers.fencetail(parsers.dash)
                        / writer.jekyllData
 
   larsers.Blockquote   = Cs(larsers.blockquote_body^1)
@@ -18012,8 +18022,7 @@ end
 \def\markdownRendererInputFencedCodePrototype#1#2{%
   \markdownRendererInputVerbatimPrototype{#1}}%
 \def\markdownRendererSetJekyllDataPrototype#1#2{%
-  \def\expandafter\csname markdownData@#1\endcsname{#2}%
-}%
+  \def\expandafter\csname markdownData@#1\endcsname{#2}}%
 \def\markdownRendererSetJekyllDataBeginPrototype{}
 \def\markdownRendererSetJekyllDataEndPrototype{}
 \def\markdownRendererHeadingOnePrototype#1{#1}%
