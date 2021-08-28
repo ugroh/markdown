@@ -16986,6 +16986,7 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
   end
 
   local blocks_toplevel_t = util.table_copy(syntax)
+  blocks_toplevel_t.JekyllData = parsers.fail
   blocks_toplevel_t.Paragraph = larsers.ToplevelParagraph
   larsers.blocks_toplevel = Ct(blocks_toplevel_t)
 
