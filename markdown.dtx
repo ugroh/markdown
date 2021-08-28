@@ -3909,52 +3909,6 @@ defaultOptions.fencedCode = false
 %</lua,lua-cli>
 %<*manual-options>
 
-#### Option `jekyllData`
-
-`jekyllData` (default value: `false`)
-
-% \fi
-% \begin{markdown}
-%
-% \Optitem[false]{jekyllData}{\opt{true}, \opt{false}}
-%
-:    true
-
-     :   Enable the Pandoc `yaml_metadata_block` syntax extension for entering
-         metadata in YAML:
-
-~~~~~~ yaml
----
-title:  'This is the title: it contains a colon'
-author:
-- Author One
-- Author Two
-keywords: [nothing, nothingness]
-abstract: |
-  This is the abstract.
-
-  It consists of two paragraphs.
----
-~~~~~~~~~~~
-
-:    false
-
-     :   Disable the Pandoc `yaml_metadata_block` syntax extension for entering
-         metadata in YAML.
-
-% \end{markdown}
-% \iffalse
-%</manual-options>
-%<*lua,lua-cli>
-% \fi
-%  \begin{macrocode}
-defaultOptions.jekyllData = false
-%    \end{macrocode}
-% \par
-% \iffalse
-%</lua,lua-cli>
-%<*manual-options>
-
 #### Option `finalizeCache`
 
 `finalizeCache` (default value: `false`)
@@ -5025,6 +4979,52 @@ following text:
 % \fi
 %  \begin{macrocode}
 defaultOptions.inlineFootnotes = false
+%    \end{macrocode}
+% \par
+% \iffalse
+%</lua,lua-cli>
+%<*manual-options>
+
+#### Option `jekyllData`
+
+`jekyllData` (default value: `false`)
+
+% \fi
+% \begin{markdown}
+%
+% \Optitem[false]{jekyllData}{\opt{true}, \opt{false}}
+%
+:    true
+
+     :   Enable the Pandoc `yaml_metadata_block` syntax extension for entering
+         metadata in YAML:
+
+~~~~~~ yaml
+---
+title:  'This is the title: it contains a colon'
+author:
+- Author One
+- Author Two
+keywords: [nothing, nothingness]
+abstract: |
+  This is the abstract.
+
+  It consists of two paragraphs.
+---
+~~~~~~~~~~~
+
+:    false
+
+     :   Disable the Pandoc `yaml_metadata_block` syntax extension for entering
+         metadata in YAML.
+
+% \end{markdown}
+% \iffalse
+%</manual-options>
+%<*lua,lua-cli>
+% \fi
+%  \begin{macrocode}
+defaultOptions.jekyllData = false
 %    \end{macrocode}
 % \par
 % \iffalse
