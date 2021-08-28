@@ -17587,6 +17587,8 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
 
       Blank                 = larsers.Blank,
 
+      JekyllData            = larsers.JekyllData,
+
       Block                 = V("ContentBlock")
                             + V("Blockquote")
                             + V("PipeTable")
@@ -17604,7 +17606,6 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
       ContentBlock          = larsers.ContentBlock,
       Blockquote            = larsers.Blockquote,
       Verbatim              = larsers.Verbatim,
-      JekyllData            = larsers.JekyllData,
       FencedCode            = larsers.FencedCode,
       HorizontalRule        = larsers.HorizontalRule,
       BulletList            = larsers.BulletList,
@@ -17712,8 +17713,8 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
     syntax.InlineNote = parsers.fail
   end
 
-  if not options.smartEllipses then
-    syntax.Smart = parsers.fail
+  if not options.jekyllData then
+    syntax.JekyllData = parsers.fail
   end
 
   if options.preserveTabs then
@@ -17722,6 +17723,10 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
 
   if not options.pipeTables then
     syntax.PipeTable = parsers.fail
+  end
+
+  if not options.smartEllipses then
+    syntax.Smart = parsers.fail
   end
 
   local blocks_toplevel_t = util.table_copy(syntax)
