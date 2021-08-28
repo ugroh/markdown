@@ -3920,21 +3920,30 @@ defaultOptions.fencedCode = false
 %
 :    true
 
-:  Enable the extension to use Jekyll frontmatter:
+     :   Enable the Pandoc `yaml_metadata_block` syntax extension for entering
+         metadata in YAML:
 
-~~~~~~~~ md
+~~~~~~ yaml
 ---
-title:  Markdown Package User Manual
-author: Vít Novotný
-date:   v\markdownVersion{} (\markdownLastModified{})
+title:  'This is the title: it contains a colon'
+author:
+- Author One
+- Author Two
+keywords: [nothing, nothingness]
+abstract: |
+  This is the abstract.
+
+  It consists of two paragraphs.
 ---
 ~~~~~~~~~~~
 
 :    false
 
-:  enable the extension to use Jekyll frontmatter.
+     :   Disable the Pandoc `yaml_metadata_block` syntax extension for entering
+         metadata in YAML.
 
 % \end{markdown}
+% \iffalse
 %</manual-options>
 %<*lua,lua-cli>
 % \fi
