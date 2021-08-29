@@ -125,7 +125,8 @@
 
 % Set up the figures.
 \usepackage{tikz}
-\usepackage{pgf-umlsd}
+\usepackage{mathabx,pgf-umlsd,tikz}
+\usetikzlibrary{automata,arrows.meta,positioning,shapes.geometric}
 \begin{filecontents}[overwrite,nosearch,noheader]{markdown-figure-block-diagram.tex}
 \begingroup
 \ifx\du\undefined\newlength{\du}\fi
@@ -1180,7 +1181,7 @@ local md5 = require("md5")
 % \begin{figure}
 % \centering
 % \input markdown-figure-block-diagram
-% \caption{A block diagram of the \pkg{Markdown} package.}
+% \caption{A block diagram of the \pkg{Markdown} package}
 % \label{fig:block-diagram}
 % \end{figure}
 % \iffalse
@@ -6470,7 +6471,7 @@ defaultOptions.underscores = true
 % \end{sequencediagram}
 % \caption[A sequence diagram of typesetting a document using the \TeX{}
 %   interface]{A sequence diagram of the Markdown package typesetting a
-%   markdown document using the \TeX{} interface.}
+%   markdown document using the \TeX{} interface}
 % \label{fig:sequence-diagram-tex-interface}
 % \end{figure}
 % \begin{figure}
@@ -6488,7 +6489,7 @@ defaultOptions.underscores = true
 % \end{sequencediagram}
 % \caption[A sequence diagram of typesetting a document using the Lua CLI]%
 %   {A sequence diagram of the Markdown package typesetting a markdown document
-%   using the Lua command-line interface.}
+%   using the Lua command-line interface}
 % \label{fig:sequence-diagram-lua-cli}
 % \end{figure}
 %  \begin{macrocode}
@@ -15895,7 +15896,45 @@ parsers.spnl                   = parsers.optionalspace
                                * (parsers.newline * parsers.optionalspace)^-1
 parsers.line                   = parsers.linechar^0 * parsers.newline
 parsers.nonemptyline           = parsers.line - parsers.blankline
-
+%    \end{macrocode}
+% \begin{figure}
+% \centering
+% \begin{tikzpicture}[shorten >=1pt, line width=0.1mm, >={Stealth[length=2mm]}, node distance=4.5cm, on grid, auto]
+% \node[state, initial by diamond, accepting] (noop) {initial};
+% \node[state] (odd_backslash) [above right=of noop] {odd backslash};
+% \node[state] (even_backslash) [below right=of odd_backslash] {even backslash};
+% \node[state] (comment) [below=of noop] {comment};
+% \node[state] (leading_spaces) [below=of even_backslash, align=center] {leading tabs\\and spaces};
+% \node[state] (blank_line) [below right=of comment] {blank line};
+% \path[->]
+% (noop) edge [in=150, out=180, loop] node [align=center, yshift=-0.5cm] {match [$^\wedge$\textbackslash\%]\\capture \meta{match}} ()
+%        edge [bend right=10] node [below right=-0.2cm] {match \textbackslash} (odd_backslash)
+%        edge [bend left=20] node [left] {match \%} (comment)
+% (comment) edge [in=305, out=325, loop] node [xshift=-1.2cm] {match [$^\wedge$$\drsh$]} ()
+%           edge [bend left=10] node {match $\drsh$} (leading_spaces)
+% (leading_spaces) edge [loop below] node {match [\textvisiblespace$\rightleftarrows$]} ()
+%                  edge [bend right=90] node [right] {match \textbackslash} (odd_backslash)
+%                  edge [bend left=10] node {match \%} (comment)
+%                  edge [bend right=10] node {$\epsilon$} (blank_line)
+%                  edge [bend left=10] node [align=center, right=0.3cm] {match [$^\wedge$\textvisiblespace$\rightleftarrows$$\drsh$\textbackslash\%]\\capture \meta{match}} (noop)
+% (blank_line) edge [loop below] node {match [\textvisiblespace$\rightleftarrows$]} ()
+%              edge [bend left=90] node [align=center, below=1.2cm] {match $\drsh$\\ capture $\drsh\drsh$} (noop)
+% (odd_backslash) edge node [align=center, xshift=-0.2cm] {match \textbackslash\\capture \textbackslash\textbackslash} (even_backslash)
+%                 edge [bend right=10] node [align=center, above left=-0.1cm] {match [$^\wedge$\textbackslash]\\for \% capture \%\\for [$^\wedge$\%] capture \textbackslash\meta{match}} (noop)
+% (even_backslash) edge [bend left=10] node {$\epsilon$} (noop);
+% \end{tikzpicture}
+% \caption{A non-deterministic finite automaton that recognizes \TeX{} comments}
+% \label{fig:commented_line}
+% \end{figure}
+% \par
+% \begin{markdown}
+%
+% The \luamdef{parsers.commented_line}`^1` parser recognizes the regular
+% language of \TeX{} comments, see an equivalent finite automaton in Figure
+% \vref{fig:commented_line}.
+%
+% \end{markdown}
+%  \begin{macrocode}
 parsers.commented_line         = Cs(((parsers.linechar  -- initial
                                      - parsers.backslash
                                      - parsers.percent)^1
