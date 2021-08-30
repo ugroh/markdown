@@ -1,0 +1,53 @@
+\def\markdownOptionJekyllData{true}
+<<<
+---
+title: The document title
+author:
+- name: Author One
+  affiliation: University of Somewhere
+- name: Author Two
+  affiliation: University of Nowhere
+---
+
+This test ensures that the Lua `jekyllData` option correctly propagates
+through the plain TeX interface.
+>>>
+setJekyllDataBegin
+BEGIN setJekyllDataString
+- key: title
+- value: The document title
+END setJekyllDataString
+BEGIN setJekyllDataSequenceBegin
+- key: author
+- length: 2
+END setJekyllDataSequenceBegin
+BEGIN setJekyllDataMappingBegin
+- key: 1
+- length: 2
+END setJekyllDataMappingBegin
+BEGIN setJekyllDataString
+- key: name
+- value: Author One
+END setJekyllDataString
+BEGIN setJekyllDataString
+- key: affiliation
+- value: University of Somewhere
+END setJekyllDataString
+setJekyllDataMappingEnd
+BEGIN setJekyllDataMappingBegin
+- key: 2
+- length: 2
+END setJekyllDataMappingBegin
+BEGIN setJekyllDataString
+- key: name
+- value: Author Two
+END setJekyllDataString
+BEGIN setJekyllDataString
+- key: affiliation
+- value: University of Nowhere
+END setJekyllDataString
+setJekyllDataMappingEnd
+setJekyllDataSequenceEnd
+setJekyllDataEnd
+interblockSeparator
+codeSpan: jekyllData
