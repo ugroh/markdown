@@ -12,41 +12,41 @@ author:
 This test ensures that the Lua `jekyllData` option correctly propagates
 through the plain TeX interface.
 >>>
-setJekyllDataBegin
-BEGIN setJekyllDataString
+jekyllDataBegin
+BEGIN jekyllDataString
 - key: title
 - value: The document title
-END setJekyllDataString
-BEGIN setJekyllDataSequenceBegin
+END jekyllDataString
+BEGIN jekyllDataSequenceBegin
 - key: author
 - length: 2
-END setJekyllDataSequenceBegin
-BEGIN setJekyllDataMappingBegin
+END jekyllDataSequenceBegin
+BEGIN jekyllDataMappingBegin
 - key: 1
 - length: 2
-END setJekyllDataMappingBegin
-BEGIN setJekyllDataString
+END jekyllDataMappingBegin
+BEGIN jekyllDataString
 - key: name
 - value: Author One
-END setJekyllDataString
-BEGIN setJekyllDataString
+END jekyllDataString
+BEGIN jekyllDataString
 - key: affiliation
 - value: University of Somewhere
-END setJekyllDataString
-setJekyllDataMappingEnd
-BEGIN setJekyllDataMappingBegin
+END jekyllDataString
+jekyllDataMappingEnd
+BEGIN jekyllDataMappingBegin
 - key: 2
 - length: 2
-END setJekyllDataMappingBegin
-BEGIN setJekyllDataString
+END jekyllDataMappingBegin
+BEGIN jekyllDataString
 - key: name
 - value: Author Two
-END setJekyllDataString
-BEGIN setJekyllDataString
+END jekyllDataString
+BEGIN jekyllDataString
 - key: affiliation
 - value: University of Nowhere
-END setJekyllDataString
-setJekyllDataMappingEnd
-setJekyllDataSequenceEnd
-setJekyllDataEnd
+END jekyllDataString
+jekyllDataMappingEnd
+jekyllDataSequenceEnd
+jekyllDataEnd
 codeSpan: jekyllData

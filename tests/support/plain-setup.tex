@@ -146,26 +146,26 @@
   \TYPE{tickedBox}}%
 \def\markdownRendererUntickedBox#1{%
   \TYPE{untickedBox}}%
-\def\markdownRendererSetJekyllDataString#1#2{%
-  \TYPE{BEGIN setJekyllDataString}%
+\def\markdownRendererJekyllDataString#1#2{%
+  \TYPE{BEGIN jekyllDataString}%
   \TYPE{- key:             #1}%
   \TYPE{- value:           #2}%
-  \TYPE{END setJekyllDataString}}%
-\def\markdownRendererSetJekyllDataBegin{%
-  \TYPE{setJekyllDataBegin}}%
-\def\markdownRendererSetJekyllDataEnd{%
-  \TYPE{setJekyllDataEnd}}%
-\def\markdownRendererSetJekyllDataSequenceBegin#1#2{%
-  \TYPE{BEGIN setJekyllDataSequenceBegin}%
+  \TYPE{END jekyllDataString}}%
+\def\markdownRendererJekyllDataBegin{%
+  \TYPE{jekyllDataBegin}}%
+\def\markdownRendererJekyllDataEnd{%
+  \TYPE{jekyllDataEnd}}%
+\def\markdownRendererJekyllDataSequenceBegin#1#2{%
+  \TYPE{BEGIN jekyllDataSequenceBegin}%
   \TYPE{- key:             #1}%
   \TYPE{- length:          #2}%
-  \TYPE{END setJekyllDataSequenceBegin}}%
-\def\markdownRendererSetJekyllDataSequenceEnd{%
-  \TYPE{setJekyllDataSequenceEnd}}%
-\def\markdownRendererSetJekyllDataMappingBegin#1#2{%
-  \TYPE{BEGIN setJekyllDataMappingBegin}%
+  \TYPE{END jekyllDataSequenceBegin}}%
+\def\markdownRendererJekyllDataSequenceEnd{%
+  \TYPE{jekyllDataSequenceEnd}}%
+\def\markdownRendererJekyllDataMappingBegin#1#2{%
+  \TYPE{BEGIN jekyllDataMappingBegin}%
   \TYPE{- key:             #1}%
   \TYPE{- length:          #2}%
-  \TYPE{END setJekyllDataMappingBegin}}%
-\def\markdownRendererSetJekyllDataMappingEnd{%
-  \TYPE{setJekyllDataMappingEnd}}%
+  \TYPE{END jekyllDataMappingBegin}}%
+\def\markdownRendererJekyllDataMappingEnd{%
+  \TYPE{jekyllDataMappingEnd}}%

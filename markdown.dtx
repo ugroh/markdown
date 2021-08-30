@@ -10198,7 +10198,7 @@ following text except for the filename, which may differ:
 % \begin{markdown}
 
 #### YAML Metadata Renderers
-The \mdef{markdownRendererSetJekyllDataString} macro represents a fenced code
+The \mdef{markdownRendererJekyllDataString} macro represents a fenced code
 block which will not be read verbatim but allows the user to set title information 
 or metadata. It can be extended to create arbitrary variables using the 
 YAML-Syntax. This macro will only be produced, when the \Opt{jekyllData} option is
@@ -10213,20 +10213,20 @@ name whereas the second contains the data.
 % \fi
 %
 %  \begin{macrocode}
-\def\markdownRendererSetJekyllDataString{%
-  \markdownRendererSetJekyllDataStringPrototype}%
-\def\markdownRendererSetJekyllDataBegin{%
-  \markdownRendererSetJekyllDataBeginPrototype}%
-\def\markdownRendererSetJekyllDataEnd{%
-  \markdownRendererSetJekyllDataEndPrototype}%
-\def\markdownRendererSetJekyllDataSequenceBegin{%
-  \markdownRendererSetJekyllDataSequenceBeginPrototype}%
-\def\markdownRendererSetJekyllDataSequenceEnd{%
-  \markdownRendererSetJekyllDataSequenceEndPrototype}%
-\def\markdownRendererSetJekyllDataMappingBegin{%
-  \markdownRendererSetJekyllDataMappingBeginPrototype}%
-\def\markdownRendererSetJekyllDataMappingEnd{%
-  \markdownRendererSetJekyllDataMappingEndPrototype}%
+\def\markdownRendererJekyllDataString{%
+  \markdownRendererJekyllDataStringPrototype}%
+\def\markdownRendererJekyllDataBegin{%
+  \markdownRendererJekyllDataBeginPrototype}%
+\def\markdownRendererJekyllDataEnd{%
+  \markdownRendererJekyllDataEndPrototype}%
+\def\markdownRendererJekyllDataSequenceBegin{%
+  \markdownRendererJekyllDataSequenceBeginPrototype}%
+\def\markdownRendererJekyllDataSequenceEnd{%
+  \markdownRendererJekyllDataSequenceEndPrototype}%
+\def\markdownRendererJekyllDataMappingBegin{%
+  \markdownRendererJekyllDataMappingBeginPrototype}%
+\def\markdownRendererJekyllDataMappingEnd{%
+  \markdownRendererJekyllDataMappingEndPrototype}%
 %    \end{macrocode}
 % \par
 %
@@ -11245,13 +11245,13 @@ following text:
 \def\markdownRendererBlockQuoteEndPrototype{}%
 \def\markdownRendererInputVerbatimPrototype#1{}%
 \def\markdownRendererInputFencedCodePrototype#1#2{}%
-\def\markdownRendererSetJekyllDataStringPrototype#1#2{}%
-\def\markdownRendererSetJekyllDataBeginPrototype{}%
-\def\markdownRendererSetJekyllDataEndPrototype{}%
-\def\markdownRendererSetJekyllDataSequenceBeginPrototype#1#2{}%
-\def\markdownRendererSetJekyllDataSequenceEndPrototype{}%
-\def\markdownRendererSetJekyllDataMappingBeginPrototype#1#2{}%
-\def\markdownRendererSetJekyllDataMappingEndPrototype{}%
+\def\markdownRendererJekyllDataStringPrototype#1#2{}%
+\def\markdownRendererJekyllDataBeginPrototype{}%
+\def\markdownRendererJekyllDataEndPrototype{}%
+\def\markdownRendererJekyllDataSequenceBeginPrototype#1#2{}%
+\def\markdownRendererJekyllDataSequenceEndPrototype{}%
+\def\markdownRendererJekyllDataMappingBeginPrototype#1#2{}%
+\def\markdownRendererJekyllDataMappingEndPrototype{}%
 \def\markdownRendererHeadingOnePrototype#1{}%
 \def\markdownRendererHeadingTwoPrototype#1{}%
 \def\markdownRendererHeadingThreePrototype#1{}%
@@ -12308,20 +12308,20 @@ The following ordered list will be preceded by roman numerals:
   \renewcommand\markdownRendererInputVerbatim[1]{#1}}%
 \define@key{markdownRenderers}{inputFencedCode}{%
   \renewcommand\markdownRendererInputFencedCode[2]{#1}}%
-\define@key{markdownRenderers}{setJekyllDataString}{%
-  \renewcommand\markdownRendererSetJekyllDataString[2]{#1}}%
-\define@key{markdownRenderers}{setJekyllDataBegin}{%
-  \renewcommand\markdownRendererSetJekyllDataBegin{#1}}%
-\define@key{markdownRenderers}{setJekyllDataEnd}{%
-  \renewcommand\markdownRendererSetJekyllDataEnd{#1}}%
-\define@key{markdownRenderers}{setJekyllDataSequenceBegin}{%
-  \renewcommand\markdownRendererSetJekyllDataSequenceBegin[2]{#1}}%
-\define@key{markdownRenderers}{setJekyllDataSequenceEnd}{%
-  \renewcommand\markdownRendererSetJekyllDataSequenceEnd{#1}}%
-\define@key{markdownRenderers}{setJekyllDataMappingBegin}{%
-  \renewcommand\markdownRendererSetJekyllDataMappingBegin[2]{#1}}%
-\define@key{markdownRenderers}{setJekyllDataMappingEnd}{%
-  \renewcommand\markdownRendererSetJekyllDataMappingEnd{#1}}%
+\define@key{markdownRenderers}{jekyllDataString}{%
+  \renewcommand\markdownRendererJekyllDataString[2]{#1}}%
+\define@key{markdownRenderers}{jekyllDataBegin}{%
+  \renewcommand\markdownRendererJekyllDataBegin{#1}}%
+\define@key{markdownRenderers}{jekyllDataEnd}{%
+  \renewcommand\markdownRendererJekyllDataEnd{#1}}%
+\define@key{markdownRenderers}{jekyllDataSequenceBegin}{%
+  \renewcommand\markdownRendererJekyllDataSequenceBegin[2]{#1}}%
+\define@key{markdownRenderers}{jekyllDataSequenceEnd}{%
+  \renewcommand\markdownRendererJekyllDataSequenceEnd{#1}}%
+\define@key{markdownRenderers}{jekyllDataMappingBegin}{%
+  \renewcommand\markdownRendererJekyllDataMappingBegin[2]{#1}}%
+\define@key{markdownRenderers}{jekyllDataMappingEnd}{%
+  \renewcommand\markdownRendererJekyllDataMappingEnd{#1}}%
 \define@key{markdownRenderers}{headingOne}{%
   \renewcommand\markdownRendererHeadingOne[1]{#1}}%
 \define@key{markdownRenderers}{headingTwo}{%
@@ -12471,20 +12471,20 @@ The following ordered list will be preceded by roman numerals:
   \renewcommand\markdownRendererInputVerbatimPrototype[1]{#1}}%
 \define@key{markdownRendererPrototypes}{inputFencedCode}{%
   \renewcommand\markdownRendererInputFencedCodePrototype[2]{#1}}%
-\define@key{markdownRendererPrototypes}{setJekyllDataString}{%
-  \renewcommand\markdownRendererSetJekyllDataStringPrototype[2]{#1}}%
-\define@key{markdownRendererPrototypes}{setJekyllDataBegin}{%
-  \renewcommand\markdownRendererSetJekyllDataBeginPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{setJekyllDataEnd}{%
-  \renewcommand\markdownRendererSetJekyllDataEndPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{setJekyllDataSequenceBegin}{%
-  \renewcommand\markdownRendererSetJekyllDataSequenceBeginPrototype[2]{#1}}%
-\define@key{markdownRendererPrototypes}{setJekyllDataSequenceEnd}{%
-  \renewcommand\markdownRendererSetJekyllDataSequenceEndPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{setJekyllDataMappingBegin}{%
-  \renewcommand\markdownRendererSetJekyllDataMappingBeginPrototype[2]{#1}}%
-\define@key{markdownRendererPrototypes}{setJekyllDataMappingEnd}{%
-  \renewcommand\markdownRendererSetJekyllDataMappingEndPrototype{#1}}%
+\define@key{markdownRendererPrototypes}{jekyllDataString}{%
+  \renewcommand\markdownRendererJekyllDataStringPrototype[2]{#1}}%
+\define@key{markdownRendererPrototypes}{jekyllDataBegin}{%
+  \renewcommand\markdownRendererJekyllDataBeginPrototype{#1}}%
+\define@key{markdownRendererPrototypes}{jekyllDataEnd}{%
+  \renewcommand\markdownRendererJekyllDataEndPrototype{#1}}%
+\define@key{markdownRendererPrototypes}{jekyllDataSequenceBegin}{%
+  \renewcommand\markdownRendererJekyllDataSequenceBeginPrototype[2]{#1}}%
+\define@key{markdownRendererPrototypes}{jekyllDataSequenceEnd}{%
+  \renewcommand\markdownRendererJekyllDataSequenceEndPrototype{#1}}%
+\define@key{markdownRendererPrototypes}{jekyllDataMappingBegin}{%
+  \renewcommand\markdownRendererJekyllDataMappingBeginPrototype[2]{#1}}%
+\define@key{markdownRendererPrototypes}{jekyllDataMappingEnd}{%
+  \renewcommand\markdownRendererJekyllDataMappingEndPrototype{#1}}%
 \define@key{markdownRendererPrototypes}{headingOne}{%
   \renewcommand\markdownRendererHeadingOnePrototype[1]{#1}}%
 \define@key{markdownRendererPrototypes}{headingTwo}{%
@@ -15737,29 +15737,29 @@ function M.writer.new(options)
   function self.jekyllData(data)
     if not self.is_writing then return "" end
     local buffer = {}
-    table.insert(buffer,"\\markdownRendererSetJekyllDataBegin")
+    table.insert(buffer,"\\markdownRendererJekyllDataBegin")
     for _, v in ipairs(data) do
       if type(v) == "table" then
         table.insert(buffer,
-          "\\markdownRendererSetJekyllDataSequenceBegin{"..
+          "\\markdownRendererJekyllDataSequenceBegin{"..
             v[1].."}{"..#v[2].."}")
         for i,w in ipairs (v[2]) do
           s = string.gsub(w, '%s*([^:]+):%s([^\r\n]+)[\r\n]+',
-            '\\markdownRendererSetJekyllDataString{%1}{%2}')
-          s = "\\markdownRendererSetJekyllDataMappingBegin{"..
+            '\\markdownRendererJekyllDataString{%1}{%2}')
+          s = "\\markdownRendererJekyllDataMappingBegin{"..
             i.."}{"..#v[2].."}"..s..
-            "\\markdownRendererSetJekyllDataMappingEnd"
+            "\\markdownRendererJekyllDataMappingEnd"
          table.insert(buffer,s)
         end
         table.insert(buffer,
-          "\\markdownRendererSetJekyllDataSequenceEnd")
+          "\\markdownRendererJekyllDataSequenceEnd")
       else
         s = string.gsub(v, '([^:]+):%s([^\r\n]+)[\r\n]+',
-          '\\markdownRendererSetJekyllDataString{%1}{%2}')
+          '\\markdownRendererJekyllDataString{%1}{%2}')
         table.insert(buffer,s)
       end
     end
-    table.insert(buffer,"\\markdownRendererSetJekyllDataEnd")
+    table.insert(buffer,"\\markdownRendererJekyllDataEnd")
     return table.concat(buffer,"")
   end
   
@@ -18064,13 +18064,13 @@ end
   \par{\tt\input#1\relax{}}\par}%
 \def\markdownRendererInputFencedCodePrototype#1#2{%
   \markdownRendererInputVerbatimPrototype{#1}}%
-\def\markdownRendererSetJekyllDataPrototype#1#2{}%
-\def\markdownRendererSetJekyllDataBeginPrototype{}%
-\def\markdownRendererSetJekyllDataEndPrototype{}%
-\def\markdownRendererSetJekyllDataSequenceBeginPrototype{}%
-\def\markdownRendererSetJekyllDataSequenceEndPrototype{}%
-\def\markdownRendererSetJekyllDataMappingBeginPrototype{}%
-\def\markdownRendererSetJekyllDataMappingEndPrototype{}%
+\def\markdownRendererJekyllDataPrototype#1#2{}%
+\def\markdownRendererJekyllDataBeginPrototype{}%
+\def\markdownRendererJekyllDataEndPrototype{}%
+\def\markdownRendererJekyllDataSequenceBeginPrototype{}%
+\def\markdownRendererJekyllDataSequenceEndPrototype{}%
+\def\markdownRendererJekyllDataMappingBeginPrototype{}%
+\def\markdownRendererJekyllDataMappingEndPrototype{}%
 \def\markdownRendererHeadingOnePrototype#1{#1}%
 \def\markdownRendererHeadingTwoPrototype#1{#1}%
 \def\markdownRendererHeadingThreePrototype#1{#1}%
