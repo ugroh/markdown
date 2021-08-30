@@ -49,5 +49,4 @@ END setJekyllDataString
 setJekyllDataMappingEnd
 setJekyllDataSequenceEnd
 setJekyllDataEnd
-interblockSeparator
 codeSpan: jekyllData

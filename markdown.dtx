@@ -15737,28 +15737,30 @@ function M.writer.new(options)
   function self.jekyllData(data)
     if not self.is_writing then return "" end
     local buffer = {}
-    table.insert(buffer,"\\mardownRendererSetJekyllDataBegin")
+    table.insert(buffer,"\\markdownRendererSetJekyllDataBegin")
     for _, v in ipairs(data) do
       if type(v) == "table" then
         table.insert(buffer,
-          "\\mardownRendererSetJekyllDataSequenceBegin{"..
+          "\\markdownRendererSetJekyllDataSequenceBegin{"..
             v[1].."}{"..#v[2].."}")
         for i,w in ipairs (v[2]) do
           s = string.gsub(w, '%s*([^:]+):%s([^\r\n]+)[\r\n]+',
             '\\markdownRendererSetJekyllDataString{%1}{%2}')
-          s= "\\markdownRendererSetJekyllDataMappingBegin{"..
+          s = "\\markdownRendererSetJekyllDataMappingBegin{"..
             i.."}{"..#v[2].."}"..s..
             "\\markdownRendererSetJekyllDataMappingEnd"
          table.insert(buffer,s)
         end
+        table.insert(buffer,
+          "\\markdownRendererSetJekyllDataSequenceEnd")
       else
         s = string.gsub(v, '([^:]+):%s([^\r\n]+)[\r\n]+',
           '\\markdownRendererSetJekyllDataString{%1}{%2}')
         table.insert(buffer,s)
       end
-      table.insert(buffer,"\\mardownRendererSetJekyllDataEnd")
     end
-      return table.concat(buffer,"")
+    table.insert(buffer,"\\markdownRendererSetJekyllDataEnd")
+    return table.concat(buffer,"")
   end
   
 %    \end{macrocode}
@@ -17767,7 +17769,6 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
   end
 
   local blocks_toplevel_t = util.table_copy(syntax)
-  blocks_toplevel_t.JekyllData = parsers.fail
   blocks_toplevel_t.Paragraph = larsers.ToplevelParagraph
   larsers.blocks_toplevel = Ct(blocks_toplevel_t)
 
