@@ -10198,7 +10198,7 @@ following text except for the filename, which may differ:
 % \begin{markdown}
 
 #### YAML Metadata Renderers
-The \mdef{markdownRendererSetJekyllData} macro represents a fenced code
+The \mdef{markdownRendererSetJekyllDataString} macro represents a fenced code
 block which will not be read verbatim but allows the user to set title information 
 or metadata. It can be extended to create arbitrary variables using the 
 YAML-Syntax. This macro will only be produced, when the \Opt{jekyllData} option is
@@ -10213,12 +10213,20 @@ name whereas the second contains the data.
 % \fi
 %
 %  \begin{macrocode}
-\def\markdownRendererSetJekyllData{%
-  \markdownRendererSetJekyllDataPrototype}%
+\def\markdownRendererSetJekyllDataString{%
+  \markdownRendererSetJekyllDataStringPrototype}%
 \def\markdownRendererSetJekyllDataBegin{%
   \markdownRendererSetJekyllDataBeginPrototype}%
 \def\markdownRendererSetJekyllDataEnd{%
-  \markdownRendererSetJekyllDataEnd}%
+  \markdownRendererSetJekyllDataEndPrototype}%
+\def\markdownRendererSetJekyllDataSequenceBegin{%
+  \markdownRendererSetJekyllDataSequenceBeginPrototype}%
+\def\markdownRendererSetJekyllDataSequenceEnd{%
+  \markdownRendererSetJekyllDataSequenceEndPrototype}%
+\def\markdownRendererSetJekyllDataMappingBegin{%
+  \markdownRendererSetJekyllDataMappingBeginPrototype}%
+\def\markdownRendererSetJekyllDataMappingEnd{%
+  \markdownRendererSetJekyllDataMappingEndPrototype}%
 %    \end{macrocode}
 % \par
 %
@@ -11237,9 +11245,13 @@ following text:
 \def\markdownRendererBlockQuoteEndPrototype{}%
 \def\markdownRendererInputVerbatimPrototype#1{}%
 \def\markdownRendererInputFencedCodePrototype#1#2{}%
-\def\markdownRendererSetJekyllDataPrototype#1#2{}%
+\def\markdownRendererSetJekyllDataStringPrototype#1#2{}%
 \def\markdownRendererSetJekyllDataBeginPrototype{}%
 \def\markdownRendererSetJekyllDataEndPrototype{}%
+\def\markdownRendererSetJekyllDataSequenceBeginPrototype#1#2{}%
+\def\markdownRendererSetJekyllDataSequenceEndPrototype{}%
+\def\markdownRendererSetJekyllDataMappingBeginPrototype#1#2{}%
+\def\markdownRendererSetJekyllDataMappingEndPrototype{}%
 \def\markdownRendererHeadingOnePrototype#1{}%
 \def\markdownRendererHeadingTwoPrototype#1{}%
 \def\markdownRendererHeadingThreePrototype#1{}%
@@ -12296,12 +12308,20 @@ The following ordered list will be preceded by roman numerals:
   \renewcommand\markdownRendererInputVerbatim[1]{#1}}%
 \define@key{markdownRenderers}{inputFencedCode}{%
   \renewcommand\markdownRendererInputFencedCode[2]{#1}}%
-\define@key{markdownRenderers}{setJekyllData}{%
-  \renewcommand\markdownRendererSetJekyllData[2]{#1}}%
+\define@key{markdownRenderers}{setJekyllDataString}{%
+  \renewcommand\markdownRendererSetJekyllDataString[2]{#1}}%
 \define@key{markdownRenderers}{setJekyllDataBegin}{%
   \renewcommand\markdownRendererSetJekyllDataBegin{#1}}%
 \define@key{markdownRenderers}{setJekyllDataEnd}{%
   \renewcommand\markdownRendererSetJekyllDataEnd{#1}}%
+\define@key{markdownRenderers}{setJekyllDataSequenceBegin}{%
+  \renewcommand\markdownRendererSetJekyllDataSequenceBegin[2]{#1}}%
+\define@key{markdownRenderers}{setJekyllDataSequenceEnd}{%
+  \renewcommand\markdownRendererSetJekyllDataSequenceEnd{#1}}%
+\define@key{markdownRenderers}{setJekyllDataMappingBegin}{%
+  \renewcommand\markdownRendererSetJekyllDataMappingBegin[2]{#1}}%
+\define@key{markdownRenderers}{setJekyllDataMappingEnd}{%
+  \renewcommand\markdownRendererSetJekyllDataMappingEnd{#1}}%
 \define@key{markdownRenderers}{headingOne}{%
   \renewcommand\markdownRendererHeadingOne[1]{#1}}%
 \define@key{markdownRenderers}{headingTwo}{%
@@ -12451,12 +12471,20 @@ The following ordered list will be preceded by roman numerals:
   \renewcommand\markdownRendererInputVerbatimPrototype[1]{#1}}%
 \define@key{markdownRendererPrototypes}{inputFencedCode}{%
   \renewcommand\markdownRendererInputFencedCodePrototype[2]{#1}}%
-\define@key{markdownRendererPrototypes}{setJekyllData}{%
-  \renewcommand\markdownRendererSetJekyllDataPrototype[2]{#1}}%
+\define@key{markdownRendererPrototypes}{setJekyllDataString}{%
+  \renewcommand\markdownRendererSetJekyllDataStringPrototype[2]{#1}}%
 \define@key{markdownRendererPrototypes}{setJekyllDataBegin}{%
   \renewcommand\markdownRendererSetJekyllDataBeginPrototype{#1}}%
 \define@key{markdownRendererPrototypes}{setJekyllDataEnd}{%
   \renewcommand\markdownRendererSetJekyllDataEndPrototype{#1}}%
+\define@key{markdownRendererPrototypes}{setJekyllDataSequenceBegin}{%
+  \renewcommand\markdownRendererSetJekyllDataSequenceBeginPrototype[2]{#1}}%
+\define@key{markdownRendererPrototypes}{setJekyllDataSequenceEnd}{%
+  \renewcommand\markdownRendererSetJekyllDataSequenceEndPrototype{#1}}%
+\define@key{markdownRendererPrototypes}{setJekyllDataMappingBegin}{%
+  \renewcommand\markdownRendererSetJekyllDataMappingBeginPrototype[2]{#1}}%
+\define@key{markdownRendererPrototypes}{setJekyllDataMappingEnd}{%
+  \renewcommand\markdownRendererSetJekyllDataMappingEndPrototype{#1}}%
 \define@key{markdownRendererPrototypes}{headingOne}{%
   \renewcommand\markdownRendererHeadingOnePrototype[1]{#1}}%
 \define@key{markdownRendererPrototypes}{headingTwo}{%
@@ -18035,10 +18063,13 @@ end
   \par{\tt\input#1\relax{}}\par}%
 \def\markdownRendererInputFencedCodePrototype#1#2{%
   \markdownRendererInputVerbatimPrototype{#1}}%
-\def\markdownRendererSetJekyllDataPrototype#1#2{%
-  \def\expandafter\csname markdownData@#1\endcsname{#2}}%
-\def\markdownRendererSetJekyllDataBeginPrototype{}
-\def\markdownRendererSetJekyllDataEndPrototype{}
+\def\markdownRendererSetJekyllDataPrototype#1#2{}%
+\def\markdownRendererSetJekyllDataBeginPrototype{}%
+\def\markdownRendererSetJekyllDataEndPrototype{}%
+\def\markdownRendererSetJekyllDataSequenceBeginPrototype{}%
+\def\markdownRendererSetJekyllDataSequenceEndPrototype{}%
+\def\markdownRendererSetJekyllDataMappingBeginPrototype{}%
+\def\markdownRendererSetJekyllDataMappingEndPrototype{}%
 \def\markdownRendererHeadingOnePrototype#1{#1}%
 \def\markdownRendererHeadingTwoPrototype#1{#1}%
 \def\markdownRendererHeadingThreePrototype#1{#1}%

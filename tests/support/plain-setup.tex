@@ -146,3 +146,26 @@
   \TYPE{tickedBox}}%
 \def\markdownRendererUntickedBox#1{%
   \TYPE{untickedBox}}%
+\def\markdownRendererSetJekyllDataString#1#2{%
+  \TYPE{BEGIN setJekyllDataString}%
+  \TYPE{- key:             #1}%
+  \TYPE{- value:           #2}%
+  \TYPE{END setJekyllDataString}}%
+\def\markdownRendererSetJekyllDataBegin{%
+  \TYPE{setJekyllDataBegin}}%
+\def\markdownRendererSetJekyllDataEnd{%
+  \TYPE{setJekyllDataEnd}}%
+\def\markdownRendererSetJekyllDataSequenceBegin#1#2{%
+  \TYPE{BEGIN setJekyllDataSequenceBegin}%
+  \TYPE{- key:             #1}%
+  \TYPE{- length:          #2}%
+  \TYPE{END setJekyllDataSequenceBegin}}%
+\def\markdownRendererSetJekyllDataSequenceEnd{%
+  \TYPE{setJekyllDataSequenceEnd}}%
+\def\markdownRendererSetJekyllDataMappingBegin#1#2{%
+  \TYPE{BEGIN setJekyllDataMappingBegin}%
+  \TYPE{- key:             #1}%
+  \TYPE{- length:          #2}%
+  \TYPE{END setJekyllDataMappingBegin}}%
+\def\markdownRendererSetJekyllDataMappingEnd{%
+  \TYPE{setJekyllDataMappingEnd}}%

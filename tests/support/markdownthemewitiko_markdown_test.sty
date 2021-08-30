@@ -168,5 +168,28 @@
     untickedBox = {%
       \TYPE{untickedBox}%
       \GOBBLE},
+    setJekyllDataString = {%
+      \TYPE{BEGIN setJekyllDataString}%
+      \TYPE{- key:             #1}%
+      \TYPE{- value:           #2}%
+      \TYPE{END setJekyllDataString}},
+    setJekyllDataBegin = {%
+      \TYPE{setJekyllDataBegin}},
+    setJekyllDataEnd = {%
+      \TYPE{setJekyllDataEnd}},
+    setJekyllDataSequenceBegin = {%
+      \TYPE{BEGIN setJekyllDataSequenceBegin}%
+      \TYPE{- key:             #1}%
+      \TYPE{- length:          #2}%
+      \TYPE{END setJekyllDataSequenceBegin}},
+    setJekyllDataSequenceEnd = {%
+      \TYPE{setJekyllDataCequenceEnd}},
+    setJekyllDataMappingBegin = {%
+      \TYPE{BEGIN setJekyllDataMappingBegin}%
+      \TYPE{- key:             #1}%
+      \TYPE{- length:          #2}%
+      \TYPE{END setJekyllDataMappingBegin}},
+    setJekyllDataMappingEnd = {%
+      \TYPE{setJekyllDataMappingEnd}},
   }%
 }%
