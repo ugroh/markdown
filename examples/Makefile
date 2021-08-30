@@ -3,9 +3,10 @@ AUXFILES=*.tmp *.tui *.tuo *.mp *.tuc *.markdown.in *.markdown.out \
   *.markdown.lua *.log *.aux context-mkii.tex context-mkiv.tex \
   latex-pdftex.tex latex-xetex.tex latex-luatex.tex example.tex
 AUXDIRS=_markdown_*/
-LUACLI_OPTIONS=hashEnumerators=true definitionLists=true footnotes=true \
-  inlineFootnotes=true smartEllipses=true fencedCode=true contentBlocks=true \
-  pipeTables=true tableCaptions=true
+LUACLI_OPTIONS=cacheDir=_markdown_example hashEnumerators=true \
+  definitionLists=true footnotes=true inlineFootnotes=true \
+  smartEllipses=true fencedCode=true contentBlocks=true pipeTables=true \
+	tableCaptions=true taskLists=true
 OUTPUT=context-mkii.pdf context-mkiv.pdf latex-pdftex.pdf \
   latex-luatex.pdf latex-xetex.pdf
 
@@ -44,8 +45,7 @@ latex-luatex.pdf: latex.tex example.tex
 # This target converts the markdown example to a plain TeX representation
 # using the Lua command-line interface for the Markdown package.
 example.tex: example.md
-	texlua "`kpsewhich -a markdown-cli.lua | tail -n 1`" \
-	cacheDir=_markdown_example $(LUACLI_OPTIONS) -- $< $@
+	texlua "`kpsewhich -a markdown-cli.lua | tail -n 1`" $(LUACLI_OPTIONS) -- $< $@
 
 # This pseudo-target removes any existing auxiliary files and directories.
 clean:
