@@ -15706,7 +15706,7 @@ function M.writer.new(options)
     local name = util.cache(options.cacheDir, s, nil, nil, ".verbatim")
     return {"\\markdownRendererInputFencedCode{",name,"}{",i,"}"}
   end
-  function self.jekyllData(_, data)
+  function self.jekyllData(data)
     if not self.is_writing then return "" end
     local buffer = {}
     table.insert(buffer,"\\mardownRendererSetJekyllDataBegin")
@@ -17362,7 +17362,9 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                        * Ct((parsers.jekyll_data_sequence(parsers.dash)
                          + parsers.fencedline(parsers.dash))^0)
                        * parsers.fencetail(parsers.dash)
-                       / writer.jekyllData
+                       / function(infostring, data)
+                           return writer.jekyllData(data)
+                         end
 
   larsers.Blockquote   = Cs(larsers.blockquote_body^1)
                        / parse_blocks_toplevel / writer.blockquote
