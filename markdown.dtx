@@ -15712,14 +15712,20 @@ function M.writer.new(options)
     table.insert(buffer,"\\mardownRendererSetJekyllDataBegin")
     for _, v in ipairs(data) do
       if type(v) == "table" then
-        table.insert(buffer,"\\mardownRendererSetJekyllDataSequenceBegin{"..v[1].."}{"..#v[2].."}")
+        table.insert(buffer,
+          "\\mardownRendererSetJekyllDataSequenceBegin{"..
+            v[1].."}{"..#v[2].."}")
         for i,w in ipairs (v[2]) do
-          s = string.gsub(w, '%s*([^:]+):%s([^\r\n]+)[\r\n]+', '\\markdownRendererSetJekyllDataString{%1}{%2}')
-          s= "\\markdownRendererSetJekyllDataMappingBegin{"..i.."}{"..#v[2].."}"..s.."\\markdownRendererSetJekyllDataMappingEnd"
+          s = string.gsub(w, '%s*([^:]+):%s([^\r\n]+)[\r\n]+',
+            '\\markdownRendererSetJekyllDataString{%1}{%2}')
+          s= "\\markdownRendererSetJekyllDataMappingBegin{"..
+            i.."}{"..#v[2].."}"..s..
+            "\\markdownRendererSetJekyllDataMappingEnd"
          table.insert(buffer,s)
         end
       else
-        s = string.gsub(v, '([^:]+):%s([^\r\n]+)[\r\n]+', '\\markdownRendererSetJekyllDataString{%1}{%2}')
+        s = string.gsub(v, '([^:]+):%s([^\r\n]+)[\r\n]+',
+          '\\markdownRendererSetJekyllDataString{%1}{%2}')
         table.insert(buffer,s)
       end
       table.insert(buffer,"\\mardownRendererSetJekyllDataEnd")
