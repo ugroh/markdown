@@ -15898,6 +15898,8 @@ parsers.line                   = parsers.linechar^0 * parsers.newline
 parsers.nonemptyline           = parsers.line - parsers.blankline
 %    \end{macrocode}
 % \begin{figure}
+% \hspace*{-0.1\textwidth}
+% \begin{minipage}{1.2\textwidth}
 % \centering
 % \begin{tikzpicture}[shorten >=1pt, line width=0.1mm, >={Stealth[length=2mm]}, node distance=4.5cm, on grid, auto]
 % \node[state, initial by diamond, accepting] (noop) {initial};
@@ -15907,9 +15909,9 @@ parsers.nonemptyline           = parsers.line - parsers.blankline
 % \node[state] (leading_spaces) [below=of even_backslash, align=center] {leading tabs\\and spaces};
 % \node[state] (blank_line) [below right=of comment] {blank line};
 % \path[->]
-% (noop) edge [in=150, out=180, loop] node [align=center, yshift=-0.5cm] {match [$^\wedge$\textbackslash\%]\\capture \meta{match}} ()
+% (noop) edge [in=150, out=180, loop] node [align=center, yshift=-0.75cm] {match [$^\wedge$\textbackslash\%]\\capture \textbackslash$\!^{2k}$\meta{match}\\reset $k$} ()
 %        edge [bend right=10] node [below right=-0.2cm] {match \textbackslash} (odd_backslash)
-%        edge [bend left=20] node [left] {match \%} (comment)
+%        edge [bend left=30] node [left, align=center] {match \%\\capture \textbackslash$\!^k$\\reset $k$} (comment)
 % (comment) edge [in=305, out=325, loop] node [xshift=-1.2cm] {match [$^\wedge$$\drsh$]} ()
 %           edge [bend left=10] node {match $\drsh$} (leading_spaces)
 % (leading_spaces) edge [loop below] node {match [\textvisiblespace$\rightleftarrows$]} ()
@@ -15919,14 +15921,14 @@ parsers.nonemptyline           = parsers.line - parsers.blankline
 %                  edge [bend left=10] node [align=center, right=0.3cm] {match [$^\wedge$\textvisiblespace$\rightleftarrows$$\drsh$\textbackslash\%]\\capture \meta{match}} (noop)
 % (blank_line) edge [loop below] node {match [\textvisiblespace$\rightleftarrows$]} ()
 %              edge [bend left=90] node [align=center, below=1.2cm] {match $\drsh$\\ capture $\drsh\drsh$} (noop)
-% (odd_backslash) edge node [align=center, xshift=-0.2cm] {match \textbackslash\\capture \textbackslash\textbackslash} (even_backslash)
-%                 edge [bend right=10] node [align=center, above left=-0.1cm] {match [$^\wedge$\textbackslash]\\for \% capture \%\\for [$^\wedge$\%] capture \textbackslash\meta{match}} (noop)
+% (odd_backslash) edge [bend right=10] node [align=center, xshift=-0.3cm, yshift=0.2cm] {match \textbackslash\\increment $k$} (even_backslash)
+%                 edge [bend right=10] node [align=center, above left=-0.3cm, xshift=0.1cm] {match [$^\wedge$\textbackslash]\\for \%, capture \textbackslash$\!^k$\%\\for [$^\wedge$\%], capture \textbackslash$\!^{2k+1}$\meta{match}\\reset $k$} (noop)
 % (even_backslash) edge [bend left=10] node {$\epsilon$} (noop);
 % \end{tikzpicture}
-% \caption{A non-deterministic finite automaton that recognizes \TeX{} comments}
+% \caption{A pushdown automaton that recognizes \TeX{} comments}
 % \label{fig:commented_line}
+% \end{minipage}
 % \end{figure}
-% \par
 % \begin{markdown}
 %
 % The \luamdef{parsers.commented_line}`^1` parser recognizes the regular
