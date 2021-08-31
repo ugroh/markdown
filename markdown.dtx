@@ -15404,29 +15404,45 @@ parsers.spnl                   = parsers.optionalspace
 parsers.line                   = parsers.linechar^0 * parsers.newline
 parsers.nonemptyline           = parsers.line - parsers.blankline
 
-parsers.commented_line         = Cs(((parsers.linechar  -- initial
-                                     - parsers.backslash
-                                     - parsers.percent)^1
-                                    + (parsers.backslash  -- even backslash
-                                      * parsers.backslash)^1
-                                    + (parsers.backslash  -- odd backslash
-                                      * parsers.backslash)^0
-                                    * (parsers.backslash / ""
-                                      * parsers.percent
-                                      + parsers.backslash
-                                      * (parsers.linechar -- initial
-                                        + parsers.newline
-                                        - parsers.backslash
-                                        - parsers.percent))
-                                 )^0)
+parsers.commented_line_letter  = parsers.linechar
+                               + parsers.newline
+                               - parsers.backslash
+                               - parsers.percent
+parsers.commented_line         = Cg(Cc(""), "backslashes")
+                               * ((#(parsers.commented_line_letter
+                                    - parsers.newline)
+                                  * Cb("backslashes")
+                                  * Cs(parsers.commented_line_letter
+                                    - parsers.newline)^1  -- initial
+                                  * Cg(Cc(""), "backslashes"))
+                                 + #(parsers.backslash * parsers.backslash)
+                                 * Cg((parsers.backslash  -- even backslash
+                                      * parsers.backslash)^1, "backslashes")
+                                 + (parsers.backslash
+                                   * (#parsers.percent
+                                     * Cb("backslashes")
+                                     / function(backslashes)
+                                       return string.rep("\\", #backslashes / 2)
+                                     end
+                                     * C(parsers.percent)
+                                     + #parsers.commented_line_letter
+                                     * Cb("backslashes")
+                                     * Cc("\\")
+                                     * C(parsers.commented_line_letter))
+                                   * Cg(Cc(""), "backslashes")))^0
+                               * (#parsers.percent
+                                 * Cb("backslashes")
+                                 / function(backslashes)
+                                   return string.rep("\\", #backslashes / 2)
+                                 end
                                  * ((parsers.percent  -- comment
                                     * parsers.line
                                     * #parsers.blankline) -- blank line
-                                    / "\n"
+                                   / "\n"
                                    + parsers.percent  -- comment
                                    * parsers.line
-                                   * parsers.optionalspace  -- leading tabs and spaces
-                                   + C(parsers.newline))
+                                   * parsers.optionalspace)  -- leading tabs and spaces
+                                 + C(parsers.newline))
 
 parsers.chunk                  = parsers.line * (parsers.optionallyindentedline
                                                 - parsers.blankline)^0
