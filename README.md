@@ -155,10 +155,12 @@ Further information
 
 For further information, consult one of the following:
 
-1. The [user manual][manual], which can be produced by interpreting the
-   `markdown.ins` file using a Unicode-aware TeX engine, such as XeTeX
-   (`xetex markdown.ins`) or LuaTeX (`luatex markdown.ins`). The manual will
-   reside in the file `markdown.md` and the CSS stylesheet `markdown.css`.
+1. The user manual for either [the released version][manual-tex-live] or
+   [the latest development version][manual-latest], which can be produced by
+   interpreting the `markdown.ins` file using a Unicode-aware TeX engine, such
+   as XeTeX (`xetex markdown.ins`) or LuaTeX (`luatex markdown.ins`). The
+   manual will reside in the file `markdown.md` and the CSS stylesheet
+   `markdown.css`.
 2. The technical documentation for either [the released version][techdoc-tex-live]
    or [the latest development version][techdoc-latest], which can be typeset by
    running the [LaTeXMK][] tool on the `markdown.dtx` file (`latexmk
@@ -206,10 +208,12 @@ For further information, consult one of the following:
 
  [install]:  https://mirrors.ctan.org/macros/generic/markdown/markdown.html#installation "Markdown Package User Manual"
  [liantze]:  https://liantze.penguinattack.org/                                          "Rants from the Lab"
- [manual]:   https://mirrors.ctan.org/macros/generic/markdown/markdown.html              "Markdown Package User Manual"
  [overleaf]: https://www.overleaf.com/                                                   "Overleaf: Real-time Collaborative Writing and Publishing Tools with Integrated PDF Preview"
  [tugboat]:  https://www.tug.org/tugboat/                                                "TUGboat - Communications of the TeX Users Group"
  [cstug]:    https://www.cstug.cz/                                                       "Československé sdružení uživatelů TeXu"
+
+ [manual-latest]:     https://witiko.github.io/markdown                                  "Markdown Package User Manual"
+ [manual-tex-live]:   https://mirrors.ctan.org/macros/generic/markdown/markdown.html     "Markdown Package User Manual"
 
  [techdoc-latest]:    https://github.com/Witiko/markdown/releases/download/latest/markdown.pdf  "A Markdown Interpreter for TeX"
  [techdoc-tex-live]:  https://mirrors.ctan.org/macros/generic/markdown/markdown.pdf             "A Markdown Interpreter for TeX"

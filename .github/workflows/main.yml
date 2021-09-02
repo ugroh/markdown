@@ -46,7 +46,7 @@ jobs:
       - name: Run unit tests
         run: docker run -v "$PWD":/git-repo -w /git-repo witiko/markdown make test
       - name: Build distribution archives
-        run: docker run -v "$PWD":/git-repo -w /git-repo witiko/markdown make dist
+        run: docker run -v "$PWD":/git-repo -w /git-repo witiko/markdown make dist gh-pages
       - name: Upload artifact markdown.tds.zip
         uses: actions/upload-artifact@v2
         with:
@@ -67,6 +67,14 @@ jobs:
         with:
           name: markdown.pdf
           path: markdown.pdf
+      - name: Publish user manual
+        if: github.ref == 'refs/heads/main'
+        uses: crazy-max/ghaction-github-pages@v2
+        with:
+          target_branch: gh-pages
+          build_dir: gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create a prerelease
         if: github.ref == 'refs/heads/main'
         uses: marvinpinto/action-automatic-releases@latest

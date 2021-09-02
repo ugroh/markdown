@@ -36,6 +36,7 @@ MAKEABLES=$(TECHNICAL_DOCUMENTATION) $(USER_MANUAL) $(INSTALLABLES) $(EXAMPLES)
 RESOURCES=$(DOCUMENTATION) $(EXAMPLES_RESOURCES) $(EXAMPLES_SOURCES) $(EXAMPLES) \
   $(MAKES) $(READMES) $(INSTALLER) $(DTXARCHIVE) $(TESTS)
 EVERYTHING=$(RESOURCES) $(INSTALLABLES)
+GITHUB_PAGES=gh-pages
 
 GIT_TAG=$(shell git describe --tags --always --long --exclude latest)
 
@@ -52,6 +53,12 @@ base: $(INSTALLABLES)
 docker-image:
 	DOCKER_BUILDKIT=1 docker build -t witiko/markdown:latest .
 	docker tag witiko/markdown:latest witiko/markdown:$(GIT_TAG)
+
+# This targets produces a directory with files for the GitHub Pages service.
+$(GITHUB_PAGES): $(HTML_USER_MANUAL)
+	mkdir -p $@
+	cp markdown.html $@/index.html
+	cp markdown.css $@
 
 # This target extracts the source files out of the DTX archive.
 $(INSTALLABLES) $(MARKDOWN_USER_MANUAL): $(INSTALLER) $(DTXARCHIVE)
@@ -96,6 +103,7 @@ examples/example.tex: $(INSTALLABLES)
 	    -e 's#\\mdef{\([^}]*\)}#`\\\1`#g' \
 	| \
 	pandoc -f markdown -t html -N -s --toc --toc-depth=3 --css=$(word 2, $^) >$@
+	sed -i 's/\$$GitTag\$$/$(GIT_TAG)/g' $@
 
 # This pseudo-target runs all the tests in the `tests/` directory.
 test:
