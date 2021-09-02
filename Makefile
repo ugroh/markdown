@@ -21,8 +21,6 @@ READMES=$(ROOT_README) LICENSE examples/README.md tests/README.md \
   tests/support/README.md tests/templates/README.md tests/testfiles/README.md \
   tests/templates/*/README.md tests/testfiles/*/README.md
 DTXARCHIVE=markdown.dtx
-VERSION=$(shell sed -rn '/^\\def\\markdownVersion\{/s/[^{]*\{(.*)\}.*/\1/p' <$(DTXARCHIVE))
-LASTMODIFIED=$(shell sed -rn '/^\\def\\markdownLastModified\{/s/[^{]*\{(.*)\}.*/\1/p' <$(DTXARCHIVE))
 INSTALLER=markdown.ins docstrip.cfg
 TECHNICAL_DOCUMENTATION=markdown.pdf
 MARKDOWN_USER_MANUAL=markdown.md markdown.css
@@ -38,7 +36,8 @@ RESOURCES=$(DOCUMENTATION) $(EXAMPLES_RESOURCES) $(EXAMPLES_SOURCES) $(EXAMPLES)
 EVERYTHING=$(RESOURCES) $(INSTALLABLES)
 GITHUB_PAGES=gh-pages
 
-GIT_TAG=$(shell git describe --tags --always --long --exclude latest)
+VERSION=$(shell git describe --tags --always --long --exclude latest)
+LASTMODIFIED=$(shell sed -rn '/^\\def\\markdownLastModified\{/s/[^{]*\{(.*)\}.*/\1/p' <$(DTXARCHIVE))
 
 # This is the default pseudo-target. It typesets the manual,
 # the examples, and extracts the package files.
@@ -52,7 +51,7 @@ base: $(INSTALLABLES)
 # This pseudo-target builds a witiko/markdown Docker image.
 docker-image:
 	DOCKER_BUILDKIT=1 docker build -t witiko/markdown:latest .
-	docker tag witiko/markdown:latest witiko/markdown:$(GIT_TAG)
+	docker tag witiko/markdown:latest witiko/markdown:$(VERSION)
 
 # This targets produces a directory with files for the GitHub Pages service.
 $(GITHUB_PAGES): $(HTML_USER_MANUAL)
@@ -63,7 +62,7 @@ $(GITHUB_PAGES): $(HTML_USER_MANUAL)
 # This target extracts the source files out of the DTX archive.
 $(INSTALLABLES) $(MARKDOWN_USER_MANUAL): $(INSTALLER) $(DTXARCHIVE)
 	xetex $<
-	sed -i 's/\$$GitTag\$$/$(GIT_TAG)/g' $(INSTALLABLES) $(MARKDOWN_USER_MANUAL)
+	sed -i 's/\$$(VERSION)/$(VERSION)/g' $(INSTALLABLES) $(MARKDOWN_USER_MANUAL)
 
 # This target typesets the manual.
 $(TECHNICAL_DOCUMENTATION): $(DTXARCHIVE) $(INSTALLABLES)
@@ -103,7 +102,6 @@ examples/example.tex: $(INSTALLABLES)
 	    -e 's#\\mdef{\([^}]*\)}#`\\\1`#g' \
 	| \
 	pandoc -f markdown -t html -N -s --toc --toc-depth=3 --css=$(word 2, $^) >$@
-	sed -i 's/\$$GitTag\$$/$(GIT_TAG)/g' $@
 
 # This pseudo-target runs all the tests in the `tests/` directory.
 test:
