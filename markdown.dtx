@@ -15156,29 +15156,12 @@ function M.writer.new(options)
 % \par
 % \begin{markdown}
 %
-% Define a table \luamdef{escaped_chars} containing the mapping from special
-% plain \TeX{} characters (including the active pipe character (`|`) of
-% \Hologo{ConTeXt}) to their escaped variants. Define tables
-% \luamdef{escaped_uri_chars}, \luamdef{escaped_citation_chars}, and
-% \luamdef{escaped_minimal_strings} containing the mapping from special plain
-% characters and character strings that need to be escaped even in content
-% that will not be typeset.
+% Define tables \luamdef{escaped_uri_chars}, \luamdef{escaped_citation_chars},
+% and \luamdef{escaped_minimal_strings} containing the mapping from special
+% plain characters and character strings that always need to be escaped.
 %
 % \end{markdown}
 %  \begin{macrocode}
-  local escaped_chars = {
-     ["{"] = "\\markdownRendererLeftBrace{}",
-     ["}"] = "\\markdownRendererRightBrace{}",
-     ["$"] = "\\markdownRendererDollarSign{}",
-     ["%"] = "\\markdownRendererPercentSign{}",
-     ["&"] = "\\markdownRendererAmpersand{}",
-     ["_"] = "\\markdownRendererUnderscore{}",
-     ["#"] = "\\markdownRendererHash{}",
-     ["^"] = "\\markdownRendererCircumflex{}",
-     ["\\"] = "\\markdownRendererBackslash{}",
-     ["~"] = "\\markdownRendererTilde{}",
-     ["|"] = "\\markdownRendererPipe{}",
-   }
    local escaped_uri_chars = {
      ["{"] = "\\markdownRendererLeftBrace{}",
      ["}"] = "\\markdownRendererRightBrace{}",
@@ -15189,8 +15172,8 @@ function M.writer.new(options)
      ["{"] = "\\markdownRendererLeftBrace{}",
      ["}"] = "\\markdownRendererRightBrace{}",
      ["%"] = "\\markdownRendererPercentSign{}",
-     ["#"] = "\\markdownRendererHash{}",
      ["\\"] = "\\markdownRendererBackslash{}",
+     ["#"] = "\\markdownRendererHash{}",
    }
    local escaped_minimal_strings = {
      ["^^"] = "\\markdownRendererCircumflex\\markdownRendererCircumflex ",
@@ -15201,10 +15184,33 @@ function M.writer.new(options)
 % \par
 % \begin{markdown}
 %
+% Define a table \luamdef{escaped_chars} containing the mapping from special
+% plain \TeX{} characters (including the active pipe character (`|`) of
+% \Hologo{ConTeXt}) that need to be escaped for typeset content.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  local escaped_chars = {
+     ["{"] = "\\markdownRendererLeftBrace{}",
+     ["}"] = "\\markdownRendererRightBrace{}",
+     ["%"] = "\\markdownRendererPercentSign{}",
+     ["\\"] = "\\markdownRendererBackslash{}",
+     ["#"] = "\\markdownRendererHash{}",
+     ["$"] = "\\markdownRendererDollarSign{}",
+     ["&"] = "\\markdownRendererAmpersand{}",
+     ["_"] = "\\markdownRendererUnderscore{}",
+     ["^"] = "\\markdownRendererCircumflex{}",
+     ["~"] = "\\markdownRendererTilde{}",
+     ["|"] = "\\markdownRendererPipe{}",
+   }
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
 % Use the \luam{escaped_chars}, \luam{escaped_uri_chars},
 % \luam{escaped_citation_chars}, and \luam{escaped_minimal_strings} tables
-% to create the \luamdef{escape}, \luamdef{escape_citation}, and
-% \luamdef{escape_uri} escaper functions.
+% to create the \luamdef{escape}, \luamdef{escape_citation},
+% \luamdef{escape_uri}, and \luamdef{escape_minimal} escaper functions.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -15212,6 +15218,7 @@ function M.writer.new(options)
   local escape_citation = util.escaper(escaped_citation_chars,
     escaped_minimal_strings)
   local escape_uri = util.escaper(escaped_uri_chars, escaped_minimal_strings)
+  local escape_minimal = util.escaper({}, escaped_minimal_strings)
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -15221,15 +15228,15 @@ function M.writer.new(options)
 % function that will transform an input citation name `c` to the output format,
 % and \luamdef{writer->uri} as a function that will transform an input
 % \acro{uri} `u` to the output format. If the \Opt{hybrid} option is enabled,
-% use identity functions. Otherwise, use the \luam{escape},
+% use the \luam{escape_minimal}. Otherwise, use the \luam{escape},
 % \luam{escape_citation}, and \luam{escape_uri} functions.
 %
 % \end{markdown}
 %  \begin{macrocode}
   if options.hybrid then
-    self.string = function(s) return s end
-    self.citation = function(c) return c end
-    self.uri = function(u) return u end
+    self.string = escape_minimal
+    self.citation = escape_minimal
+    self.uri = escape_minimal
   else
     self.string = escape
     self.citation = escape_citation
