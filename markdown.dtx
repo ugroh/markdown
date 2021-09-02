@@ -15771,8 +15771,8 @@ function M.writer.new(options)
 % \end{markdown}
 %  \begin{macrocode}
   function self.set_state(s)
-    previous_state = self.get_state()
-    for key, value in pairs(state) do
+    local previous_state = self.get_state()
+    for key, value in pairs(s) do
       self[key] = value
     end
     return previous_state
@@ -15788,9 +15788,9 @@ function M.writer.new(options)
 % \end{markdown}
 %  \begin{macrocode}
   function self.defer_call(f)
-    state = self.get_state()
+    local previous_state = self.get_state()
     return function(...)
-      state = self.set_state(state)
+      local state = self.set_state(previous_state)
       local return_value = f(...)
       self.set_state(state)
       return return_value
