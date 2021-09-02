@@ -63,7 +63,7 @@ hours) and use its [LaTeXMK][] tool:
 A PDF document named `workdir/document.pdf` should be produced and contain the
 following output:
 
- ![banner](banner.png "An example LaTeX document using the Markdown package")
+ ![banner](markdown.png "An example LaTeX document using the Markdown package")
 
 Congratulations, you have just typeset your first Markdown document! 🥳
 

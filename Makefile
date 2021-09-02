@@ -16,7 +16,7 @@ EXAMPLES=examples/context-mkii.pdf examples/context-mkiv.pdf \
 TESTS=tests/test.sh tests/support/*.tex tests/templates/*/*.tex.m4 \
   tests/templates/*/COMMANDS.m4 tests/testfiles/*/*.test
 MAKES=Makefile $(addsuffix /Makefile, $(SUBDIRECTORIES)) latexmkrc
-ROOT_README=README.md banner.png
+ROOT_README=README.md markdown.png
 READMES=$(ROOT_README) LICENSE examples/README.md tests/README.md \
   tests/support/README.md tests/templates/README.md tests/testfiles/README.md \
   tests/templates/*/README.md tests/testfiles/*/README.md
