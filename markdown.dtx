@@ -102,6 +102,7 @@
 % Set up Unicode characters.
 \usepackage{newunicodechar}
 \newunicodechar{☒}{\markdownRendererTickedBox}
+\newunicodechar{⌛}{\markdownRendererHalfTickedBox}
 \newunicodechar{☐}{\markdownRendererUntickedBox}
 \newunicodechar{😉}{\emoji{winking-face}}
 
@@ -6014,8 +6015,9 @@ defaultOptions.tableCaptions = false
        
 
         ``` md
-        - [ ] an unchecked task list item
-        - [x] checked item
+        - [ ] an unticked task list item
+        - [/] a half-checked task list item
+        - [X] a ticked task list item
         ``````
 
 :    false
@@ -6035,13 +6037,15 @@ following content:
 \markdownSetup{
   renderers = {
     untickedBox = No,
+    halfTickedBox = Maybe,
     tickedBox = Yes,
   },
 }
 \begin{document}
 \begin{markdown}
 - [ ] you can't.
-- [x] I can!
+- [/] I can?
+- [X] I can!
 \end{markdown}
 \end{document}
 ```````
@@ -6053,6 +6057,7 @@ A PDF document named `document.pdf` should be produced and contain the
 following text:
 
 > - No you can't.
+> - Maybe I can?
 > - Yes I can!
 
 ##### \Hologo{ConTeXt} Example {.unnumbered}
@@ -6063,11 +6068,13 @@ following content:
 \usemodule[t][markdown]
 \def\markdownOptionTaskLists{true}
 \def\markdownRendererUntickedBox{No}
+\def\markdownRendererHalftickedBox{Maybe}
 \def\markdownRendererTickedBox{Yes}
 \starttext
 \startmarkdown
 - [ ] you can't.
-- [x] I can!
+- [/] I can?
+- [X] I can!
 \stopmarkdown
 \stoptext
 ````````
@@ -6079,6 +6086,7 @@ A PDF document named `document.pdf` should be produced and contain the
 following text:
 
 > - No you can't.
+> - Maybe I can?
 > - Yes I can!
 
 %</manual-options>
@@ -7192,12 +7200,12 @@ In this section, I will describe the individual token renderers.
 % \vref{sec:texrendererprototypes}).
 
 #### Tickbox Renderers
-The macros named \mdef{markdownRendererTickedBox} and
-\mdef{markdownRendererUntickedBox} represent ticked and unticked boxes,
-respectively. These macros will either be produced, when the \Opt{taskLists}
-option is enabled, or when the Ballot Box with X (☒, U+2612) or Ballot Box
-(☐, U+2610) Unicode characters are encountered in the markdown input,
-respectively.
+The macros named \mdef{markdownRendererTickedBox},
+\mdef{markdownRendererHalfTickedBox}, and \mdef{markdownRendererUntickedBox}
+represent ticked and unticked boxes, respectively. These macros will either be
+produced, when the \Opt{taskLists} option is enabled, or when the Ballot Box
+with X (☒, U+2612), Hourglass (⌛, U+231B) or Ballot Box (☐, U+2610) Unicode
+characters are encountered in the markdown input, respectively.
 
 % \end{markdown}
 %
@@ -7266,6 +7274,8 @@ following text:
 %  \begin{macrocode}
 \def\markdownRendererTickedBox{%
   \markdownRendererTickedBoxPrototype}%
+\def\markdownRendererHalfTickedBox{%
+  \markdownRendererHalfTickedBoxPrototype}%
 \def\markdownRendererUntickedBox{%
   \markdownRendererUntickedBoxPrototype}%
 %    \end{macrocode}
@@ -11173,6 +11183,7 @@ following text:
 \def\markdownRendererTablePrototype#1#2#3{}%
 \def\markdownRendererInlineHtmlCommentPrototype#1{}%
 \def\markdownRendererTickedBoxPrototype{}%
+\def\markdownRendererHalfTickedBoxPrototype{}%
 \def\markdownRendererUntickedBoxPrototype{}%
 %    \end{macrocode}
 % \par
@@ -12240,6 +12251,8 @@ The following ordered list will be preceded by roman numerals:
   \renewcommand\markdownRendererInlineHtmlComment[1]{#1}}%
 \define@key{markdownRenderers}{tickedBox}{%
   \renewcommand\markdownRendererTickedBox{#1}}%
+\define@key{markdownRenderers}{halfTickedBox}{%
+  \renewcommand\markdownRendererHalfTickedBox{#1}}%
 \define@key{markdownRenderers}{untickedBox}{%
   \renewcommand\markdownRendererUntickedBox{#1}}%
 %    \end{macrocode}
@@ -12389,6 +12402,8 @@ The following ordered list will be preceded by roman numerals:
   \renewcommand\markdownRendererInlineHtmlCommentPrototype[1]{#1}}%
 \define@key{markdownRendererPrototypes}{tickedBox}{%
   \renewcommand\markdownRendererTickedBoxPrototype{#1}}%
+\define@key{markdownRendererPrototypes}{halfTickedBox}{%
+  \renewcommand\markdownRendererHalfTickedBoxPrototype{#1}}%
 \define@key{markdownRendererPrototypes}{untickedBox}{%
   \renewcommand\markdownRendererUntickedBoxPrototype{#1}}%
 %    \end{macrocode}
@@ -15178,6 +15193,7 @@ function M.writer.new(options)
    local escaped_minimal_strings = {
      ["^^"] = "\\markdownRendererCircumflex\\markdownRendererCircumflex ",
      ["☒"] = "\\markdownRendererTickedBox{}",
+     ["⌛"] = "\\markdownRendererHalfTickedBox{}",
      ["☐"] = "\\markdownRendererUntickedBox{}",
    }
 %    \end{macrocode}
@@ -15551,15 +15567,17 @@ function M.writer.new(options)
 % \begin{markdown}
 %
 % Define \luamdef{writer->tickbox} as a function that will transform a
-% boolean `b` to the output format.
+% number `f` to the output format.
 %
 % \end{markdown}
 %  \begin{macrocode}
-  function self.tickbox(b)
-    if b then
+  function self.tickbox(f)
+    if f == 1.0 then
       return "☒ "
-    else
+    elseif f == 0.0 then
       return "☐ "
+    else
+      return "⌛ "
     end
   end
 %    \end{macrocode}
@@ -16031,13 +16049,14 @@ parsers.bullet = ( parsers.bulletchar * #parsers.spacing
                                  * parsers.bulletchar * #parsers.spacing
                  )
 
-parsers.ticked_box = parsers.optionalspace * parsers.lbracket
-                   * S("xX") * parsers.rbracket
-                   * parsers.spacechar^1 * Cc(true)
+local function tickbox(interior)
+  return parsers.optionalspace * parsers.lbracket
+       * interior * parsers.rbracket * parsers.spacechar^1
+end
 
-parsers.unticked_box = parsers.optionalspace * parsers.lbracket
-                     * parsers.spacechar^1 * parsers.rbracket
-                     * parsers.spacechar^1 * Cc(false)
+parsers.ticked_box = tickbox(S("xX")) * Cc(1.0)
+parsers.halfticked_box = tickbox(S("./")) * Cc(0.5)
+parsers.unticked_box = tickbox(parsers.spacechar^1) * Cc(0.0)
 
 %    \end{macrocode}
 % \par
@@ -17320,6 +17339,7 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
 
   if options.taskLists then
     larsers.tickbox = ( parsers.ticked_box
+                      + parsers.halfticked_box
                       + parsers.unticked_box
                       ) / writer.tickbox
   else
@@ -17943,7 +17963,8 @@ end
 \def\markdownRendererFootnotePrototype#1{#1}%
 \def\markdownRendererCitePrototype#1{}%
 \def\markdownRendererTextCitePrototype#1{}%
-\def\markdownRendererTickedBoxPrototype{[x]}%
+\def\markdownRendererTickedBoxPrototype{[X]}%
+\def\markdownRendererHalfTickedBoxPrototype{[/]}%
 \def\markdownRendererUntickedBoxPrototype{[ ]}%
 %    \end{macrocode}
 % \par
@@ -19004,8 +19025,9 @@ end
   dlItem = {\item[#1]},
   dlEnd = {\end{description}},
   emphasis = {\emph{#1}},
-  tickedBox = {\ensuremath{\boxtimes}},
-  untickedBox = {\ensuremath{\square}},
+  tickedBox = {$\boxtimes$},
+  halfTickedBox = {$\boxdot$},
+  untickedBox = {$\square$},
   blockQuoteBegin = {\begin{quotation}},
   blockQuoteEnd = {\end{quotation}},
   inputVerbatim = {\VerbatimInput{#1}},
@@ -19096,16 +19118,19 @@ end
 }
 \def\markdownLaTeXUlItem{%
   \ifx\markdownLaTeXCheckbox\markdownRendererTickedBox
-    \item[$\markdownLaTeXCheckbox$]\expandafter\expandafter
-    \expandafter\@gobble
+    \item[\markdownLaTeXCheckbox]%
   \else
-    \ifx\markdownLaTeXCheckbox\markdownRendererUntickedBox
-      \item[$\markdownLaTeXCheckbox$]\expandafter\expandafter
-      \expandafter\@gobble
+    \ifx\markdownLaTeXCheckbox\markdownRendererHalfTickedBox
+      \item[\markdownLaTeXCheckbox]%
     \else
-      \item{}%
+      \ifx\markdownLaTeXCheckbox\markdownRendererUntickedBox
+        \item[\markdownLaTeXCheckbox]%
+      \else
+        \item{}%
+      \fi
     \fi
   \fi
+  \@gobble
 }
 %    \end{macrocode}
 % \par
@@ -19742,6 +19767,7 @@ end
     \expandafter\gobbleoneargument
   \fi\markdownConTeXtRenderTableCell}
 \def\markdownRendererTickedBox{$\boxtimes$}
+\def\markdownRendererHalfTickedBox{$\boxdot$}
 \def\markdownRendererUntickedBox{$\square$}
 %    \end{macrocode}
 % \iffalse

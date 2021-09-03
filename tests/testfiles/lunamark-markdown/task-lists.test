@@ -16,7 +16,25 @@ the plain TeX interface.
     3. [X] *here is loose nested item with a ticked box*
 
     4. *some item with a Unicode unticked box ☐*
-    5. *some item with a Unicode ticked box ☒*
+    5. *some item with a Unicode half-ticked box ⌛*
+    6. *some item with a Unicode ticked box ☒*
+
+Here are some unticked boxes:
+
+- [ ] one unticked box
+- ☐ two unticked boxes
+
+Here are some half-ticked boxes:
+
+- [.] one half-ticked box
+- [/] two half-ticked boxes
+- ⌛ three half-ticked boxes
+
+Here are some ticked boxes:
+
+- [x] one ticked box
+- [X] two ticked boxes
+- ☒ three ticked boxes
 >>>
 codeSpan: taskLists
 interblockSeparator
@@ -52,8 +70,47 @@ olItemWithNumber: 4
 emphasis: some item with a Unicode unticked box (untickedBox)
 olItemEnd
 olItemWithNumber: 5
+emphasis: some item with a Unicode half-ticked box (halfTickedBox)
+olItemEnd
+olItemWithNumber: 6
 emphasis: some item with a Unicode ticked box (tickedBox)
 olItemEnd
 olEnd
 ulItemEnd
 ulEnd
+interblockSeparator
+interblockSeparator
+ulBeginTight
+ulItem
+untickedBox
+ulItemEnd
+ulItem
+untickedBox
+ulItemEnd
+ulEndTight
+interblockSeparator
+interblockSeparator
+ulBeginTight
+ulItem
+halfTickedBox
+ulItemEnd
+ulItem
+halfTickedBox
+ulItemEnd
+ulItem
+halfTickedBox
+ulItemEnd
+ulEndTight
+interblockSeparator
+interblockSeparator
+ulBeginTight
+ulItem
+tickedBox
+ulItemEnd
+ulItem
+tickedBox
+ulItemEnd
+ulItem
+tickedBox
+ulItemEnd
+ulEndTight

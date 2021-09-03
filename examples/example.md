@@ -84,9 +84,11 @@ This is a compact ordered list using hash enumerators:
 This is a task list:
 
 * [ ] Some unfinished task
-* [x] Some finished task
+* [/] Some half-finished task
+* [X] Some finished task
 * An item of an unordered list
     #. [ ] Some unfinished subtask
+    #. [.] Some half-finished subtask
     #. [x] Some finished subtask
     #. An item of an ordered list
 
