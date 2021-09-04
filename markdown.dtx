@@ -19119,18 +19119,21 @@ end
 \def\markdownLaTeXUlItem{%
   \ifx\markdownLaTeXCheckbox\markdownRendererTickedBox
     \item[\markdownLaTeXCheckbox]%
+    \expandafter\@gobble
   \else
     \ifx\markdownLaTeXCheckbox\markdownRendererHalfTickedBox
       \item[\markdownLaTeXCheckbox]%
+      \expandafter\expandafter\expandafter\@gobble
     \else
       \ifx\markdownLaTeXCheckbox\markdownRendererUntickedBox
         \item[\markdownLaTeXCheckbox]%
+        \expandafter\expandafter\expandafter\expandafter
+          \expandafter\expandafter\expandafter\@gobble
       \else
         \item{}%
       \fi
     \fi
   \fi
-  \@gobble
 }
 %    \end{macrocode}
 % \par
