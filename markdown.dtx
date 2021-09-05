@@ -844,16 +844,16 @@ First, download the package from the repository using Git:
 ``` sh
 git clone https://github.com/witiko/markdown
 ``````
-Next, enter the directory named `markdown` and interpret the file named
-`markdown.ins` file using a Unicode-aware \TeX{} engine, such as XeTeX or
-LuaTeX:
+Next, enter the directory named `markdown` and run the `make base` command using
+GNU Make:
 ``` sh
 cd markdown
-luatex markdown.ins
+make base
 ``````
 This should produce the following files:
 
  * `markdown.lua`, the Lua module,
+ * `libraries/markdown-tinyyaml.lua`, an external library for reading YAML,
  * `markdown-cli.lua`, the Lua command-line interface,
  * `markdown.tex`, the plain \TeX{} macro package,
  * `markdown.sty`, the \LaTeX{} package,
@@ -869,6 +869,7 @@ directory structure. This is generally where the individual files should be
 placed:
 
  * `⟨TEXMF⟩/tex/luatex/markdown/markdown.lua`
+ * `⟨TEXMF⟩/tex/luatex/markdown/markdown-tinyyaml.lua`
  * `⟨TEXMF⟩/scripts/markdown/markdown-cli.lua`
  * `⟨TEXMF⟩/tex/generic/markdown/markdown.tex`
  * `⟨TEXMF⟩/tex/latex/markdown/markdown.sty`
@@ -15760,35 +15761,79 @@ function M.writer.new(options)
     local name = util.cache(options.cacheDir, s, nil, nil, ".verbatim")
     return {"\\markdownRendererInputFencedCode{",name,"}{",i,"}"}
   end
-  function self.jekyllData(data)
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Define \luamdef{writer->jekyllData} as a function that will transform an
+% input YAML table `d` to the output format. The table is the value of
+% the key `p` in a parent table; if `p` is nil, then the table has no parent.
+% Any string values encountered in the table will be transformed using the
+% function `t`.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  function self.jekyllData(d, t, p)
     if not self.is_writing then return "" end
-    local buffer = {}
-    table.insert(buffer,"\\markdownRendererJekyllDataBegin")
-    for _, v in ipairs(data) do
-      if type(v) == "table" then
-        table.insert(buffer,
-          "\\markdownRendererJekyllDataSequenceBegin{"..
-            v[1].."}{"..#v[2].."}")
-        for i,w in ipairs (v[2]) do
-          s = string.gsub(w, '%s*([^:]+):%s([^\r\n]+)[\r\n]+',
-            '\\markdownRendererJekyllDataString{%1}{%2}')
-          s = "\\markdownRendererJekyllDataMappingBegin{"..
-            i.."}{"..#v[2].."}"..s..
-            "\\markdownRendererJekyllDataMappingEnd"
-         table.insert(buffer,s)
-        end
-        table.insert(buffer,
-          "\\markdownRendererJekyllDataSequenceEnd")
+
+    local buf = {}
+
+    local keys = {}
+    for k, _ in pairs(d) do
+      table.insert(keys, k)
+    end
+    table.sort(keys)
+
+    if not p then
+      table.insert(buf, "\\markdownRendererJekyllDataBegin")
+    end
+
+    if #d > 0 then
+        table.insert(buf, "\\markdownRendererJekyllDataSequenceBegin{")
+        table.insert(buf, p or "")
+        table.insert(buf, "}{")
+        table.insert(buf, #keys)
+        table.insert(buf, "}")
+    else
+        table.insert(buf, "\\markdownRendererJekyllDataMappingBegin{")
+        table.insert(buf, p or "")
+        table.insert(buf, "}{")
+        table.insert(buf, #keys)
+        table.insert(buf, "}")
+    end
+
+    for _, k in ipairs(keys) do
+      local v = d[k]
+      local typ = type(v)
+      if typ == "table" then
+        table.insert(
+          buf,
+          self.jekyllData(v, t, k)
+        )
+      elseif typ == "string" or typ == nil then
+        table.insert(buf, "\\markdownRendererJekyllDataString{")
+        table.insert(buf, k)
+        table.insert(buf, "}{")
+        table.insert(buf, t(v or ""))
+        table.insert(buf, "}")
       else
-        s = string.gsub(v, '([^:]+):%s([^\r\n]+)[\r\n]+',
-          '\\markdownRendererJekyllDataString{%1}{%2}')
-        table.insert(buffer,s)
+        error(format("Unexpected type %s for value of " ..
+                     "YAML key %s", typ, k))
       end
     end
-    table.insert(buffer,"\\markdownRendererJekyllDataEnd")
-    return table.concat(buffer,"")
+
+    if #d > 0 then
+      table.insert(buf, "\\markdownRendererJekyllDataSequenceEnd")
+    else
+      table.insert(buf, "\\markdownRendererJekyllDataMappingEnd")
+    end
+
+    if not p then
+      table.insert(buf, "\\markdownRendererJekyllDataEnd")
+    end
+
+    return buf
   end
-  
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -16285,30 +16330,6 @@ parsers.fencedline   = function(char)
                          return s:sub(i)
                        end
 end
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
-%#### Parsers Used for YAML Metadata
-%
-% \end{markdown}
-%  \begin{macrocode}
-parsers.jekyll_data_mapping  = function(char)
-  return parsers.dash * Cs(parsers.space^1 * parsers.fencedline(char)^-1
-       * (parsers.space * parsers.fencedline(char))^1)
-end
-
-parsers.jekyll_data_sequence_start = C((parsers.linechar - parsers.colon)^0)
-                                   * parsers.colon * parsers.newline
-
-parsers.jekyll_data_sequence = function(char)
-  return parsers.jekyll_data_sequence_start^1
-  * Ct(parsers.jekyll_data_mapping(char)^1)
-  / function(sequence, data)
-      return {sequence, data}
-    end
-end
-
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -17023,7 +17044,7 @@ function M.reader.new(writer, options)
       end
     end
   end
-    
+
   local parse_blocks
     = create_parser("parse_blocks",
                     function()
@@ -17477,12 +17498,18 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                                                     expandtabs(code))
                          end
 
-  larsers.JekyllData   = parsers.fencehead(parsers.dash)
-                       * Ct((parsers.jekyll_data_sequence(parsers.dash)
-                         + parsers.fencedline(parsers.dash))^0)
-                       * parsers.fencetail(parsers.dash)
-                       / function(infostring, data)
-                           return writer.jekyllData(data)
+  larsers.JekyllData   = P("---")
+                       * parsers.blankline / 0
+                       * #(-parsers.blankline)  -- if followed by blank, it's an hrule
+                       * C((parsers.line - P("---") - P("..."))^0)
+                       * (P("---") + P("..."))
+                       / function(text)
+                           local tinyyaml = require("markdown-tinyyaml")
+                           data = tinyyaml.parse(text)
+                           return writer.jekyllData(data, function(s)
+                             s = s:gsub("\n", "\n\n")
+                             return parse_blocks(s)
+                           end, nil)
                          end
 
   larsers.Blockquote   = Cs(larsers.blockquote_body^1)
@@ -17703,7 +17730,7 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
   local syntax =
     { "Blocks",
 
-      Blocks                = larsers.Blank^0 * V("JekyllData")^-1 * parsers.Block^-1
+      Blocks                = larsers.Blank^0 * parsers.Block^-1
                             * (larsers.Blank^0 / writer.interblocksep
                               * parsers.Block)^0
                             * larsers.Blank^0 * parsers.eof,
@@ -17713,6 +17740,7 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
       JekyllData            = larsers.JekyllData,
 
       Block                 = V("ContentBlock")
+                            + V("JekyllData")
                             + V("Blockquote")
                             + V("PipeTable")
                             + V("Verbatim")

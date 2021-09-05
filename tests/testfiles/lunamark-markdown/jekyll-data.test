@@ -1,22 +1,38 @@
 \def\markdownOptionJekyllData{true}
 <<<
+This test ensures that the Lua `jekyllData` option correctly propagates
+through the plain TeX interface.
+
 ---
 title: The document title
 author:
-- name: Author One
+- name: Author *One*
   affiliation: University of Somewhere
-- name: Author Two
+- name: Author **Two**
   affiliation: University of Nowhere
----
+...
 
-This test ensures that the Lua `jekyllData` option correctly propagates
-through the plain TeX interface.
+A document may contain *multiple* metadata blocks:
+
+---
+title:  'This is the title: it contains a colon'
+author:
+- Author One with `inline` markup in *their name*
+- Author Two
+keywords: [nothing, nothingness]
+abstract: |
+  This is *the abstract*.
+
+  It consists of two paragraphs.
+---
 >>>
+codeSpan: jekyllData
+interblockSeparator
 jekyllDataBegin
-BEGIN jekyllDataString
-- key: title
-- value: The document title
-END jekyllDataString
+BEGIN jekyllDataMappingBegin
+- key: 
+- length: 2
+END jekyllDataMappingBegin
 BEGIN jekyllDataSequenceBegin
 - key: author
 - length: 2
@@ -26,12 +42,12 @@ BEGIN jekyllDataMappingBegin
 - length: 2
 END jekyllDataMappingBegin
 BEGIN jekyllDataString
-- key: name
-- value: Author One
-END jekyllDataString
-BEGIN jekyllDataString
 - key: affiliation
 - value: University of Somewhere
+END jekyllDataString
+BEGIN jekyllDataString
+- key: name
+- value: Author (emphasis: One)
 END jekyllDataString
 jekyllDataMappingEnd
 BEGIN jekyllDataMappingBegin
@@ -39,14 +55,62 @@ BEGIN jekyllDataMappingBegin
 - length: 2
 END jekyllDataMappingBegin
 BEGIN jekyllDataString
-- key: name
-- value: Author Two
-END jekyllDataString
-BEGIN jekyllDataString
 - key: affiliation
 - value: University of Nowhere
 END jekyllDataString
+BEGIN jekyllDataString
+- key: name
+- value: Author (strongEmphasis: Two)
+END jekyllDataString
 jekyllDataMappingEnd
 jekyllDataSequenceEnd
+BEGIN jekyllDataString
+- key: title
+- value: The document title
+END jekyllDataString
+jekyllDataMappingEnd
 jekyllDataEnd
-codeSpan: jekyllData
+interblockSeparator
+emphasis: multiple
+interblockSeparator
+jekyllDataBegin
+BEGIN jekyllDataMappingBegin
+- key: 
+- length: 4
+END jekyllDataMappingBegin
+BEGIN jekyllDataString
+- key: abstract
+- value: This is (emphasis: the abstract).(interblockSeparator)It consists of two paragraphs.
+END jekyllDataString
+BEGIN jekyllDataSequenceBegin
+- key: author
+- length: 2
+END jekyllDataSequenceBegin
+BEGIN jekyllDataString
+- key: 1
+- value: Author One with (codeSpan: inline) markup in (emphasis: their name)
+END jekyllDataString
+BEGIN jekyllDataString
+- key: 2
+- value: Author Two
+END jekyllDataString
+jekyllDataSequenceEnd
+BEGIN jekyllDataSequenceBegin
+- key: keywords
+- length: 2
+END jekyllDataSequenceBegin
+BEGIN jekyllDataString
+- key: 1
+- value: nothing
+END jekyllDataString
+BEGIN jekyllDataString
+- key: 2
+- value: nothingness
+END jekyllDataString
+jekyllDataSequenceEnd
+BEGIN jekyllDataString
+- key: title
+- value: This is the title: it contains a colon
+END jekyllDataString
+jekyllDataMappingEnd
+jekyllDataEnd

@@ -1,4 +1,4 @@
-.PHONY: all base clean implode dist test examples docker-image
+.PHONY: all base clean implode dist test docker-image
 
 AUXFILES=markdown.bbl markdown.cb markdown.cb2 markdown.glo markdown.bbl \
   markdown.run.xml markdown.bib markdown.markdown.in markdown.markdown.lua \
@@ -27,6 +27,7 @@ MARKDOWN_USER_MANUAL=markdown.md markdown.css
 HTML_USER_MANUAL=markdown.html markdown.css
 USER_MANUAL=$(MARKDOWN_USER_MANUAL) $(HTML_USER_MANUAL)
 DOCUMENTATION=$(TECHNICAL_DOCUMENTATION) $(USER_MANUAL) $(ROOT_README)
+LIBRARIES=libraries/markdown-tinyyaml.lua
 INSTALLABLES=markdown.lua markdown-cli.lua markdown.tex markdown.sty t-markdown.tex \
 	markdownthemewitiko_dot.sty markdownthemewitiko_graphicx_http.sty \
 	markdownthemewitiko_tilde.sty
@@ -44,8 +45,9 @@ LASTMODIFIED=$(shell sed -rn '/^\\def\\markdownLastModified\{/s/[^{]*\{(.*)\}.*/
 all: $(MAKEABLES)
 	$(MAKE) clean
 
-# This pseudo-target extracts the source files out of the DTX archive.
-base: $(INSTALLABLES)
+# This pseudo-target extracts the source files out of the DTX archive and
+# produces external Lua libraries.
+base: $(INSTALLABLES) $(LIBRARIES)
 	$(MAKE) clean
 
 # This pseudo-target builds a witiko/markdown Docker image.
@@ -64,16 +66,20 @@ $(INSTALLABLES) $(MARKDOWN_USER_MANUAL): $(INSTALLER) $(DTXARCHIVE)
 	xetex $<
 	sed -i 's/\$$(VERSION)/$(VERSION)/g' $(INSTALLABLES) $(MARKDOWN_USER_MANUAL)
 
+# This target produces external Lua libraries.
+$(LIBRARIES):
+	$(MAKE) -C libraries $(notdir $@)
+
 # This target typesets the manual.
-$(TECHNICAL_DOCUMENTATION): $(DTXARCHIVE) $(INSTALLABLES)
+$(TECHNICAL_DOCUMENTATION): $(DTXARCHIVE) $(INSTALLABLES) $(LIBRARIES)
 	latexmk -interaction=nonstopmode $<
 	test `tail $(basename $<).log | sed -rn 's/.*\(([0-9]*) pages.*/\1/p'` -gt 150
 
 # These targets typeset the examples.
-$(EXAMPLES): $(EXAMPLE_SOURCES) examples/example.tex $(INSTALLABLES)
+$(EXAMPLES): $(EXAMPLE_SOURCES) examples/example.tex $(INSTALLABLES) $(LIBRARIES)
 	$(MAKE) -C examples $(notdir $@)
 
-examples/example.tex: $(INSTALLABLES)
+examples/example.tex: $(INSTALLABLES) $(LIBRARIES)
 	$(MAKE) -C examples $(notdir $@)
 
 # This target converts the markdown user manual to an HTML page.
@@ -113,11 +119,11 @@ dist: implode
 	$(MAKE) clean
 
 # This target produces the TeX directory structure archive.
-$(TDSARCHIVE): $(DTXARCHIVE) $(INSTALLER) $(INSTALLABLES) $(DOCUMENTATION) $(EXAMPLES_RESOURCES) $(EXAMPLES_SOURCES)
+$(TDSARCHIVE): $(DTXARCHIVE) $(INSTALLER) $(INSTALLABLES) $(DOCUMENTATION) $(EXAMPLES_RESOURCES) $(EXAMPLES_SOURCES) $(LIBRARIES)
 	@# Installing the macro package.
 	mkdir -p tex/generic/markdown tex/luatex/markdown tex/latex/markdown \
 	  tex/context/third/markdown scripts/markdown
-	cp markdown.lua tex/luatex/markdown/
+	cp markdown.lua $(LIBRARIES) tex/luatex/markdown/
 	cp markdown-cli.lua scripts/markdown/
 	cp markdown.sty markdownthemewitiko_dot.sty markdownthemewitiko_graphicx_http.sty \
 	  markdownthemewitiko_tilde.sty tex/latex/markdown/
@@ -158,3 +164,4 @@ clean:
 implode: clean
 	rm -f $(MAKEABLES) $(ARCHIVES)
 	$(MAKE) -C examples implode
+	$(MAKE) -C libraries implode
