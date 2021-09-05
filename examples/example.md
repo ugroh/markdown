@@ -81,6 +81,17 @@ This is a compact ordered list using hash enumerators:
 #. the second item of an ordered list,
 #. the third item of an ordered list.
 
+This is a task list:
+
+* [ ] Some unfinished task
+* [/] Some half-finished task
+* [X] Some finished task
+* An item of an unordered list
+    #. [ ] Some unfinished subtask
+    #. [.] Some half-finished subtask
+    #. [x] Some finished subtask
+    #. An item of an ordered list
+
 This is a definition list:
 
 Term 1

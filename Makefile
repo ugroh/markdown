@@ -16,13 +16,11 @@ EXAMPLES=examples/context-mkii.pdf examples/context-mkiv.pdf \
 TESTS=tests/test.sh tests/support/*.tex tests/templates/*/*.tex.m4 \
   tests/templates/*/COMMANDS.m4 tests/testfiles/*/*.test
 MAKES=Makefile $(addsuffix /Makefile, $(SUBDIRECTORIES)) latexmkrc
-ROOT_README=README.md banner.png
+ROOT_README=README.md markdown.png
 READMES=$(ROOT_README) LICENSE examples/README.md tests/README.md \
   tests/support/README.md tests/templates/README.md tests/testfiles/README.md \
   tests/templates/*/README.md tests/testfiles/*/README.md
 DTXARCHIVE=markdown.dtx
-VERSION=$(shell sed -rn '/^\\def\\markdownVersion\{/s/[^{]*\{(.*)\}.*/\1/p' <$(DTXARCHIVE))
-LASTMODIFIED=$(shell sed -rn '/^\\def\\markdownLastModified\{/s/[^{]*\{(.*)\}.*/\1/p' <$(DTXARCHIVE))
 INSTALLER=markdown.ins docstrip.cfg
 TECHNICAL_DOCUMENTATION=markdown.pdf
 MARKDOWN_USER_MANUAL=markdown.md markdown.css
@@ -36,8 +34,10 @@ MAKEABLES=$(TECHNICAL_DOCUMENTATION) $(USER_MANUAL) $(INSTALLABLES) $(EXAMPLES)
 RESOURCES=$(DOCUMENTATION) $(EXAMPLES_RESOURCES) $(EXAMPLES_SOURCES) $(EXAMPLES) \
   $(MAKES) $(READMES) $(INSTALLER) $(DTXARCHIVE) $(TESTS)
 EVERYTHING=$(RESOURCES) $(INSTALLABLES)
+GITHUB_PAGES=gh-pages
 
-GIT_TAG=$(shell git describe --tags --always --long --exclude latest)
+VERSION=$(shell git describe --tags --always --long --exclude latest)
+LASTMODIFIED=$(shell sed -rn '/^\\def\\markdownLastModified\{/s/[^{]*\{(.*)\}.*/\1/p' <$(DTXARCHIVE))
 
 # This is the default pseudo-target. It typesets the manual,
 # the examples, and extracts the package files.
@@ -51,12 +51,18 @@ base: $(INSTALLABLES)
 # This pseudo-target builds a witiko/markdown Docker image.
 docker-image:
 	DOCKER_BUILDKIT=1 docker build -t witiko/markdown:latest .
-	docker tag witiko/markdown:latest witiko/markdown:$(GIT_TAG)
+	docker tag witiko/markdown:latest witiko/markdown:$(VERSION)
+
+# This targets produces a directory with files for the GitHub Pages service.
+$(GITHUB_PAGES): $(HTML_USER_MANUAL)
+	mkdir -p $@
+	cp markdown.html $@/index.html
+	cp markdown.css $@
 
 # This target extracts the source files out of the DTX archive.
 $(INSTALLABLES) $(MARKDOWN_USER_MANUAL): $(INSTALLER) $(DTXARCHIVE)
 	xetex $<
-	sed -i 's/\$$GitTag\$$/$(GIT_TAG)/g' $(INSTALLABLES) $(MARKDOWN_USER_MANUAL)
+	sed -i 's/\$$(VERSION)/$(VERSION)/g' $(INSTALLABLES) $(MARKDOWN_USER_MANUAL)
 
 # This target typesets the manual.
 $(TECHNICAL_DOCUMENTATION): $(DTXARCHIVE) $(INSTALLABLES)

@@ -63,7 +63,7 @@ hours) and use its [LaTeXMK][] tool:
 A PDF document named `workdir/document.pdf` should be produced and contain the
 following output:
 
- ![banner](banner.png "An example LaTeX document using the Markdown package")
+ ![banner](markdown.png "An example LaTeX document using the Markdown package")
 
 Congratulations, you have just typeset your first Markdown document! 🥳
 
@@ -155,10 +155,12 @@ Further information
 
 For further information, consult one of the following:
 
-1. The [user manual][manual], which can be produced by interpreting the
-   `markdown.ins` file using a Unicode-aware TeX engine, such as XeTeX
-   (`xetex markdown.ins`) or LuaTeX (`luatex markdown.ins`). The manual will
-   reside in the file `markdown.md` and the CSS stylesheet `markdown.css`.
+1. The user manual for either [the released version][manual-tex-live] or
+   [the latest development version][manual-latest], which can be produced by
+   interpreting the `markdown.ins` file using a Unicode-aware TeX engine, such
+   as XeTeX (`xetex markdown.ins`) or LuaTeX (`luatex markdown.ins`). The
+   manual will reside in the file `markdown.md` and the CSS stylesheet
+   `markdown.css`.
 2. The technical documentation for either [the released version][techdoc-tex-live]
    or [the latest development version][techdoc-latest], which can be typeset by
    running the [LaTeXMK][] tool on the `markdown.dtx` file (`latexmk
@@ -191,13 +193,13 @@ For further information, consult one of the following:
  [overleaf-5]: https://www.overleaf.com/latex/examples/writing-posters-with-markdown/jtbgmmgqrqmh       "Writing Posters with Markdown"
  [overleaf-6]: https://www.overleaf.com/latex/examples/using-markdown-in-latex-documents/whdrnpcpnwrm   "Using Markdown in LaTeX documents"
 
- [tb119]: https://www.tug.org/TUGboat/tb38-2/tb119novotny.pdf           "Using Markdown inside TeX documents"
- [tb124]: https://www.tug.org/TUGboat/tb40-1/tb124novotny-markdown.pdf  "Markdown 2.7.0: Towards lightweight markup in TeX"
- [tb129]: https://www.tug.org/TUGboat/tb41-3/tb129novotny-frozen.pdf    "Making Markdown into a Microwave Meal"
+ [tb119]: https://www.tug.org/TUGboat/tb38-2/tb119novotny.pdf          "Using Markdown inside TeX documents"
+ [tb124]: https://www.tug.org/TUGboat/tb40-1/tb124novotny-markdown.pdf "Markdown 2.7.0: Towards lightweight markup in TeX"
+ [tb129]: https://www.tug.org/TUGboat/tb41-3/tb129novotny-frozen.pdf   "Making Markdown into a Microwave Meal"
 
- [tb131-preprint]: https://tug.org/tug2021/assets/pdf/novotny-tug2021-preprint.pdf  "Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX"
- [tb131-slides]:   https://tug.org/tug2021/assets/pdf/tug2021-novotny-slides.pdf    "Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX"
- [tb131-video]:    https://youtu.be/i2GJMnLCZls                                     "Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX"
+ [tb131-preprint]: https://tug.org/TUGboat/production/42-2/tb131novotny-markdown.pdf "Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX"
+ [tb131-slides]:   https://tug.org/tug2021/assets/pdf/tug2021-novotny-slides.pdf     "Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX"
+ [tb131-video]:    https://youtu.be/i2GJMnLCZls                                      "Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX"
 
  [10.5300/2016-1-4/78]: https://bulletin.cstug.cz/pdf/2016-1-4.pdf#page=80 "Rendering Markdown inside TeX Documents"
  [10.5300/2020-1-2/48]: https://bulletin.cstug.cz/pdf/2020-1-2.pdf#page=50 "Markdown 2.8.1: Boldly Unto the Throne of Lightweight Markup in TeX"
@@ -206,10 +208,12 @@ For further information, consult one of the following:
 
  [install]:  https://mirrors.ctan.org/macros/generic/markdown/markdown.html#installation "Markdown Package User Manual"
  [liantze]:  https://liantze.penguinattack.org/                                          "Rants from the Lab"
- [manual]:   https://mirrors.ctan.org/macros/generic/markdown/markdown.html              "Markdown Package User Manual"
  [overleaf]: https://www.overleaf.com/                                                   "Overleaf: Real-time Collaborative Writing and Publishing Tools with Integrated PDF Preview"
  [tugboat]:  https://www.tug.org/tugboat/                                                "TUGboat - Communications of the TeX Users Group"
  [cstug]:    https://www.cstug.cz/                                                       "Československé sdružení uživatelů TeXu"
+
+ [manual-latest]:     https://witiko.github.io/markdown                                  "Markdown Package User Manual"
+ [manual-tex-live]:   https://mirrors.ctan.org/macros/generic/markdown/markdown.html     "Markdown Package User Manual"
 
  [techdoc-latest]:    https://github.com/Witiko/markdown/releases/download/latest/markdown.pdf  "A Markdown Interpreter for TeX"
  [techdoc-tex-live]:  https://mirrors.ctan.org/macros/generic/markdown/markdown.pdf             "A Markdown Interpreter for TeX"

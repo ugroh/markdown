@@ -102,6 +102,7 @@
 % Set up Unicode characters.
 \usepackage{newunicodechar}
 \newunicodechar{☒}{\markdownRendererTickedBox}
+\newunicodechar{⌛}{\markdownRendererHalfTickedBox}
 \newunicodechar{☐}{\markdownRendererUntickedBox}
 \newunicodechar{😉}{\emoji{winking-face}}
 
@@ -125,7 +126,8 @@
 
 % Set up the figures.
 \usepackage{tikz}
-\usepackage{pgf-umlsd}
+\usepackage{mathabx,pgf-umlsd,tikz}
+\usetikzlibrary{automata,arrows.meta,positioning,shapes.geometric}
 \begin{filecontents}[overwrite,nosearch,noheader]{markdown-figure-block-diagram.tex}
 \begingroup
 \ifx\du\undefined\newlength{\du}\fi
@@ -747,7 +749,7 @@ abbr {
 ---
 title:  Markdown Package User Manual
 author: Vít Novotný
-date:   v\markdownVersion{} (\markdownLastModified{})
+date:   \markdownVersion{} (\markdownLastModified{})
 ---
 
 % \fi
@@ -797,7 +799,7 @@ documentation][techdoc].
 % \fi
 %  \begin{macrocode}
 local metadata = {
-    version   = "$GitTag$",
+    version   = "$(VERSION)",
     comment   = "A module for the conversion from markdown to plain TeX",
     author    = "John MacFarlane, Hans Hagen, Vít Novotný",
     copyright = {"2009-2016 John MacFarlane, Hans Hagen",
@@ -1180,7 +1182,7 @@ local md5 = require("md5")
 % \begin{figure}
 % \centering
 % \input markdown-figure-block-diagram
-% \caption{A block diagram of the \pkg{Markdown} package.}
+% \caption{A block diagram of the \pkg{Markdown} package}
 % \label{fig:block-diagram}
 % \end{figure}
 % \iffalse
@@ -6059,8 +6061,9 @@ defaultOptions.tableCaptions = false
        
 
         ``` md
-        - [ ] an unchecked task list item
-        - [x] checked item
+        - [ ] an unticked task list item
+        - [/] a half-checked task list item
+        - [X] a ticked task list item
         ``````
 
 :    false
@@ -6080,13 +6083,15 @@ following content:
 \markdownSetup{
   renderers = {
     untickedBox = No,
+    halfTickedBox = Maybe,
     tickedBox = Yes,
   },
 }
 \begin{document}
 \begin{markdown}
 - [ ] you can't.
-- [x] I can!
+- [/] I can?
+- [X] I can!
 \end{markdown}
 \end{document}
 ```````
@@ -6098,6 +6103,7 @@ A PDF document named `document.pdf` should be produced and contain the
 following text:
 
 > - No you can't.
+> - Maybe I can?
 > - Yes I can!
 
 ##### \Hologo{ConTeXt} Example {.unnumbered}
@@ -6108,11 +6114,13 @@ following content:
 \usemodule[t][markdown]
 \def\markdownOptionTaskLists{true}
 \def\markdownRendererUntickedBox{No}
+\def\markdownRendererHalftickedBox{Maybe}
 \def\markdownRendererTickedBox{Yes}
 \starttext
 \startmarkdown
 - [ ] you can't.
-- [x] I can!
+- [/] I can?
+- [X] I can!
 \stopmarkdown
 \stoptext
 ````````
@@ -6124,6 +6132,7 @@ A PDF document named `document.pdf` should be produced and contain the
 following text:
 
 > - No you can't.
+> - Maybe I can?
 > - Yes I can!
 
 %</manual-options>
@@ -6516,7 +6525,7 @@ defaultOptions.underscores = true
 % \end{sequencediagram}
 % \caption[A sequence diagram of typesetting a document using the \TeX{}
 %   interface]{A sequence diagram of the Markdown package typesetting a
-%   markdown document using the \TeX{} interface.}
+%   markdown document using the \TeX{} interface}
 % \label{fig:sequence-diagram-tex-interface}
 % \end{figure}
 % \begin{figure}
@@ -6534,7 +6543,7 @@ defaultOptions.underscores = true
 % \end{sequencediagram}
 % \caption[A sequence diagram of typesetting a document using the Lua CLI]%
 %   {A sequence diagram of the Markdown package typesetting a markdown document
-%   using the Lua command-line interface.}
+%   using the Lua command-line interface}
 % \label{fig:sequence-diagram-lua-cli}
 % \end{figure}
 %  \begin{macrocode}
@@ -6751,8 +6760,8 @@ pdftex --shell-escape document.tex
 %
 % \end{markdown}
 %  \begin{macrocode}
-\def\markdownLastModified{2021/08/06}%
-\def\markdownVersion{$GitTag$}%
+\def\markdownLastModified{2021/08/31}%
+\def\markdownVersion{$(VERSION)}%
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -7238,12 +7247,12 @@ In this section, I will describe the individual token renderers.
 % \vref{sec:texrendererprototypes}).
 
 #### Tickbox Renderers
-The macros named \mdef{markdownRendererTickedBox} and
-\mdef{markdownRendererUntickedBox} represent ticked and unticked boxes,
-respectively. These macros will either be produced, when the \Opt{taskLists}
-option is enabled, or when the Ballot Box with X (☒, U+2612) or Ballot Box
-(☐, U+2610) Unicode characters are encountered in the markdown input,
-respectively.
+The macros named \mdef{markdownRendererTickedBox},
+\mdef{markdownRendererHalfTickedBox}, and \mdef{markdownRendererUntickedBox}
+represent ticked and unticked boxes, respectively. These macros will either be
+produced, when the \Opt{taskLists} option is enabled, or when the Ballot Box
+with X (☒, U+2612), Hourglass (⌛, U+231B) or Ballot Box (☐, U+2610) Unicode
+characters are encountered in the markdown input, respectively.
 
 % \end{markdown}
 %
@@ -7312,6 +7321,8 @@ following text:
 %  \begin{macrocode}
 \def\markdownRendererTickedBox{%
   \markdownRendererTickedBoxPrototype}%
+\def\markdownRendererHalfTickedBox{%
+  \markdownRendererHalfTickedBoxPrototype}%
 \def\markdownRendererUntickedBox{%
   \markdownRendererUntickedBoxPrototype}%
 %    \end{macrocode}
@@ -11265,6 +11276,7 @@ following text:
 \def\markdownRendererTablePrototype#1#2#3{}%
 \def\markdownRendererInlineHtmlCommentPrototype#1{}%
 \def\markdownRendererTickedBoxPrototype{}%
+\def\markdownRendererHalfTickedBoxPrototype{}%
 \def\markdownRendererUntickedBoxPrototype{}%
 %    \end{macrocode}
 % \par
@@ -11895,14 +11907,14 @@ conference article:
 %    \usepackage[theme=witiko/graphicx/http]{markdown}
 %    \begin{document}
 %    \begin{markdown}
-%    ![img](https://github.com/witiko/markdown/raw/main/banner.png
+%    ![img](https://github.com/witiko/markdown/raw/main/markdown.png
 %           "The banner of the Markdown package")
 %    \end{markdown}
 %    \end{document}
 %    ```````
 %    Typesetting the above document produces the output shown in
 %    Figure \vref{fig:witiko/graphicx/http}.
-%    ![img](https://github.com/witiko/markdown/raw/main/banner.png
+%    ![img](https://github.com/witiko/markdown/raw/main/markdown.png
 %           "The banner of the Markdown package \label{fig:witiko/graphicx/http}")
      The theme requires the \pkg{catchfile} \LaTeX{} package and a Unix-like
      operating system with GNU Coreutils `md5sum` and either GNU Wget or cURL
@@ -11921,7 +11933,7 @@ following content:
 \usepackage[theme=witiko/graphicx/http]{markdown}
 \begin{document}
 \begin{markdown}
-![img](https://github.com/witiko/markdown/raw/main/banner.png
+![img](https://github.com/witiko/markdown/raw/main/markdown.png
        "The banner of the Markdown package")
 \end{markdown}
 \end{document}
@@ -11933,7 +11945,7 @@ lualatex document.tex
 A PDF document named `document.pdf` should be produced and contain the
 following image:
 
-> ![img](https://github.com/witiko/markdown/raw/main/banner.png
+> ![img](https://github.com/witiko/markdown/raw/main/markdown.png
 >        "The banner of the Markdown package")
 
 %</manual-options>
@@ -12348,6 +12360,8 @@ The following ordered list will be preceded by roman numerals:
   \renewcommand\markdownRendererInlineHtmlComment[1]{#1}}%
 \define@key{markdownRenderers}{tickedBox}{%
   \renewcommand\markdownRendererTickedBox{#1}}%
+\define@key{markdownRenderers}{halfTickedBox}{%
+  \renewcommand\markdownRendererHalfTickedBox{#1}}%
 \define@key{markdownRenderers}{untickedBox}{%
   \renewcommand\markdownRendererUntickedBox{#1}}%
 %    \end{macrocode}
@@ -12511,6 +12525,8 @@ The following ordered list will be preceded by roman numerals:
   \renewcommand\markdownRendererInlineHtmlCommentPrototype[1]{#1}}%
 \define@key{markdownRendererPrototypes}{tickedBox}{%
   \renewcommand\markdownRendererTickedBoxPrototype{#1}}%
+\define@key{markdownRendererPrototypes}{halfTickedBox}{%
+  \renewcommand\markdownRendererHalfTickedBoxPrototype{#1}}%
 \define@key{markdownRendererPrototypes}{untickedBox}{%
   \renewcommand\markdownRendererUntickedBoxPrototype{#1}}%
 %    \end{macrocode}
@@ -15278,29 +15294,12 @@ function M.writer.new(options)
 % \par
 % \begin{markdown}
 %
-% Define a table \luamdef{escaped_chars} containing the mapping from special
-% plain \TeX{} characters (including the active pipe character (`|`) of
-% \Hologo{ConTeXt}) to their escaped variants. Define tables
-% \luamdef{escaped_uri_chars}, \luamdef{escaped_citation_chars}, and
-% \luamdef{escaped_minimal_strings} containing the mapping from special plain
-% characters and character strings that need to be escaped even in content
-% that will not be typeset.
+% Define tables \luamdef{escaped_uri_chars}, \luamdef{escaped_citation_chars},
+% and \luamdef{escaped_minimal_strings} containing the mapping from special
+% plain characters and character strings that always need to be escaped.
 %
 % \end{markdown}
 %  \begin{macrocode}
-  local escaped_chars = {
-     ["{"] = "\\markdownRendererLeftBrace{}",
-     ["}"] = "\\markdownRendererRightBrace{}",
-     ["$"] = "\\markdownRendererDollarSign{}",
-     ["%"] = "\\markdownRendererPercentSign{}",
-     ["&"] = "\\markdownRendererAmpersand{}",
-     ["_"] = "\\markdownRendererUnderscore{}",
-     ["#"] = "\\markdownRendererHash{}",
-     ["^"] = "\\markdownRendererCircumflex{}",
-     ["\\"] = "\\markdownRendererBackslash{}",
-     ["~"] = "\\markdownRendererTilde{}",
-     ["|"] = "\\markdownRendererPipe{}",
-   }
    local escaped_uri_chars = {
      ["{"] = "\\markdownRendererLeftBrace{}",
      ["}"] = "\\markdownRendererRightBrace{}",
@@ -15311,13 +15310,37 @@ function M.writer.new(options)
      ["{"] = "\\markdownRendererLeftBrace{}",
      ["}"] = "\\markdownRendererRightBrace{}",
      ["%"] = "\\markdownRendererPercentSign{}",
-     ["#"] = "\\markdownRendererHash{}",
      ["\\"] = "\\markdownRendererBackslash{}",
+     ["#"] = "\\markdownRendererHash{}",
    }
    local escaped_minimal_strings = {
      ["^^"] = "\\markdownRendererCircumflex\\markdownRendererCircumflex ",
      ["☒"] = "\\markdownRendererTickedBox{}",
+     ["⌛"] = "\\markdownRendererHalfTickedBox{}",
      ["☐"] = "\\markdownRendererUntickedBox{}",
+   }
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Define a table \luamdef{escaped_chars} containing the mapping from special
+% plain \TeX{} characters (including the active pipe character (`|`) of
+% \Hologo{ConTeXt}) that need to be escaped for typeset content.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  local escaped_chars = {
+     ["{"] = "\\markdownRendererLeftBrace{}",
+     ["}"] = "\\markdownRendererRightBrace{}",
+     ["%"] = "\\markdownRendererPercentSign{}",
+     ["\\"] = "\\markdownRendererBackslash{}",
+     ["#"] = "\\markdownRendererHash{}",
+     ["$"] = "\\markdownRendererDollarSign{}",
+     ["&"] = "\\markdownRendererAmpersand{}",
+     ["_"] = "\\markdownRendererUnderscore{}",
+     ["^"] = "\\markdownRendererCircumflex{}",
+     ["~"] = "\\markdownRendererTilde{}",
+     ["|"] = "\\markdownRendererPipe{}",
    }
 %    \end{macrocode}
 % \par
@@ -15325,8 +15348,8 @@ function M.writer.new(options)
 %
 % Use the \luam{escaped_chars}, \luam{escaped_uri_chars},
 % \luam{escaped_citation_chars}, and \luam{escaped_minimal_strings} tables
-% to create the \luamdef{escape}, \luamdef{escape_citation}, and
-% \luamdef{escape_uri} escaper functions.
+% to create the \luamdef{escape}, \luamdef{escape_citation},
+% \luamdef{escape_uri}, and \luamdef{escape_minimal} escaper functions.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -15334,6 +15357,7 @@ function M.writer.new(options)
   local escape_citation = util.escaper(escaped_citation_chars,
     escaped_minimal_strings)
   local escape_uri = util.escaper(escaped_uri_chars, escaped_minimal_strings)
+  local escape_minimal = util.escaper({}, escaped_minimal_strings)
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -15343,15 +15367,15 @@ function M.writer.new(options)
 % function that will transform an input citation name `c` to the output format,
 % and \luamdef{writer->uri} as a function that will transform an input
 % \acro{uri} `u` to the output format. If the \Opt{hybrid} option is enabled,
-% use identity functions. Otherwise, use the \luam{escape},
+% use the \luam{escape_minimal}. Otherwise, use the \luam{escape},
 % \luam{escape_citation}, and \luam{escape_uri} functions.
 %
 % \end{markdown}
 %  \begin{macrocode}
   if options.hybrid then
-    self.string = function(s) return s end
-    self.citation = function(c) return c end
-    self.uri = function(u) return u end
+    self.string = escape_minimal
+    self.citation = escape_minimal
+    self.uri = escape_minimal
   else
     self.string = escape
     self.citation = escape_citation
@@ -15666,15 +15690,17 @@ function M.writer.new(options)
 % \begin{markdown}
 %
 % Define \luamdef{writer->tickbox} as a function that will transform a
-% boolean `b` to the output format.
+% number `f` to the output format.
 %
 % \end{markdown}
 %  \begin{macrocode}
-  function self.tickbox(b)
-    if b then
+  function self.tickbox(f)
+    if f == 1.0 then
       return "☒ "
-    else
+    elseif f == 0.0 then
       return "☐ "
+    else
+      return "⌛ "
     end
   end
 %    \end{macrocode}
@@ -15915,8 +15941,8 @@ function M.writer.new(options)
 % \end{markdown}
 %  \begin{macrocode}
   function self.set_state(s)
-    previous_state = self.get_state()
-    for key, value in pairs(state) do
+    local previous_state = self.get_state()
+    for key, value in pairs(s) do
       self[key] = value
     end
     return previous_state
@@ -15932,9 +15958,9 @@ function M.writer.new(options)
 % \end{markdown}
 %  \begin{macrocode}
   function self.defer_call(f)
-    state = self.get_state()
+    local previous_state = self.get_state()
     return function(...)
-      state = self.set_state(state)
+      local state = self.set_state(previous_state)
       local return_value = f(...)
       self.set_state(state)
       return return_value
@@ -16047,30 +16073,86 @@ parsers.spnl                   = parsers.optionalspace
                                * (parsers.newline * parsers.optionalspace)^-1
 parsers.line                   = parsers.linechar^0 * parsers.newline
 parsers.nonemptyline           = parsers.line - parsers.blankline
-
-parsers.commented_line         = Cs(((parsers.linechar  -- initial
-                                     - parsers.backslash
-                                     - parsers.percent)^1
-                                    + (parsers.backslash  -- even backslash
-                                      * parsers.backslash)^1
-                                    + (parsers.backslash  -- odd backslash
-                                      * parsers.backslash)^0
-                                    * (parsers.backslash / ""
-                                      * parsers.percent
-                                      + parsers.backslash
-                                      * (parsers.linechar -- initial
-                                        + parsers.newline
-                                        - parsers.backslash
-                                        - parsers.percent))
-                                 )^0)
+%    \end{macrocode}
+% \begin{figure}
+% \hspace*{-0.1\textwidth}
+% \begin{minipage}{1.2\textwidth}
+% \centering
+% \begin{tikzpicture}[shorten >=1pt, line width=0.1mm, >={Stealth[length=2mm]}, node distance=4.5cm, on grid, auto]
+% \node[state, initial by diamond, accepting] (noop) {initial};
+% \node[state] (odd_backslash) [above right=of noop] {odd backslash};
+% \node[state] (even_backslash) [below right=of odd_backslash] {even backslash};
+% \node[state] (comment) [below=of noop] {comment};
+% \node[state] (leading_spaces) [below=of even_backslash, align=center] {leading tabs\\and spaces};
+% \node[state] (blank_line) [below right=of comment] {blank line};
+% \path[->]
+% (noop) edge [in=150, out=180, loop] node [align=center, yshift=-0.75cm] {match [$^\wedge$\textbackslash\%]\\capture \textbackslash$\!^{2k}$\meta{match}\\reset $k$} ()
+%        edge [bend right=10] node [below right=-0.2cm] {match \textbackslash} (odd_backslash)
+%        edge [bend left=30] node [left, align=center] {match \%\\capture \textbackslash$\!^k$\\reset $k$} (comment)
+% (comment) edge [in=305, out=325, loop] node [xshift=-1.2cm] {match [$^\wedge$$\drsh$]} ()
+%           edge [bend left=10] node {match $\drsh$} (leading_spaces)
+% (leading_spaces) edge [loop below] node {match [\textvisiblespace$\rightleftarrows$]} ()
+%                  edge [bend right=90] node [right] {match \textbackslash} (odd_backslash)
+%                  edge [bend left=10] node {match \%} (comment)
+%                  edge [bend right=10] node {$\epsilon$} (blank_line)
+%                  edge [bend left=10] node [align=center, right=0.3cm] {match [$^\wedge$\textvisiblespace$\rightleftarrows$$\drsh$\textbackslash\%]\\capture \meta{match}} (noop)
+% (blank_line) edge [loop below] node {match [\textvisiblespace$\rightleftarrows$]} ()
+%              edge [bend left=90] node [align=center, below=1.2cm] {match $\drsh$\\ capture $\drsh\drsh$} (noop)
+% (odd_backslash) edge [bend right=10] node [align=center, xshift=-0.3cm, yshift=0.2cm] {match \textbackslash\\increment $k$} (even_backslash)
+%                 edge [bend right=10] node [align=center, above left=-0.3cm, xshift=0.1cm] {match [$^\wedge$\textbackslash]\\for \%, capture \textbackslash$\!^k$\%\\for [$^\wedge$\%], capture \textbackslash$\!^{2k+1}$\meta{match}\\reset $k$} (noop)
+% (even_backslash) edge [bend left=10] node {$\epsilon$} (noop);
+% \end{tikzpicture}
+% \caption{A pushdown automaton that recognizes \TeX{} comments}
+% \label{fig:commented_line}
+% \end{minipage}
+% \end{figure}
+% \begin{markdown}
+%
+% The \luamdef{parsers.commented_line}`^1` parser recognizes the regular
+% language of \TeX{} comments, see an equivalent finite automaton in Figure
+% \vref{fig:commented_line}.
+%
+% \end{markdown}
+%  \begin{macrocode}
+parsers.commented_line_letter  = parsers.linechar
+                               + parsers.newline
+                               - parsers.backslash
+                               - parsers.percent
+parsers.commented_line         = Cg(Cc(""), "backslashes")
+                               * ((#(parsers.commented_line_letter
+                                    - parsers.newline)
+                                  * Cb("backslashes")
+                                  * Cs(parsers.commented_line_letter
+                                    - parsers.newline)^1  -- initial
+                                  * Cg(Cc(""), "backslashes"))
+                                 + #(parsers.backslash * parsers.backslash)
+                                 * Cg((parsers.backslash  -- even backslash
+                                      * parsers.backslash)^1, "backslashes")
+                                 + (parsers.backslash
+                                   * (#parsers.percent
+                                     * Cb("backslashes")
+                                     / function(backslashes)
+                                       return string.rep("\\", #backslashes / 2)
+                                     end
+                                     * C(parsers.percent)
+                                     + #parsers.commented_line_letter
+                                     * Cb("backslashes")
+                                     * Cc("\\")
+                                     * C(parsers.commented_line_letter))
+                                   * Cg(Cc(""), "backslashes")))^0
+                               * (#parsers.percent
+                                 * Cb("backslashes")
+                                 / function(backslashes)
+                                   return string.rep("\\", #backslashes / 2)
+                                 end
                                  * ((parsers.percent  -- comment
                                     * parsers.line
                                     * #parsers.blankline) -- blank line
-                                    / "\n"
+                                   / "\n"
                                    + parsers.percent  -- comment
                                    * parsers.line
-                                   * parsers.optionalspace  -- leading tabs and spaces
-                                   + C(parsers.newline))
+                                   * parsers.optionalspace)  -- leading tabs and spaces
+                                 + C(parsers.newline))
 
 parsers.chunk                  = parsers.line * (parsers.optionallyindentedline
                                                 - parsers.blankline)^0
@@ -16119,13 +16201,14 @@ parsers.bullet = ( parsers.bulletchar * #parsers.spacing
                                  * parsers.bulletchar * #parsers.spacing
                  )
 
-parsers.ticked_box = parsers.optionalspace * parsers.lbracket
-                   * S("xX") * parsers.rbracket
-                   * parsers.spacechar^1 * Cc(true)
+local function tickbox(interior)
+  return parsers.optionalspace * parsers.lbracket
+       * interior * parsers.rbracket * parsers.spacechar^1
+end
 
-parsers.unticked_box = parsers.optionalspace * parsers.lbracket
-                     * parsers.spacechar^1 * parsers.rbracket
-                     * parsers.spacechar^1 * Cc(false)
+parsers.ticked_box = tickbox(S("xX")) * Cc(1.0)
+parsers.halfticked_box = tickbox(S("./")) * Cc(0.5)
+parsers.unticked_box = tickbox(parsers.spacechar^1) * Cc(0.0)
 
 %    \end{macrocode}
 % \par
@@ -17445,6 +17528,7 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
 
   if options.taskLists then
     larsers.tickbox = ( parsers.ticked_box
+                      + parsers.halfticked_box
                       + parsers.unticked_box
                       ) / writer.tickbox
   else
@@ -18081,7 +18165,8 @@ end
 \def\markdownRendererFootnotePrototype#1{#1}%
 \def\markdownRendererCitePrototype#1{}%
 \def\markdownRendererTextCitePrototype#1{}%
-\def\markdownRendererTickedBoxPrototype{[x]}%
+\def\markdownRendererTickedBoxPrototype{[X]}%
+\def\markdownRendererHalfTickedBoxPrototype{[/]}%
 \def\markdownRendererUntickedBoxPrototype{[ ]}%
 %    \end{macrocode}
 % \par
@@ -19145,8 +19230,9 @@ end
   dlItem = {\item[#1]},
   dlEnd = {\end{description}},
   emphasis = {\emph{#1}},
-  tickedBox = {\ensuremath{\text{\rlap{$\checkmark$}}\square}},
-  untickedBox = {\ensuremath{\square}},
+  tickedBox = {$\boxtimes$},
+  halfTickedBox = {$\boxdot$},
+  untickedBox = {$\square$},
   blockQuoteBegin = {\begin{quotation}},
   blockQuoteEnd = {\end{quotation}},
   inputVerbatim = {\VerbatimInput{#1}},
@@ -19237,14 +19323,20 @@ end
 }
 \def\markdownLaTeXUlItem{%
   \ifx\markdownLaTeXCheckbox\markdownRendererTickedBox
-    \item[$\markdownLaTeXCheckbox$]\expandafter\expandafter
+    \item[\markdownLaTeXCheckbox]%
     \expandafter\@gobble
   \else
-    \ifx\markdownLaTeXCheckbox\markdownRendererUntickedBox
-      \item[$\markdownLaTeXCheckbox$]\expandafter\expandafter
-      \expandafter\@gobble
+    \ifx\markdownLaTeXCheckbox\markdownRendererHalfTickedBox
+      \item[\markdownLaTeXCheckbox]%
+      \expandafter\expandafter\expandafter\@gobble
     \else
-      \item{}%
+      \ifx\markdownLaTeXCheckbox\markdownRendererUntickedBox
+        \item[\markdownLaTeXCheckbox]%
+        \expandafter\expandafter\expandafter\expandafter
+          \expandafter\expandafter\expandafter\@gobble
+      \else
+        \item{}%
+      \fi
     \fi
   \fi
 }
@@ -19882,6 +19974,9 @@ end
   \ifnum\markdownConTeXtColumnCounter<\markdownConTeXtColumnTotal\relax\else
     \expandafter\gobbleoneargument
   \fi\markdownConTeXtRenderTableCell}
+\def\markdownRendererTickedBox{$\boxtimes$}
+\def\markdownRendererHalfTickedBox{$\boxdot$}
+\def\markdownRendererUntickedBox{$\square$}
 %    \end{macrocode}
 % \iffalse
 %</context>

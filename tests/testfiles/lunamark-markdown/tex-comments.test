@@ -13,6 +13,18 @@ The following *emphasi% this is a comment
 
 A single backslash at the *end of \
 a line* should be allowed by the preprocessor.
+
+The surjective preprocessor should allow us to express `\\%
+` and `\\\%`, `\\\\%
+` and `\\\\\%`, etc. by having each pair of backslashes preceding a percent
+sign become a single backslash.
+
+On the other hand, any backslashes not preceding a percent sign should stay
+unaltered by the preprocessor: `\text{Hello world}!\\`
+
+Here is a corner case: `\\` separated by a comment: `\\%
+\`.
+
 >>>
 codeSpan: texComments
 interblockSeparator
@@ -22,3 +34,13 @@ interblockSeparator
 interblockSeparator
 interblockSeparator
 emphasis: end of (backslash) a line
+interblockSeparator
+codeSpan: (backslash)
+codeSpan: (backslash)(percentSign)
+codeSpan: (backslash)(backslash)
+codeSpan: (backslash)(backslash)(percentSign)
+interblockSeparator
+codeSpan: (backslash)text(leftBrace)Hello world(rightBrace)!(backslash)(backslash)
+interblockSeparator
+codeSpan: (backslash)(backslash)
+codeSpan: (backslash)(backslash)
