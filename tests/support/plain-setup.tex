@@ -148,6 +148,18 @@
   \TYPE{halfTickedBox}}%
 \def\markdownRendererUntickedBox#1{%
   \TYPE{untickedBox}}%
+\def\markdownRendererJekyllDataBoolean#1#2{%
+  \TYPE{BEGIN jekyllDataBoolean}%
+  \TYPE{- key:             #1}%
+  \TYPE{- value:           #2}%
+  \TYPE{END jekyllDataBoolean}}%
+\def\markdownRendererJekyllDataEmpty#1{%
+  \TYPE{jekyllDataEmpty:   #1}}%
+\def\markdownRendererJekyllDataNumber#1#2{%
+  \TYPE{BEGIN jekyllDataNumber}%
+  \TYPE{- key:             #1}%
+  \TYPE{- value:           #2}%
+  \TYPE{END jekyllDataNumber}}%
 \def\markdownRendererJekyllDataString#1#2{%
   \TYPE{BEGIN jekyllDataString}%
   \TYPE{- key:             #1}%

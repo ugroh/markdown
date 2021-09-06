@@ -10225,6 +10225,12 @@ name whereas the second contains the data.
 % \fi
 %
 %  \begin{macrocode}
+\def\markdownRendererJekyllDataBoolean{%
+  \markdownRendererJekyllDataBooleanPrototype}%
+\def\markdownRendererJekyllDataEmpty{%
+  \markdownRendererJekyllDataEmptyPrototype}%
+\def\markdownRendererJekyllDataNumber{%
+  \markdownRendererJekyllDataNumberPrototype}%
 \def\markdownRendererJekyllDataString{%
   \markdownRendererJekyllDataStringPrototype}%
 \def\markdownRendererJekyllDataBegin{%
@@ -11257,6 +11263,9 @@ following text:
 \def\markdownRendererBlockQuoteEndPrototype{}%
 \def\markdownRendererInputVerbatimPrototype#1{}%
 \def\markdownRendererInputFencedCodePrototype#1#2{}%
+\def\markdownRendererJekyllDataBooleanPrototype#1#2{}%
+\def\markdownRendererJekyllDataEmptyPrototype#1{}%
+\def\markdownRendererJekyllDataNumberPrototype#1#2{}%
 \def\markdownRendererJekyllDataStringPrototype#1#2{}%
 \def\markdownRendererJekyllDataBeginPrototype{}%
 \def\markdownRendererJekyllDataEndPrototype{}%
@@ -12321,6 +12330,12 @@ The following ordered list will be preceded by roman numerals:
   \renewcommand\markdownRendererInputVerbatim[1]{#1}}%
 \define@key{markdownRenderers}{inputFencedCode}{%
   \renewcommand\markdownRendererInputFencedCode[2]{#1}}%
+\define@key{markdownRenderers}{jekyllDataBoolean}{%
+  \renewcommand\markdownRendererJekyllDataBoolean[2]{#1}}%
+\define@key{markdownRenderers}{jekyllDataEmpty}{%
+  \renewcommand\markdownRendererJekyllDataEmpty[1]{#1}}%
+\define@key{markdownRenderers}{jekyllDataNumber}{%
+  \renewcommand\markdownRendererJekyllDataNumber[2]{#1}}%
 \define@key{markdownRenderers}{jekyllDataString}{%
   \renewcommand\markdownRendererJekyllDataString[2]{#1}}%
 \define@key{markdownRenderers}{jekyllDataBegin}{%
@@ -12486,6 +12501,12 @@ The following ordered list will be preceded by roman numerals:
   \renewcommand\markdownRendererInputVerbatimPrototype[1]{#1}}%
 \define@key{markdownRendererPrototypes}{inputFencedCode}{%
   \renewcommand\markdownRendererInputFencedCodePrototype[2]{#1}}%
+\define@key{markdownRendererPrototypes}{jekyllDataBoolean}{%
+  \renewcommand\markdownRendererJekyllDataBooleanPrototype[2]{#1}}%
+\define@key{markdownRendererPrototypes}{jekyllDataEmpty}{%
+  \renewcommand\markdownRendererJekyllDataEmptyPrototype[1]{#1}}%
+\define@key{markdownRendererPrototypes}{jekyllDataNumber}{%
+  \renewcommand\markdownRendererJekyllDataNumberPrototype[2]{#1}}%
 \define@key{markdownRendererPrototypes}{jekyllDataString}{%
   \renewcommand\markdownRendererJekyllDataStringPrototype[2]{#1}}%
 \define@key{markdownRendererPrototypes}{jekyllDataBegin}{%
@@ -15766,10 +15787,11 @@ function M.writer.new(options)
 % \begin{markdown}
 %
 % Define \luamdef{writer->jekyllData} as a function that will transform an
-% input YAML table `d` to the output format. The table is the value of
-% the key `p` in a parent table; if `p` is nil, then the table has no parent.
-% Any string values encountered in the table will be transformed using the
-% function `t`.
+% input YAML table `d` to the output format. The table is the value for
+% the key `p` in the parent table; if `p` is nil, then the table has no parent.
+% All scalar keys encountered in the table will be cast to a string
+% following YAML serialization rules. Scalar values will not be typecast,
+% but string values will be transformed using the function `t`.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -15790,13 +15812,13 @@ function M.writer.new(options)
 
     if #d > 0 then
         table.insert(buf, "\\markdownRendererJekyllDataSequenceBegin{")
-        table.insert(buf, p or "")
+        table.insert(buf, self.uri(p or "null"))
         table.insert(buf, "}{")
         table.insert(buf, #keys)
         table.insert(buf, "}")
     else
         table.insert(buf, "\\markdownRendererJekyllDataMappingBegin{")
-        table.insert(buf, p or "")
+        table.insert(buf, self.uri(p or "null"))
         table.insert(buf, "}{")
         table.insert(buf, #keys)
         table.insert(buf, "}")
@@ -15805,20 +15827,41 @@ function M.writer.new(options)
     for _, k in ipairs(keys) do
       local v = d[k]
       local typ = type(v)
-      if typ == "table" then
+      k = tostring(k or "null")
+      if typ == "table" and next(v) ~= nil then
         table.insert(
           buf,
           self.jekyllData(v, t, k)
         )
-      elseif typ == "string" or typ == nil then
-        table.insert(buf, "\\markdownRendererJekyllDataString{")
-        table.insert(buf, k)
-        table.insert(buf, "}{")
-        table.insert(buf, t(v or ""))
-        table.insert(buf, "}")
       else
-        error(format("Unexpected type %s for value of " ..
-                     "YAML key %s", typ, k))
+        k = self.uri(k)
+        v = tostring(v)
+        if typ == "boolean" then
+          table.insert(buf, "\\markdownRendererJekyllDataBoolean{")
+          table.insert(buf, k)
+          table.insert(buf, "}{")
+          table.insert(buf, v)
+          table.insert(buf, "}")
+        elseif typ == "number" then
+          table.insert(buf, "\\markdownRendererJekyllDataNumber{")
+          table.insert(buf, k)
+          table.insert(buf, "}{")
+          table.insert(buf, v)
+          table.insert(buf, "}")
+        elseif typ == "string" then
+          table.insert(buf, "\\markdownRendererJekyllDataString{")
+          table.insert(buf, k)
+          table.insert(buf, "}{")
+          table.insert(buf, t(v))
+          table.insert(buf, "}")
+        elseif typ == "table" then
+          table.insert(buf, "\\markdownRendererJekyllDataEmpty{")
+          table.insert(buf, k)
+          table.insert(buf, "}")
+        else
+          error(format("Unexpected type %s for value of " ..
+                       "YAML key %s", typ, k))
+        end
       end
     end
 
@@ -17507,6 +17550,7 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                            local tinyyaml = require("markdown-tinyyaml")
                            data = tinyyaml.parse(text)
                            return writer.jekyllData(data, function(s)
+                             -- a hack that works around issue #13 in peposso/lua-tinyyaml
                              s = s:gsub("\n", "\n\n")
                              return parse_blocks(s)
                            end, nil)
@@ -18176,13 +18220,6 @@ end
   \par{\tt\input#1\relax{}}\par}%
 \def\markdownRendererInputFencedCodePrototype#1#2{%
   \markdownRendererInputVerbatimPrototype{#1}}%
-\def\markdownRendererJekyllDataPrototype#1#2{}%
-\def\markdownRendererJekyllDataBeginPrototype{}%
-\def\markdownRendererJekyllDataEndPrototype{}%
-\def\markdownRendererJekyllDataSequenceBeginPrototype{}%
-\def\markdownRendererJekyllDataSequenceEndPrototype{}%
-\def\markdownRendererJekyllDataMappingBeginPrototype{}%
-\def\markdownRendererJekyllDataMappingEndPrototype{}%
 \def\markdownRendererHeadingOnePrototype#1{#1}%
 \def\markdownRendererHeadingTwoPrototype#1{#1}%
 \def\markdownRendererHeadingThreePrototype#1{#1}%

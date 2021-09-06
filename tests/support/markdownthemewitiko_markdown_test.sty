@@ -171,6 +171,18 @@
     untickedBox = {%
       \TYPE{untickedBox}%
       \GOBBLE},
+    jekyllDataBoolean = {%
+      \TYPE{BEGIN jekyllDataBoolean}%
+      \TYPE{- key:             #1}%
+      \TYPE{- value:           #2}%
+      \TYPE{END jekyllDataBoolean}},
+    jekyllDataEmpty = {%
+      \TYPE{jekyllDataEmpty:   #1}},%
+    jekyllDataNumber = {%
+      \TYPE{BEGIN jekyllDataNumber}%
+      \TYPE{- key:             #1}%
+      \TYPE{- value:           #2}%
+      \TYPE{END jekyllDataNumber}},
     jekyllDataString = {%
       \TYPE{BEGIN jekyllDataString}%
       \TYPE{- key:             #1}%
