@@ -19243,7 +19243,75 @@ end
 %    \end{macrocode}
 % \par
 % \begin{markdown}
-%
+% The most comfortable way to to parse the jekyllData is using \pkg{expl3}'s
+% l3keys module. due to the structure of the data we need to initialize some
+% variables to save the data.
+% \end{markdown}
+%  \begin{macrocode}
+\ExplSyntaxOn
+\seq_new:N \l__markdown_jekyll_data_seq
+\prop_new:N \l__markdown_jekyll_prop
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+% The default setup will add unknown data to a property list
+% \mdef{l__markdown_jekyll_prop} and set \mref{title}, \mref{author} and
+% \mref{date} to be used with \mref{maketitle}.
+% \end{markdown}
+%    \begin{macrocode}
+\keys_define:nn {markdown/JekyllData} {
+  title .code:n = \title{#1}
+  \prop_put:NVn \l__markdown_jekyll_prop \l_keys_key_tl {#1},
+  author .code:n = \author{#1}
+  \prop_put:NVn \l__markdown_jekyll_prop \l_keys_key_tl {#1},
+  date .code:n = \date{#1}
+  \prop_put:NVn \l__markdown_jekyll_prop \l_keys_key_tl {#1},
+  maketitle .bool_set:N = \l__markdown_maketitle_bool,
+  maketitle .initial:n = true,
+  unknown .code:n = {
+    \seq_if_empty:NTF \l__markdown_jekyll_data_seq
+      {\prop_put:NVn \l__markdown_jekyll_prop \l_keys_key_tl {#1}}
+      {\prop_put:Nxx \l__markdown_jekyll_prop {
+          \seq_use:Nn \l__markdown_jekyll_data_seq {/}
+          /
+          \l_keys_key_tl
+        } {\exp_not:n {#1}}}
+  },
+}
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+% The `unknown` value allows the user to add arbitrary keys to the jekyll
+% Syntax Internally sequences will be saved with l3seq but the default
+% setup will convert the output to a nested comma list which will be
+% saved in the propertylist to be accessed by the user.
+% \end{markdown}
+%    \begin{macrocode}
+\markdownSetup{rendererPrototypes={
+    jekyllDataEnd =
+      \bool_if:NT \l__markdown_maketitle_bool \maketitle,
+    jekyllDataString={
+      \exp_args:Nx \keys_set:nn {
+        markdown/JekyllData\seq_if_empty:NF \l__markdown_jekyll_data_seq {/}\seq_use:Nn \l__markdown_jekyll_data_seq {/}
+      }
+      {#1={#2}}
+    },
+    jekyllDataSequenceBegin={
+      \seq_put_right:Nn \l__markdown_jekyll_data_seq {#1}
+      \exp_args:Nx \keys_define:nn
+        {markdown/JekyllData/\seq_use:Nn \l__markdown_jekyll_data_seq {/}}
+        {unknown .code:n = {
+          \exp_args:Nnx \keys_set:nn
+           {markdown/JekyllData}{\l_keys_key_tl  = \exp_not:n {##1}}}}
+    },
+    jekyllDataSequenceEnd={
+      \seq_pop_right:NN \l__markdown_jekyll_data_seq \l_tmpa_tl
+    },
+}}
+\ExplSyntaxOff
+%    \end{macrocode}
+% \par
+% \begin{markdown}%
 % If the \mref{markdownOptionTightLists} macro expands to `false`, do not load
 % the \pkg{paralist} package. This is necessary for \Hologo{LaTeX2e} document
 % classes that do not play nice with \pkg{paralist}, such as \pkg{beamer}.
