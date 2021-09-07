@@ -17550,7 +17550,9 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                            local tinyyaml = require("markdown-tinyyaml")
                            data = tinyyaml.parse(text)
                            return writer.jekyllData(data, function(s)
-                             -- a hack that works around issue #13 in peposso/lua-tinyyaml
+                             -- a hack that works around
+                             -- issue #13 in peposso/lua-tinyyaml and
+                             -- issue #10 in api7/lua-tinyyaml.
                              s = s:gsub("\n", "\n\n")
                              return parse_blocks(s)
                            end, nil)
