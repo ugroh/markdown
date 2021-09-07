@@ -19244,13 +19244,14 @@ end
 % \par
 % \begin{markdown}
 % The most comfortable way to to parse the jekyllData is using \pkg{expl3}'s
-% l3keys module. due to the structure of the data we need to initialize some
+% l3keys module. Due to the structure of the data we need to initialize some
 % variables to save the data.
 % \end{markdown}
 %  \begin{macrocode}
 \ExplSyntaxOn
 \seq_new:N \l__markdown_jekyll_data_seq
 \prop_new:N \l__markdown_jekyll_prop
+\tl_new:N \l__markdown_jekyll_path_tl
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -19272,7 +19273,7 @@ end
     \seq_if_empty:NTF \l__markdown_jekyll_data_seq
       {\prop_put:NVn \l__markdown_jekyll_prop \l_keys_key_tl {#1}}
       {\prop_put:Nxx \l__markdown_jekyll_prop {
-          \seq_use:Nn \l__markdown_jekyll_data_seq {/}
+          \tl_tail:N \l__markdown_jekyll_path_tl
           /
           \l_keys_key_tl
         } {\exp_not:n {#1}}}
@@ -19292,21 +19293,38 @@ end
       \bool_if:NT \l__markdown_maketitle_bool \maketitle,
     jekyllDataString={
       \exp_args:Nx \keys_set:nn {
-        markdown/JekyllData\seq_if_empty:NF \l__markdown_jekyll_data_seq {/}\seq_use:Nn \l__markdown_jekyll_data_seq {/}
+        markdown/JekyllData\l__markdown_jekyll_path_tl
       }
       {#1={#2}}
     },
     jekyllDataSequenceBegin={
+      \tl_if_blank:nF {#1} {
       \seq_put_right:Nn \l__markdown_jekyll_data_seq {#1}
-      \exp_args:Nx \keys_define:nn
-        {markdown/JekyllData/\seq_use:Nn \l__markdown_jekyll_data_seq {/}}
+      \tl_set:Nx \l__markdown_jekyll_path_tl {
+        \seq_if_empty:NF\l__markdown_jekyll_data_seq {/}
+        \seq_use:Nn \l__markdown_jekyll_data_seq {/}
+      }
+      \exp_args:Nxx \keys_define:nn
+        {markdown/JekyllData\l__markdown_jekyll_path_tl}
         {unknown .code:n = {
-          \exp_args:Nnx \keys_set:nn
-           {markdown/JekyllData}{\l_keys_key_tl  = \exp_not:n {##1}}}}
+          \exp_not:n {\exp_args:Nnx \keys_set:nn
+           {markdown/JekyllData}
+           {\l_keys_key_tl = \exp_not:n {##1}}}},
+         }
+       \exp_args:Nx \keys_set:nn
+         {markdown/JekyllData\l__markdown_jekyll_path_tl}
+         {N=#2}
+      }
     },
     jekyllDataSequenceEnd={
       \seq_pop_right:NN \l__markdown_jekyll_data_seq \l_tmpa_tl
+      \tl_set:Nx \l__markdown_jekyll_path_tl {
+        \seq_if_empty:NF\l__markdown_jekyll_data_seq {/}
+        \seq_use:Nn \l__markdown_jekyll_data_seq {/}
+      }
     },
+    jekyllDataMappingBegin=\markdownRendererJekyllDataSequenceBegin{#1}{#2},
+    jekyllDataMappingEnd=\markdownRendererJekyllDataSequenceEnd,
 }}
 \ExplSyntaxOff
 %    \end{macrocode}
