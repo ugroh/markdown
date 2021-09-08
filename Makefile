@@ -50,7 +50,7 @@ base: $(INSTALLABLES)
 
 # This pseudo-target builds a witiko/markdown Docker image.
 docker-image:
-	DOCKER_BUILDKIT=1 docker build -t witiko/markdown:latest .
+	DOCKER_BUILDKIT=1 docker build --build-arg TEXLIVE_TAG -t witiko/markdown:latest .
 	docker tag witiko/markdown:latest witiko/markdown:$(VERSION)
 
 # This targets produces a directory with files for the GitHub Pages service.

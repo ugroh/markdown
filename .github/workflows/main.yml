@@ -28,15 +28,27 @@ jobs:
           files: .
           config_file: .markdownlint.yaml
   test:
-    name: Test and publish
+    name: Test
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        texlive:
+          - latest
+          - TL2014-historic
+          - TL2015-historic
+          - TL2016-historic
+          - TL2017-historic
+          - TL2018-historic
+          - TL2019-historic
+          - TL2020-historic
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
       - name: Build Docker image
-        run: make docker-image
+        run: TEXLIVE_TAG=${{ matrix.texlive }} make docker-image
       - name: Test Lua command-line interface
         run: |
           RESULT="$(printf '%s\n' 'Hello *Markdown*! $a_x + b_x = c_x$' |
@@ -45,6 +57,23 @@ jobs:
           test "$RESULT" = 'Hello \markdownRendererEmphasis{Markdown}! $a_x + b_x = c_x$\relax'
       - name: Run unit tests
         run: docker run -v "$PWD":/git-repo -w /git-repo witiko/markdown make test
+      - name: Build distribution archives
+        run: docker run -v "$PWD":/git-repo -w /git-repo witiko/markdown make dist gh-pages
+  publish:
+    name: Publish
+    if: github.ref == 'refs/heads/main'
+    needs:
+      - shellcheck
+      - markdownlint
+      - test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Build Docker image
+        run: make docker-image
       - name: Build distribution archives
         run: docker run -v "$PWD":/git-repo -w /git-repo witiko/markdown make dist gh-pages
       - name: Upload artifact markdown.tds.zip
@@ -68,7 +97,6 @@ jobs:
           name: markdown.pdf
           path: markdown.pdf
       - name: Publish user manual
-        if: github.ref == 'refs/heads/main'
         uses: crazy-max/ghaction-github-pages@v2
         with:
           target_branch: gh-pages
@@ -76,7 +104,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create a prerelease
-        if: github.ref == 'refs/heads/main'
         uses: marvinpinto/action-automatic-releases@latest
         with:
           title: The latest version
@@ -89,11 +116,9 @@ jobs:
             markdown.zip
             markdown.pdf
       - name: Authenticate registry
-        if: github.ref == 'refs/heads/main'
         uses: azure/docker-login@v1
         with:
           username: ${{ secrets.DOCKER_HUB_USER }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
       - name: Publish Docker image
-        if: github.ref == 'refs/heads/main'
         run: docker push witiko/markdown --all-tags
