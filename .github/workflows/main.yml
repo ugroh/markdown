@@ -34,10 +34,10 @@ jobs:
       fail-fast: true
       matrix:
         texlive:
-          - latest
           - TL2018-historic
           - TL2019-historic
           - TL2020-historic
+          - latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
