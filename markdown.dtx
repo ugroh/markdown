@@ -830,7 +830,7 @@ Requirements
 
 The package requires either [our official Docker image][docker], which contains
 the latest development version of the Markdown package, or a \TeX{}
-distribution: [\TeX{} Live][tl] ≥ 2013 is known to work and so are recent
+distribution: [\TeX{} Live][tl] ≥ 2015 is known to work and so are recent
 versions of [Mik\TeX{}][mik]. If you are using a minimal installation of a
 \TeX{} distribution, please consult the [technical documentation][techdoc] for
 a detailed list of required packages.
@@ -842,7 +842,7 @@ a detailed list of required packages.
 Installation
 ------------
 
-If you are using an older \TeX{} distribution such as [\TeX{} Live][tl] < 2016,
+If you are using an older \TeX{} distribution such as [\TeX{} Live][tl] 2015,
 you will need to install the Markdown package.
 
 First, download the package from the repository using Git:
@@ -1106,7 +1106,8 @@ local md5 = require("md5")
 % \pkg{gobble}
 %
 %:    A package that provides the \m{\@gobblethree} \TeX{} command that
-%     is used in the default renderer prototype for citations.
+%     is used in the default renderer prototype for citations. The package
+%     is included in \TeX Live${}\geq{}2015$.
 %
 % \pkg{amsmath} and \pkg{amssymb}
 %
@@ -1122,9 +1123,9 @@ local md5 = require("md5")
 % \pkg{grffile}
 %
 %:    A package that extends the name processing of package graphics to support
-%     a larger range of file names in \TeX{} Live${}\leq{}2019$. It is used in
-%     the `witiko/dot` and `witiko/graphicx/http` \LaTeX{} themes, see Section
-%     \vref{sec:latexthemes}.
+%     a larger range of file names in $2006\leq{}$\TeX{} Live${}\leq{}2019$. It
+%     is used in the `witiko/dot` and `witiko/graphicx/http` \LaTeX{} themes,
+%     see Section \vref{sec:latexthemes}.
 %
 % \end{markdown}
 % \iffalse
