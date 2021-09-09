@@ -830,10 +830,11 @@ Requirements
 
 The package requires either [our official Docker image][docker], which contains
 the latest development version of the Markdown package, or a \TeX{}
-distribution: [\TeX{} Live][tl] ≥ 2016 is known to work and so are recent
-versions of [Mik\TeX{}][mik]. If you are using a minimal installation of a
-\TeX{} distribution, please consult the [technical documentation][techdoc] for
-a detailed list of required packages.
+distribution: [\TeX{} Live][tl] ≥ 2018 is known to work with the current
+version of the Markdown package and so are recent versions of [Mik\TeX{}][mik].
+If you are using an older, incomplete, or atypical \TeX{} distribution, please
+consult the [technical documentation][techdoc] for a detailed list of
+requirements.
 
  [docker]: https://hub.docker.com/r/witiko/markdown/tags (witiko/markdown - Docker Image)
  [tl]: https://www.tug.org/texlive/ (TeX Live - TeX Users Group)
@@ -842,8 +843,8 @@ a detailed list of required packages.
 Installation
 ------------
 
-If you are using an older \TeX{} distribution such as [\TeX{} Live][tl] 2015,
-you will need to install the Markdown package.
+If Markdown is not included in your \TeX{} distribution, you will need to
+install it.
 
 First, download the package from the repository using Git:
 ``` sh
