@@ -35,7 +35,6 @@ jobs:
       matrix:
         texlive:
           - latest
-          - TL2015-historic
           - TL2016-historic
           - TL2017-historic
           - TL2018-historic
