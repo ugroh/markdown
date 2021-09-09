@@ -28,8 +28,9 @@ ARG BINARY_DIR=/usr/local/bin
 ARG BUILD_DIR=/git-repo
 ARG INSTALL_DIR=/usr/local/texlive/texmf-local
 
+ARG TEXLIVE_TAG=latest-with-cache
 
-FROM texlive/texlive:latest-with-cache as build
+FROM texlive/texlive:$TEXLIVE_TAG as build
 
 ARG DEPENDENCIES
 
@@ -83,7 +84,7 @@ unzip ${BUILD_DIR}/markdown.tds.zip -d ${BUILD_DIR}/dist
 EOF
 
 
-FROM texlive/texlive:latest-with-cache
+FROM texlive/texlive:$TEXLIVE_TAG
 
 ARG AUXILIARY_FILES
 ARG DEPENDENCIES

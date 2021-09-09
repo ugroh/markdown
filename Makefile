@@ -1,9 +1,9 @@
 .PHONY: all base clean implode dist test docker-image
 
 AUXFILES=markdown.bbl markdown.cb markdown.cb2 markdown.glo markdown.bbl \
-  markdown.run.xml markdown.bib markdown.markdown.in markdown.markdown.lua \
+  markdown.run.xml markdown.markdown.in markdown.markdown.lua \
   markdown.markdown.out markdown-interfaces.md markdown-miscellanea.md \
-	markdown-options.md markdown-tokens.md markdown-figure-block-diagram.tex
+	markdown-options.md markdown-tokens.md $(TECHNICAL_DOCUMENTATION_RESOURCES)
 AUXDIRS=_minted-markdown _markdown_markdown
 TDSARCHIVE=markdown.tds.zip
 CTANARCHIVE=markdown.ctan.zip
@@ -22,6 +22,7 @@ READMES=$(ROOT_README) LICENSE examples/README.md tests/README.md \
   tests/templates/*/README.md tests/testfiles/*/README.md
 DTXARCHIVE=markdown.dtx
 INSTALLER=markdown.ins docstrip.cfg
+TECHNICAL_DOCUMENTATION_RESOURCES=markdown.bib markdown-figure-block-diagram.tex
 TECHNICAL_DOCUMENTATION=markdown.pdf
 MARKDOWN_USER_MANUAL=markdown.md markdown.css
 HTML_USER_MANUAL=markdown.html markdown.css
@@ -31,6 +32,7 @@ LIBRARIES=libraries/markdown-tinyyaml.lua
 INSTALLABLES=markdown.lua markdown-cli.lua markdown.tex markdown.sty t-markdown.tex \
 	markdownthemewitiko_dot.sty markdownthemewitiko_graphicx_http.sty \
 	markdownthemewitiko_tilde.sty
+EXTRACTABLES=$(INSTALLABLES) $(MARKDOWN_USER_MANUAL) $(TECHNICAL_DOCUMENTATION_RESOURCES)
 MAKEABLES=$(TECHNICAL_DOCUMENTATION) $(USER_MANUAL) $(INSTALLABLES) $(EXAMPLES)
 RESOURCES=$(DOCUMENTATION) $(EXAMPLES_RESOURCES) $(EXAMPLES_SOURCES) $(EXAMPLES) \
   $(MAKES) $(READMES) $(INSTALLER) $(DTXARCHIVE) $(TESTS)
@@ -52,7 +54,7 @@ base: $(INSTALLABLES) $(LIBRARIES)
 
 # This pseudo-target builds a witiko/markdown Docker image.
 docker-image:
-	DOCKER_BUILDKIT=1 docker build -t witiko/markdown:latest .
+	DOCKER_BUILDKIT=1 docker build --build-arg TEXLIVE_TAG -t witiko/markdown:latest .
 	docker tag witiko/markdown:latest witiko/markdown:$(VERSION)
 
 # This targets produces a directory with files for the GitHub Pages service.
@@ -62,24 +64,24 @@ $(GITHUB_PAGES): $(HTML_USER_MANUAL)
 	cp markdown.css $@
 
 # This target extracts the source files out of the DTX archive.
-$(INSTALLABLES) $(MARKDOWN_USER_MANUAL): $(INSTALLER) $(DTXARCHIVE)
+$(EXTRACTABLES): $(INSTALLER) $(DTXARCHIVE)
 	xetex $<
-	sed -i 's/\$$(VERSION)/$(VERSION)/g' $(INSTALLABLES) $(MARKDOWN_USER_MANUAL)
+	sed -i 's/\$$(VERSION)/$(VERSION)/g' $(INSTALLABLES)
 
 # This target produces external Lua libraries.
 $(LIBRARIES):
 	$(MAKE) -C libraries $(notdir $@)
 
 # This target typesets the manual.
-$(TECHNICAL_DOCUMENTATION): $(DTXARCHIVE) $(INSTALLABLES) $(LIBRARIES)
-	latexmk -interaction=nonstopmode $<
+$(TECHNICAL_DOCUMENTATION): $(DTXARCHIVE) $(TECHNICAL_DOCUMENTATION_RESOURCES)
+	latexmk -silent $< || (cat $(basename $@).log 1>&2; exit 1)
 	test `tail $(basename $<).log | sed -rn 's/.*\(([0-9]*) pages.*/\1/p'` -gt 150
 
 # These targets typeset the examples.
-$(EXAMPLES): $(EXAMPLE_SOURCES) examples/example.tex $(INSTALLABLES) $(LIBRARIES)
+$(EXAMPLES): $(EXAMPLE_SOURCES) examples/example.tex
 	$(MAKE) -C examples $(notdir $@)
 
-examples/example.tex: $(INSTALLABLES) $(LIBRARIES)
+examples/example.tex:
 	$(MAKE) -C examples $(notdir $@)
 
 # This target converts the markdown user manual to an HTML page.

@@ -2,7 +2,7 @@
 %<*driver>
 \documentclass{ltxdockit}
 \usepackage[american]{babel}
-\usepackage{amsmath,btxdockit,doc,emoji,fancyvrb,graphicx,hologo,microtype,minted,varioref}
+\usepackage{amsmath,btxdockit,doc,fancyvrb,graphicx,hologo,microtype,minted,varioref}
 
 % Set up the style.
 \usepackage{fontspec}
@@ -44,21 +44,21 @@
 \newcommand\mdef[1]{% A TeX macro definition
   \index{#1@\cs{#1}|textit}%
   \phantomsection\label{macro:#1}\textcolor{spot}{\cs{#1}}}
-\newcommand\m[1]{% A TeX macro reference
+\newcommand\mref[1]{% A TeX macro reference
   \index{#1@\cs{#1}}%
   \hyperref[macro:#1]{\textcolor{spot}{\cs{#1}}}}
 
 \newcommand\envmdef[1]{% A LaTeX environment definition
   \index{#1@\texttt{#1}|textit}%
   \phantomsection\label{environment:#1}\inline{#1}}
-\newcommand\envm[1]{% A LaTeX environment reference
+\newcommand\envmref[1]{% A LaTeX environment reference
   \index{#1@\texttt{#1}}%
   \hyperref[environment:#1]{\inline{#1}}}
 
 \newcommand\luamdef[1]{% A Lua object / method definition
   \index{#1@\texttt{#1}|textit}%
   \phantomsection\label{lua:#1}\inline{#1}}
-\newcommand\luam[1]{% A Lua object / method reference
+\newcommand\luamref[1]{% A Lua object / method reference
   \index{#1@\texttt{#1}}%
   \hyperref[lua:#1]{\inline{#1}}}
 
@@ -104,7 +104,12 @@
 \newunicodechar{☒}{\markdownRendererTickedBox}
 \newunicodechar{⌛}{\markdownRendererHalfTickedBox}
 \newunicodechar{☐}{\markdownRendererUntickedBox}
-\newunicodechar{😉}{\emoji{winking-face}}
+\IfFileExists{emoji.sty}{
+  \usepackage{emoji}
+  \newunicodechar{😉}{\emoji{winking-face}}
+}{
+  \newunicodechar{😉}{;-)}
+}
 
 % Set up the catcodes.
 \catcode`\_=12 % We won't be typesetting much math and Lua contains lots of `_`.
@@ -128,252 +133,8 @@
 \usepackage{tikz}
 \usepackage{mathabx,pgf-umlsd,tikz}
 \usetikzlibrary{automata,arrows.meta,positioning,shapes.geometric}
-\begin{filecontents}[overwrite,nosearch,noheader]{markdown-figure-block-diagram.tex}
-\begingroup
-\ifx\du\undefined\newlength{\du}\fi
-\setlength{\du}{15\unitlength}
-\begin{tikzpicture}
-\pgftransformxscale{1.000000}
-\pgftransformyscale{-1.23800}
-\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
-\pgfsetstrokecolor{dialinecolor}
-\definecolor{dialinecolor}{rgb}{1.000000, 1.000000, 1.000000}
-\pgfsetfillcolor{dialinecolor}
-\definecolor{dialinecolor}{rgb}{1.000000, 1.000000, 1.000000}
-\pgfsetfillcolor{dialinecolor}
-\fill (4.282853\du,-3.750000\du)--(4.282853\du,-1.850000\du)--(11.971656\du,-1.850000\du)--(11.971656\du,-3.750000\du)--cycle;
-\pgfsetlinewidth{0.040000\du}
-\pgfsetdash{}{0pt}
-\pgfsetdash{}{0pt}
-\pgfsetmiterjoin
-\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
-\pgfsetstrokecolor{dialinecolor}
-\draw (4.282853\du,-3.750000\du)--(4.282853\du,-1.850000\du)--(11.971656\du,-1.850000\du)--(11.971656\du,-3.750000\du)--cycle;
-\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
-\pgfsetstrokecolor{dialinecolor}
-\node at (8.127254\du,-2.705000\du){\LaTeX{} layer};
-\definecolor{dialinecolor}{rgb}{1.000000, 1.000000, 1.000000}
-\pgfsetfillcolor{dialinecolor}
-\fill (-5.055135\du,-3.788555\du)--(-5.055135\du,-1.888555\du)--(2.894865\du,-1.888555\du)--(2.894865\du,-3.788555\du)--cycle;
-\pgfsetlinewidth{0.040000\du}
-\pgfsetdash{}{0pt}
-\pgfsetdash{}{0pt}
-\pgfsetmiterjoin
-\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
-\pgfsetstrokecolor{dialinecolor}
-\draw (-5.055135\du,-3.788555\du)--(-5.055135\du,-1.888555\du)--(2.894865\du,-1.888555\du)--(2.894865\du,-3.788555\du)--cycle;
-\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
-\pgfsetstrokecolor{dialinecolor}
-\node at (-1.080135\du,-2.743555\du){\Hologo{ConTeXt} layer};
-\definecolor{dialinecolor}{rgb}{1.000000, 1.000000, 1.000000}
-\pgfsetfillcolor{dialinecolor}
-\fill (-8.200000\du,-0.224996\du)--(-8.200000\du,1.675004\du)--(11.870000\du,1.675004\du)--(11.870000\du,-0.224996\du)--cycle;
-\pgfsetlinewidth{0.040000\du}
-\pgfsetdash{}{0pt}
-\pgfsetdash{}{0pt}
-\pgfsetmiterjoin
-\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
-\pgfsetstrokecolor{dialinecolor}
-\draw (-8.200000\du,-0.224996\du)--(-8.200000\du,1.675004\du)--(11.870000\du,1.675004\du)--(11.870000\du,-0.224996\du)--cycle;
-\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
-\pgfsetstrokecolor{dialinecolor}
-\node at (1.835000\du,0.820004\du){Plain \TeX{} layer};
-\definecolor{dialinecolor}{rgb}{1.000000, 1.000000, 1.000000}
-\pgfsetfillcolor{dialinecolor}
-\fill (-11.150000\du,3.325006\du)--(-11.150000\du,5.225006\du)--(11.800000\du,5.225006\du)--(11.800000\du,3.325006\du)--cycle;
-\pgfsetlinewidth{0.040000\du}
-\pgfsetdash{}{0pt}
-\pgfsetdash{}{0pt}
-\pgfsetmiterjoin
-\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
-\pgfsetstrokecolor{dialinecolor}
-\draw (-11.150000\du,3.325006\du)--(-11.150000\du,5.225006\du)--(11.800000\du,5.225006\du)--(11.800000\du,3.325006\du)--cycle;
-\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
-\pgfsetstrokecolor{dialinecolor}
-\node at (0.325000\du,4.370006\du){Lua layer};
-\pgfsetlinewidth{0.040000\du}
-\pgfsetdash{}{0pt}
-\pgfsetdash{}{0pt}
-\pgfsetbuttcap
-{
-\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
-\pgfsetfillcolor{dialinecolor}
-\pgfsetarrowsstart{stealth}
-\pgfsetarrowsend{stealth}
-\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
-\pgfsetstrokecolor{dialinecolor}
-\draw (-9.906400\du,-5.181570\du)--(-9.937836\du,3.024193\du);
-}
-\pgfsetlinewidth{0.040000\du}
-\pgfsetdash{}{0pt}
-\pgfsetdash{}{0pt}
-\pgfsetbuttcap
-{
-\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
-\pgfsetfillcolor{dialinecolor}
-\pgfsetarrowsstart{stealth}
-\pgfsetarrowsend{stealth}
-\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
-\pgfsetstrokecolor{dialinecolor}
-\draw (-6.919693\du,-5.181570\du)--(-6.938734\du,-0.450800\du);
-}
-\pgfsetlinewidth{0.040000\du}
-\pgfsetdash{}{0pt}
-\pgfsetdash{}{0pt}
-\pgfsetbuttcap
-{
-\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
-\pgfsetfillcolor{dialinecolor}
-\pgfsetarrowsstart{stealth}
-\pgfsetarrowsend{stealth}
-\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
-\pgfsetstrokecolor{dialinecolor}
-\draw (-1.063746\du,-5.175791\du)--(-1.063746\du,-3.975793\du);
-}
-\definecolor{dialinecolor}{rgb}{1.000000, 1.000000, 1.000000}
-\pgfsetfillcolor{dialinecolor}
-\fill (-10.972500\du,-7.267480\du)--(-10.972500\du,-5.367480\du)--(11.977500\du,-5.367480\du)--(11.977500\du,-7.267480\du)--cycle;
-\pgfsetlinewidth{0.040000\du}
-\pgfsetdash{}{0pt}
-\pgfsetdash{}{0pt}
-\pgfsetmiterjoin
-\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
-\pgfsetstrokecolor{dialinecolor}
-\draw (-10.972500\du,-7.267480\du)--(-10.972500\du,-5.367480\du)--(11.977500\du,-5.367480\du)--(11.977500\du,-7.267480\du)--cycle;
-\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
-\pgfsetstrokecolor{dialinecolor}
-\node at (0.502500\du,-6.322480\du){User code};
-\pgfsetlinewidth{0.040000\du}
-\pgfsetdash{}{0pt}
-\pgfsetdash{}{0pt}
-\pgfsetbuttcap
-{
-\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
-\pgfsetfillcolor{dialinecolor}
-\pgfsetarrowsstart{stealth}
-\pgfsetarrowsend{stealth}
-\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
-\pgfsetstrokecolor{dialinecolor}
-\draw (8.149986\du,-5.159541\du)--(8.149986\du,-3.959543\du);
-}
-\pgfsetlinewidth{0.040000\du}
-\pgfsetdash{}{0pt}
-\pgfsetdash{}{0pt}
-\pgfsetbuttcap
-{
-\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
-\pgfsetfillcolor{dialinecolor}
-\pgfsetarrowsstart{stealth}
-\pgfsetarrowsend{stealth}
-\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
-\pgfsetstrokecolor{dialinecolor}
-\draw (-1.074995\du,-1.634548\du)--(-1.074995\du,-0.434550\du);
-}
-\pgfsetlinewidth{0.040000\du}
-\pgfsetdash{}{0pt}
-\pgfsetdash{}{0pt}
-\pgfsetbuttcap
-{
-\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
-\pgfsetfillcolor{dialinecolor}
-\pgfsetarrowsstart{stealth}
-\pgfsetarrowsend{stealth}
-\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
-\pgfsetstrokecolor{dialinecolor}
-\draw (8.138736\du,-1.618298\du)--(8.138736\du,-0.418300\du);
-}
-\pgfsetlinewidth{0.040000\du}
-\pgfsetdash{}{0pt}
-\pgfsetdash{}{0pt}
-\pgfsetbuttcap
-{
-\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
-\pgfsetfillcolor{dialinecolor}
-\pgfsetarrowsstart{stealth}
-\pgfsetarrowsend{stealth}
-\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
-\pgfsetstrokecolor{dialinecolor}
-\draw (1.689638\du,1.881695\du)--(1.689638\du,3.081693\du);
-}
-\end{tikzpicture}
-\endgroup
-\end{filecontents}
 
 % Set up the bibliography.
-\begin{filecontents}[overwrite,nosearch,noheader]{markdown.bib}
-@book{tantau21,
-  author    = {Till Tantau and Joseph Wright and Vedran Miletić},
-  title     = {The Beamer class},
-  date      = {2021-02-10},
-  url       = {https://mirrors.ctan.org/macros/latex/contrib/beamer/doc/beameruserguide.pdf},
-  urldate   = {2021-02-11}}
-@online{sotkov17,
-  author    = {Sotkov, Anton},
-  title     = {File transclusion syntax for Markdown},
-  date      = {2017-01-19},
-  url       = {https://github.com/iainc/Markdown-Content-Blocks},
-  urldate   = {2018-01-08}}
-@book{luatex17,
-  author    = {{Lua\TeX{} development team}},
-  title     = {Lua\TeX{} reference manual},
-  year      = {2017},
-  month     = {2},
-  url       = {http://www.luatex.org/svn/trunk/manual/luatex.pdf},
-  urldate   = {2018-01-08}}
-@book{latex17,
-  author    = {Braams, Johannes and Carlisle, David and Jeffrey, Alan and
-               Lamport, Leslie and Mittelbach, Frank and Rowley, Chris and
-               Schöpf, Rainer},
-  title     = {The \Hologo{LaTeX2e} Sources},
-  date      = {2017-04-15},
-  url       = {https://mirrors.ctan.org/macros/latex/base/source2e.pdf},
-  urldate   = {2018-01-08}}
-@book{mittelbach17,
-  author    = {Mittelbach, Frank},
-  title     = {The \texttt{doc} and \texttt{shortvrb} Packages},
-  date      = {2017-04-15},
-  url       = {https://mirrors.ctan.org/macros/latex/base/doc.pdf},
-  urldate   = {2018-02-19}}
-@book{poore17,
-  author    = {Poore, Geoffrey M.},
-  title     = {The \texttt{minted} Package},
-  subtitle  = {Highlighted source code in \LaTeX},
-  date      = {2017-07-19},
-  version   = {v2.5},
-  url       = {https://mirrors.ctan.org/macros/latex/contrib/minted/minted.pdf},
-  urldate   = {2020-09-01}}
-@online{novotny15,
-  author    = {Novotný, Vít},
-  year      = {2015},
-  title     = {TeXový interpret jazyka Markdown (markdown.sty)},
-  location  = {Brno, Czech Republic},
-  publisher = {Masaryk University},
-  url       = {https://www.muni.cz/en/research/projects/32984},
-  urldate   = {2018-02-19}}
-@book{ierusalimschy13,
-  author    = {Ierusalimschy, Roberto},
-  year      = {2013},
-  title     = {Programming in Lua},
-  edition   = {3},
-  isbn      = {978-85-903798-5-0},
-  pagetotal = {xviii, 347},
-  location  = {Rio de Janeiro},
-  publisher = {PUC-Rio}}
-@book{knuth86,
-  author    = {Knuth, Donald Ervin},
-  year      = {1986},
-  title     = {The \TeX{}book},
-  edition   = {3},
-  isbn      = {0-201-13447-0},
-  pagetotal = {ix, 479},
-  publisher = {Addison-Wesley}}
-@online{novotny21,
-  author    = {Novotný, Vít},
-  title     = {\Hologo{LaTeX2e} no longer keys packages by pathnames},
-  date      = {2021-02-20},
-  url       = {https://github.com/latex3/latex2e/issues/510},
-  urldate   = {2021-02-21}}
-\end{filecontents}
 \usepackage[
   backend=biber,
   style=numeric,
@@ -744,6 +505,250 @@ abbr {
 }
 
 %</manual-css>
+%<*techdoc-block-diagram>
+\begingroup
+\ifx\du\undefined\newlength{\du}\fi
+\setlength{\du}{15\unitlength}
+\begin{tikzpicture}
+\pgftransformxscale{1.000000}
+\pgftransformyscale{-1.23800}
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\definecolor{dialinecolor}{rgb}{1.000000, 1.000000, 1.000000}
+\pgfsetfillcolor{dialinecolor}
+\definecolor{dialinecolor}{rgb}{1.000000, 1.000000, 1.000000}
+\pgfsetfillcolor{dialinecolor}
+\fill (4.282853\du,-3.750000\du)--(4.282853\du,-1.850000\du)--(11.971656\du,-1.850000\du)--(11.971656\du,-3.750000\du)--cycle;
+\pgfsetlinewidth{0.040000\du}
+\pgfsetdash{}{0pt}
+\pgfsetdash{}{0pt}
+\pgfsetmiterjoin
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\draw (4.282853\du,-3.750000\du)--(4.282853\du,-1.850000\du)--(11.971656\du,-1.850000\du)--(11.971656\du,-3.750000\du)--cycle;
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\node at (8.127254\du,-2.705000\du){\LaTeX{} layer};
+\definecolor{dialinecolor}{rgb}{1.000000, 1.000000, 1.000000}
+\pgfsetfillcolor{dialinecolor}
+\fill (-5.055135\du,-3.788555\du)--(-5.055135\du,-1.888555\du)--(2.894865\du,-1.888555\du)--(2.894865\du,-3.788555\du)--cycle;
+\pgfsetlinewidth{0.040000\du}
+\pgfsetdash{}{0pt}
+\pgfsetdash{}{0pt}
+\pgfsetmiterjoin
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\draw (-5.055135\du,-3.788555\du)--(-5.055135\du,-1.888555\du)--(2.894865\du,-1.888555\du)--(2.894865\du,-3.788555\du)--cycle;
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\node at (-1.080135\du,-2.743555\du){\Hologo{ConTeXt} layer};
+\definecolor{dialinecolor}{rgb}{1.000000, 1.000000, 1.000000}
+\pgfsetfillcolor{dialinecolor}
+\fill (-8.200000\du,-0.224996\du)--(-8.200000\du,1.675004\du)--(11.870000\du,1.675004\du)--(11.870000\du,-0.224996\du)--cycle;
+\pgfsetlinewidth{0.040000\du}
+\pgfsetdash{}{0pt}
+\pgfsetdash{}{0pt}
+\pgfsetmiterjoin
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\draw (-8.200000\du,-0.224996\du)--(-8.200000\du,1.675004\du)--(11.870000\du,1.675004\du)--(11.870000\du,-0.224996\du)--cycle;
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\node at (1.835000\du,0.820004\du){Plain \TeX{} layer};
+\definecolor{dialinecolor}{rgb}{1.000000, 1.000000, 1.000000}
+\pgfsetfillcolor{dialinecolor}
+\fill (-11.150000\du,3.325006\du)--(-11.150000\du,5.225006\du)--(11.800000\du,5.225006\du)--(11.800000\du,3.325006\du)--cycle;
+\pgfsetlinewidth{0.040000\du}
+\pgfsetdash{}{0pt}
+\pgfsetdash{}{0pt}
+\pgfsetmiterjoin
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\draw (-11.150000\du,3.325006\du)--(-11.150000\du,5.225006\du)--(11.800000\du,5.225006\du)--(11.800000\du,3.325006\du)--cycle;
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\node at (0.325000\du,4.370006\du){Lua layer};
+\pgfsetlinewidth{0.040000\du}
+\pgfsetdash{}{0pt}
+\pgfsetdash{}{0pt}
+\pgfsetbuttcap
+{
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetfillcolor{dialinecolor}
+\pgfsetarrowsstart{stealth}
+\pgfsetarrowsend{stealth}
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\draw (-9.906400\du,-5.181570\du)--(-9.937836\du,3.024193\du);
+}
+\pgfsetlinewidth{0.040000\du}
+\pgfsetdash{}{0pt}
+\pgfsetdash{}{0pt}
+\pgfsetbuttcap
+{
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetfillcolor{dialinecolor}
+\pgfsetarrowsstart{stealth}
+\pgfsetarrowsend{stealth}
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\draw (-6.919693\du,-5.181570\du)--(-6.938734\du,-0.450800\du);
+}
+\pgfsetlinewidth{0.040000\du}
+\pgfsetdash{}{0pt}
+\pgfsetdash{}{0pt}
+\pgfsetbuttcap
+{
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetfillcolor{dialinecolor}
+\pgfsetarrowsstart{stealth}
+\pgfsetarrowsend{stealth}
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\draw (-1.063746\du,-5.175791\du)--(-1.063746\du,-3.975793\du);
+}
+\definecolor{dialinecolor}{rgb}{1.000000, 1.000000, 1.000000}
+\pgfsetfillcolor{dialinecolor}
+\fill (-10.972500\du,-7.267480\du)--(-10.972500\du,-5.367480\du)--(11.977500\du,-5.367480\du)--(11.977500\du,-7.267480\du)--cycle;
+\pgfsetlinewidth{0.040000\du}
+\pgfsetdash{}{0pt}
+\pgfsetdash{}{0pt}
+\pgfsetmiterjoin
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\draw (-10.972500\du,-7.267480\du)--(-10.972500\du,-5.367480\du)--(11.977500\du,-5.367480\du)--(11.977500\du,-7.267480\du)--cycle;
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\node at (0.502500\du,-6.322480\du){User code};
+\pgfsetlinewidth{0.040000\du}
+\pgfsetdash{}{0pt}
+\pgfsetdash{}{0pt}
+\pgfsetbuttcap
+{
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetfillcolor{dialinecolor}
+\pgfsetarrowsstart{stealth}
+\pgfsetarrowsend{stealth}
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\draw (8.149986\du,-5.159541\du)--(8.149986\du,-3.959543\du);
+}
+\pgfsetlinewidth{0.040000\du}
+\pgfsetdash{}{0pt}
+\pgfsetdash{}{0pt}
+\pgfsetbuttcap
+{
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetfillcolor{dialinecolor}
+\pgfsetarrowsstart{stealth}
+\pgfsetarrowsend{stealth}
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\draw (-1.074995\du,-1.634548\du)--(-1.074995\du,-0.434550\du);
+}
+\pgfsetlinewidth{0.040000\du}
+\pgfsetdash{}{0pt}
+\pgfsetdash{}{0pt}
+\pgfsetbuttcap
+{
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetfillcolor{dialinecolor}
+\pgfsetarrowsstart{stealth}
+\pgfsetarrowsend{stealth}
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\draw (8.138736\du,-1.618298\du)--(8.138736\du,-0.418300\du);
+}
+\pgfsetlinewidth{0.040000\du}
+\pgfsetdash{}{0pt}
+\pgfsetdash{}{0pt}
+\pgfsetbuttcap
+{
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetfillcolor{dialinecolor}
+\pgfsetarrowsstart{stealth}
+\pgfsetarrowsend{stealth}
+\definecolor{dialinecolor}{rgb}{0.000000, 0.000000, 0.000000}
+\pgfsetstrokecolor{dialinecolor}
+\draw (1.689638\du,1.881695\du)--(1.689638\du,3.081693\du);
+}
+\end{tikzpicture}
+\endgroup
+%</techdoc-block-diagram>
+%<*techdoc-bibliography>
+@book{tantau21,
+  author    = {Till Tantau and Joseph Wright and Vedran Miletić},
+  title     = {The Beamer class},
+  date      = {2021-02-10},
+  url       = {https://mirrors.ctan.org/macros/latex/contrib/beamer/doc/beameruserguide.pdf},
+  urldate   = {2021-02-11}}
+@online{sotkov17,
+  author    = {Sotkov, Anton},
+  title     = {File transclusion syntax for Markdown},
+  date      = {2017-01-19},
+  url       = {https://github.com/iainc/Markdown-Content-Blocks},
+  urldate   = {2018-01-08}}
+@book{luatex17,
+  author    = {{Lua\TeX{} development team}},
+  title     = {Lua\TeX{} reference manual},
+  year      = {2017},
+  month     = {2},
+  url       = {http://www.luatex.org/svn/trunk/manual/luatex.pdf},
+  urldate   = {2018-01-08}}
+@book{latex17,
+  author    = {Braams, Johannes and Carlisle, David and Jeffrey, Alan and
+               Lamport, Leslie and Mittelbach, Frank and Rowley, Chris and
+               Schöpf, Rainer},
+  title     = {The \Hologo{LaTeX2e} Sources},
+  date      = {2017-04-15},
+  url       = {https://mirrors.ctan.org/macros/latex/base/source2e.pdf},
+  urldate   = {2018-01-08}}
+@book{mittelbach17,
+  author    = {Mittelbach, Frank},
+  title     = {The \texttt{doc} and \texttt{shortvrb} Packages},
+  date      = {2017-04-15},
+  url       = {https://mirrors.ctan.org/macros/latex/base/doc.pdf},
+  urldate   = {2018-02-19}}
+@book{poore17,
+  author    = {Poore, Geoffrey M.},
+  title     = {The \texttt{minted} Package},
+  subtitle  = {Highlighted source code in \LaTeX},
+  date      = {2017-07-19},
+  version   = {v2.5},
+  url       = {https://mirrors.ctan.org/macros/latex/contrib/minted/minted.pdf},
+  urldate   = {2020-09-01}}
+@online{novotny15,
+  author    = {Novotný, Vít},
+  year      = {2015},
+  title     = {TeXový interpret jazyka Markdown (markdown.sty)},
+  location  = {Brno, Czech Republic},
+  publisher = {Masaryk University},
+  url       = {https://www.muni.cz/en/research/projects/32984},
+  urldate   = {2018-02-19}}
+@book{ierusalimschy13,
+  author    = {Ierusalimschy, Roberto},
+  year      = {2013},
+  title     = {Programming in Lua},
+  edition   = {3},
+  isbn      = {978-85-903798-5-0},
+  pagetotal = {xviii, 347},
+  location  = {Rio de Janeiro},
+  publisher = {PUC-Rio}}
+@book{knuth86,
+  author    = {Knuth, Donald Ervin},
+  year      = {1986},
+  title     = {The \TeX{}book},
+  edition   = {3},
+  isbn      = {0-201-13447-0},
+  pagetotal = {ix, 479},
+  publisher = {Addison-Wesley}}
+@online{novotny21,
+  author    = {Novotný, Vít},
+  title     = {\Hologo{LaTeX2e} no longer keys packages by pathnames},
+  date      = {2021-02-20},
+  url       = {https://github.com/latex3/latex2e/issues/510},
+  urldate   = {2021-02-21}}
+%</techdoc-bibliography>
 %<*manual>
 
 ---
@@ -825,10 +830,11 @@ Requirements
 
 The package requires either [our official Docker image][docker], which contains
 the latest development version of the Markdown package, or a \TeX{}
-distribution: [\TeX{} Live][tl] ≥ 2013 is known to work and so are recent
-versions of [Mik\TeX{}][mik]. If you are using a minimal installation of a
-\TeX{} distribution, please consult the [technical documentation][techdoc] for
-a detailed list of required packages.
+distribution: [\TeX{} Live][tl] ≥ 2018 is known to work with the current
+version of the Markdown package and so are recent versions of [Mik\TeX{}][mik].
+If you are using an older, incomplete, or atypical \TeX{} distribution, please
+consult the [technical documentation][techdoc] for a detailed list of
+requirements.
 
  [docker]: https://hub.docker.com/r/witiko/markdown/tags (witiko/markdown - Docker Image)
  [tl]: https://www.tug.org/texlive/ (TeX Live - TeX Users Group)
@@ -837,8 +843,8 @@ a detailed list of required packages.
 Installation
 ------------
 
-If you are using an older \TeX{} distribution such as [\TeX{} Live][tl] < 2016,
-you will need to install the Markdown package.
+If Markdown is not included in your \TeX{} distribution, you will need to
+install it.
 
 First, download the package from the repository using Git:
 ``` sh
@@ -985,11 +991,11 @@ local md5 = require("md5")
 %
 %:    A library that provides access to the filesystem via \acro{os}-specific
 %     syscalls. It is used by the plain \TeX{} code to create the cache
-%     directory specified by the \m{markdownOptionCacheDir} macro before
+%     directory specified by the \mref{markdownOptionCacheDir} macro before
 %     interfacing with the \pkg{Lunamark} library. \pkg{Lua File System} is
 %     included in all releases of Lua\TeX{} (\TeX Live${}\geq{}2008$).
 %
-%     The plain \TeX{} code makes use of the \luam{isdir} method that was added
+%     The plain \TeX{} code makes use of the \luamref{isdir} method that was added
 %     to the \pkg{Lua File System} library by the Lua\TeX{} engine
 %     developers~[@luatex17, Section 3.2].
 %
@@ -999,10 +1005,10 @@ local md5 = require("md5")
 % Unless you convert markdown documents to \TeX{} manually using the Lua
 % command-line interface (see Section \vref{sec:lua-cli-interface}), the plain
 % \TeX{} part of the package will require that either the Lua\TeX{}
-% \m{directlua} primitive or the shell access file stream 18 is available in
+% \mref{directlua} primitive or the shell access file stream 18 is available in
 % your \TeX{} engine. If only the shell access file stream is available in your
 % \TeX{} engine (as is the case with \hologo{pdfTeX} and \Hologo{XeTeX}) or if
-% you enforce the use of shell using the \m{markdownMode} macro, then unless
+% you enforce the use of shell using the \mref{markdownMode} macro, then unless
 % your \TeX{} engine is globally configured to enable shell access, you will
 % need to provide the `-shell-escape` parameter to your engine when typesetting
 % a document.
@@ -1037,8 +1043,8 @@ local md5 = require("md5")
 % \pkg{keyval}
 %
 %:    A package that enables the creation of parameter sets. This package is
-%     used to provide the \m{markdownSetup} macro, the package options
-%     processing, as well as the parameters of the \envm{markdown*} \LaTeX{}
+%     used to provide the \mref{markdownSetup} macro, the package options
+%     processing, as well as the parameters of the \envmref{markdown*} \LaTeX{}
 %     environment.
 %
 % \end{markdown}
@@ -1060,24 +1066,25 @@ local md5 = require("md5")
 % \begin{markdown}
 %
 % The following packages are soft prerequisites. They are only used to provide
-% default token renderer prototype (see Section
-% \vref{sec:texrendererprototypes}) and will not be loaded if the `plain`
-% package option has been enabled (see Section \vref{sec:latexplain}):
+% default token renderer prototypes (see Section
+% \vref{sec:texrendererprototypes}) or \LaTeX{} themes and will not be loaded
+% if the `plain` package option has been enabled (see Section
+% \vref{sec:latexplain}):
 %
 % \pkg{url}
 %
-%:    A package that provides the \m{url} macro for the typesetting of
+%:    A package that provides the \mref{url} macro for the typesetting of
 %     links.
 %
 % \pkg{graphicx}
 %
-%:    A package that provides the \m{includegraphics} macro for the typesetting
+%:    A package that provides the \mref{includegraphics} macro for the typesetting
 %     of images.
 %
 % \pkg{paralist}
 %
-%:    A package that provides the \envm{compactitem}, \envm{compactenum}, and
-%     \envm{compactdesc} macros for the typesetting of tight bulleted lists,
+%:    A package that provides the \envmref{compactitem}, \envmref{compactenum}, and
+%     \envmref{compactdesc} macros for the typesetting of tight bulleted lists,
 %     ordered lists, and definition lists.
 %
 % \pkg{ifthen}
@@ -1090,23 +1097,37 @@ local md5 = require("md5")
 %
 % \pkg{fancyvrb}
 %
-%:    A package that provides the \m{VerbatimInput} macros for the verbatim
+%:    A package that provides the \mref{VerbatimInput} macros for the verbatim
 %     inclusion of files containing code.
 %
 % \pkg{csvsimple}
 %
-%:    A package that provides the \m{csvautotabular} macro for typesetting
+%:    A package that provides the \mref{csvautotabular} macro for typesetting
 %     \acro{csv} files.
 %
 % \pkg{gobble}
 %
-%:    A package that provides the \m{\@gobblethree} \TeX{} command that
-%     is used in the default renderer prototype for citations.
+%:    A package that provides the \mref{\@gobblethree} \TeX{} command that
+%     is used in the default renderer prototype for citations. The package
+%     is included in \TeX Live${}\geq{}2016$.
 %
 % \pkg{amsmath} and \pkg{amssymb}
 %
 %:    Packages that provide symbols used for drawing ticked and unticked
 %     boxes.
+%
+% \pkg{catchfile}
+%
+%:    A package that catches the contents of a file and puts it in a macro. It
+%     is used in the `witiko/graphicx/http` \LaTeX{} theme, see Section
+%     \vref{sec:latexthemes}.
+%
+% \pkg{grffile}
+%
+%:    A package that extends the name processing of package graphics to support
+%     a larger range of file names in $2006\leq{}$\TeX{} Live${}\leq{}2019$. It
+%     is used in the `witiko/dot` and `witiko/graphicx/http` \LaTeX{} themes,
+%     see Section \vref{sec:latexthemes}.
 %
 % \end{markdown}
 % \iffalse
@@ -1837,7 +1858,7 @@ defaultOptions.cacheDir = "."
 
      The frozen cache makes it possible to later typeset a plain \TeX{}
      document that contains markdown documents without invoking Lua using
-     the \m{markdownOptionFrozenCache} plain \TeX{} option. As a result, the
+     the \mref{markdownOptionFrozenCache} plain \TeX{} option. As a result, the
      plain \TeX{} document becomes more portable, but further changes in the
      order and the content of markdown documents will not be reflected.
 
@@ -3927,7 +3948,7 @@ defaultOptions.fencedCode = false
 
      The frozen cache makes it possible to later typeset a plain \TeX{}
      document that contains markdown documents without invoking Lua using
-     the \m{markdownOptionFrozenCache} plain \TeX{} option. As a result, the
+     the \mref{markdownOptionFrozenCache} plain \TeX{} option. As a result, the
      plain \TeX{} document becomes more portable, but further changes in the
      order and the content of markdown documents will not be reflected.
 
@@ -5519,7 +5540,7 @@ defaultOptions.slice = "^ $"
 :    true
 
      :   Convert any ellipses in the input to the
-         \m{markdownRendererEllipsis} \TeX{} macro.
+         \mref{markdownRendererEllipsis} \TeX{} macro.
 
 :    false
 
@@ -5717,12 +5738,12 @@ defaultOptions.smartEllipses = false
 
      :   Make the number in the first item of an ordered lists significant. The
          item numbers will be passed to the
-         \m{markdownRendererOlItemWithNumber} \TeX{} macro.
+         \mref{markdownRendererOlItemWithNumber} \TeX{} macro.
 
 :    false
 
      :   Ignore the numbers in the ordered list items. Each item will only
-         produce a \m{markdownRendererOlItem} \TeX{} macro.
+         produce a \mref{markdownRendererOlItem} \TeX{} macro.
 
 % \end{markdown}
 % \iffalse
@@ -6267,10 +6288,10 @@ defaultOptions.texComments = false
 
      :   Lists whose bullets do not consist of multiple paragraphs will be
          passed to the
-         \m{markdownRendererOlBeginTight}, \m{markdownRendererOlEndTight},
-         \m{markdownRendererUlBeginTight}, \m{markdownRendererUlEndTight},
-         \m{markdownRendererDlBeginTight}, and
-         \m{markdownRendererDlEndTight} \TeX{} macros.
+         \mref{markdownRendererOlBeginTight}, \mref{markdownRendererOlEndTight},
+         \mref{markdownRendererUlBeginTight}, \mref{markdownRendererUlEndTight},
+         \mref{markdownRendererDlBeginTight}, and
+         \mref{markdownRendererDlEndTight} \TeX{} macros.
 
 :    false
 
@@ -6605,7 +6626,7 @@ for i = 1, #arg do
       key, value = arg[i]:match("(.-)=(.*)")
 %    \end{macrocode}
 % \begin{markdown}
-% The \luam{defaultOptions} table is consulted to identify whether \meta{value}
+% The \luamref{defaultOptions} table is consulted to identify whether \meta{value}
 % should be parsed as a string or as a boolean.
 % \end{markdown}
 %  \begin{macrocode}
@@ -6773,15 +6794,15 @@ pdftex --shell-escape document.tex
 % \input markdown
 % ```````
 % \noindent It is expected that the special plain \TeX{} characters have the
-% expected category codes, when \m{input}ting the file.
+% expected category codes, when \mref{input}ting the file.
 %
 %### Typesetting Markdown
 % \label{sec:textypesetting}
 % The interface exposes the \mdef{markdownBegin}, \mdef{markdownEnd}, and
 % \mdef{markdownInput} macros.
 %
-% The \m{markdownBegin} macro marks the beginning of a markdown document
-% fragment and the \m{markdownEnd} macro marks its end.
+% The \mref{markdownBegin} macro marks the beginning of a markdown document
+% fragment and the \mref{markdownEnd} macro marks its end.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -6791,24 +6812,24 @@ pdftex --shell-escape document.tex
 % \par
 % \begin{markdown}
 %
-% You may prepend your own code to the \m{markdownBegin} macro and redefine the
-% \m{markdownEnd} macro to produce special effects before and after the
+% You may prepend your own code to the \mref{markdownBegin} macro and redefine the
+% \mref{markdownEnd} macro to produce special effects before and after the
 % markdown block.
 %
 % There are several limitations to the macros you need to be aware of.
-% The first limitation concerns the \m{markdownEnd} macro, which must be
+% The first limitation concerns the \mref{markdownEnd} macro, which must be
 % visible directly from the input line buffer (it may not be produced as a
 % result of input expansion). Otherwise, it will not be recognized as the end
-% of the markdown string. As a corrolary, the \m{markdownEnd} string
+% of the markdown string. As a corrolary, the \mref{markdownEnd} string
 % may not appear anywhere inside the markdown input.
 %
 % Another limitation concerns spaces at the right end of an input line. In
 % markdown, these are used to produce a forced line break. However, any such
 % spaces are removed before the lines enter the input buffer of
-% \TeX{}~[@knuth86, p. 46]. As a corrolary, the \m{markdownBegin} macro also
+% \TeX{}~[@knuth86, p. 46]. As a corrolary, the \mref{markdownBegin} macro also
 % ignores them.
 %
-% The \m{markdownBegin} and \m{markdownEnd} macros will also consume the rest
+% The \mref{markdownBegin} and \mref{markdownEnd} macros will also consume the rest
 % of the lines at which they appear.  In the following example plain \TeX{}
 % code, the characters `c`, `e`, and `f` will not appear in the output.
 %
@@ -6822,11 +6843,11 @@ pdftex --shell-escape document.tex
 % \bye
 % ```````
 %
-% Note that you may also not nest the \m{markdownBegin} and \m{markdownEnd}
+% Note that you may also not nest the \mref{markdownBegin} and \mref{markdownEnd}
 % macros.
 %
 % The following example plain \TeX{} code showcases the usage of the
-% \m{markdownBegin} and \m{markdownEnd} macros:
+% \mref{markdownBegin} and \mref{markdownEnd} macros:
 %
 % ``` tex
 % \input markdown
@@ -6836,7 +6857,7 @@ pdftex --shell-escape document.tex
 % \bye
 % ```````
 %
-% The \m{markdownInput} macro accepts a single parameter containing the
+% The \mref{markdownInput} macro accepts a single parameter containing the
 % filename of a markdown document and expands to the result of the conversion
 % of the input markdown document to plain \TeX{}.
 %
@@ -6848,10 +6869,10 @@ pdftex --shell-escape document.tex
 % \begin{markdown}
 %
 % This macro is not subject to the abovelisted limitations of the
-% \m{markdownBegin} and \m{markdownEnd} macros.
+% \mref{markdownBegin} and \mref{markdownEnd} macros.
 %
 % The following example plain \TeX{} code showcases the usage of the
-% \m{markdownInput} macro:
+% \mref{markdownInput} macro:
 %
 % ``` tex
 % \input markdown
@@ -6888,7 +6909,7 @@ interfaces.
 %#### Finalizing and Freezing the Cache
 % The \mdef{markdownOptionFinalizeCache} option corresponds to the Lua
 % interface \Opt{finalizeCache} option, which creates an output file
-% \m{markdownOptionFrozenCacheFileName} (frozen cache) that contains a mapping
+% \mref{markdownOptionFrozenCacheFileName} (frozen cache) that contains a mapping
 % between an enumeration of the markdown documents in the plain \TeX{} document
 % and their auxiliary files cached in the \Opt{cacheDir} directory.
 %
@@ -6907,7 +6928,7 @@ interfaces.
 % \begin{markdown}
 %
 The \mdef{markdownOptionFrozenCache} option uses the mapping previously
-% created by the \m{markdownOptionFinalizeCache} option,
+% created by the \mref{markdownOptionFinalizeCache} option,
 % \iffalse
 created by the Lua interface \Opt{finalizeCache} option,
 % \fi
@@ -6918,18 +6939,18 @@ defaults to `false`.
 
 % The standard usage of the above two options is as follows:
 % \iffalse
-The standard usage of the \Opt{finalizeCache} and \m{markdownOptionFrozenCache}
+The standard usage of the \Opt{finalizeCache} and \mref{markdownOptionFrozenCache}
 options is as follows:
 % \fi
 
 1. Remove the \Opt{cacheDir} cache directory with stale auxiliary cache
    files.
-% 2. Enable the \m{markdownOptionFinalizeCache} option.
+% 2. Enable the \mref{markdownOptionFinalizeCache} option.
 % \iffalse
 2. Enable the \Opt{finalizeCache} option.
 % \fi
 3. Typeset the plain \TeX{} document to populate and finalize the cache.
-4. Enable the \m{markdownOptionFrozenCache} option.
+4. Enable the \mref{markdownOptionFrozenCache} option.
 5. Publish the source code of the plain \TeX{} document and the
    \Opt{cacheDir} directory.
 
@@ -6948,13 +6969,13 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 %
 % The \mdef{markdownOptionHelperScriptFileName} macro sets the filename of the
 % helper Lua script file that is created during the conversion from markdown to
-% plain \TeX{} in \TeX{} engines without the \m{directlua} primitive. It
-% defaults to \m{jobname}`.markdown.lua`, where \m{jobname} is the base name
+% plain \TeX{} in \TeX{} engines without the \mref{directlua} primitive. It
+% defaults to \mref{jobname}`.markdown.lua`, where \mref{jobname} is the base name
 % of the document being typeset.
 %
 % The expansion of this macro must not contain quotation marks (`"`) or
 % backslash symbols (`\`). Mind that \TeX{} engines tend to
-% put quotation marks around \m{jobname}, when it contains spaces.
+% put quotation marks around \mref{jobname}, when it contains spaces.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -6965,9 +6986,9 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 %
 % The \mdef{markdownOptionInputTempFileName} macro sets the filename of the
 % temporary input file that is created during the conversion from markdown to
-% plain \TeX{} in \m{markdownMode} other than `2`. It defaults to
-% \m{jobname}`.markdown.out`. The same limitations as in the case of the
-% \m{markdownOptionHelperScriptFileName} macro apply here.
+% plain \TeX{} in \mref{markdownMode} other than `2`. It defaults to
+% \mref{jobname}`.markdown.out`. The same limitations as in the case of the
+% \mref{markdownOptionHelperScriptFileName} macro apply here.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -6978,9 +6999,9 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 %
 % The \mdef{markdownOptionOutputTempFileName} macro sets the filename of the
 % temporary output file that is created during the conversion from markdown to
-% plain \TeX{} in \m{markdownMode} other than `2`. It defaults to
-% \m{jobname}`.markdown.out`. The same limitations apply here as in the case
-% of the \m{markdownOptionHelperScriptFileName} macro.
+% plain \TeX{} in \mref{markdownMode} other than `2`. It defaults to
+% \mref{jobname}`.markdown.out`. The same limitations apply here as in the case
+% of the \mref{markdownOptionHelperScriptFileName} macro.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -6991,9 +7012,9 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 %
 % The \mdef{markdownOptionErrorTempFileName} macro sets the filename of the
 % temporary output file that is created when a Lua error is encountered during
-% the conversion from markdown to plain \TeX{} in \m{markdownMode} other than
-% `2`. It defaults to \m{jobname}`.markdown.err`. The same limitations
-% apply here as in the case of the \m{markdownOptionHelperScriptFileName}
+% the conversion from markdown to plain \TeX{} in \mref{markdownMode} other than
+% `2`. It defaults to \mref{jobname}`.markdown.err`. The same limitations
+% apply here as in the case of the \mref{markdownOptionHelperScriptFileName}
 % macro.
 %
 % \end{markdown}
@@ -7012,7 +7033,7 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 % your \TeX{} engine for the package to function correctly. We need this macro
 % to make the Lua implementation aware where it should store the helper files.
 % The same limitations apply here as in the case of the
-% \m{markdownOptionHelperScriptFileName} macro.
+% \mref{markdownOptionHelperScriptFileName} macro.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -7023,10 +7044,10 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 %
 % The \mdef{markdownOptionCacheDir} macro corresponds to the Lua interface
 % \Opt{cacheDir} option that sets the path to the directory that will contain
-% the produced cache files. The option defaults to `_markdown_`\m{jobname},
+% the produced cache files. The option defaults to `_markdown_`\mref{jobname},
 % which is a similar naming scheme to the one used by the \pkg{minted} \LaTeX{}
 % package. The same limitations apply here as in the case of the
-% \m{markdownOptionHelperScriptFileName} macro.
+% \mref{markdownOptionHelperScriptFileName} macro.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -7040,7 +7061,7 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 % file (frozen cache) that will contain a mapping between an enumeration of the
 % markdown documents in the plain \TeX{} document and their auxiliary cache
 % files. The option defaults to `frozenCache.tex`. The same limitations apply
-% here as in the case of the \m{markdownOptionHelperScriptFileName} macro.
+% here as in the case of the \mref{markdownOptionHelperScriptFileName} macro.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -7122,7 +7143,7 @@ bug](https://github.com/witiko/markdown/issues).
 %
 % For the macros that correspond to the non-boolean options recognized by the
 % Lua interface, the same limitations apply here in the case of the
-% \m{markdownOptionHelperScriptFileName} macro.
+% \mref{markdownOptionHelperScriptFileName} macro.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -8274,7 +8295,7 @@ and the title of the content block.
 
 The \mdef{markdownRendererContentBlockOnlineImage} macro represents an
 iA\,Writer online image content block. The macro receives the same arguments
-as \m{markdownRendererContentBlock}.
+as \mref{markdownRendererContentBlock}.
 
 % \end{markdown}
 %
@@ -10824,7 +10845,7 @@ following text:
 The \mdef{markdownRendererTextCite} macro represents a string of one or more
 text citations. This macro will only be produced, when the
 \Opt{citations} option is enabled. The macro receives parameters in the same 
-format as the \m{markdownRendererCite} macro.
+format as the \mref{markdownRendererCite} macro.
 
 % \end{markdown}
 %
@@ -11296,7 +11317,7 @@ following text:
 % The \mdef{markdownInfo}, \mdef{markdownWarning}, and \mdef{markdownError}
 % macros perform logging for the Markdown package. Their first argument
 % specifies the text of the info, warning, or error message.
-% The \m{markdownError} macro receives a second argument that provides a help
+% The \mref{markdownError} macro receives a second argument that provides a help
 % text. You may redefine these macros to redirect and process the info,
 % warning, and error messages.
 %
@@ -11315,9 +11336,9 @@ following text:
 % \par
 % \begin{markdown}
 %
-% The \mdef{markdownReadAndConvert} macro implements the \m{markdownBegin}
+% The \mdef{markdownReadAndConvert} macro implements the \mref{markdownBegin}
 % macro. The first argument specifies the token sequence that will terminate
-% the markdown input (\m{markdownEnd} in the instance of the \m{markdownBegin}
+% the markdown input (\mref{markdownEnd} in the instance of the \mref{markdownBegin}
 % macro) when the plain \TeX{} special characters have had their category
 % changed to *other*. The second argument specifies the token sequence
 % that will actually be inserted into the document, when the ending token
@@ -11353,13 +11374,13 @@ following text:
 % as follows:
 %
 % - `0` – Shell escape via the 18 output file stream
-% - `1` – Shell escape via the Lua \luam{os.execute} method
+% - `1` – Shell escape via the Lua \luamref{os.execute} method
 % - `2` – Direct Lua access
 %
 % By defining the macro, the user can coerce the package to use a specific mode.
 % If the user does not define the macro prior to loading the plain \TeX{}
 % implementation, the correct value will be automatically detected. The outcome
-% of changing the value of \m{markdownMode} after the implementation has been
+% of changing the value of \mref{markdownMode} after the implementation has been
 % loaded is undefined.
 %
 % \end{markdown}
@@ -11406,8 +11427,8 @@ idioms, such as package options and environments.
 
 The \LaTeX{} interface accepts the same options as the plain \TeX{} interface,
 but now the options are specified as \meta{key}${}={}$\meta{value} pairs and
-they are passed either as package options, in the \m{markdownSetup} command, or
-as parameters for the \envm{markdown*} \LaTeX{} environment.
+they are passed either as package options, in the \mref{markdownSetup} command, or
+as parameters for the \envmref{markdown*} \LaTeX{} environment.
 
 Using a text editor, create a text document named `document.tex` with the
 following content:
@@ -11462,7 +11483,7 @@ pdflatex --shell-escape document.tex
 % \end{Verbatim}
 % \begin{markdown}
 % where \meta{options} are the \LaTeX{} interface options (see Section
-% \vref{sec:latexoptions}). Note that \meta{options} inside the \m{usepackage}
+% \vref{sec:latexoptions}). Note that \meta{options} inside the \mref{usepackage}
 % macro may not set the `markdownRenderers` (see Section
 % \vref{sec:latexrenderers}) and `markdownRendererPrototypes` (see Section
 % \vref{sec:latexrendererprototypes}) keys. This limitation is due to the way
@@ -11474,11 +11495,11 @@ pdflatex --shell-escape document.tex
 %
 %### Typesetting Markdown
 % The interface exposes the \envmdef{markdown} and \envmdef{markdown*}
-% \LaTeX{} environments, and redefines the \m{markdownInput} command.
+% \LaTeX{} environments, and redefines the \mref{markdownInput} command.
 %
-% The \envm{markdown} and \envm{markdown*} \LaTeX{} environments are used to
+% The \envmref{markdown} and \envmref{markdown*} \LaTeX{} environments are used to
 % typeset markdown document fragments. The starred version of the
-% \envm{markdown} environment accepts \LaTeX{} interface options (see
+% \envmref{markdown} environment accepts \LaTeX{} interface options (see
 % Section \vref{sec:latexoptions}) as its only argument. These options will
 % only influence this markdown document fragment.
 %
@@ -11489,17 +11510,17 @@ pdflatex --shell-escape document.tex
 %    \end{macrocode}
 % \markdownBegin
 %
-% You may prepend your own code to the \m{markdown} macro and append your own
-% code to the \m{endmarkdown} macro to produce special effects before and after
-% the \envm{markdown} \LaTeX{} environment (and likewise for the starred
+% You may prepend your own code to the \mref{markdown} macro and append your own
+% code to the \mref{endmarkdown} macro to produce special effects before and after
+% the \envmref{markdown} \LaTeX{} environment (and likewise for the starred
 % version).
 %
-% Note that the \envm{markdown} and \envm{markdown*} \LaTeX{} environments are
-% subject to the same limitations as the \m{markdownBegin} and \m{markdownEnd}
+% Note that the \envmref{markdown} and \envmref{markdown*} \LaTeX{} environments are
+% subject to the same limitations as the \mref{markdownBegin} and \mref{markdownEnd}
 % macros exposed by the plain \TeX{} interface.
 %
 % The following example \LaTeX{} code showcases the usage of the
-% \envm{markdown} and \envm{markdown*} environments:
+% \envmref{markdown} and \envmref{markdown*} environments:
 % ``` tex
 % \documentclass{article}            \documentclass{article}
 % \usepackage{markdown}              \usepackage{markdown}
@@ -11512,16 +11533,16 @@ pdflatex --shell-escape document.tex
 % \end{document}                     \end{document}
 % ```````
 %
-% The \m{markdownInput} macro accepts a single mandatory parameter containing
+% The \mref{markdownInput} macro accepts a single mandatory parameter containing
 % the filename of a markdown document and expands to the result of the
 % conversion of the input markdown document to plain \TeX{}.  Unlike the
-% \m{markdownInput} macro provided by the plain \TeX{} interface, this macro
+% \mref{markdownInput} macro provided by the plain \TeX{} interface, this macro
 % also accepts \LaTeX{} interface options (see Section \vref{sec:latexoptions})
 % as its optional argument. These options will only influnce this markdown
 % document.
 %
 % The following example \LaTeX{} code showcases the usage of the
-% \m{markdownInput} macro:
+% \mref{markdownInput} macro:
 % ``` tex
 % \documentclass{article}
 % \usepackage{markdown}
@@ -11549,9 +11570,9 @@ pdflatex --shell-escape document.tex
 % Sections \vref{sec:texrenderersuser} and \vref{sec:texrendererprototypes}).
 %
 % The \LaTeX{} options may be specified when loading the \LaTeX{} package, when
-% using the \envm{markdown*} \LaTeX{} environment or the \m{markdownInput}
+% using the \envmref{markdown*} \LaTeX{} environment or the \mref{markdownInput}
 % macro (see Section \vref{sec:latexinterface}), or via the \mdef{markdownSetup}
-% macro. The \m{markdownSetup} macro receives the options to set up as its only
+% macro. The \mref{markdownSetup} macro receives the options to set up as its only
 % argument:
 %
 % \markdownEnd
@@ -11562,7 +11583,7 @@ pdflatex --shell-escape document.tex
 % \begin{markdown}
 %
 % We may also store \LaTeX{} options as *setup snippets* and invoke them later
-% using the \mdef{markdownSetupSnippet} macro. The \m{markdownSetupSnippet}
+% using the \mdef{markdownSetupSnippet} macro. The \mref{markdownSetupSnippet}
 % macro receives two arguments: the name of the setup snippet and the options
 % to store:
 %
@@ -11654,7 +11675,7 @@ high-level goals without low-level programming.
 % (\texttt{_}), the theme name is a value that is *qualified* and contains no
 % underscores, and a value is qualified if and only if it contains at least one
 % forward slash. Themes are inspired by the Beamer \LaTeX{} package, which
-% provides similar functionality with its \m{usetheme} macro [@tantau21,
+% provides similar functionality with its \mref{usetheme} macro [@tantau21,
 % Section 15.1].
 %
 % Theme names must be qualified to minimize naming conflicts between different
@@ -11673,7 +11694,7 @@ high-level goals without low-level programming.
 % package named `markdownthemewitiko_beamer_MU.sty`.
 %
 % If the \LaTeX{} option with key `theme` is (repeatedly) specified in the
-% \m{usepackage} macro, the loading of the theme(s) will be postponed in
+% \mref{usepackage} macro, the loading of the theme(s) will be postponed in
 % first-in-first-out order until after the Markdown \LaTeX{} package has been
 % loaded. Otherwise, the theme(s) will be loaded immediately. For example,
 % there is a theme named `witiko/dot`, which typesets fenced code blocks with
@@ -11836,7 +11857,7 @@ Example themes provided with the Markdown package include:
 %    ```
      The theme requires a Unix-like operating system with GNU Diffutils and
      Graphviz installed. The theme also requires shell access unless the
-     \m{markdownOptionFrozenCache} plain \TeX{} option is enabled.
+     \mref{markdownOptionFrozenCache} plain \TeX{} option is enabled.
 
 % \markdownEnd
 % \iffalse
@@ -11929,7 +11950,7 @@ conference article:
      The theme requires the \pkg{catchfile} \LaTeX{} package and a Unix-like
      operating system with GNU Coreutils `md5sum` and either GNU Wget or cURL
      installed. The theme also requires shell access unless the
-     \m{markdownOptionFrozenCache} plain \TeX{} option is enabled.
+     \mref{markdownOptionFrozenCache} plain \TeX{} option is enabled.
 
 % \markdownEnd
 % \iffalse
@@ -11963,7 +11984,6 @@ following image:
 % \fi
 %  \begin{macrocode}
 \ProvidesPackage{markdownthemewitiko_graphicx_http}[2021/03/22]%
-\RequirePackage{catchfile}
 %    \end{macrocode}
 % \iffalse
 %</latex-themes-witiko-graphicx-http>
@@ -12176,7 +12196,7 @@ The following ordered list will be preceded by roman numerals:
 % \par
 % \begin{markdown}
 %
-% The \m{markdownOptionFinalizeCache} and \m{markdownOptionFrozenCache} plain
+% The \mref{markdownOptionFinalizeCache} and \mref{markdownOptionFrozenCache} plain
 % \TeX{} options are exposed through \LaTeX{} options with keys `finalizeCache`
 % and `frozenCache`.
 %
@@ -12214,8 +12234,8 @@ The following ordered list will be preceded by roman numerals:
 % \begin{markdown}
 %
 % The following example \LaTeX{} code showcases a possible configuration of
-% plain \TeX{} interface options \m{markdownOptionHybrid},
-% \m{markdownOptionSmartEllipses}, and \m{markdownOptionCacheDir}.
+% plain \TeX{} interface options \mref{markdownOptionHybrid},
+% \mref{markdownOptionSmartEllipses}, and \mref{markdownOptionCacheDir}.
 % ``` tex
 % \markdownSetup{
 %   hybrid,
@@ -12385,7 +12405,7 @@ The following ordered list will be preceded by roman numerals:
 % \begin{markdown}
 %
 % The following example \LaTeX{} code showcases a possible configuration of the
-% \m{markdownRendererLink} and \m{markdownRendererEmphasis} markdown token
+% \mref{markdownRendererLink} and \mref{markdownRendererEmphasis} markdown token
 % renderers.
 % ``` tex
 % \markdownSetup{
@@ -12556,7 +12576,7 @@ The following ordered list will be preceded by roman numerals:
 % \begin{markdown}
 %
 % The following example \LaTeX{} code showcases a possible configuration of the
-% \m{markdownRendererImagePrototype} and \m{markdownRendererCodeSpanPrototype}
+% \mref{markdownRendererImagePrototype} and \mref{markdownRendererCodeSpanPrototype}
 % markdown token renderer prototypes.
 % ``` tex
 % \markdownSetup{
@@ -12646,7 +12666,7 @@ texexec --passon=--shell-escape document.tex
 % \usemodule[t][markdown]
 % ```````
 % \noindent It is expected that the special plain \TeX{} characters have the
-% expected category codes, when \m{input}ting the file.
+% expected category codes, when \mref{input}ting the file.
 %
 %### Typesetting Markdown
 % The interface exposes the \mdef{startmarkdown} and \mdef{stopmarkdown} macro
@@ -12660,16 +12680,16 @@ texexec --passon=--shell-escape document.tex
 % \par
 % \begin{markdown}
 %
-% You may prepend your own code to the \m{startmarkdown} macro and redefine the
-% \m{stopmarkdown} macro to produce special effects before and after the
+% You may prepend your own code to the \mref{startmarkdown} macro and redefine the
+% \mref{stopmarkdown} macro to produce special effects before and after the
 % markdown block.
 %
-% Note that the \m{startmarkdown} and \m{stopmarkdown} macros
-% are subject to the same limitations as the \m{markdownBegin} and
-% \m{markdownEnd} macros exposed by the plain \TeX{} interface.
+% Note that the \mref{startmarkdown} and \mref{stopmarkdown} macros
+% are subject to the same limitations as the \mref{markdownBegin} and
+% \mref{markdownEnd} macros exposed by the plain \TeX{} interface.
 %
 % The following example \Hologo{ConTeXt} code showcases the usage of the
-% \m{startmarkdown} and \m{stopmarkdown} macros:
+% \mref{startmarkdown} and \mref{stopmarkdown} macros:
 % ``` tex
 % \usemodule[t][markdown]
 % \starttext
@@ -12869,7 +12889,7 @@ end
 %
 % The \luamdef{util.rope_to_string} method converts a rope `rope` to a
 % string and returns it. For the definition of a rope, see the definition of
-% the \luam{util.walk} method.
+% the \luamref{util.walk} method.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -12883,7 +12903,7 @@ end
 % \begin{markdown}
 %
 % The \luamdef{util.rope_last} method retrieves the last item in a rope. For
-% the definition of a rope, see the definition of the \luam{util.walk} method.
+% the definition of a rope, see the definition of the \luamref{util.walk} method.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -15115,16 +15135,16 @@ end
 %
 %### Plain \TeX{} Writer
 % \label{sec:texwriter}
-% This section documents the \luam{writer} object, which implements the
+% This section documents the \luamref{writer} object, which implements the
 % routines for producing the \TeX{} output. The object is an amalgamate of the
 % generic, \TeX{}, \LaTeX{} writer objects that were located in the
 % `lunamark/writer/generic.lua`, `lunamark/writer/tex.lua`, and
 % `lunamark/writer/latex.lua` files in the Lunamark Lua module.
 %
 % Although not specified in the Lua interface (see Section
-% \vref{sec:luainterface}), the \luam{writer} object is exported, so that the
+% \vref{sec:luainterface}), the \luamref{writer} object is exported, so that the
 % curious user could easily tinker with the methods of the objects produced by
-% the \luam{writer.new} method described below. The user should be aware,
+% the \luamref{writer.new} method described below. The user should be aware,
 % however, that the implementation may change in a future revision.
 %
 % \end{markdown}
@@ -15139,7 +15159,7 @@ M.writer = {}
 % \vref{sec:luaoptions}) `options`. When `options` are unspecified, it is
 % assumed that an empty table was passed to the method.
 %
-% The objects produced by the \luam{writer.new} method expose instance methods
+% The objects produced by the \luamref{writer.new} method expose instance methods
 % and variables of their own. As a convention, I will refer to these
 % \meta{member}s as `writer->`\meta{member}. All member variables are
 % immutable unless explicitly stated otherwise.
@@ -15153,7 +15173,7 @@ function M.writer.new(options)
 % \par
 % \begin{markdown}
 %
-% Make the `options` table inherit from the \luam{defaultOptions} table.
+% Make the `options` table inherit from the \luamref{defaultOptions} table.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -15165,7 +15185,7 @@ function M.writer.new(options)
 %
 % Parse the \Opt{slice} option and define \luamdef{writer->slice\_begin}
 % \luamdef{writer->slice\_end}, and \luamdef{writer->is\_writing}. The
-% \luam{writer->is\_writing} member variable is mutable.
+% \luamref{writer->is\_writing} member variable is mutable.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -15368,8 +15388,8 @@ function M.writer.new(options)
 % \par
 % \begin{markdown}
 %
-% Use the \luam{escaped_chars}, \luam{escaped_uri_chars},
-% \luam{escaped_citation_chars}, and \luam{escaped_minimal_strings} tables
+% Use the \luamref{escaped_chars}, \luamref{escaped_uri_chars},
+% \luamref{escaped_citation_chars}, and \luamref{escaped_minimal_strings} tables
 % to create the \luamdef{escape}, \luamdef{escape_citation},
 % \luamdef{escape_uri}, and \luamdef{escape_minimal} escaper functions.
 %
@@ -15389,8 +15409,8 @@ function M.writer.new(options)
 % function that will transform an input citation name `c` to the output format,
 % and \luamdef{writer->uri} as a function that will transform an input
 % \acro{uri} `u` to the output format. If the \Opt{hybrid} option is enabled,
-% use the \luam{escape_minimal}. Otherwise, use the \luam{escape},
-% \luam{escape_citation}, and \luam{escape_uri} functions.
+% use the \luamref{escape_minimal}. Otherwise, use the \luamref{escape},
+% \luamref{escape_citation}, and \luamref{escape_uri} functions.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -15408,8 +15428,8 @@ function M.writer.new(options)
 % \begin{markdown}
 %
 % Define \luamdef{writer->escape} as a function that will transform an input
-% plain text span to the output format. Unlike the \luam{writer->string}
-% function, \luam{writer->escape} always uses the \luam{escape} function,
+% plain text span to the output format. Unlike the \luamref{writer->string}
+% function, \luamref{writer->escape} always uses the \luamref{escape} function,
 % even when the \Opt{hybrid} option is enabled.
 %
 % \end{markdown}
@@ -15496,9 +15516,9 @@ function M.writer.new(options)
 % \begin{markdown}
 %
 % The \luamdef{languages_json} table maps programming language filename
-% extensions to fence infostrings. All `options.`\luam{contentBlocksLanguageMap}
+% extensions to fence infostrings. All `options.`\luamref{contentBlocksLanguageMap}
 % files located by the KPathSea library are loaded into a chain of tables.
-% \luam{languages_json} corresponds to the first table and is chained with
+% \luamref{languages_json} corresponds to the first table and is chained with
 % the rest via Lua metatables.
 %
 % \end{markdown}
@@ -15511,7 +15531,7 @@ function M.writer.new(options)
 % \begin{markdown}
 %
 % If the KPathSea library is unavailable, perhaps because we are using
-% LuaMeta\TeX, we will only locate the `options.`\luam{contentBlocksLanguageMap}
+% LuaMeta\TeX, we will only locate the `options.`\luamref{contentBlocksLanguageMap}
 % in the current working directory:
 %
 % \end{markdown}
@@ -15883,7 +15903,7 @@ function M.writer.new(options)
 %
 % Define \luamdef{writer->active\_headings} as a stack of identifiers
 % of the headings that are currently active. The
-% \luam{writer->active\_headings} member variable is mutable.
+% \luamref{writer->active\_headings} member variable is mutable.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -16041,7 +16061,7 @@ function M.writer.new(options)
 %
 % Define \luamdef{writer->defer_call} as a function that will encapsulate the
 % input function `f`, so that `f` is called with the state of the writer at the
-% time of calling \luam{writer->defer_call}.
+% time of calling \luamref{writer->defer_call}.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -16063,7 +16083,7 @@ end
 %
 %### Parsers
 % The \luamdef{parsers} hash table stores \acro{peg} patterns that are
-% static and can be reused between different \luam{reader} objects.
+% static and can be reused between different \luamref{reader} objects.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -16927,15 +16947,15 @@ end
 %
 %### Markdown Reader
 % \label{sec:markdownreader}
-% This section documents the \luam{reader} object, which implements the
+% This section documents the \luamref{reader} object, which implements the
 % routines for parsing the markdown input. The object corresponds to the
 % markdown reader object that was located in the
 % `lunamark/reader/markdown.lua` file in the Lunamark Lua module.
 %
 % Although not specified in the Lua interface (see Section
-% \vref{sec:luainterface}), the \luam{reader} object is exported, so that the
+% \vref{sec:luainterface}), the \luamref{reader} object is exported, so that the
 % curious user could easily tinker with the methods of the objects produced by
-% the \luam{reader.new} method described below. The user should be aware,
+% the \luamref{reader.new} method described below. The user should be aware,
 % however, that the implementation may change in a future revision.
 %
 % The \luamdef{reader.new} method creates and returns a new \TeX{} reader
@@ -16944,7 +16964,7 @@ end
 % `options` are unspecified, it is assumed that an empty table was passed to
 % the method.
 %
-% The objects produced by the \luam{reader.new} method expose instance methods
+% The objects produced by the \luamref{reader.new} method expose instance methods
 % and variables of their own. As a convention, I will refer to these
 % \meta{member}s as `reader->`\meta{member}.
 %
@@ -16958,7 +16978,7 @@ function M.reader.new(writer, options)
 % \par
 % \begin{markdown}
 %
-% Make the `options` table inherit from the \luam{defaultOptions} table.
+% Make the `options` table inherit from the \luamref{defaultOptions} table.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -17019,9 +17039,9 @@ function M.reader.new(writer, options)
 % \par
 % \begin{markdown}
 %
-% The \luamdef{larsers} (as in ``local \luam{parsers}'') hash table stores
+% The \luamdef{larsers} (as in ``local \luamref{parsers}'') hash table stores
 % \acro{peg} patterns that depend on the received `options`, which impedes
-% their reuse between different \luam{reader} objects.
+% their reuse between different \luamref{reader} objects.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -17988,7 +18008,7 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
 %    \end{macrocode}
 % \begin{markdown}
 % Produce the cache file and transform its filename to plain \TeX{} output
-% via the \luam{writer->pack} method.
+% via the \luamref{writer->pack} method.
 % \end{markdown}
 %  \begin{macrocode}
     local name = util.cache(options.cacheDir, input, salt, function(input)
@@ -18026,7 +18046,7 @@ end
 % \begin{markdown}
 %
 %### Conversion from Markdown to Plain \TeX{}
-% The \luam{new} method returns the \luam{reader->convert} function of a reader
+% The \luamref{new} method returns the \luamref{reader->convert} function of a reader
 % object associated with the Lua interface options (see Section
 % \vref{sec:luaoptions}) `options` and with a writer object associated with
 % `options`.
@@ -18148,12 +18168,12 @@ end
 %
 %### Finalizing and Freezing the Cache
 %
-% When the \m{markdownOptionFinalizeCache} option is enabled, then the
+% When the \mref{markdownOptionFinalizeCache} option is enabled, then the
 % \mdef{markdownFrozenCacheCounter} counter is used to enumerate the markdown
 % documents using the Lua interface \Opt{frozenCacheCounter} option.
 %
-% When the \m{markdownOptionFrozenCache} option is enabled, then the
-% \m{markdownFrozenCacheCounter} counter is used to render markdown documents
+% When the \mref{markdownOptionFrozenCache} option is enabled, then the
+% \mref{markdownFrozenCacheCounter} counter is used to render markdown documents
 % from the frozen cache without invoking Lua.
 %
 % \end{markdown}
@@ -18351,14 +18371,14 @@ end
 %
 % The \mdef{markdownPrepare} macro contains the Lua code that is executed prior
 % to any conversion from markdown to plain \TeX{}. It exposes the
-% \luam{convert} function for the use by any further Lua code.
+% \luamref{convert} function for the use by any further Lua code.
 %
 % \end{markdown}
 %  \begin{macrocode}
 \def\markdownPrepare{%
 %    \end{macrocode}
 % \begin{markdown}
-% First, ensure that the \m{markdownOptionCacheDir} directory exists.
+% First, ensure that the \mref{markdownOptionCacheDir} directory exists.
 % \end{markdown}
 %  \begin{macrocode}
   local lfs = require("lfs")
@@ -18370,7 +18390,7 @@ end
 % \begin{markdown}
 % Next, load the `markdown` module and create a converter function using
 % the plain \TeX{} options, which were serialized to a Lua table via the
-% \m{markdownLuaOptions} macro.
+% \mref{markdownLuaOptions} macro.
 % \end{markdown}
 %  \begin{macrocode}
   local md = require("markdown")
@@ -18424,8 +18444,8 @@ end
 % \par
 % \begin{markdown}
 %
-% The \m{markdownReadAndConvert} macro is largely a rewrite of the
-% \Hologo{LaTeX2e} \m{filecontents} macro to plain \TeX{}.
+% The \mref{markdownReadAndConvert} macro is largely a rewrite of the
+% \Hologo{LaTeX2e} \mref{filecontents} macro to plain \TeX{}.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -18437,7 +18457,7 @@ end
 % backslash as an ordinary character inside the macro definition.  Likewise,
 % swap the character codes of the percent sign (`%`) and the ampersand (`@`),
 % so that we can remove percent signs from the beginning of lines when
-% \m{markdownOptionStripPercentSigns} is enabled.
+% \mref{markdownOptionStripPercentSigns} is enabled.
 % \end{markdown}
 %  \begin{macrocode}
   \catcode`\^^M=13%
@@ -18451,7 +18471,7 @@ end
 %    \end{macrocode}
 % \begin{markdown}
 % If we are not reading markdown documents from the frozen cache,
-% open the \m{markdownOptionInputTempFileName} file for writing.
+% open the \mref{markdownOptionInputTempFileName} file for writing.
 % \end{markdown}
 %  \begin{macrocode}
     |markdownIfOption{FrozenCache}{}{@
@@ -18476,7 +18496,7 @@ end
 % \begin{markdown}
 % The \mdef{markdownReadAndConvertStripPercentSigns} macro will process the
 % individual lines of output, stipping away leading percent signs (`%`) when
-% \m{markdownOptionStripPercentSigns} is enabled.
+% \mref{markdownOptionStripPercentSigns} is enabled.
 % Notice the use of the comments (`@`) to ensure that the entire macro is at
 % a single line and therefore no (active) newline symbols
 % (`^^M`) are produced.
@@ -18512,7 +18532,7 @@ end
 % \begin{markdown}
 % If we are not reading markdown documents from the frozen cache and the ending
 % token sequence does not appear in the line, store the line in the
-% \m{markdownOptionInputTempFileName} file.
+% \mref{markdownOptionInputTempFileName} file.
 % If we are reading markdown documents from the frozen cache and the
 % ending token sequence does not appear in the line, gobble the line.
 % \end{markdown}
@@ -18525,10 +18545,10 @@ end
 %    \end{macrocode}
 % \begin{markdown}
 % When the ending token sequence appears in the line, make the next newline
-% character close the \m{markdownOptionInputTempFileName} file, return the
+% character close the \mref{markdownOptionInputTempFileName} file, return the
 % character categories back to the former state, convert the
-% \m{markdownOptionInputTempFileName} file from markdown to plain \TeX{},
-% \m{input} the result of the conversion, and expand the ending control
+% \mref{markdownOptionInputTempFileName} file from markdown to plain \TeX{},
+% \mref{input} the result of the conversion, and expand the ending control
 % sequence.
 % \end{markdown}
 %  \begin{macrocode}
@@ -18562,7 +18582,7 @@ end
 % \begin{markdown}
 % Make the newline character active at expansion time and make it consume the
 % rest of the line on expansion. Throw away the rest of the first line and
-% pass the second line to the \m{markdownReadAndConvertProcessLine} macro.
+% pass the second line to the \mref{markdownReadAndConvertProcessLine} macro.
 % \end{markdown}
 %  \begin{macrocode}
     |catcode`|^^M=13@
@@ -18585,9 +18605,9 @@ end
 % \label{sec:luabridge}
 % The following \TeX{} code is intended for \TeX{} engines that do not provide
 % direct access to Lua, but expose the shell of the operating system. This
-% corresponds to the \m{markdownMode} values of `0` and `1`.
+% corresponds to the \mref{markdownMode} values of `0` and `1`.
 %
-% The \m{markdownLuaExecute} macro defined here and in Section
+% The \mref{markdownLuaExecute} macro defined here and in Section
 % \vref{sec:directlua} are meant to be indistinguishable to the remaining code.
 %
 % The package assumes that although the user is not using the Lua\TeX{} engine,
@@ -18611,10 +18631,10 @@ end
 % whether the shell access is enabled (`1`), disabled (`0`), or restricted
 % (`2`).
 %
-% Inherit the value of the the \m{pdfshellescape} (Lua\TeX{}, \Hologo{pdfTeX})
-% or the \m{shellescape} (\Hologo{XeTeX}) commands. If neither of these
+% Inherit the value of the the \mref{pdfshellescape} (Lua\TeX{}, \Hologo{pdfTeX})
+% or the \mref{shellescape} (\Hologo{XeTeX}) commands. If neither of these
 % commands is defined and Lua is available, attempt to access the
-% \luam{status.shell_escape} configuration item.
+% \luamref{status.shell_escape} configuration item.
 %
 % If you cannot detect, whether the shell access is enabled, act as if it were.
 %
@@ -18640,7 +18660,7 @@ end
 %
 % The \mdef{markdownExecuteDirect} macro executes the code it has received as
 % its first argument by writing it to the output file stream 18, if Lua is
-% unavailable, or by using the Lua \luam{os.execute} method otherwise.
+% unavailable, or by using the Lua \luamref{os.execute} method otherwise.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -18655,8 +18675,8 @@ end
 % \begin{markdown}
 %
 % The \mdef{markdownExecute} macro is a wrapper on top of
-% \m{markdownExecuteDirect} that checks the value of
-% \m{markdownExecuteShellEscape} and prints an error message if the shell is
+% \mref{markdownExecuteDirect} that checks the value of
+% \mref{markdownExecuteShellEscape} and prints an error message if the shell is
 % inaccessible.
 %
 % \end{markdown}
@@ -18675,8 +18695,8 @@ end
 %
 % The \mdef{markdownLuaExecute} macro executes the Lua code it has received as
 % its first argument. The Lua code may not directly interact with the \TeX{}
-% engine, but it can use the \luam{print} function in the same manner it
-% would use the \luam{tex.print} method.
+% engine, but it can use the \luamref{print} function in the same manner it
+% would use the \luamref{tex.print} method.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -18692,7 +18712,7 @@ end
   |gdef|markdownLuaExecute#1{%
 %    \end{macrocode}
 % \begin{markdown}
-% Create the file \m{markdownOptionHelperScriptFileName} and fill it with the
+% Create the file \mref{markdownOptionHelperScriptFileName} and fill it with the
 % input Lua code prepended with \pkg{kpathsea} initialization, so that Lua
 % modules from the \TeX{} distribution are available.
 % \end{markdown}
@@ -18709,7 +18729,7 @@ end
       end)
 %    \end{macrocode}
 % \begin{markdown}
-% If there was an error, use the file \m{markdownOptionErrorTempFileName} to
+% If there was an error, use the file \mref{markdownOptionErrorTempFileName} to
 % store the error message.
 % \end{markdown}
 %  \begin{macrocode}
@@ -18729,9 +18749,9 @@ end
     |immediate|closeout|markdownOutputFileStream
 %    \end{macrocode}
 % \begin{markdown}
-% Execute the generated \m{markdownOptionHelperScriptFileName} Lua script using
+% Execute the generated \mref{markdownOptionHelperScriptFileName} Lua script using
 % the \TeX{}Lua binary and store the output in the
-% \m{markdownOptionOutputTempFileName} file.
+% \mref{markdownOptionOutputTempFileName} file.
 % \end{markdown}
 %  \begin{macrocode}
     |markdownInfo{Executing a helper Lua script from the file
@@ -18743,7 +18763,7 @@ end
       /|markdownOptionOutputTempFileName"}%
 %    \end{macrocode}
 % \begin{markdown}
-% \m{input} the generated \m{markdownOptionOutputTempFileName} file.
+% \mref{input} the generated \mref{markdownOptionOutputTempFileName} file.
 % \end{markdown}
 %  \begin{macrocode}
     |input|markdownOptionOutputTempFileName|relax}%
@@ -18755,9 +18775,9 @@ end
 %### Direct Lua Access
 % \label{sec:directlua}
 % The following \TeX{} code is intended for \TeX{} engines that provide
-% direct access to Lua (Lua\TeX{}). The macro \m{markdownLuaExecute} defined
+% direct access to Lua (Lua\TeX{}). The macro \mref{markdownLuaExecute} defined
 % here and in Section \vref{sec:luabridge} are meant to be indistinguishable to
-% the remaining code. This corresponds to the \m{markdownMode} value of `2`.
+% the remaining code. This corresponds to the \mref{markdownMode} value of `2`.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -18767,10 +18787,10 @@ end
 % \par
 % \begin{markdown}
 %
-% The direct Lua access version of the \m{markdownLuaExecute} macro is defined
-% in terms of the \m{directlua} primitive. The \luam{print} function is set as
-% an alias to the \m{tex.print} method in order to mimic the behaviour of the
-% \m{markdownLuaExecute} definition from Section \vref{sec:luabridge},
+% The direct Lua access version of the \mref{markdownLuaExecute} macro is defined
+% in terms of the \mref{directlua} primitive. The \luamref{print} function is set as
+% an alias to the \mref{tex.print} method in order to mimic the behaviour of the
+% \mref{markdownLuaExecute} definition from Section \vref{sec:luabridge},
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -18782,8 +18802,8 @@ end
 %
 %### Typesetting Markdown
 %
-% The \m{markdownInput} macro uses an implementation of the
-% \m{markdownLuaExecute} macro to convert the contents of the file whose
+% The \mref{markdownInput} macro uses an implementation of the
+% \mref{markdownLuaExecute} macro to convert the contents of the file whose
 % filename it has received as its single argument from markdown to plain
 % \TeX{}.
 %
@@ -18812,7 +18832,7 @@ end
 % \begin{markdown}
 % If we are reading from the frozen cache, input it, expand the corresponding
 % `\markdownFrozenCache`\meta{number} macro, and increment
-% \m{markdownFrozenCacheCounter}.
+% \mref{markdownFrozenCacheCounter}.
 % \end{markdown}
 %  \begin{macrocode}
     |markdownIfOption{FrozenCache}{%
@@ -18853,7 +18873,7 @@ end
 %    \end{macrocode}
 % \begin{markdown}
 % If we are finalizing the frozen cache, increment
-% \m{markdownFrozenCacheCounter}.
+% \mref{markdownFrozenCacheCounter}.
 % \end{markdown}
 %  \begin{macrocode}
       |markdownIfOption{FinalizeCache}{%
@@ -18880,8 +18900,8 @@ end
 % existing plain \TeX{} implementation.
 %
 % The \LaTeX{} implementation redefines the plain \TeX{} logging macros (see
-% Section \vref{sec:texinterfacelogging}) to use the \LaTeX{} \m{PackageInfo},
-% \m{PackageWarning}, and \m{PackageError} macros.
+% Section \vref{sec:texinterfacelogging}) to use the \LaTeX{} \mref{PackageInfo},
+% \mref{PackageWarning}, and \mref{PackageError} macros.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -18898,8 +18918,8 @@ end
 %
 %### Logging Facilities
 % The \LaTeX{} implementation redefines the plain \TeX{} logging macros (see
-% Section \vref{sec:texinterfacelogging}) to use the \LaTeX{} \m{PackageInfo},
-% \m{PackageWarning}, and \m{PackageError} macros.
+% Section \vref{sec:texinterfacelogging}) to use the \LaTeX{} \mref{PackageInfo},
+% \mref{PackageWarning}, and \mref{PackageError} macros.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -18909,7 +18929,7 @@ end
 %
 %### Typesetting Markdown
 % The \mdef{markdownInputPlainTeX} macro is used to store the original plain
-% \TeX{} implementation of the \m{markdownInput} macro. The \m{markdownInput}
+% \TeX{} implementation of the \mref{markdownInput} macro. The \mref{markdownInput}
 % is then redefined to accept an optional argument with options recognized by
 % the \LaTeX{} interface (see Section \vref{sec:latexoptions}).
 %
@@ -18925,8 +18945,8 @@ end
 % \par
 % \begin{markdown}
 %
-% The \envm{markdown}, and \envm{markdown*} \LaTeX{} environments are
-% implemented using the \m{markdownReadAndConvert} macro.
+% The \envmref{markdown}, and \envmref{markdown*} \LaTeX{} environments are
+% implemented using the \mref{markdownReadAndConvert} macro.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -18958,7 +18978,7 @@ end
 % \begin{markdown}
 %
 %### Options
-% The supplied package options are processed using the \m{markdownSetup} macro.
+% The supplied package options are processed using the \mref{markdownSetup} macro.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -18999,6 +19019,15 @@ end
 %    \end{macrocode}
 % \begin{markdown}
 %
+% We load the \pkg{ifthen} and \pkg{grffile} packages, see also
+% Section~\ref{sec:latexprerequisites}:
+%
+% \end{markdown}
+%  \begin{macrocode}
+\RequirePackage{ifthen,grffile}
+%    \end{macrocode}
+% \begin{markdown}
+%
 % We store the previous definition of the fenced code token renderer prototype:
 %
 % \end{markdown}
@@ -19010,12 +19039,11 @@ end
 %
 % If the infostring starts with `dot …`, we redefine the fenced code block
 % token renderer prototype, so that it typesets the code block via Graphviz
-% tools if and only if the \m{markdownOptionFrozenCache} plain \TeX{} option is
+% tools if and only if the \mref{markdownOptionFrozenCache} plain \TeX{} option is
 % disabled and the code block has not been previously typeset:
 %
 % \end{markdown}
 %  \begin{macrocode}
-\RequirePackage{ifthen}
 \renewcommand\markdownRendererInputFencedCode[2]{%
   \def\next##1 ##2\relax{%
     \ifthenelse{\equal{##1}{dot}}{%
@@ -19065,8 +19093,17 @@ end
 %    \end{macrocode}
 % \begin{markdown}
 %
-% We define the \m{markdown@witiko@graphicx@http@counter} counter to enumerate
-% the images for caching and the \m{markdown@witiko@graphicx@http@filename}
+% We load the \pkg{catchfile} and \pkg{grffile} packages, see also
+% Section~\ref{sec:latexprerequisites}:
+%
+% \end{markdown}
+%  \begin{macrocode}
+\RequirePackage{catchfile,grffile}
+%    \end{macrocode}
+% \begin{markdown}
+%
+% We define the \mref{markdown@witiko@graphicx@http@counter} counter to enumerate
+% the images for caching and the \mref{markdown@witiko@graphicx@http@filename}
 % command, which will store the pathname of the file containing the pathname
 % of the downloaded image file.
 %
@@ -19080,7 +19117,7 @@ end
 %    \end{macrocode}
 % \begin{markdown}
 %
-% We define the \m{markdown@witiko@graphicx@http@download} command, which will
+% We define the \mref{markdown@witiko@graphicx@http@download} command, which will
 % receive two arguments that correspond to the URL of the online image and to
 % the pathname, where the online image should be downloaded. The command will
 % produce a shell command that tries to downloads the online image to the
@@ -19116,7 +19153,7 @@ end
 % \begin{markdown}
 %
 % The image will be downloaded only if the image URL has the http or https
-% protocols and the \m{markdownOptionFrozenCache} plain \TeX{} option is disabled:
+% protocols and the \mref{markdownOptionFrozenCache} plain \TeX{} option is disabled:
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -19127,7 +19164,7 @@ end
 %    \end{macrocode}
 % \begin{markdown}
 %
-% The image will be downloaded to the pathname \m{markdownOptionCacheDir}<!--
+% The image will be downloaded to the pathname \mref{markdownOptionCacheDir}<!--
 % -->`/`\meta{the MD5 digest of the image URL}`.`\meta{the suffix of the
 % image URL}:
 %
@@ -19168,7 +19205,7 @@ end
 %
 % \end{markdown}
 %  \begin{macrocode}
-    \CatchFileDef{\filename}{\filename}{}^^A
+    \CatchFileDef{\filename}{\filename}{\endlinechar=-1}^^A
     \markdown@witiko@graphicx@http@oldRendererImagePrototype^^A
       {#1}{#2}{\filename}{#4}^^A
   \endgroup
@@ -19207,22 +19244,23 @@ end
 % \par
 % \begin{markdown}
 %
-% If the \m{markdownOptionTightLists} macro expands to `false`, do not load
+% If the \mref{markdownOptionTightLists} macro expands to `false`, do not load
 % the \pkg{paralist} package. This is necessary for \Hologo{LaTeX2e} document
 % classes that do not play nice with \pkg{paralist}, such as \pkg{beamer}.
-% If the \m{markdownOptionTightLists} is undefined and the \pkg{beamer}
+% If the \mref{markdownOptionTightLists} is undefined and the \pkg{beamer}
 % document class is in use, then do not load the \pkg{paralist} package either.
 %
 % \end{markdown}
 %  \begin{macrocode}
 \RequirePackage{ifthen}
-\@ifundefined{markdownOptionTightLists}{%
+
+\ifx\markdownOptionTightLists\undefined
   \@ifclassloaded{beamer}{}{%
     \RequirePackage{paralist}}%
-}{%
+\else
   \ifthenelse{\equal{\markdownOptionTightLists}{false}}{}{%
     \RequirePackage{paralist}}%
-}%
+\fi
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -19411,9 +19449,9 @@ end
 % \par
 % \begin{markdown}
 %
-% There is a basic implementation for citations that uses the \LaTeX{} \m{cite}
-% macro. There are also implementations that use the \pkg{natbib} \m{citep},
-% and \m{citet} macros, and the Bib\LaTeX{} \m{autocites} and \m{textcites}
+% There is a basic implementation for citations that uses the \LaTeX{} \mref{cite}
+% macro. There are also implementations that use the \pkg{natbib} \mref{citep},
+% and \mref{citet} macros, and the Bib\LaTeX{} \mref{autocites} and \mref{textcites}
 % macros. These implementations will be used, when the respective packages are
 % loaded.
 %
@@ -19751,7 +19789,7 @@ end
 %### Miscellanea
 % When buffering user input, we should disable the bytes with the high bit set,
 % since these are made active by the \pkg{inputenc} package. We will do this by
-% redefining the \m{markdownMakeOther} macro accordingly. The code is courtesy
+% redefining the \mref{markdownMakeOther} macro accordingly. The code is courtesy
 % of Scott Pakin, the creator of the \pkg{filecontents} package.
 %
 % \end{markdown}
@@ -19782,7 +19820,7 @@ end
 %
 % The \Hologo{ConTeXt} implementation redefines the plain \TeX{} logging macros
 % (see Section \vref{sec:texinterfacelogging}) to use the \Hologo{ConTeXt}
-% \m{writestatus} macro.
+% \mref{writestatus} macro.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -19796,8 +19834,8 @@ end
 % \begin{markdown}
 %
 % When buffering user input, we should disable the bytes with the high bit set,
-% since these are made active by the \m{enableregime} macro. We will do this
-% by redefining the \m{markdownMakeOther} macro accordingly. The code is
+% since these are made active by the \mref{enableregime} macro. We will do this
+% by redefining the \mref{markdownMakeOther} macro accordingly. The code is
 % courtesy of Scott Pakin, the creator of the \pkg{filecontents} \LaTeX{}
 % package.
 %
@@ -19824,8 +19862,8 @@ end
 % \begin{markdown}
 %
 %### Typesetting Markdown
-% The \m{startmarkdown} and \m{stopmarkdown} macros are implemented using the
-% \m{markdownReadAndConvert} macro.
+% The \mref{startmarkdown} and \mref{stopmarkdown} macros are implemented using the
+% \mref{markdownReadAndConvert} macro.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -19935,7 +19973,7 @@ end
 % \begin{markdown}
 %
 % The code fence infostring is used as a name from the \Hologo{ConTeXt}
-% \m{definetyping} macro. This allows the user to set up code highlighting
+% \mref{definetyping} macro. This allows the user to set up code highlighting
 % mapping as follows:
 % ````` tex
 % % Map the `TEX` syntax highlighter to the `latex` infostring.
