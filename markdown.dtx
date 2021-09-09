@@ -1064,9 +1064,10 @@ local md5 = require("md5")
 % \begin{markdown}
 %
 % The following packages are soft prerequisites. They are only used to provide
-% default token renderer prototype (see Section
-% \vref{sec:texrendererprototypes}) and will not be loaded if the `plain`
-% package option has been enabled (see Section \vref{sec:latexplain}):
+% default token renderer prototypes (see Section
+% \vref{sec:texrendererprototypes}) or \LaTeX{} themes and will not be loaded
+% if the `plain` package option has been enabled (see Section
+% \vref{sec:latexplain}):
 %
 % \pkg{url}
 %
@@ -1111,6 +1112,19 @@ local md5 = require("md5")
 %
 %:    Packages that provide symbols used for drawing ticked and unticked
 %     boxes.
+%
+% \pkg{catchfile}
+%
+%:    A package that catches the contents of a file and puts it in a macro. It
+%     is used in the `witiko/graphicx/http` \LaTeX{} theme, see Section
+%     \vref{sec:latexthemes}.
+%
+% \pkg{grffile}
+%
+%:    A package that extends the name processing of package graphics to support
+%     a larger range of file names in \TeX{} Live${}\leq{}2019$. It is used in
+%     the `witiko/dot` and `witiko/graphicx/http` \LaTeX{} themes, see Section
+%     \vref{sec:latexthemes}.
 %
 % \end{markdown}
 % \iffalse
@@ -11865,7 +11879,6 @@ following image:
 % \fi
 %  \begin{macrocode}
 \ProvidesPackage{markdownthemewitiko_graphicx_http}[2021/03/22]%
-\RequirePackage{catchfile}
 %    \end{macrocode}
 % \iffalse
 %</latex-themes-witiko-graphicx-http>
@@ -18732,6 +18745,15 @@ end
 %    \end{macrocode}
 % \begin{markdown}
 %
+% We load the \pkg{ifthen} and \pkg{grffile} packages, see also
+% Section~\ref{sec:latexprerequisites}:
+%
+% \end{markdown}
+%  \begin{macrocode}
+\RequirePackage{ifthen,grffile}
+%    \end{macrocode}
+% \begin{markdown}
+%
 % We store the previous definition of the fenced code token renderer prototype:
 %
 % \end{markdown}
@@ -18748,7 +18770,6 @@ end
 %
 % \end{markdown}
 %  \begin{macrocode}
-\RequirePackage{ifthen}
 \renewcommand\markdownRendererInputFencedCode[2]{%
   \def\next##1 ##2\relax{%
     \ifthenelse{\equal{##1}{dot}}{%
@@ -18795,6 +18816,15 @@ end
 %  \begin{macrocode}
 \let\markdown@witiko@graphicx@http@oldRendererImagePrototype
   \markdownRendererImagePrototype
+%    \end{macrocode}
+% \begin{markdown}
+%
+% We load the \pkg{catchfile} and \pkg{grffile} packages, see also
+% Section~\ref{sec:latexprerequisites}:
+%
+% \end{markdown}
+%  \begin{macrocode}
+\RequirePackage{catchfile,grffile}
 %    \end{macrocode}
 % \begin{markdown}
 %
