@@ -68,7 +68,7 @@ $(EXTRACTABLES): $(INSTALLER) $(DTXARCHIVE)
 
 # This target typesets the manual.
 $(TECHNICAL_DOCUMENTATION): $(DTXARCHIVE) $(TECHNICAL_DOCUMENTATION_RESOURCES)
-	latexmk -interaction=nonstopmode $<
+	latexmk -silent $< || (cat $(basename $@).log 1>&2; exit 1)
 	test `tail $(basename $<).log | sed -rn 's/.*\(([0-9]*) pages.*/\1/p'` -gt 150
 
 # These targets typeset the examples.
