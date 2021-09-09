@@ -2,7 +2,7 @@
 %<*driver>
 \documentclass{ltxdockit}
 \usepackage[american]{babel}
-\usepackage{amsmath,btxdockit,doc,emoji,fancyvrb,graphicx,hologo,microtype,minted,varioref}
+\usepackage{amsmath,btxdockit,doc,fancyvrb,graphicx,hologo,microtype,minted,varioref}
 
 % Set up the style.
 \usepackage{fontspec}
@@ -104,7 +104,12 @@
 \newunicodechar{☒}{\markdownRendererTickedBox}
 \newunicodechar{⌛}{\markdownRendererHalfTickedBox}
 \newunicodechar{☐}{\markdownRendererUntickedBox}
-\newunicodechar{😉}{\emoji{winking-face}}
+\IfFileExists{emoji.sty}{
+  \usepackage{emoji}
+  \newunicodechar{😉}{\emoji{winking-face}}
+}{
+  \newunicodechar{😉}{;-)}
+}
 
 % Set up the catcodes.
 \catcode`\_=12 % We won't be typesetting much math and Lua contains lots of `_`.
