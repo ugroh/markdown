@@ -18979,13 +18979,14 @@ end
 % \end{markdown}
 %  \begin{macrocode}
 \RequirePackage{ifthen}
-\@ifundefined{markdownOptionTightLists}{%
+
+\ifx\markdownOptionTightLists\undefined
   \@ifclassloaded{beamer}{}{%
     \RequirePackage{paralist}}%
-}{%
+\else
   \ifthenelse{\equal{\markdownOptionTightLists}{false}}{}{%
     \RequirePackage{paralist}}%
-}%
+\fi
 %    \end{macrocode}
 % \par
 % \begin{markdown}
