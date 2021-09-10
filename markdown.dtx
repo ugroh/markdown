@@ -19925,10 +19925,22 @@ end
 %     delimited by slashes. Allows the users to react to complex
 %     context-sensitive structures with ease.
 %
+%:    For example, the `name` key in the following YAML document
+%     would correspond to the `/*/person/name` absolute wildcard:
+%     ``` yaml
+%     [{person: {name: Elon, surname: Musk}}]
+%     ```
+%
 % \mdef{g_\@\@_jekyll_data_wildcard_relative_address_tl}
 %
 %:    A *relative wildcard*: The rightmost segment of the wildcard. Allows the
 %     users to react to simple context-free structures.
+%
+%:    For example, the `name` key in the following YAML document
+%     would correspond to the `name` relative wildcard:
+%     ``` yaml
+%     [{person: {name: Elon, surname: Musk}}]
+%     ```
 %
 % We will construct \mref{g_\@\@_jekyll_data_wildcard_absolute_address_tl}
 % using the \mdef{markdown_jekyll_data_concatenate_address:NN} macro and
@@ -19990,8 +20002,8 @@ end
 % To interface with the user, we use `markdown/jekyllData` key--values from the
 % l3keys module of the \LaTeX3 kernel. The default setup will invoke the
 % \mref{title}, \mref{author}, and \mref{date} macros when scalar values for
-% the `title`, `author`, and `date` relative wildcards are encountered,
-% respectively.
+% keys that correspond to the `title`, `author`, and `date` relative wildcards
+% are encountered, respectively.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -20081,8 +20093,8 @@ end
 % \begin{markdown}
 %
 % To complement the default setup of our key--values, we will use
-% the \mref{maketitle} macro to typeset the title page of a document.
-% If we are in the preamble, we will wait with the \mref{maketitle}
+% the \mref{maketitle} macro to typeset the title page of a document
+% at the end of YAML metadata. If we are in the preamble, we will wait
 % macro until after the beginning of the document. Otherwise, we will
 % use the \mref{maketitle} macro straight away.
 %
