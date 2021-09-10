@@ -22,7 +22,8 @@ READMES=$(ROOT_README) LICENSE examples/README.md tests/README.md \
   tests/templates/*/README.md tests/testfiles/*/README.md
 DTXARCHIVE=markdown.dtx
 INSTALLER=markdown.ins docstrip.cfg
-TECHNICAL_DOCUMENTATION_RESOURCES=markdown.bib markdown-figure-block-diagram.tex
+TECHNICAL_DOCUMENTATION_RESOURCES=markdown.bib markdown-figure-block-diagram.tex \
+	markdownthemewitiko_markdown_techdoc.sty
 TECHNICAL_DOCUMENTATION=markdown.pdf
 MARKDOWN_USER_MANUAL=markdown.md markdown.css
 HTML_USER_MANUAL=markdown.html markdown.css

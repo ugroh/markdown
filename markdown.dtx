@@ -1,4 +1,5 @@
 % \iffalse
+%<@@=markdown>
 %<*driver>
 \documentclass{ltxdockit}
 \usepackage[american]{babel}
@@ -80,24 +81,13 @@
   headerAttributes,
   hybrid,
   html,
+  jekyllData,
   stripPercentSigns,
   underscores=false,
   theme=witiko/dot,
   theme=witiko/graphicx/http,
+  theme=witiko/markdown/techdoc,
 ]{markdown}
-\markdownSetup{
-  renderers = {
-    codeSpan = {\inline{#1}},
-    link = {#1\footnote{See \url{#3}.}},
-    headingFour = {%
-      \paragraph{#1}\leavevmode
-      \def\markdownRendererInterblockSeparator{%
-        \let\markdownRendererInterblockSeparator\par
-      }%
-      \noindent
-    },
-  },
-}
 
 % Set up Unicode characters.
 \usepackage{newunicodechar}
@@ -116,17 +106,16 @@
 \catcode`\^^B=8 % When we occasionally need subscripts , we will use `^^B` (STX).
 
 % Set up the title page.
-\titlepage{%
-  title={A Markdown Interpreter for \TeX{}},
-  subtitle={},
-  url={https://github.com/witiko/markdown},
-  author={Vít Novotný},
-  email={witiko@mail.muni.cz},
-  revision=\markdownVersion,
-  date={\today}}
-\hypersetup{%
-  pdftitle={A Markdown Interpreter for \TeX{}},
-  pdfauthor={Vít Novotný}}
+\begin{markdown}
+---
+title:    A Markdown Interpreter for \TeX
+url:      https://github.com/witiko/markdown
+author:   Vít Novotný
+email:    witiko@mail.muni.cz
+revision: \markdownVersion
+date:     \today
+---
+\end{markdown}
 \CodelineIndex
 
 % Set up the figures.
@@ -144,9 +133,6 @@
 \addbibresource{markdown.bib}
 
 \begin{document}
-\printtitlepage
-\tableofcontents
-{\def\addcontentsline#1#2#3{}\listoffigures}
 \DocInput{markdown.dtx}
 \printbibliography[heading=bibintoc]
 \printindex
@@ -749,6 +735,76 @@ abbr {
   url       = {https://github.com/latex3/latex2e/issues/510},
   urldate   = {2021-02-21}}
 %</techdoc-bibliography>
+%<*latex-themes-witiko-markdown-techdoc>
+\ProvidesPackage{markdownthemewitiko_markdown_techdoc}[2021/09/10]
+\markdownSetup{
+  renderers = {
+    codeSpan = {\inline{#1}},
+    link = {#1\footnote{See \url{#3}.}},
+    headingFour = {%
+      \paragraph{#1}\leavevmode
+      \def\markdownRendererInterblockSeparator{%
+        \let\markdownRendererInterblockSeparator\par
+      }%
+      \noindent
+    },
+    jekyllDataEnd = {%
+      \AddToHook{begindocument/end}{%
+        \printtitlepage
+        \tableofcontents
+        {\def\addcontentsline##1##2##3{}\listoffigures}}%
+    },
+  },
+}
+\markdownSetupSnippet{options}{
+  renderers = {
+    dlBegin = {\begin{optionlist}},
+    dlItem = {
+      #1
+      \begingroup
+      \markdownSetup{
+        renderers = {
+          dlBegin = {
+            \begingroup
+            \markdownSetup{
+              renderers = {
+                dlItem = {\item[####1]},
+                dlItemEnd = {}}}
+            \begin{valuelist}
+          },
+          dlEnd = {
+            \end{valuelist}
+            \endgroup
+          },
+        },
+      }%
+    },
+    dlItemEnd = {\endgroup},
+    dlEnd = {\end{optionlist}},
+  }
+}
+\ExplSyntaxOn
+\keys_define:nn
+  { markdown/jekyllData }
+  {
+    author   .code:n =
+      {
+        \gdef\ltd@title@author   { #1 }
+        \hypersetup{ pdfauthor = { #1 } }
+      },
+    title    .code:n =
+      {
+        \gdef\ltd@title@title    { #1 }
+        \gdef\ltd@title@subtitle {    }
+        \hypersetup{ pdftitle  = { #1 } }
+      },
+    date     .code:n = { \gdef\ltd@title@date     { #1 } },
+    email    .code:n = { \gdef\ltd@title@email    { #1 } },
+    revision .code:n = { \gdef\ltd@title@revision { #1 } },
+    url      .code:n = { \gdef\ltd@title@url      { #1 } },
+  }
+\ExplSyntaxOff
+%</latex-themes-witiko-markdown-techdoc>
 %<*manual>
 
 ---
@@ -1652,26 +1708,7 @@ package.
 local defaultOptions = {}
 %    \end{macrocode}
 % \begingroup
-% \markdownSetup{
-%   renderers = {
-%     dlBegin = {\begin{optionlist}},
-%     dlItem = {
-%       #1
-%       \begingroup
-%       \markdownSetup{
-%         renderers = {
-%           dlBegin = {
-%             \begingroup
-%             \markdownSetup{
-%               renderers = {
-%                 dlItem = {\item[####1]},
-%                 dlItemEnd = {}}}
-%             \begin{valuelist}},
-%           dlEnd = {
-%             \end{valuelist}
-%             \endgroup}}}},
-%     dlItemEnd = {\endgroup},
-%     dlEnd = {\end{optionlist}}}}
+% \markdownSetup{snippet=witiko/markdown/techdoc/options}
 % \par
 % \iffalse
 %</lua,lua-cli>
@@ -19242,93 +19279,6 @@ end
 \ifmarkdownLaTeXPlain\else
 %    \end{macrocode}
 % \par
-% \begin{markdown}
-% The most comfortable way to to parse the jekyllData is using \pkg{expl3}'s
-% l3keys module. Due to the structure of the data we need to initialize some
-% variables to save the data.
-% \end{markdown}
-%  \begin{macrocode}
-\ExplSyntaxOn
-\seq_new:N \l__markdown_jekyll_data_seq
-\prop_new:N \l__markdown_jekyll_prop
-\tl_new:N \l__markdown_jekyll_path_tl
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-% The default setup will add unknown data to a property list
-% \mdef{l__markdown_jekyll_prop} and set \mref{title}, \mref{author} and
-% \mref{date} to be used with \mref{maketitle}.
-% \end{markdown}
-%    \begin{macrocode}
-\keys_define:nn {markdown/JekyllData} {
-  title .code:n = \title{#1}
-  \prop_put:NVn \l__markdown_jekyll_prop \l_keys_key_tl {#1},
-  author .code:n = \author{#1}
-  \prop_put:NVn \l__markdown_jekyll_prop \l_keys_key_tl {#1},
-  date .code:n = \date{#1}
-  \prop_put:NVn \l__markdown_jekyll_prop \l_keys_key_tl {#1},
-  maketitle .bool_set:N = \l__markdown_maketitle_bool,
-  maketitle .initial:n = true,
-  unknown .code:n = {
-    \seq_if_empty:NTF \l__markdown_jekyll_data_seq
-      {\prop_put:NVn \l__markdown_jekyll_prop \l_keys_key_tl {#1}}
-      {\prop_put:Nxx \l__markdown_jekyll_prop {
-          \tl_tail:N \l__markdown_jekyll_path_tl
-          /
-          \l_keys_key_tl
-        } {\exp_not:n {#1}}}
-  },
-}
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-% The `unknown` value allows the user to add arbitrary keys to the jekyll
-% Syntax Internally sequences will be saved with l3seq but the default
-% setup will convert the output to a nested comma list which will be
-% saved in the propertylist to be accessed by the user.
-% \end{markdown}
-%    \begin{macrocode}
-\markdownSetup{rendererPrototypes={
-    jekyllDataEnd =
-      \bool_if:NT \l__markdown_maketitle_bool \maketitle,
-    jekyllDataString={
-      \exp_args:Nx \keys_set:nn {
-        markdown/JekyllData\l__markdown_jekyll_path_tl
-      }
-      {#1={#2}}
-    },
-    jekyllDataSequenceBegin={
-      \tl_if_blank:nF {#1} {
-      \seq_put_right:Nn \l__markdown_jekyll_data_seq {#1}
-      \tl_set:Nx \l__markdown_jekyll_path_tl {
-        \seq_if_empty:NF\l__markdown_jekyll_data_seq {/}
-        \seq_use:Nn \l__markdown_jekyll_data_seq {/}
-      }
-      \exp_args:Nxx \keys_define:nn
-        {markdown/JekyllData\l__markdown_jekyll_path_tl}
-        {unknown .code:n = {
-          \exp_not:n {\exp_args:Nnx \keys_set:nn
-           {markdown/JekyllData}
-           {\l_keys_key_tl = \exp_not:n {##1}}}},
-         }
-       \exp_args:Nx \keys_set:nn
-         {markdown/JekyllData\l__markdown_jekyll_path_tl}
-         {N=#2}
-      }
-    },
-    jekyllDataSequenceEnd={
-      \seq_pop_right:NN \l__markdown_jekyll_data_seq \l_tmpa_tl
-      \tl_set:Nx \l__markdown_jekyll_path_tl {
-        \seq_if_empty:NF\l__markdown_jekyll_data_seq {/}
-        \seq_use:Nn \l__markdown_jekyll_data_seq {/}
-      }
-    },
-    jekyllDataMappingBegin=\markdownRendererJekyllDataSequenceBegin{#1}{#2},
-    jekyllDataMappingEnd=\markdownRendererJekyllDataSequenceEnd,
-}}
-\ExplSyntaxOff
-%    \end{macrocode}
-% \par
 % \begin{markdown}%
 % If the \mref{markdownOptionTightLists} macro expands to `false`, do not load
 % the \pkg{paralist} package. This is necessary for \Hologo{LaTeX2e} document
@@ -19500,6 +19450,7 @@ end
 % \par
 % \begin{markdown}
 %
+%#### Tickboxes
 % If the \Opt{taskLists} option is enabled, we will hide bullets in unordered
 % list items with tickboxes.
 %
@@ -19535,7 +19486,8 @@ end
 % \par
 % \begin{markdown}
 %
-% There is a basic implementation for citations that uses the \LaTeX{} \mref{cite}
+%#### Citations
+% Here is a basic implementation for citations that uses the \LaTeX{} \mref{cite}
 % macro. There are also implementations that use the \pkg{natbib} \mref{citep},
 % and \mref{citet} macros, and the Bib\LaTeX{} \mref{autocites} and \mref{textcites}
 % macros. These implementations will be used, when the respective packages are
@@ -19766,6 +19718,7 @@ end
 % \par
 % \begin{markdown}
 %
+%#### Links
 % Before consuming the parameters for the hyperlink renderer, we change the
 % category code of the hash sign (`#`) to other, so that it cannot be
 % mistaken for a parameter character. After the hyperlink has been typeset,
@@ -19786,7 +19739,8 @@ end
 % \par
 % \begin{markdown}
 %
-% There is a basic implementation of tables. If the \pkg{booktabs} package is
+%#### Tables
+% Here is a basic implementation of tables. If the \pkg{booktabs} package is
 % loaded, then it is used to produce horizontal lines.
 %
 % \end{markdown}
@@ -19868,6 +19822,276 @@ end
     \expandafter\@gobble
   \fi\markdownLaTeXRenderTableCell}
 \fi
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+%#### YAML Metadata
+% To parse the YAML metadata we will use the expl3 language from the \LaTeX3
+% kernel.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\ExplSyntaxOn
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% To keep track of the current type of structure we inhabit when we are
+% traversing a YAML document, we will maintain the
+% \mdef{g_\@\@_jekyll_data_datatypes_seq} stack. At every step of the traversal,
+% the stack will contain one of the following constants at any position $p$:
+%
+% \mdef{c_\@\@_jekyll_data_sequence_tl}
+%
+%:    The currently traversed branch of the YAML document contains a sequence
+%     at depth $p$.
+%
+% \mdef{c_\@\@_jekyll_data_mapping_tl}
+%
+%:    The currently traversed branch of the YAML document contains a mapping
+%     at depth $p$.
+%
+% \mdef{c_\@\@_jekyll_data_scalar_tl}
+%
+%:    The currently traversed branch of the YAML document contains a scalar
+%     value at depth $p$.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\seq_new:N   \g_@@_jekyll_data_datatypes_seq
+\tl_const:Nn \c_@@_jekyll_data_sequence_tl   { sequence }
+\tl_const:Nn \c_@@_jekyll_data_mapping_tl    { mapping  }
+\tl_const:Nn \c_@@_jekyll_data_scalar_tl     { scalar   }
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% To keep track of our current place when we are traversing a YAML document, we
+% will maintain the \mdef{g_\@\@_jekyll_data_wildcard_absolute_address_seq} stack
+% of keys using the \mdef{markdown_jekyll_data_push_address_segment:n} macro.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\seq_new:N \g_@@_jekyll_data_wildcard_absolute_address_seq
+\cs_new:Nn \markdown_jekyll_data_push_address_segment:n
+  {
+    \seq_if_empty:NF
+      \g_@@_jekyll_data_datatypes_seq
+      {
+        \seq_get_right:NN
+          \g_@@_jekyll_data_datatypes_seq
+          \l_tmpa_tl
+%    \end{macrocode}
+% \begin{markdown}
+%
+% If we are currently in a sequence, we will put an asterisk (`*`) instead of
+% a key into \mref{g_\@\@_jekyll_data_wildcard_absolute_address_seq} to make
+% it represent a *wildcard*. Keeping a wildcard instead of a precise address
+% makes it easy for the users to react to *any* item of a sequence regardless
+% of how many there are, which can often be useful.
+%
+% \end{markdown}
+%  \begin{macrocode}
+      \tl_if_eq:NNTF
+        \l_tmpa_tl
+        \c_@@_jekyll_data_sequence_tl
+        {
+          \seq_put_right:Nn
+            \g_@@_jekyll_data_wildcard_absolute_address_seq
+            { *  }
+        }
+        {
+          \seq_put_right:Nn
+            \g_@@_jekyll_data_wildcard_absolute_address_seq
+            { #1 }
+        }
+      }
+  }
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Out of \mref{g_\@\@_jekyll_data_wildcard_absolute_address_seq}, we will
+% construct the following two token lists:
+%
+% \mdef{g_\@\@_jekyll_data_wildcard_absolute_address_tl}
+%
+%:    An *absolute wildcard*: The wildcard from the root of the document
+%     prefixed with a slash (`/`) with individual keys and asterisks also
+%     delimited by slashes. Allows the users to react to complex
+%     context-sensitive structures with ease.
+%
+% \mdef{g_\@\@_jekyll_data_wildcard_relative_address_tl}
+%
+%:    A *relative wildcard*: The rightmost segment of the wildcard. Allows the
+%     users to react to simple context-free structures.
+%
+% We will construct \mref{g_\@\@_jekyll_data_wildcard_absolute_address_tl}
+% using the \mdef{markdown_jekyll_data_concatenate_address:NN} macro and
+% we will construct both token lists using the
+% \mdef{markdown_jekyll_data_update_address_tls:} macro.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\tl_new:N  \g_@@_jekyll_data_wildcard_absolute_address_tl
+\tl_new:N  \g_@@_jekyll_data_wildcard_relative_address_tl
+\cs_new:Nn \markdown_jekyll_data_concatenate_address:NN
+  {
+    \seq_pop_left:NN #1 \l_tmpa_tl
+    \tl_set:Nx #2 { / \seq_use:Nn #1 { / } }
+    \seq_put_left:NV #1 \l_tmpa_tl
+  }
+\cs_new:Nn \markdown_jekyll_data_update_address_tls:
+  {
+    \markdown_jekyll_data_concatenate_address:NN
+      \g_@@_jekyll_data_wildcard_absolute_address_seq
+      \g_@@_jekyll_data_wildcard_absolute_address_tl
+    \seq_get_right:NN
+      \g_@@_jekyll_data_wildcard_absolute_address_seq
+      \g_@@_jekyll_data_wildcard_relative_address_tl
+  }
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% To make sure that the stacks and token lists stay in sync, we will use the
+% \mdef{markdown_jekyll_data_push:nN} and \mdef{markdown_jekyll_data_pop:}
+% macros.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\cs_new:Nn \markdown_jekyll_data_push:nN
+  {
+    \markdown_jekyll_data_push_address_segment:n
+      { #1 }
+    \seq_put_right:NV
+     \g_@@_jekyll_data_datatypes_seq
+     #2
+    \markdown_jekyll_data_update_address_tls:
+  }
+\cs_new:Nn \markdown_jekyll_data_pop:
+  {
+    \seq_pop_right:NN
+      \g_@@_jekyll_data_wildcard_absolute_address_seq
+      \l_tmpa_tl
+    \seq_pop_right:NN
+      \g_@@_jekyll_data_datatypes_seq
+      \l_tmpa_tl
+    \markdown_jekyll_data_update_address_tls:
+  }
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% To interface with the user, we use `markdown/jekyllData` key--values from the
+% l3keys module of the \LaTeX3 kernel. The default setup will invoke the
+% \mref{title}, \mref{author}, and \mref{date} macros when scalar values for
+% the `title`, `author`, and `date` relative wildcards are encountered,
+% respectively.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\keys_define:nn
+  { markdown/jekyllData }
+  {
+    author  .code:n = { \author{#1} },
+    date    .code:n = { \date{#1}   },
+    title   .code:n = { \title{#1}  },
+  }
+%    \end{macrocode}
+% \begin{markdown}
+%
+% To set a single key--value, we will use the
+% \mdef{markdown_jekyll_data_set_keyval:Nn} macro, ignoring unknown keys.
+% To set key--values for both absolute and relative wildcards, we will use the
+% \mdef{markdown_jekyll_data_set_keyvals:nn} macro.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\cs_new:Nn \markdown_jekyll_data_set_keyval:nn
+  {
+    \keys_set_known:nn
+      { markdown/jekyllData }
+      { { #1 } = { #2 } }
+  }
+\cs_generate_variant:Nn
+  \markdown_jekyll_data_set_keyval:nn
+  { Vn }
+\cs_new:Nn \markdown_jekyll_data_set_keyvals:nn
+  {
+    \markdown_jekyll_data_push:nN
+      { #1 }
+      \c_@@_jekyll_data_scalar_tl
+    \markdown_jekyll_data_set_keyval:Vn
+      \g_@@_jekyll_data_wildcard_absolute_address_tl
+      { #2 }
+    \markdown_jekyll_data_set_keyval:Vn
+      \g_@@_jekyll_data_wildcard_relative_address_tl
+      { #2 }
+    \markdown_jekyll_data_pop:
+  }
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Finally, we will register our macros as token renderer prototypes
+% to be able to react to the traversal of a YAML document.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\markdownSetup{
+  rendererPrototypes = {
+    jekyllDataSequenceBegin = {
+      \markdown_jekyll_data_push:nN
+        { #1 }
+        \c_@@_jekyll_data_sequence_tl
+    },
+    jekyllDataMappingBegin = {
+      \markdown_jekyll_data_push:nN
+        { #1 }
+        \c_@@_jekyll_data_mapping_tl
+    },
+    jekyllDataSequenceEnd = {
+      \markdown_jekyll_data_pop:
+    },
+    jekyllDataMappingEnd = {
+      \markdown_jekyll_data_pop:
+    },
+    jekyllDataBoolean = {
+      \markdown_jekyll_data_set_keyvals:nn
+        { #1 }
+        { #2 }
+    },
+    jekyllDataEmpty = { },
+    jekyllDataNumber = {
+      \markdown_jekyll_data_set_keyvals:nn
+        { #1 }
+        { #2 }
+    },
+    jekyllDataString = {
+      \markdown_jekyll_data_set_keyvals:nn
+        { #1 }
+        { #2 }
+    },
+%    \end{macrocode}
+% \begin{markdown}
+%
+% To complement the default setup of our key--values, we will use
+% the \mref{maketitle} macro to typeset the title page of a document.
+% If we are in the preamble, we will wait with the \mref{maketitle}
+% macro until after the beginning of the document. Otherwise, we will
+% use the \mref{maketitle} macro straight away.
+%
+% \end{markdown}
+%  \begin{macrocode}
+    jekyllDataEnd = {
+      \AddToHook{begindocument/end}{\maketitle}
+    },
+  },
+}
+
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 % \begin{markdown}
