@@ -886,7 +886,7 @@ Requirements
 
 The package requires either [our official Docker image][docker], which contains
 the latest development version of the Markdown package, or a \TeX{}
-distribution: [\TeX{} Live][tl] ≥ 2018 is known to work with the current
+distribution: [\TeX{} Live][tl] ≥ 2021 is known to work with the current
 version of the Markdown package and so are recent versions of [Mik\TeX{}][mik].
 If you are using an older, incomplete, or atypical \TeX{} distribution, please
 consult the [technical documentation][techdoc] for a detailed list of
@@ -1092,9 +1092,10 @@ local md5 = require("md5")
 %</latex-themes-witiko-dot,latex-themes-witiko-graphicx-http,latex-themes-witiko-tilde>
 % \fi
 % \begin{markdown}
-% a \TeX{} engine that extends \Hologo{eTeX}, all the plain \TeX{}
-% prerequisites (see Section \vref{sec:texprerequisites}), and the following
-% \Hologo{LaTeX2e} packages:
+% with a recent \LaTeX3 kernel that includes hook management and the expl3
+% programming language (\TeX{} Live${}\geq{}2021$) using a \TeX{} engine that
+% extends \Hologo{eTeX}, all the plain \TeX{} prerequisites (see Section
+% \vref{sec:texprerequisites}), and the following \Hologo{LaTeX2e} packages:
 %
 % \pkg{keyval}
 %
