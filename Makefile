@@ -41,7 +41,7 @@ EVERYTHING=$(RESOURCES) $(INSTALLABLES)
 GITHUB_PAGES=gh-pages
 
 VERSION=$(shell git describe --tags --always --long --exclude latest)
-LASTMODIFIED=$(shell sed -rn '/^\\def\\markdownLastModified\{/s/[^{]*\{(.*)\}.*/\1/p' <$(DTXARCHIVE))
+LAST_MODIFIED=$(shell git log -1 --date=format:%Y/%m/%d --format=%ad)
 
 # This is the default pseudo-target. It typesets the manual,
 # the examples, and extracts the package files.
@@ -67,7 +67,10 @@ $(GITHUB_PAGES): $(HTML_USER_MANUAL)
 # This target extracts the source files out of the DTX archive.
 $(EXTRACTABLES): $(INSTALLER) $(DTXARCHIVE)
 	xetex $<
-	sed -i 's/\$$(VERSION)/$(VERSION)/g' $(INSTALLABLES)
+	sed -i \
+	    -e 's#\$$(VERSION)#$(VERSION)#g' \
+	    -e 's#\$$(LAST_MODIFIED)#$(LAST_MODIFIED)#g' \
+	    $(INSTALLABLES)
 
 # This target produces external Lua libraries.
 $(LIBRARIES):
@@ -95,7 +98,7 @@ examples/example.tex:
 	        print($$0); \
 	}' <$< | \
 	sed -e 's#\\markdownVersion{}#$(VERSION)#g' \
-	    -e 's#\\markdownLastModified{}#$(LASTMODIFIED)#g' \
+	    -e 's#\\markdownLastModified{}#$(LAST_MODIFIED)#g' \
 	    -e 's#\\TeX{}#<span class="tex">T<sub>e</sub>X</span>#g' \
 	    -e 's#\\LaTeX{}#<span class="latex">L<sup>a</sup>T<sub>e</sub>X</span>#g' \
 	    -e 's#\\Hologo{ConTeXt}#Con<span class="tex">T<sub>e</sub>X</span>t#g' \
