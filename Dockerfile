@@ -72,6 +72,9 @@ cp -f ${BUILD_DIR}/markdownthemewitiko_tilde.sty          ${INSTALL_DIR}/tex/lat
 mkdir -p                                                  ${INSTALL_DIR}/tex/context/third/markdown/
 cp -f ${BUILD_DIR}/t-markdown.tex                         ${INSTALL_DIR}/tex/context/third/markdown/
 
+# Generate the ConTeXt file database
+mtxrun --generate
+
 # Reindex the TeX directory structure
 texhash
 
