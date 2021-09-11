@@ -737,6 +737,7 @@ abbr {
 %</techdoc-bibliography>
 %<*latex-themes-witiko-markdown-techdoc>
 \ProvidesPackage{markdownthemewitiko_markdown_techdoc}[2021/09/10]
+\RequirePackage{etoolbox}
 \markdownSetup{
   renderers = {
     codeSpan = {\inline{#1}},
@@ -749,10 +750,11 @@ abbr {
       \noindent
     },
     jekyllDataEnd = {%
-      \AddToHook{begindocument/end}{%
+      \AfterEndPreamble{%
         \printtitlepage
         \tableofcontents
-        {\def\addcontentsline##1##2##3{}\listoffigures}}%
+        {\def\addcontentsline##1##2##3{}\listoffigures}%
+      }%
     },
   },
 }
@@ -783,6 +785,7 @@ abbr {
     dlEnd = {\end{optionlist}},
   }
 }
+\RequirePackage{expl3}
 \ExplSyntaxOn
 \keys_define:nn
   { markdown/jekyllData }
@@ -886,7 +889,7 @@ Requirements
 
 The package requires either [our official Docker image][docker], which contains
 the latest development version of the Markdown package, or a \TeX{}
-distribution: [\TeX{} Live][tl] ≥ 2021 is known to work with the current
+distribution: [\TeX{} Live][tl] ≥ 2018 is known to work with the current
 version of the Markdown package and so are recent versions of [Mik\TeX{}][mik].
 If you are using an older, incomplete, or atypical \TeX{} distribution, please
 consult the [technical documentation][techdoc] for a detailed list of
@@ -1092,10 +1095,9 @@ local md5 = require("md5")
 %</latex-themes-witiko-dot,latex-themes-witiko-graphicx-http,latex-themes-witiko-tilde>
 % \fi
 % \begin{markdown}
-% with a recent \LaTeX3 kernel that includes hook management and the expl3
-% programming language (\TeX{} Live${}\geq{}2021$) using a \TeX{} engine that
-% extends \Hologo{eTeX}, all the plain \TeX{} prerequisites (see Section
-% \vref{sec:texprerequisites}), and the following \Hologo{LaTeX2e} packages:
+% a \TeX{} engine that extends \Hologo{eTeX}, all the plain \TeX{}
+% prerequisites (see Section \vref{sec:texprerequisites}), and the following
+% \Hologo{LaTeX2e} packages:
 %
 % \pkg{keyval}
 %
@@ -1123,8 +1125,9 @@ local md5 = require("md5")
 % \begin{markdown}
 %
 % The following packages are soft prerequisites. They are only used to provide
-% default token renderer prototypes (see Section
-% \vref{sec:texrendererprototypes}) or \LaTeX{} themes and will not be loaded
+% default token renderer prototypes (see sections
+% \vref{sec:texrendererprototypes} and \vref{sec:latexrendererprototypes}) or
+% \LaTeX{} themes (see Section \vref{sec:latexthemes}) and will not be loaded
 % if the `plain` package option has been enabled (see Section
 % \vref{sec:latexplain}):
 %
@@ -1160,7 +1163,8 @@ local md5 = require("md5")
 % \pkg{csvsimple}
 %
 %:    A package that provides the \mref{csvautotabular} macro for typesetting
-%     \acro{csv} files.
+%     \acro{csv} files in the default renderer prototypes for iA\,Writer
+%     content blocks.
 %
 % \pkg{gobble}
 %
@@ -1187,6 +1191,18 @@ local md5 = require("md5")
 %     been integrated in the \LaTeXe{} kernel. It is used in the `witiko/dot`
 %     and `witiko/graphicx/http` \LaTeX{} themes, see Section
 %     \vref{sec:latexthemes}.
+%
+% \pkg{etoolbox}
+%
+%:    A package that is used to polyfill the general hook management system in
+%     the default renderer prototypes for YAML metadata, see Section
+%     \ref{sec:latexyamlmetadata}.
+%
+% \pkg{expl3}
+%
+%:    A package that enables the expl3 language from the \LaTeX3 kernel in
+%     \TeX{} Live${}\leq{}2019$. It is used in the default renderer prototypes
+%     for YAML metadata, see Section \ref{sec:latexyamlmetadata}.
 %
 % \end{markdown}
 % \iffalse
@@ -19274,6 +19290,7 @@ end
 % \begin{markdown}
 %
 %### Token Renderer Prototypes
+% \label{sec:latexrendererprototypes}
 % The following configuration should be considered placeholder. If the `plain`
 % package option has been enabled (see Section \vref{sec:latexplain}), none of
 % it will take effect.
@@ -19830,11 +19847,13 @@ end
 % \begin{markdown}
 %
 %#### YAML Metadata
+% \label{sec:latexyamlmetadata}
 % To parse the YAML metadata we will use the expl3 language from the \LaTeX3
 % kernel.
 %
 % \end{markdown}
 %  \begin{macrocode}
+\RequirePackage{expl3}
 \ExplSyntaxOn
 %    \end{macrocode}
 % \par
@@ -20101,7 +20120,20 @@ end
 % \end{markdown}
 %  \begin{macrocode}
     jekyllDataEnd = {
-      \AddToHook{begindocument/end}{\maketitle}
+      \@ifl@t@r
+        \fmtversion
+        { 2020-10-01 }
+        { \AddToHook{begindocument/end}{\maketitle} }
+        {
+          \ifx\@onlypreamble\@notprerr
+            % We are in the document
+            \maketitle
+          \else
+            % We are in the preamble
+            \RequirePackage{etoolbox}
+            \AfterEndPreamble{\maketitle}
+          \fi
+        }
     },
   },
 }
