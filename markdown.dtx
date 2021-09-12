@@ -1030,7 +1030,14 @@ local md5 = require("md5")
 % \begin{markdown}
 %
 % All the abovelisted modules are statically linked into the current version of
-% the Lua\TeX{} engine~[@luatex17, Section 3.3].
+% the Lua\TeX{} engine~[@luatex17, Section 3.3]. Beside these, we also carry
+% the following third-party Lua libraries:
+%
+% \pkg{api7/lua-tinyyaml}
+%
+%:    A library that provides a regex-based recursive descent YAML (subset)
+%     parser that is used to read YAML metadata when the \Opt{jekyllData}
+%     option is enabled.
 %
 % \end{markdown}
 % \iffalse
