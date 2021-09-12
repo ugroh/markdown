@@ -20115,9 +20115,15 @@ end
 %
 % \end{markdown}
 %  \begin{macrocode}
+  },
+}
+\ifx\IfFormatAtLeastTF\@undefined
+  \def\IfFormatAtLeastTF{\@ifl@t@r\fmtversion}
+\fi
+\markdownSetup{
+  rendererPrototypes = {
     jekyllDataEnd = {
-      \@ifl@t@r
-        \fmtversion
+      \IfFormatAtLeastTF
         { 2020-10-01 }
         { \AddToHook{begindocument/end}{\maketitle} }
         {
