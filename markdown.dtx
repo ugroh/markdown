@@ -9898,6 +9898,29 @@ a block quote. The macro receives no arguments.
 % \end{markdown}
 %
 % \iffalse
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererBlockQuoteBegin{%
+  \markdownRendererBlockQuoteBeginPrototype}%
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
+The \mdef{markdownRendererBlockQuoteEnd} macro represents the end of a block
+quote. The macro receives no arguments.
+
+% \end{markdown}
+%
+% \iffalse
 
 ##### Plain \TeX{} Example {.unnumbered}
 
@@ -10011,29 +10034,6 @@ following text:
 > > make guilty of our disasters the sun, the moon, and the
 > > stars [...]
 
-%</manual-tokens>
-%<*tex>
-% \fi
-%
-%  \begin{macrocode}
-\def\markdownRendererBlockQuoteBegin{%
-  \markdownRendererBlockQuoteBeginPrototype}%
-%    \end{macrocode}
-% \par
-%
-% \iffalse
-%</tex>
-%<*manual-tokens>
-% \fi
-%
-% \begin{markdown}
-
-The \mdef{markdownRendererBlockQuoteEnd} macro represents the end of a block
-quote. The macro receives no arguments.
-
-% \end{markdown}
-%
-% \iffalse
 %</manual-tokens>
 %<*tex>
 % \fi
