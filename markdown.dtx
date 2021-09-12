@@ -918,7 +918,7 @@ make base
 This should produce the following files:
 
  * `markdown.lua`, the Lua module,
- * `libraries/markdown-tinyyaml.lua`, an external library for reading YAML,
+ * `libraries/markdown-tinyyaml.lua`, an external library for reading \acro{yaml},
  * `markdown-cli.lua`, the Lua command-line interface,
  * `markdown.tex`, the plain \TeX{} macro package,
  * `markdown.sty`, the \LaTeX{} package,
@@ -1035,9 +1035,9 @@ local md5 = require("md5")
 %
 % \pkg{api7/lua-tinyyaml}
 %
-%:    A library that provides a regex-based recursive descent YAML (subset)
-%     parser that is used to read YAML metadata when the \Opt{jekyllData}
-%     option is enabled.
+%:    A library that provides a regex-based recursive descent \acro{yaml}
+%     (subset) parser that is used to read \acro{yaml} metadata when the
+%     \Opt{jekyllData} option is enabled.
 %
 % \end{markdown}
 % \iffalse
@@ -1202,14 +1202,14 @@ local md5 = require("md5")
 % \pkg{etoolbox}
 %
 %:    A package that is used to polyfill the general hook management system in
-%     the default renderer prototypes for YAML metadata, see Section
+%     the default renderer prototypes for \acro{yaml} metadata, see Section
 %     \ref{sec:latexyamlmetadata}.
 %
 % \pkg{expl3}
 %
 %:    A package that enables the expl3 language from the \LaTeX3 kernel in
 %     \TeX{} Live${}\leq{}2019$. It is used in the default renderer prototypes
-%     for YAML metadata, see Section \ref{sec:latexyamlmetadata}.
+%     for \acro{yaml} metadata, see Section \ref{sec:latexyamlmetadata}.
 %
 % \end{markdown}
 % \iffalse
@@ -5084,7 +5084,7 @@ defaultOptions.inlineFootnotes = false
 :    true
 
      :   Enable the Pandoc `yaml_metadata_block` syntax extension for entering
-         metadata in YAML:
+         metadata in \acro{yaml}:
 
 ~~~~~~ yaml
 ---
@@ -5103,7 +5103,7 @@ abstract: |
 :    false
 
      :   Disable the Pandoc `yaml_metadata_block` syntax extension for entering
-         metadata in YAML.
+         metadata in \acro{yaml}.
 
 % \end{markdown}
 % \iffalse
@@ -10297,7 +10297,7 @@ following text except for the filename, which may differ:
 The \mdef{markdownRendererJekyllDataString} macro represents a fenced code
 block which will not be read verbatim but allows the user to set title information 
 or metadata. It can be extended to create arbitrary variables using the 
-YAML-Syntax. This macro will only be produced, when the \Opt{jekyllData} option is
+\acro{yaml}-Syntax. This macro will only be produced, when the \Opt{jekyllData} option is
 enabled. The macro receives two argument where the first one represents the variable
 name whereas the second contains the data.
 
@@ -15870,10 +15870,10 @@ function M.writer.new(options)
 % \begin{markdown}
 %
 % Define \luamdef{writer->jekyllData} as a function that will transform an
-% input YAML table `d` to the output format. The table is the value for
+% input \acro{yaml} table `d` to the output format. The table is the value for
 % the key `p` in the parent table; if `p` is nil, then the table has no parent.
 % All scalar keys encountered in the table will be cast to a string
-% following YAML serialization rules. Scalar values will not be typecast,
+% following \acro{yaml} serialization rules. Scalar values will not be typecast,
 % but string values will be transformed using the function `t`.
 %
 % \end{markdown}
@@ -19851,8 +19851,8 @@ end
 %
 %#### YAML Metadata
 % \label{sec:latexyamlmetadata}
-% To parse the YAML metadata we will use the expl3 language from the \LaTeX3
-% kernel.
+% To parse the \acro{yaml} metadata we will use the expl3 language from the
+% \LaTeX3 kernel.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -19863,23 +19863,23 @@ end
 % \begin{markdown}
 %
 % To keep track of the current type of structure we inhabit when we are
-% traversing a YAML document, we will maintain the
+% traversing a \acro{yaml} document, we will maintain the
 % \mdef{g_\@\@_jekyll_data_datatypes_seq} stack. At every step of the traversal,
 % the stack will contain one of the following constants at any position $p$:
 %
 % \mdef{c_\@\@_jekyll_data_sequence_tl}
 %
-%:    The currently traversed branch of the YAML document contains a sequence
+%:    The currently traversed branch of the \acro{yaml} document contains a sequence
 %     at depth $p$.
 %
 % \mdef{c_\@\@_jekyll_data_mapping_tl}
 %
-%:    The currently traversed branch of the YAML document contains a mapping
+%:    The currently traversed branch of the \acro{yaml} document contains a mapping
 %     at depth $p$.
 %
 % \mdef{c_\@\@_jekyll_data_scalar_tl}
 %
-%:    The currently traversed branch of the YAML document contains a scalar
+%:    The currently traversed branch of the \acro{yaml} document contains a scalar
 %     value at depth $p$.
 %
 % \end{markdown}
@@ -19892,9 +19892,10 @@ end
 % \par
 % \begin{markdown}
 %
-% To keep track of our current place when we are traversing a YAML document, we
-% will maintain the \mdef{g_\@\@_jekyll_data_wildcard_absolute_address_seq} stack
-% of keys using the \mdef{markdown_jekyll_data_push_address_segment:n} macro.
+% To keep track of our current place when we are traversing a \acro{yaml}
+% document, we will maintain the
+% \mdef{g_\@\@_jekyll_data_wildcard_absolute_address_seq} stack of keys using
+% the \mdef{markdown_jekyll_data_push_address_segment:n} macro.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -19947,7 +19948,7 @@ end
 %     delimited by slashes. Allows the users to react to complex
 %     context-sensitive structures with ease.
 %
-%:    For example, the `name` key in the following YAML document
+%:    For example, the `name` key in the following \acro{yaml} document
 %     would correspond to the `/*/person/name` absolute wildcard:
 %     ``` yaml
 %     [{person: {name: Elon, surname: Musk}}]
@@ -19958,7 +19959,7 @@ end
 %:    A *relative wildcard*: The rightmost segment of the wildcard. Allows the
 %     users to react to simple context-free structures.
 %
-%:    For example, the `name` key in the following YAML document
+%:    For example, the `name` key in the following \acro{yaml} document
 %     would correspond to the `name` relative wildcard:
 %     ``` yaml
 %     [{person: {name: Elon, surname: Musk}}]
@@ -20073,7 +20074,7 @@ end
 % \begin{markdown}
 %
 % Finally, we will register our macros as token renderer prototypes
-% to be able to react to the traversal of a YAML document.
+% to be able to react to the traversal of a \acro{yaml} document.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -20116,9 +20117,9 @@ end
 %
 % To complement the default setup of our key--values, we will use
 % the \mref{maketitle} macro to typeset the title page of a document
-% at the end of YAML metadata. If we are in the preamble, we will wait
-% macro until after the beginning of the document. Otherwise, we will
-% use the \mref{maketitle} macro straight away.
+% at the end of \acro{yaml} metadata. If we are in the preamble, we will wait
+% macro until after the beginning of the document. Otherwise, we will use
+% the \mref{maketitle} macro straight away.
 %
 % \end{markdown}
 %  \begin{macrocode}
