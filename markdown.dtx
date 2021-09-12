@@ -10294,12 +10294,135 @@ following text except for the filename, which may differ:
 % \begin{markdown}
 
 #### YAML Metadata Renderers
-The \mdef{markdownRendererJekyllDataString} macro represents a fenced code
-block which will not be read verbatim but allows the user to set title information 
-or metadata. It can be extended to create arbitrary variables using the 
-\acro{yaml}-Syntax. This macro will only be produced, when the \Opt{jekyllData} option is
-enabled. The macro receives two argument where the first one represents the variable
-name whereas the second contains the data.
+The \mdef{markdownRendererJekyllDataBegin} macro represents the beginning of a
+\acro{yaml} document. This macro will only be produced when the \Opt{jekyllData}
+option is enabled. The macro receives no arguments.
+
+% \end{markdown}
+%
+% \iffalse
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererJekyllDataBegin{%
+  \markdownRendererJekyllDataBeginPrototype}%
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
+The \mdef{markdownRendererJekyllDataEnd} macro represents the end of a
+\acro{yaml} document. This macro will only be produced when the
+\Opt{jekyllData} option is enabled. The macro receives no arguments.
+
+% \end{markdown}
+%
+% \iffalse
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererJekyllDataEnd{%
+  \markdownRendererJekyllDataEndPrototype}%
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
+The \mdef{markdownRendererJekyllDataMappingBegin} macro represents the
+beginning of a mapping in a \acro{yaml} document. This macro will only be
+produced when the \Opt{jekyllData} option is enabled. The macro receives two
+arguments: the scalar key in the parent structure, cast to a string following
+\acro{yaml} serialization rules, and the number of items in the mapping.
+
+% \end{markdown}
+%
+% \iffalse
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererJekyllDataMappingBegin{%
+  \markdownRendererJekyllDataMappingBeginPrototype}%
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
+The \mdef{markdownRendererJekyllDataMappingEnd} macro represents the
+end of a mapping in a \acro{yaml} document. This macro will only be produced
+when the \Opt{jekyllData} option is enabled. The macro receives no arguments.
+
+% \end{markdown}
+%
+% \iffalse
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererJekyllDataMappingEnd{%
+  \markdownRendererJekyllDataMappingEndPrototype}%
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
+The \mdef{markdownRendererJekyllDataSequenceBegin} macro represents the
+beginning of a sequence in a \acro{yaml} document. This macro will only be
+produced when the \Opt{jekyllData} option is enabled. The macro receives two
+arguments: the scalar key in the parent structure, cast to a string following
+\acro{yaml} serialization rules, and the number of items in the sequence.
+
+% \end{markdown}
+%
+% \iffalse
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererJekyllDataSequenceBegin{%
+  \markdownRendererJekyllDataSequenceBeginPrototype}%
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
+The \mdef{markdownRendererJekyllDataBoolean} macro represents a boolean scalar
+value in a \acro{yaml} document. This macro will only be produced when the
+\Opt{jekyllData} option is enabled. The macro receives two arguments: the
+scalar key in the parent structure, and the scalar value, both cast to a string
+following \acro{yaml} serialization rules.
 
 % \end{markdown}
 %
@@ -10311,24 +10434,84 @@ name whereas the second contains the data.
 %  \begin{macrocode}
 \def\markdownRendererJekyllDataBoolean{%
   \markdownRendererJekyllDataBooleanPrototype}%
-\def\markdownRendererJekyllDataEmpty{%
-  \markdownRendererJekyllDataEmptyPrototype}%
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
+The \mdef{markdownRendererJekyllDataNumber} macro represents a numeric scalar
+value in a \acro{yaml} document. This macro will only be produced when the
+\Opt{jekyllData} option is enabled. The macro receives two arguments: the
+scalar key in the parent structure, and the scalar value, both cast to a string
+following \acro{yaml} serialization rules.
+
+% \end{markdown}
+%
+% \iffalse
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
 \def\markdownRendererJekyllDataNumber{%
   \markdownRendererJekyllDataNumberPrototype}%
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
+The \mdef{markdownRendererJekyllDataString} macro represents a string scalar
+value in a \acro{yaml} document. This macro will only be produced when the
+\Opt{jekyllData} option is enabled. The macro receives two arguments: the
+scalar key in the parent structure, cast to a string following \acro{yaml}
+serialization rules, and the scalar value.
+
+% \end{markdown}
+%
+% \iffalse
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
 \def\markdownRendererJekyllDataString{%
   \markdownRendererJekyllDataStringPrototype}%
-\def\markdownRendererJekyllDataBegin{%
-  \markdownRendererJekyllDataBeginPrototype}%
-\def\markdownRendererJekyllDataEnd{%
-  \markdownRendererJekyllDataEndPrototype}%
-\def\markdownRendererJekyllDataSequenceBegin{%
-  \markdownRendererJekyllDataSequenceBeginPrototype}%
-\def\markdownRendererJekyllDataSequenceEnd{%
-  \markdownRendererJekyllDataSequenceEndPrototype}%
-\def\markdownRendererJekyllDataMappingBegin{%
-  \markdownRendererJekyllDataMappingBeginPrototype}%
-\def\markdownRendererJekyllDataMappingEnd{%
-  \markdownRendererJekyllDataMappingEndPrototype}%
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
+The \mdef{markdownRendererJekyllDataEmpty} macro represents an empty scalar
+value in a \acro{yaml} document. This macro will only be produced when the
+\Opt{jekyllData} option is enabled. The macro receives one argument: the
+scalar key in the parent structure, cast to a string following \acro{yaml}
+serialization rules.
+
+% \end{markdown}
+%
+% \iffalse
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererJekyllDataEmpty{%
+  \markdownRendererJekyllDataEmptyPrototype}%
 %    \end{macrocode}
 % \par
 %
@@ -15872,9 +16055,9 @@ function M.writer.new(options)
 % Define \luamdef{writer->jekyllData} as a function that will transform an
 % input \acro{yaml} table `d` to the output format. The table is the value for
 % the key `p` in the parent table; if `p` is nil, then the table has no parent.
-% All scalar keys encountered in the table will be cast to a string
-% following \acro{yaml} serialization rules. Scalar values will not be typecast,
-% but string values will be transformed using the function `t`.
+% All scalar keys and values encountered in the table will be cast to a string
+% following \acro{yaml} serialization rules. String values will also be
+% transformed using the function `t`.
 %
 % \end{markdown}
 %  \begin{macrocode}
