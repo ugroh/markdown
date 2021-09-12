@@ -70,6 +70,14 @@ jobs:
           fetch-depth: 0
       - name: Build Docker image
         run: make docker-image
+      - name: Test Lua command-line interface
+        run: |
+          RESULT="$(printf '%s\n' 'Hello *Markdown*! $a_x + b_x = c_x$' |
+                    docker run --rm -i witiko/markdown markdown-cli hybrid=true underscores=false |
+                    tee /dev/stderr)"
+          test "$RESULT" = 'Hello \markdownRendererEmphasis{Markdown}! $a_x + b_x = c_x$\relax'
+      - name: Run unit tests
+        run: docker run -v "$PWD":/git-repo -w /git-repo witiko/markdown make test
       - name: Build distribution archives
         run: docker run -v "$PWD":/git-repo -w /git-repo witiko/markdown make dist gh-pages
       - name: Upload artifact markdown.tds.zip
