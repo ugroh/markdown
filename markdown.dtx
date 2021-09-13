@@ -20496,9 +20496,7 @@ end
 %  \begin{macrocode}
   },
 }
-\ifx\IfFormatAtLeastTF\@undefined
-  \def\IfFormatAtLeastTF{\@ifl@t@r\fmtversion}
-\fi
+\providecommand\IfFormatAtLeastTF{\@ifl@t@r\fmtversion}
 \markdownSetup{
   rendererPrototypes = {
     jekyllDataEnd = {
