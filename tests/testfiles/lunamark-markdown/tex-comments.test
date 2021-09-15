@@ -14,6 +14,12 @@ The following *emphasi% this is a comment
 A single backslash at the *end of \
 a line* should be allowed by the preprocessor.
 
+Two backslashes at the *end of \\
+a line* should also be allowed by the preprocessor.
+
+Three backslashes at the *end of \\\
+a line* should also be allowed by the preprocessor.
+
 The surjective preprocessor should allow us to express `\\%
 ` and `\\\%`, `\\\\%
 ` and `\\\\\%`, etc. by having each pair of backslashes preceding a percent
@@ -34,6 +40,10 @@ interblockSeparator
 interblockSeparator
 interblockSeparator
 emphasis: end of (backslash) a line
+interblockSeparator
+emphasis: end of (backslash) a line
+interblockSeparator
+emphasis: end of (backslash)(backslash) a line
 interblockSeparator
 codeSpan: (backslash)
 codeSpan: (backslash)(percentSign)

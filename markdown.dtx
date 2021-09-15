@@ -16694,7 +16694,9 @@ parsers.commented_line         = Cg(Cc(""), "backslashes")
                                    + parsers.percent  -- comment
                                    * parsers.line
                                    * parsers.optionalspace)  -- leading tabs and spaces
-                                 + C(parsers.newline))
+                                 + #(parsers.newline)
+                                 * Cb("backslashes")
+                                 * C(parsers.newline))
 
 parsers.chunk                  = parsers.line * (parsers.optionallyindentedline
                                                 - parsers.blankline)^0
