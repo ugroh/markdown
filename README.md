@@ -294,3 +294,13 @@ BibTeX entry:
   urldate = {2020-07-31},
 }
 ```
+
+Alternatively, you can use the `Novotny:2017:UMI` key from the [`tugboat.bib`][tugboat.bib]
+BibTeX file that is included in your TeX distribution like this:
+
+``` tex
+\cite{Novotny:2017:UMI}
+\bibliography{tugboat}
+```
+
+ [tugboat.bib]: http://mirrors.ctan.org/info/digests/tugboat/biblio/tugboat.bib
