@@ -1133,10 +1133,10 @@ local md5 = require("md5")
 %
 % The following packages are soft prerequisites. They are only used to provide
 % default token renderer prototypes (see sections
-% \vref{sec:texrendererprototypes} and \vref{sec:latexrendererprototypes}) or
-% \LaTeX{} themes (see Section \vref{sec:latexthemes}) and will not be loaded
-% if the `plain` package option has been enabled (see Section
-% \vref{sec:latexplain}):
+% \vref{sec:texrendererprototypes} and
+% \vref{sec:latexdefaultrendererprototypes}) or \LaTeX{} themes (see Section
+% \vref{sec:latexthemes}) and will not be loaded if the `plain` package option
+% has been enabled (see Section \vref{sec:latexplain}):
 %
 % \pkg{url}
 %
@@ -19666,7 +19666,7 @@ end
 % \begin{markdown}
 %
 %### Token Renderer Prototypes
-% \label{sec:latexrendererprototypes}
+% \label{sec:latexdefaultrendererprototypes}
 % The following configuration should be considered placeholder. If the `plain`
 % package option has been enabled (see Section \vref{sec:latexplain}), none of
 % it will take effect.
