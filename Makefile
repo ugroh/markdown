@@ -28,7 +28,7 @@ TECHNICAL_DOCUMENTATION=markdown.pdf
 MARKDOWN_USER_MANUAL=markdown.md markdown.css
 HTML_USER_MANUAL=markdown.html markdown.css
 USER_MANUAL=$(MARKDOWN_USER_MANUAL) $(HTML_USER_MANUAL)
-DOCUMENTATION=$(TECHNICAL_DOCUMENTATION) $(USER_MANUAL) $(ROOT_README)
+DOCUMENTATION=$(TECHNICAL_DOCUMENTATION) $(HTML_USER_MANUAL) $(ROOT_README)
 LIBRARIES=libraries/markdown-tinyyaml.lua
 INSTALLABLES=markdown.lua markdown-cli.lua markdown.tex markdown.sty t-markdown.tex \
 	markdownthemewitiko_dot.sty markdownthemewitiko_graphicx_http.sty \
