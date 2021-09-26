@@ -197,17 +197,17 @@ For further information, consult one of the following:
  [tb124]: https://www.tug.org/TUGboat/tb40-1/tb124novotny-markdown.pdf "Markdown 2.7.0: Towards lightweight markup in TeX"
  [tb129]: https://www.tug.org/TUGboat/tb41-3/tb129novotny-frozen.pdf   "Making Markdown into a Microwave Meal"
 
- [tb131-preprint]: https://tug.org/TUGboat/production/42-2/tb131novotny-markdown.pdf "Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX"
- [tb131-slides]:   https://tug.org/tug2021/assets/pdf/tug2021-novotny-slides.pdf     "Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX"
- [tb131-video]:    https://youtu.be/i2GJMnLCZls                                      "Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX"
+ [tb131-preprint]: https://tug.org/tug2021/assets/pdf/novotny-tug2021-preprint.pdf "Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX"
+ [tb131-slides]:   https://tug.org/tug2021/assets/pdf/tug2021-novotny-slides.pdf   "Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX"
+ [tb131-video]:    https://youtu.be/i2GJMnLCZls                                    "Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX"
 
  [10.5300/2016-1-4/78]: https://bulletin.cstug.cz/pdf/2016-1-4.pdf#page=80 "Rendering Markdown inside TeX Documents"
  [10.5300/2020-1-2/48]: https://bulletin.cstug.cz/pdf/2020-1-2.pdf#page=50 "Markdown 2.8.1: Boldly Unto the Throne of Lightweight Markup in TeX"
 
- [pv212-fall2020]: https://is.muni.cz/el/fi/podzim2020/PV212/index.qwarp?prejit=5595952
+ [pv212-fall2020]: https://is.muni.cz/elearning/warp?qurl=%2Fel%2Ffi%2Fpodzim2020%2FPV212%2Findex.qwarp;prejit=5595952
 
  [install]:  https://mirrors.ctan.org/macros/generic/markdown/markdown.html#installation "Markdown Package User Manual"
- [liantze]:  https://liantze.penguinattack.org/                                          "Rants from the Lab"
+ [liantze]:  http://liantze.penguinattack.org/                                           "Rants from the Lab"
  [overleaf]: https://www.overleaf.com/                                                   "Overleaf: Real-time Collaborative Writing and Publishing Tools with Integrated PDF Preview"
  [tugboat]:  https://www.tug.org/tugboat/                                                "TUGboat - Communications of the TeX Users Group"
  [cstug]:    https://www.cstug.cz/                                                       "Československé sdružení uživatelů TeXu"
