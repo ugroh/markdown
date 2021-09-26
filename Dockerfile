@@ -18,8 +18,10 @@ ARG DEPENDENCIES="\
     m4 \
     pandoc \
     parallel \
+    poppler-utils \
     python3-pygments \
     ruby \
+    unzip \
     wget \
     zip \
 "
