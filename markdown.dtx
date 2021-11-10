@@ -10512,6 +10512,30 @@ arguments: the scalar key in the parent structure, cast to a string following
 %
 % \begin{markdown}
 
+The \mdef{markdownRendererJekyllDataSequenceEnd} macro represents the
+end of a sequence in a \acro{yaml} document. This macro will only be produced
+when the \Opt{jekyllData} option is enabled. The macro receives no arguments.
+
+% \end{markdown}
+%
+% \iffalse
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererJekyllDataSequenceEnd{%
+  \markdownRendererJekyllDataSequenceEndPrototype}%
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
 The \mdef{markdownRendererJekyllDataBoolean} macro represents a boolean scalar
 value in a \acro{yaml} document. This macro will only be produced when the
 \Opt{jekyllData} option is enabled. The macro receives two arguments: the
