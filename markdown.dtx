@@ -12090,9 +12090,11 @@ Default token renderer prototypes require \LaTeX{} packages that may clash with
 other packages used in a document.  Additionally, if we redefine token
 renderers and renderer prototypes ourselves, the default definitions will bring
 no benefit to us. Using the `plain` package option, we can keep the default
-definitions from the plain \TeX{} implementation (see Section
-\vref{sec:textokenrendererprototypes}) and prevent the soft \LaTeX{}
-prerequisites in Section \vref{sec:latexprerequisites} from being loaded:
+definitions from the plain \TeX{} implementation
+% (see Section \vref{sec:textokenrendererprototypes})
+and prevent the soft \LaTeX{} prerequisites
+% in Section \vref{sec:latexprerequisites}
+from being loaded:
 
 ``` tex
 \usepackage[plain]{markdown}
