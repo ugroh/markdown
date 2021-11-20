@@ -281,7 +281,7 @@ When citing Markdown in academic papers and theses, please use the following
 BibTeX entry:
 
 ``` bib
-@article{novotny17markdown,
+@article{novotny2017markdown,
   author  = {V\'{i}t Novotn\'{y}},
   year    = {2017},
   title   = {Using {M}arkdown Inside {\TeX} Documents},
