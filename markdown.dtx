@@ -11985,11 +11985,11 @@ pdflatex --shell-escape document.tex
 % \documentclass{article}            \documentclass{article}
 % \usepackage{markdown}              \usepackage{markdown}
 % \begin{document}                   \begin{document}
-% % ...                              % ...
+% \% ...                              \% ...
 % \begin{markdown}                   \begin{markdown*}{smartEllipses}
 % _Hello_ **world** ...              _Hello_ **world** ...
 % \end{markdown}                     \end{markdown*}
-% % ...                              % ...
+% \% ...                              \% ...
 % \end{document}                     \end{document}
 % ```````
 %
@@ -12872,8 +12872,8 @@ The following ordered list will be preceded by roman numerals:
 % ``` tex
 % \markdownSetup{
 %   renderers = {
-%     link = {#4},                   % Render links as the link title.
-%     emphasis = {\emph{#1}},    % Render emphasized text via `\emph`.
+%     link = {#4},                   \% Render links as the link title.
+%     emphasis = {\emph{#1}},    \% Render emphasized text via `\emph`.
 %   }
 % }
 % ```````
@@ -13044,7 +13044,7 @@ The following ordered list will be preceded by roman numerals:
 % \markdownSetup{
 %   rendererPrototypes = {
 %     image = {\includegraphics{#2}},
-%     codeSpan = {\texttt{#1}},    % Render inline code via `\texttt`.
+%     codeSpan = {\texttt{#1}},    \% Render inline code via `\texttt`.
 %   }
 % }
 % ```````
