@@ -7359,6 +7359,7 @@ bug](https://github.com/witiko/markdown/issues).
 \let\markdownOptionContentBlocks\undefined
 \let\markdownOptionContentBlocksLanguageMap\undefined
 \let\markdownOptionDefinitionLists\undefined
+\let\markdownOptionEagerCache\undefined
 \let\markdownOptionFootnotes\undefined
 \let\markdownOptionFencedCode\undefined
 \let\markdownOptionHashEnumerators\undefined
@@ -12656,6 +12657,8 @@ The following ordered list will be preceded by roman numerals:
   \def\markdownOptionContentBlocksLanguageMap{#1}}%
 \define@key{markdownOptions}{definitionLists}[true]{%
   \def\markdownOptionDefinitionLists{#1}}%
+\define@key{markdownOptions}{eagerCache}[true]{%
+  \def\markdownOptionEagerCache{#1}}%
 \define@key{markdownOptions}{footnotes}[true]{%
   \def\markdownOptionFootnotes{#1}}%
 \define@key{markdownOptions}{fencedCode}[true]{%
@@ -18813,6 +18816,9 @@ end
 \fi
 \ifx\markdownOptionDefinitionLists\undefined\else
   definitionLists = \markdownOptionDefinitionLists,
+\fi
+\ifx\markdownOptionEagerCache\undefined\else
+  eagerCache = \markdownOptionEagerCache,
 \fi
 \ifx\markdownOptionFinalizeCache\undefined\else
   finalizeCache = \markdownOptionFinalizeCache,
