@@ -3858,12 +3858,18 @@ defaultOptions.definitionLists = false
      produces a large number of auxiliary files on the disk and obscures the
      output of the Lua command-line interface when it is used for plumbing.
 
+     This behavior will always be used if the \Opt{finalizeCache} option is
+     enabled.
+
 :    false
 
      Converted markdown documents will not be cached. This decreases the number
      of auxiliary files that we produce and makes it easier to use the Lua
-     command-line interface for plumbing. *This behavior is planned to be the
-     new default in the next major release of the Markdown package.*
+     command-line interface for plumbing.
+
+     This behavior will only be used when the \Opt{finalizeCache} option is
+     disabled. Furthermore, this behavior is planned to be the new default in
+     the next major release of the Markdown package.
 
 % \end{markdown}
 % \iffalse
@@ -18503,19 +18509,30 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
     end
     table.sort(opt_string)
     local salt = table.concat(opt_string, ",") .. "," .. metadata.version
+    local output
 %    \end{macrocode}
 % \begin{markdown}
-% Produce the cache file and transform its filename to plain \TeX{} output
-% via the \luamref{writer->pack} method.
+% If we cache markdown documents, produce the cache file and transform its
+% filename to plain \TeX{} output via the \luamref{writer->pack} method.
 % \end{markdown}
 %  \begin{macrocode}
-    local name = util.cache(options.cacheDir, input, salt, function(input)
-        return util.rope_to_string(parse_blocks_toplevel(input)) .. writer.eof
-      end, ".md" .. writer.suffix)
-    local output = writer.pack(name)
+    local function convert(input)
+      return util.rope_to_string(parse_blocks_toplevel(input)) .. writer.eof
+    end
+    if options.eagerCache or options.finalizeCache then
+      local name = util.cache(options.cacheDir, input, salt, convert, ".md" .. writer.suffix)
+      output = writer.pack(name)
 %    \end{macrocode}
 % \begin{markdown}
-% If the \Opt{frozenCache} option is enabled, populate the frozen cache in
+% Otherwise, return the result of the conversion directly.
+% \end{markdown}
+%  \begin{macrocode}
+    else
+      output = convert(input)
+    end
+%    \end{macrocode}
+% \begin{markdown}
+% If the \Opt{finalizeCache} option is enabled, populate the frozen cache in
 % the file \Opt{frozenCacheFileName} with an entry for markdown document
 % number \Opt{frozenCacheCounter}.
 % \end{markdown}
