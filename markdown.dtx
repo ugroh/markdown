@@ -3873,6 +3873,54 @@ defaultOptions.definitionLists = false
 
 % \end{markdown}
 % \iffalse
+
+##### Lua Module Example {.unnumbered}
+
+Using a text editor, create a text document named `hello.md` with the
+following content:
+``` md
+Hello *world*!
+``````
+Next, invoke LuaTeX from the terminal with the \Opt{eagerCache} option
+disabled:
+``` sh
+texlua ⟨CLI pathname⟩ eagerCache=false -- hello.md hello.tex
+```````
+where \meta{CLI pathname} corresponds to the location of the Lua CLI script file,
+such as `~/texmf/scripts/markdown/markdown-cli.lua` on UN\*X systems or
+`C:\Users\`\meta{Your username}`\texmf\scripts\markdown\markdown-cli.lua` on Windows
+systems. Use the command `kpsewhich -a markdown-cli.lua` to locate the Lua CLI
+script file using [Kpathsea][].
+
+A \TeX{} document named `hello.tex` should be produced and contain the
+following code:
+``` tex
+Hello \markdownRendererEmphasis{world}!\relax
+```
+
+***
+
+Invoke LuaTeX from the terminal again, this time with the \Opt{eagerCache}
+option enabled:
+
+``` tex
+texlua ⟨CLI pathname⟩ eagerCache=true -- hello.md hello.tex
+```
+
+A \TeX{} document named `hello.tex` should be produced and contain the
+following code:
+
+``` tex
+\input ./⟨hash⟩.md.tex\relax
+```
+
+Additionally, a \TeX{} document named `⟨hash⟩.md.tex` should be produced and
+contain the following code:
+
+``` tex
+Hello \markdownRendererEmphasis{world}!\relax
+```
+
 %</manual-options>
 %<*lua,lua-cli>
 % \fi
@@ -15787,7 +15835,7 @@ function M.writer.new(options)
 % \end{markdown}
 %  \begin{macrocode}
   function self.pack(name)
-    return [[\input ]] .. name .. [[\relax{}]]
+    return [[\input ]] .. name .. [[\relax]]
   end
 %    \end{macrocode}
 % \par
