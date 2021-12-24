@@ -3841,6 +3841,43 @@ defaultOptions.definitionLists = false
 %</lua,lua-cli>
 %<*manual-options>
 
+#### Option `eagerCache`
+
+`eagerCache` (default value: `true`)
+
+% \fi
+% \begin{markdown}
+%
+% \Optitem[true]{eagerCache}{\opt{true}, \opt{false}}
+%
+:    true
+
+     Converted markdown documents will be cached in \Opt{cacheDir}. This can be
+     useful for post-processing the converted documents and for recovering
+     historical versions of the documents from the cache.  However, it also
+     produces a large number of auxiliary files on the disk and obscures the
+     output of the Lua command-line interface when it is used for plumbing.
+
+:    false
+
+     Converted markdown documents will not be cached. This decreases the number
+     of auxiliary files that we produce and makes it easier to use the Lua
+     command-line interface for plumbing. *This behavior is planned to be the
+     new default in the next major release of the Markdown package.*
+
+% \end{markdown}
+% \iffalse
+%</manual-options>
+%<*lua,lua-cli>
+% \fi
+%  \begin{macrocode}
+defaultOptions.eagerCache = true
+%    \end{macrocode}
+% \par
+% \iffalse
+%</lua,lua-cli>
+%<*manual-options>
+
 #### Option `fencedCode`
 
 `fencedCode` (default value: `false`)
