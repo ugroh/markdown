@@ -724,13 +724,26 @@ abbr {
   pagetotal = {xviii, 347},
   location  = {Rio de Janeiro},
   publisher = {PUC-Rio}}
-@book{knuth86,
+@book{knuth86a,
   author    = {Knuth, Donald Ervin},
   year      = {1986},
   title     = {The \TeX{}book},
   edition   = {3},
   isbn      = {0-201-13447-0},
   pagetotal = {ix, 479},
+  series    = {Computers \& Typesetting},
+  volume    = {A},
+  location  = {Reading, MA},
+  publisher = {Addison-Wesley}}
+@book{knuth86b,
+  author    = {Knuth, Donald Ervin},
+  year      = {1986},
+  title     = {\TeX: The Program},
+  isbn      = {0-201-13437-7},
+  pagetotal = {xvi, 594},
+  series    = {Computers \& Typesetting},
+  volume    = {B},
+  location  = {Reading, MA},
   publisher = {Addison-Wesley}}
 @online{novotny21,
   author    = {Novotný, Vít},
@@ -738,6 +751,15 @@ abbr {
   date      = {2021-02-20},
   url       = {https://github.com/latex3/latex2e/issues/510},
   urldate   = {2021-02-21}}
+@book{eijkhout92,
+  author    = {Victor Eijkhout},
+  title     = {\TeX{} by Topic},
+  subtitle  = {A \TeX nician's Reference},
+  isbn      = {0-201-56882-0},
+  pagetotal = {307},
+  date = {1992-02-01},
+  location = {Wokingham, England},
+  publisher = {Addison-Wesley}}
 %</techdoc-bibliography>
 %<*latex-themes-witiko-markdown-techdoc>
 \ProvidesPackage{markdownthemewitiko_markdown_techdoc}[2021/09/10]
@@ -7078,7 +7100,7 @@ pdftex --shell-escape document.tex
 % Another limitation concerns spaces at the right end of an input line. In
 % markdown, these are used to produce a forced line break. However, any such
 % spaces are removed before the lines enter the input buffer of
-% \TeX{}~[@knuth86, p. 46]. As a corrolary, the \mref{markdownBegin} macro also
+% \TeX{}~[@knuth86a, p. 46]. As a corrolary, the \mref{markdownBegin} macro also
 % ignores them.
 %
 % The \mref{markdownBegin} and \mref{markdownEnd} macros will also consume the rest
@@ -20807,24 +20829,50 @@ end
 % The \mref{startmarkdown} and \mref{stopmarkdown} macros are implemented using the
 % \mref{markdownReadAndConvert} macro.
 %
+% In Knuth's \TeX, trailing spaces are removed very early on when a line is
+% being put to the input buffer.~[@knuth86b, sec. 31].  According to
+% @eijkhout92 [sec. 2.2], this is because ``these spaces are hard to see in
+% an editor''. At the moment, there is no option to suppress this behavior in
+% (Lua)\TeX, but \Hologo{ConTeXt} MkIV funnels all input through its own input
+% handler. This makes it possible to suppress the removal of trailing spaces
+% in \Hologo{ConTeXt} MkIV and therefore to insert hard line breaks into
+% markdown text.
+%
 % \end{markdown}
 %  \begin{macrocode}
-\begingroup
-%    \end{macrocode}
-% \begin{markdown}
-% Locally swap the category code of the backslash symbol with the pipe symbol.
-% This is required in order that all the special symbols that appear in the
-% first argument of the `markdownReadAndConvert` macro have the category code
-% *other*.
-% \end{markdown}
-%  \begin{macrocode}
-  \catcode`\|=0%
-  \catcode`\\=12%
-  |gdef|startmarkdown{%
-    |markdownReadAndConvert{\stopmarkdown}%
-                           {|stopmarkdown}}%
-  |gdef|stopmarkdown{|markdownEnd}%
-|endgroup
+\ifx\startluacode\undefined  % MkII
+  \begingroup
+    \catcode`\|=0%
+    \catcode`\\=12%
+    |gdef|startmarkdown{%
+      |markdownReadAndConvert{\stopmarkdown}%
+                             {|stopmarkdown}}%
+    |gdef|stopmarkdown{%
+      |markdownEnd}%
+  |endgroup
+\else  % MkIV
+  \startluacode
+    document.markdown_buffering = false
+    local function preserve_trailing_spaces(line)
+      if document.markdown_buffering then
+        line = line:gsub("[ \t][ \t]$", "\t\t")
+      end
+      return line
+    end
+    resolvers.installinputlinehandler(preserve_trailing_spaces)
+  \stopluacode
+  \begingroup
+    \catcode`\|=0%
+    \catcode`\\=12%
+    |gdef|startmarkdown{%
+      |ctxlua{document.markdown_buffering = true}%
+      |markdownReadAndConvert{\stopmarkdown}%
+                             {|stopmarkdown}}%
+    |gdef|stopmarkdown{%
+      |ctxlua{document.markdown_buffering = false}%
+      |markdownEnd}%
+  |endgroup
+\fi
 %    \end{macrocode}
 % \par
 % \begin{markdown}
