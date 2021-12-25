@@ -19399,7 +19399,28 @@ end
 %
 % \end{markdown}
 %  \begin{macrocode}
-\def\markdownLuaExecute#1{\directlua{local print = tex.print #1}}%
+\begingroup
+%    \end{macrocode}
+% \begin{markdown}
+% Swap the category code of the backslash symbol and the pipe symbol, so that
+% we may use the backslash symbol freely inside the Lua code.
+% \end{markdown}
+%  \begin{macrocode}
+  \catcode`|=0%
+  \catcode`\\=12%
+  |gdef|markdownLuaExecute#1{%
+    |directlua{%
+      local function print(input)
+        local output = {}
+        for line in input:gmatch("[^\r\n]+") do
+          table.insert(output, line)
+        end
+        tex.print(output)
+      end
+      #1
+    }%
+  }%
+|endgroup
 \fi
 %    \end{macrocode}
 % \par
