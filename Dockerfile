@@ -108,22 +108,8 @@ COPY --from=build ${BUILD_DIR}/dist ${INSTALL_DIR}/
 
 COPY <<EOF ${BINARY_DIR}/markdown-cli
 #!/bin/bash
-# Expand the output of markdown-cli.lua to make it more human-readable
-
-RESULT=\"\$(texlua ${INSTALL_DIR}/scripts/markdown/markdown-cli.lua \"\$@\")\"
-EXIT_CODE=\$?
-
-if (( \$(wc -l <<< \"\$RESULT\") == 1 )) && grep -q \'^\\\\input\' <<< \"\$RESULT\"
-then
-    FILENAME=\"\$(sed -r \'s/\\\\input (.*)\\\\relax\\{\\}/\\1/\' <<< \"\$RESULT\")\"
-    RESULT=\"\$(cat \"\$FILENAME\")\"
-fi
-
-printf \'%s\\n\' \"\$RESULT\"
-exit \$EXIT_CODE
-
+texlua ${INSTALL_DIR}/scripts/markdown/markdown-cli.lua eagerCache=false \"\$@\"
 EOF
-
 
 RUN <<EOF
 
