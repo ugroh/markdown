@@ -44,7 +44,9 @@ This is a bullet list:
 * The first item of a bullet list
 
   that spans several paragraphs,
+
 * the second item of a bullet list,
+
 * the third item of a bullet list.
 
 This is a compact bullet list:
@@ -58,7 +60,9 @@ This is an ordered list:
 5. The first item of an ordered list
 
    that spans several paragraphs,
+
 6. the second item of an ordered list,
+
 7. the third item of an ordered list.
 
 This is an ordered list using hash enumerators:
@@ -66,7 +70,9 @@ This is an ordered list using hash enumerators:
 #. The first item of an ordered list
 
    that spans several paragraphs,
+
 #. the second item of an ordered list,
+
 #. the third item of an ordered list.
 
 This is a compact ordered list:
