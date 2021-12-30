@@ -179,9 +179,11 @@ For further information, consult one of the following:
     - [Markdown 2.7.0: Towards lightweight markup in TeX][tb124],
     - [Making Markdown into a Microwave Meal][tb129], and
     - [Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX][tb131].
-5. My journal articles published by [CSTUG][] (in Czech):
-    - [Rendering Markdown inside TeX Documents][10.5300/2016-1-4/78], and
-    - [Markdown 2.8.1: Boldly Unto the Throne of Lightweight Markup in TeX][10.5300/2020-1-2/48].
+5. Journal articles of me and my students published by [CSTUG][] (in Czech and Slovak):
+    - [Rendering Markdown inside TeX Documents][10.5300/2016-1-4/78],
+    - [Markdown 2.8.1: Boldly Unto the Throne of Lightweight Markup in TeX][10.5300/2020-1-2/48],
+    - [Markdown 2.10.0: LaTeX Themes & Snippets][10.5300/2021-1-4/76], and
+    - [Direct Typesetting of Various Document Formats in TeX Using the Pandoc Utility][10.5300/2021-1-4/83].
 6. My talks:
     - [Five Years of Markdown in LaTeX: What, Why, How, and Whereto][pv212-fall2020] (in Czech), and
     - [Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX][tb131-video] ([slides][tb131-slides]).
@@ -203,6 +205,8 @@ For further information, consult one of the following:
 
  [10.5300/2016-1-4/78]: https://bulletin.cstug.cz/pdf/2016-1-4.pdf#page=80 "Rendering Markdown inside TeX Documents"
  [10.5300/2020-1-2/48]: https://bulletin.cstug.cz/pdf/2020-1-2.pdf#page=50 "Markdown 2.8.1: Boldly Unto the Throne of Lightweight Markup in TeX"
+ [10.5300/2021-1-4/76]: https://bulletin.cstug.cz/pdf/2021-1-4.pdf#page=78 "Markdown 2.10.0: LaTeX Themes & Snippets"
+ [10.5300/2021-1-4/83]: https://bulletin.cstug.cz/pdf/2021-1-4.pdf#page=85 "Direct Typesetting of Various Document Formats in TeX Using the Pandoc Utility"
 
  [pv212-fall2020]: https://is.muni.cz/elearning/warp?qurl=%2Fel%2Ffi%2Fpodzim2020%2FPV212%2Findex.qwarp;prejit=5595952
 
