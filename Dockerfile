@@ -30,7 +30,7 @@ ARG BINARY_DIR=/usr/local/bin
 ARG BUILD_DIR=/git-repo
 ARG INSTALL_DIR=/usr/local/texlive/texmf-local
 
-ARG TEXLIVE_TAG=latest-with-cache
+ARG TEXLIVE_TAG=latest
 
 FROM texlive/texlive:$TEXLIVE_TAG as build
 
