@@ -61,31 +61,31 @@ jobs:
       - name: Build distribution archives
         run: docker run -v "$PWD":/git-repo -w /git-repo witiko/markdown make dist gh-pages
       - name: Upload artifact markdown.tds.zip
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' && matrix.texlive == 'latest'
         uses: actions/upload-artifact@v2
         with:
           name: markdown.tds.zip
           path: markdown.tds.zip
       - name: Upload artifact markdown.ctan.zip
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' && matrix.texlive == 'latest'
         uses: actions/upload-artifact@v2
         with:
           name: markdown.ctan.zip
           path: markdown.ctan.zip
       - name: Upload artifact markdown.zip
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' && matrix.texlive == 'latest'
         uses: actions/upload-artifact@v2
         with:
           name: markdown.zip
           path: markdown.zip
       - name: Upload artifact markdown.pdf
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' && matrix.texlive == 'latest'
         uses: actions/upload-artifact@v2
         with:
           name: markdown.pdf
           path: markdown.pdf
       - name: Publish user manual
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' && matrix.texlive == 'latest'
         uses: crazy-max/ghaction-github-pages@v2
         with:
           target_branch: gh-pages
@@ -93,7 +93,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create a prerelease
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' && matrix.texlive == 'latest'
         uses: marvinpinto/action-automatic-releases@latest
         with:
           title: The latest version
