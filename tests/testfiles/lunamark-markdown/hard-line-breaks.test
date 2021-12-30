@@ -1,0 +1,20 @@
+\def\markdownOptionHardLineBreaks{true}
+<<<
+This test ensures that the Lua `hardLineBreaks` option correctly propagates
+through the plain TeX interface.
+
+'Twas *brillig*, and the slithy toves
+Did *gyre and gimble* in the wabe; 
+All mimsy were the *borogoves*,  
+And the mome raths *outgrabe*.
+>>>
+codeSpan: hardLineBreaks
+lineBreak
+interblockSeparator
+emphasis: brillig
+lineBreak
+emphasis: gyre and gimble
+lineBreak
+emphasis: borogoves
+lineBreak
+emphasis: outgrabe

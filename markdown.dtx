@@ -4480,6 +4480,80 @@ defaultOptions.frozenCacheCounter = 0
 %</lua,lua-cli>
 %<*manual-options>
 
+#### Option `hardLineBreaks`
+
+`hardLineBreaks` (default value: `false`)
+
+% \fi
+% \begin{markdown}
+%
+% \Optitem[false]{hardLineBreaks}{\opt{true}, \opt{false}}
+%
+:    true
+
+     :  Interpret all newlines within a paragraph as hard line breaks instead
+        of spaces.
+
+:    false
+
+     :  Interpret all newlines within a paragraph as spaces.
+
+% \end{markdown}
+% \iffalse
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\documentclass{article}
+\usepackage{markdown}
+\begin{document}
+
+\begin{markdown}
+'Twas brillig, and the slithy toves
+Did gyre and gimble in the wabe;
+All mimsy were the borogoves,
+And the mome raths outgrabe.
+\end{markdown}
+
+\begin{markdown*}{hardLineBreaks}
+'Twas brillig, and the slithy toves
+Did gyre and gimble in the wabe;
+All mimsy were the borogoves,
+And the mome raths outgrabe.
+\end{markdown*}
+
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> 'Twas brillig, and the slithy toves
+> Did gyre and gimble in the wabe;
+> All mimsy were the borogoves,
+> And the mome raths outgrabe.
+>
+> 'Twas brillig, and the slithy toves  
+> Did gyre and gimble in the wabe;  
+> All mimsy were the borogoves,  
+> And the mome raths outgrabe.
+
+%</manual-options>
+%<*lua,lua-cli>
+% \fi
+%  \begin{macrocode}
+defaultOptions.hardLineBreaks = false
+%    \end{macrocode}
+% \par
+% \iffalse
+%</lua,lua-cli>
+%<*manual-options>
+
 #### Option `hashEnumerators`
 
 `hashEnumerators` (default value: `false`)
@@ -7445,6 +7519,7 @@ bug](https://github.com/witiko/markdown/issues).
 \let\markdownOptionEagerCache\undefined
 \let\markdownOptionFootnotes\undefined
 \let\markdownOptionFencedCode\undefined
+\let\markdownOptionHardLineBreaks\undefined
 \let\markdownOptionHashEnumerators\undefined
 \let\markdownOptionHeaderAttributes\undefined
 \let\markdownOptionHtml\undefined
@@ -12771,6 +12846,8 @@ The following ordered list will be preceded by roman numerals:
   \def\markdownOptionFencedCode{#1}}%
 \define@key{markdownOptions}{jekyllData}[true]{%
   \def\markdownOptionJekyllData{#1}}%
+\define@key{markdownOptions}{hardLineBreaks}[true]{%
+  \def\markdownOptionHardLineBreaks{#1}}%
 \define@key{markdownOptions}{hashEnumerators}[true]{%
   \def\markdownOptionHashEnumerators{#1}}%
 \define@key{markdownOptions}{headerAttributes}[true]{%
@@ -18022,15 +18099,22 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                       + larsers.bqstart
                       + larsers.headerstart
                       + larsers.fencestart
-                    ) * parsers.spacechar^0 / writer.space
+                    ) * parsers.spacechar^0
+                    / (options.hardLineBreaks and writer.linebreak
+                                               or writer.space)
 
   larsers.OptionalIndent
                      = parsers.spacechar^1 / writer.space
 
   larsers.Space      = parsers.spacechar^2 * larsers.Endline / writer.linebreak
                      + parsers.spacechar^1 * larsers.Endline^-1 * parsers.eof / ""
-                     + parsers.spacechar^1 * larsers.Endline^-1
-                                           * parsers.optionalspace / writer.space
+                     + parsers.spacechar^1 * larsers.Endline
+                                           * parsers.optionalspace
+                                           / (options.hardLineBreaks
+                                              and writer.linebreak
+                                               or writer.space)
+                     + parsers.spacechar^1 * parsers.optionalspace
+                                           / writer.space
 
   larsers.NonbreakingEndline
                     = parsers.newline * -( -- newline, but not before...
@@ -18040,13 +18124,20 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                       + larsers.bqstart
                       + larsers.headerstart
                       + larsers.fencestart
-                    ) * parsers.spacechar^0 / writer.nbsp
+                    ) * parsers.spacechar^0
+                    / (options.hardLineBreaks and writer.linebreak
+                                               or writer.nbsp)
 
   larsers.NonbreakingSpace
                   = parsers.spacechar^2 * larsers.Endline / writer.linebreak
                   + parsers.spacechar^1 * larsers.Endline^-1 * parsers.eof / ""
-                  + parsers.spacechar^1 * larsers.Endline^-1
-                                        * parsers.optionalspace / writer.nbsp
+                  + parsers.spacechar^1 * larsers.Endline
+                                        * parsers.optionalspace
+                                        / (options.hardLineBreaks
+                                           and writer.linebreak
+                                            or writer.nbsp)
+                  + parsers.spacechar^1 * parsers.optionalspace
+                                        / writer.nbsp
 
   if options.underscores then
     larsers.Strong = ( parsers.between(parsers.Inline, parsers.doubleasterisks,
@@ -18936,6 +19027,9 @@ end
 \fi
 \ifx\markdownOptionFencedCode\undefined\else
   fencedCode = \markdownOptionFencedCode,
+\fi
+\ifx\markdownOptionHardLineBreaks\undefined\else
+  hardLineBreaks = \markdownOptionHardLineBreaks,
 \fi
 \ifx\markdownOptionHashEnumerators\undefined\else
   hashEnumerators = \markdownOptionHashEnumerators,
