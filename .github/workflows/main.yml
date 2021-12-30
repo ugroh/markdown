@@ -45,7 +45,7 @@ jobs:
           fetch-depth: 0
           submodules: true
       - name: Build Docker image
-        run: TEXLIVE_TAG=${{ matrix.texlive }} make docker-image
+        run: make docker-image TEXLIVE_TAG=${{ matrix.texlive }}
       - name: Test Lua command-line interface
         run: |
           RESULT="$(printf '%s\n' 'Hello *Markdown*! $a_x + b_x = c_x$' |
@@ -64,6 +64,14 @@ jobs:
       - markdownlint
       - test
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        texlive:
+          - TL2018-historic
+          - TL2019-historic
+          - TL2020-historic
+          - latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -71,7 +79,7 @@ jobs:
           fetch-depth: 0
           submodules: true
       - name: Build Docker image
-        run: make docker-image
+        run: make docker-image TEXLIVE_TAG=${{ matrix.texlive }}
       - name: Test Lua command-line interface
         run: |
           RESULT="$(printf '%s\n' 'Hello *Markdown*! $a_x + b_x = c_x$' |
