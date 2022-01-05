@@ -58,7 +58,6 @@ base: $(INSTALLABLES) $(LIBRARIES)
 # This pseudo-target builds a witiko/markdown Docker image.
 docker-image:
 	DOCKER_BUILDKIT=1 docker build --pull --build-arg TEXLIVE_TAG=$(TEXLIVE_TAG) \
-	                               -t witiko/markdown:latest \
 	                               -t witiko/markdown:$(TEXLIVE_TAG) \
 	                               -t witiko/markdown:$(VERSION)-$(TEXLIVE_TAG) .
 

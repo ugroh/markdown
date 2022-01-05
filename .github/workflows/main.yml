@@ -53,13 +53,13 @@ jobs:
       - name: Test Lua command-line interface
         run: |
           RESULT="$(printf '%s\n' 'Hello *Markdown*! $a_x + b_x = c_x$' |
-                    docker run --rm -i witiko/markdown markdown-cli hybrid=true underscores=false |
+                    docker run --rm -i witiko/markdown:${{ matrix.texlive }} markdown-cli hybrid=true underscores=false |
                     tee /dev/stderr)"
           test "$RESULT" = 'Hello \markdownRendererEmphasis{Markdown}! $a_x + b_x = c_x$\relax'
       - name: Run unit tests
-        run: docker run -v "$PWD":/git-repo -w /git-repo witiko/markdown make test
+        run: docker run -v "$PWD":/git-repo -w /git-repo witiko/markdown:${{ matrix.texlive }} make test
       - name: Build distribution archives
-        run: docker run -v "$PWD":/git-repo -w /git-repo witiko/markdown make dist gh-pages
+        run: docker run -v "$PWD":/git-repo -w /git-repo witiko/markdown:${{ matrix.texlive }} make dist gh-pages
       - name: Upload artifact markdown.tds.zip
         if: github.ref == 'refs/heads/main' && matrix.texlive == 'latest'
         uses: actions/upload-artifact@v2
