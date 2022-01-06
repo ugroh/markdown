@@ -1,8 +1,10 @@
 <<<
 [hi `there] bud`](/url)
 >>>
+documentBegin
 BEGIN link
 - label: hi (codeSpan: there] bud)
 - URI: /url
 - title: 
 END link
+documentEnd

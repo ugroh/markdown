@@ -10,6 +10,7 @@ bar
 bar
 ~~~
 >>>
+documentBegin
 codeSpan: fencedCode
 interblockSeparator
 codeSpan: foo bar 
@@ -20,3 +21,4 @@ tilde
 tilde
 tilde
 tilde
+documentEnd

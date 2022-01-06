@@ -9,6 +9,7 @@ backslash with \\> greater than
 
 \\\*no emphasis*
 >>>
+documentBegin
 interblockSeparator
 backslash
 interblockSeparator
@@ -17,3 +18,4 @@ interblockSeparator
 backslash
 interblockSeparator
 backslash
+documentEnd

@@ -8,6 +8,7 @@ ___This is strong and em.___
 So is ___this___ word.
 
 >>>
+documentBegin
 strongEmphasis: (emphasis: This is strong and em.)
 interblockSeparator
 strongEmphasis: (emphasis: this)
@@ -15,3 +16,4 @@ interblockSeparator
 strongEmphasis: (emphasis: This is strong and em.)
 interblockSeparator
 strongEmphasis: (emphasis: this)
+documentEnd

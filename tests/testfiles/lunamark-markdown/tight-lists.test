@@ -6,6 +6,7 @@ following list should be tight.
 4. four
 5. five
 >>>
+documentBegin
 codeSpan: tightLists
 interblockSeparator
 olBeginTight
@@ -16,3 +17,4 @@ olItemEnd
 olItemWithNumber: 5
 olItemEnd
 olEndTight
+documentEnd

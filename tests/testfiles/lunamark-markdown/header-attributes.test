@@ -18,6 +18,7 @@ A level two heading {#fourth4-id .2not-a-class}
 ##### A level five heading ## {#--7the-seventh-id}
 ###### A level six heading {#-_the-eighth-id attribute=value}
 >>>
+documentBegin
 codeSpan: headerAttributes
 interblockSeparator
 headingOne: A level one heading
@@ -35,3 +36,4 @@ interblockSeparator
 headingFive: A level five heading
 interblockSeparator
 headingSix: A level six heading
+documentEnd

@@ -7,6 +7,7 @@ through the plain TeX interface. The following list should be regular.
 4. four
 5. five
 >>>
+documentBegin
 codeSpan: tightLists
 interblockSeparator
 olBegin
@@ -17,3 +18,4 @@ olItemEnd
 olItemWithNumber: 5
 olItemEnd
 olEnd
+documentEnd

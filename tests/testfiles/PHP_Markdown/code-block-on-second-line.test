@@ -3,4 +3,6 @@
     Codeblock on second line
 
 >>>
+documentBegin
 inputVerbatim: ./_markdown_test/1a728d8504cb30370a61eb99e6709c67.verbatim
+documentEnd

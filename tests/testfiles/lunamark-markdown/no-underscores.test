@@ -10,6 +10,8 @@ This __is no__ strongly emphasized span of text.
 This **is** a strongly emphasized span of text.
 \endgroup
 >>>
+documentBegin
 codeSpan: underscores
 interblockSeparator
 strongEmphasis: is
+documentEnd

@@ -139,6 +139,7 @@ belong to the previous footnote.
     line.  In this way, multi-paragraph footnotes work like
     multi-paragraph list items.
 >>>
+documentBegin
 headingTwo: This is an H2
 interblockSeparator
 headingThree: This is an H3
@@ -180,3 +181,4 @@ BEGIN fencedCode
 - infostring: latex
 END fencedCode
 interblockSeparator
+documentEnd

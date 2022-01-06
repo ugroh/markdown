@@ -8,6 +8,7 @@ foo@bar
 
 foo @bar
 >>>
+documentBegin
 codeSpan: citations
 interblockSeparator
 interblockSeparator
@@ -19,3 +20,4 @@ BEGIN textCite
 - name: bar
 END textCite
 END textCites
+documentEnd

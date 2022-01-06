@@ -111,6 +111,7 @@ Cell      | Cell
 | Cell      | Cell      | Extra cell? |
 | Cell | Cell | Extra cell? |
 >>>
+documentBegin
 BEGIN table (3 rows, 2 columns)
 - caption: 
 - alignment of column 1: d
@@ -325,3 +326,4 @@ BEGIN table (3 rows, 1 columns)
 - row 2, column 1: Cell
 - row 3, column 1: Cell
 END table
+documentEnd

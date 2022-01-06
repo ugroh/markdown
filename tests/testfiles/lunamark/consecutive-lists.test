@@ -4,6 +4,7 @@
 1. one
 2. two
 >>>
+documentBegin
 ulBeginTight
 ulItem
 ulItemEnd
@@ -17,3 +18,4 @@ olItemEnd
 olItemWithNumber: 2
 olItemEnd
 olEndTight
+documentEnd

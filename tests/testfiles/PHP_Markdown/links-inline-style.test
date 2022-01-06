@@ -2,8 +2,10 @@
 [silly URL w/ angle brackets](<?}]*+|&)>).
 
 >>>
+documentBegin
 BEGIN link
 - label: silly URL w/ angle brackets
 - URI: ?(rightBrace)]*+(pipe)(ampersand))
 - title: 
 END link
+documentEnd

@@ -81,6 +81,7 @@ _____Cut here_____
 ____Cut here____
 
 >>>
+documentBegin
 interblockSeparator
 olBeginTight
 olItemWithNumber: 1
@@ -270,3 +271,4 @@ underscore
 underscore
 underscore
 underscore
+documentEnd

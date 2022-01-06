@@ -6,6 +6,7 @@ labels and the URLs are escaped.
 
 <Value_of_life@Value_of_life.com>
 >>>
+documentBegin
 interblockSeparator
 BEGIN link
 - label: https://en.wikipedia.org/wiki/Value(underscore)of(underscore)life
@@ -18,3 +19,4 @@ BEGIN link
 - URI: mailto:Value(underscore)of(underscore)life@Value(underscore)of(underscore)life.com
 - title: 
 END link
+documentEnd

@@ -21,6 +21,7 @@ Here are several ways to write a pipe:
 
 Unrecognized character entities are ignored: &nonsense;
 >>>
+documentBegin
 codeSpan: html
 interblockSeparator
 interblockSeparator
@@ -51,3 +52,4 @@ ulItemEnd
 ulEndTight
 interblockSeparator
 ampersand
+documentEnd

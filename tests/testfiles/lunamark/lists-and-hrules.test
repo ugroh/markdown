@@ -5,6 +5,7 @@
 
   *   *   *   *   *
 >>>
+documentBegin
 ulBegin
 ulItem
 interblockSeparator
@@ -16,3 +17,4 @@ ulItemEnd
 ulEnd
 interblockSeparator
 horizontalRule
+documentEnd

@@ -5,4 +5,6 @@
  	stripped and be recognized as a paragraph of text, not a verbatim code
 	block.
 >>>
+documentBegin
 codeSpan: stripIndent
+documentEnd

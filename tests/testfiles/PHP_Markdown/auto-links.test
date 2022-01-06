@@ -3,6 +3,7 @@
 
 <hr@company.com>
 >>>
+documentBegin
 BEGIN link
 - label: HTTP://WWW.SOMEURL.COM
 - URI: HTTP://WWW.SOMEURL.COM
@@ -14,3 +15,4 @@ BEGIN link
 - URI: mailto:hr@company.com
 - title: 
 END link
+documentEnd

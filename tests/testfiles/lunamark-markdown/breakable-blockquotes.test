@@ -8,6 +8,7 @@ propagates through the plain TeX interface.
 > *quote 2*
 
 >>>
+documentBegin
 codeSpan: breakableBlockquotes
 interblockSeparator
 blockQuoteBegin
@@ -17,3 +18,4 @@ interblockSeparator
 blockQuoteBegin
 emphasis: quote 2
 blockQuoteEnd
+documentEnd
