@@ -9,6 +9,7 @@ are merged into strings of citations.
 [@doe1992  ; -@doe1993;  @doe1994]
 [@doe1992]  [-@doe1993] [@doe1994]
 >>>
+documentBegin
 interblockSeparator
 BEGIN textCites
 BEGIN textCite
@@ -87,3 +88,4 @@ BEGIN cite
 - name: doe1994
 END cite
 END cites
+documentEnd

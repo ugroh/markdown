@@ -7,9 +7,11 @@ default.
 > *quote 2*
 
 >>>
+documentBegin
 codeSpan: breakableBlockquotes
 interblockSeparator
 blockQuoteBegin
 emphasis: quote 1
 emphasis: quote 2
 blockQuoteEnd
+documentEnd

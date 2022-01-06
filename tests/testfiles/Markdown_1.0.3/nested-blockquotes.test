@@ -6,9 +6,11 @@
 > foo
 
 >>>
+documentBegin
 blockQuoteBegin
 interblockSeparator
 blockQuoteBegin
 blockQuoteEnd
 interblockSeparator
 blockQuoteEnd
+documentEnd

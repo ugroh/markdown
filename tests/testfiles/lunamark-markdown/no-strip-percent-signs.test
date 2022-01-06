@@ -5,6 +5,8 @@ default.
 The following emphasized text *should contain the percent sign at the
 % beginning of the line*.
 >>>
+documentBegin
 codeSpan: stripPercentSigns
 interblockSeparator
 emphasis: should contain the percent sign at the (percentSign) beginning of the line
+documentEnd

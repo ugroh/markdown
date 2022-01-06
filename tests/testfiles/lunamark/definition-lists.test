@@ -80,6 +80,7 @@ orange
     1. sublist
     2. sublist
 >>>
+documentBegin
 interblockSeparator
 dlBeginTight
 dlItem: apple
@@ -198,3 +199,4 @@ olEndTight
 dlDefinitionEnd
 dlItemEnd
 dlEnd
+documentEnd

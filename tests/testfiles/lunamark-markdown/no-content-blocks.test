@@ -15,6 +15,7 @@ htt(p:/)/exam(ple.c)om/m\(inard.jpg (Napoleon's disastrous Russian campaign of 1
 /Example.swift (Source code)
 /Lorem Ipsum.txt
 >>>
+documentBegin
 codeSpan: contentBlocks
 interblockSeparator
 interblockSeparator
@@ -30,3 +31,4 @@ BEGIN link
 END link
 interblockSeparator
 interblockSeparator
+documentEnd

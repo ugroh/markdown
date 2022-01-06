@@ -9,6 +9,7 @@ Paragraphr
 
 Paragraph
 >>>
+documentBegin
 headingThree: Header
 interblockSeparator
 horizontalRule
@@ -16,3 +17,4 @@ interblockSeparator
 interblockSeparator
 horizontalRule
 interblockSeparator
+documentEnd

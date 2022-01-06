@@ -23,6 +23,7 @@ default.
 
 A caption may not span multiple paragraphs.
 >>>
+documentBegin
 codeSpan: tableCaptions
 interblockSeparator
 BEGIN table (4 rows, 4 columns)
@@ -77,3 +78,4 @@ END table
 interblockSeparator
 emphasis: pipe table
 interblockSeparator
+documentEnd

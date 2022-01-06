@@ -22,6 +22,7 @@ And:
 	    indented with spaces
 
 >>>
+documentBegin
 ulBegin
 ulItem
 ulItemEnd
@@ -37,3 +38,4 @@ inputVerbatim: ./_markdown_test/7b4c059fd391119f1afdffcb9aa2e6d7.verbatim
 interblockSeparator
 interblockSeparator
 inputVerbatim: ./_markdown_test/1ad8ee27ab4fcae258439433e5866228.verbatim
+documentEnd

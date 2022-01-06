@@ -32,6 +32,7 @@ abstract: |
   It consists of two paragraphs.
 ---
 >>>
+documentBegin
 codeSpan: jekyllData
 interblockSeparator
 jekyllDataBegin
@@ -130,3 +131,4 @@ BEGIN jekyllDataString
 END jekyllDataString
 jekyllDataMappingEnd
 jekyllDataEnd
+documentEnd

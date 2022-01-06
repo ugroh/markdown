@@ -7719,6 +7719,162 @@ following text:
 %
 % \begin{markdown}
 
+#### Markdown Document Renderers
+The \mdef{markdownRendererDocumentBegin} and \mdef{markdownRendererDocumentEnd}
+macros represent the beginning and the end of a *markdown* document. The macros
+receive no arguments.
+
+A \TeX{} document may contain any number of markdown documents. Additionally,
+markdown documents may appear not only in a sequence, but several markdown
+documents may also be *nested*. Redefinitions of the macros should take this
+into account.
+
+% \end{markdown}
+%
+% \iffalse
+
+##### \LaTeX{} Example {.unnumbered}
+
+\def\markdownRendererDocumentEnd{%
+  \endgroup
+  This is the end of a document.\par
+}
+\def\markdownRendererDocumentBegin{%
+  This is the beginning of a document.\par
+  \begingroup
+  \def\markdownRendererDocumentBegin{%
+    This is the beginning of a nested document.\par
+    \begingroup
+    \def\markdownRendererDocumentBegin{%
+      This is the beginning of a nested document.\par
+      \begingroup
+    }%
+    \def\markdownRendererDocumentEnd{%
+      \endgroup
+      This is the end of a nested document.\par
+    }%
+  }%
+}
+
+Using a text editor, create a text document named `nested.md` with the
+following content:
+``` md
+This is a *nested* markdown document.
+```
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\documentclass{article}
+\usepackage{markdown}
+\markdownSetup{
+  renderers = {
+    contentBlock = {%
+      \markdownInput{#3}%
+    },
+    documentBegin = {%
+      \par
+      \emph{(The beginning of a document)}
+      \par
+      \begingroup
+      \markdownSetup{snippet=first-nesting-level}%
+    },
+    documentEnd = {%
+      \endgroup
+      \par
+      \emph{(The end of a document)}
+      \par
+    },
+  },
+}
+\markdownSetupSnippet{first-nesting-level}{
+  renderers = {
+    documentBegin = {
+      \par
+      \emph{(The beginning of a nested document)}
+      \par
+      \begingroup
+      \markdownSetup{snippet=second-nesting-level-and-below}
+    },
+  },
+}
+\markdownSetupSnippet{second-nesting-level-and-below}{
+  renderers = {
+    documentBegin = {
+      \par
+      \emph{(The beginning of a nested document)}
+      \par
+      \begingroup
+    },
+    documentEnd = {
+      \endgroup
+      \par
+      \emph{(The end of a nested document)}
+      \par
+    },
+  },
+}
+\begin{document}
+\begin{markdown}
+Hello *world*!
+
+/nested.md
+
+_Foo_ bar!
+\end{markdown}
+\begin{markdown}
+
+Bar baz!
+
+\end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> *(The beginning of a document)*
+>
+> Hello *world*!
+>
+> *(The beginning of a nested document)*
+>
+> This is a *nested* markdown document.
+>
+> *(The end of a nested document)*
+>
+> _Foo_ bar!
+>
+> *(The end of a document)*
+>
+> *(The beginning of a document)*
+>
+> Bar baz!
+>
+> *(The end of a document)*
+
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererDocumentBegin{%
+  \markdownRendererDocumentBeginPrototype}%
+\def\markdownRendererDocumentEnd{%
+  \markdownRendererDocumentEndPrototype}%
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
 #### Interblock Separator Renderer
 The \mdef{markdownRendererInterblockSeparator} macro represents a separator
 between two markdown block elements. The macro receives no arguments.
@@ -11899,6 +12055,8 @@ following text:
 %
 % \end{markdown}
 %  \begin{macrocode}
+\def\markdownRendererDocumentBeginPrototype{}%
+\def\markdownRendererDocumentEndPrototype{}%
 \def\markdownRendererInterblockSeparatorPrototype{}%
 \def\markdownRendererLineBreakPrototype{}%
 \def\markdownRendererEllipsisPrototype{}%
@@ -12946,6 +13104,10 @@ The following ordered list will be preceded by roman numerals:
 %
 % \end{markdown}
 %  \begin{macrocode}
+\define@key{markdownRenderers}{documentBegin}{%
+  \renewcommand\markdownRendererDocumentBegin{#1}}%
+\define@key{markdownRenderers}{documentEnd}{%
+  \renewcommand\markdownRendererDocumentEnd{#1}}%
 \define@key{markdownRenderers}{interblockSeparator}{%
   \renewcommand\markdownRendererInterblockSeparator{#1}}%
 \define@key{markdownRenderers}{lineBreak}{%
@@ -13117,6 +13279,10 @@ The following ordered list will be preceded by roman numerals:
 %
 % \end{markdown}
 %  \begin{macrocode}
+\define@key{markdownRendererPrototypes}{documentBegin}{%
+  \renewcommand\markdownRendererDocumentBeginPrototype{#1}}%
+\define@key{markdownRendererPrototypes}{documentEnd}{%
+  \renewcommand\markdownRendererDocumentEndPrototype{#1}}%
 \define@key{markdownRendererPrototypes}{interblockSeparator}{%
   \renewcommand\markdownRendererInterblockSeparatorPrototype{#1}}%
 \define@key{markdownRendererPrototypes}{lineBreak}{%
@@ -15989,15 +16155,6 @@ function M.writer.new(options)
 % \par
 % \begin{markdown}
 %
-% Define \luamdef{writer->eof} as the end of file marker in the output format.
-%
-% \end{markdown}
-%  \begin{macrocode}
-  self.eof = [[\relax]]
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
 % Define \luamdef{writer->linebreak} as the output format of a forced line break.
 %
 % \end{markdown}
@@ -16493,6 +16650,19 @@ function M.writer.new(options)
     s = string.gsub(s, '[\r\n%s]*$', '')
     local name = util.cache(options.cacheDir, s, nil, nil, ".verbatim")
     return {"\\markdownRendererInputFencedCode{",name,"}{",i,"}"}
+  end
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Define \luamdef{writer->document} as a function that will transform a
+% document `d` to the output format.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  function self.document(d)
+    return {"\\markdownRendererDocumentBegin\n", d,
+      "\\markdownRendererDocumentEnd"}
   end
 %    \end{macrocode}
 % \par
@@ -18717,7 +18887,8 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
 % \end{markdown}
 %  \begin{macrocode}
     local function convert(input)
-      return util.rope_to_string(parse_blocks_toplevel(input)) .. writer.eof
+      local document = parse_blocks_toplevel(input)
+      return util.rope_to_string(writer.document(document))
     end
     if options.eagerCache or options.finalizeCache then
       local name = util.cache(options.cacheDir, input, salt, convert, ".md" .. writer.suffix)

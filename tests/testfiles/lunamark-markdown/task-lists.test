@@ -36,6 +36,7 @@ Here are some ticked boxes:
 - [X] two ticked boxes
 - ☒ three ticked boxes
 >>>
+documentBegin
 codeSpan: taskLists
 interblockSeparator
 ulBegin
@@ -114,3 +115,4 @@ ulItem
 tickedBox
 ulItemEnd
 ulEndTight
+documentEnd

@@ -16,6 +16,7 @@ Loose:
 
 5. five
 >>>
+documentBegin
 codeSpan: startNumber
 interblockSeparator
 interblockSeparator
@@ -37,3 +38,4 @@ olItemEnd
 olItemWithNumber: 5
 olItemEnd
 olEnd
+documentEnd

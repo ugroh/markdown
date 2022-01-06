@@ -15,6 +15,7 @@ string of several @doe99 [pp. 33-35; also
 @smit:.#$%&-+?<>~/h04, chap. 1]. Here is one with the
 name of the author suppressed -@doe99.
 >>>
+documentBegin
 codeSpan: citations
 interblockSeparator
 hash
@@ -29,3 +30,4 @@ dollarSign
 percentSign
 ampersand
 tilde
+documentEnd

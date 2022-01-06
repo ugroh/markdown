@@ -8,6 +8,7 @@ Did *gyre and gimble* in the wabe;
 All mimsy were the *borogoves*,  
 And the mome raths *outgrabe*.
 >>>
+documentBegin
 codeSpan: hardLineBreaks
 lineBreak
 interblockSeparator
@@ -18,3 +19,4 @@ lineBreak
 emphasis: borogoves
 lineBreak
 emphasis: outgrabe
+documentEnd

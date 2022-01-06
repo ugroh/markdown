@@ -3,6 +3,7 @@
 
 International domain names: <help@tūdaliņ.lv>
 >>>
+documentBegin
 BEGIN link
 - label: michel.fortin@michelf.com
 - URI: mailto:michel.fortin@michelf.com
@@ -14,3 +15,4 @@ BEGIN link
 - URI: mailto:help@tūdaliņ.lv
 - title: 
 END link
+documentEnd

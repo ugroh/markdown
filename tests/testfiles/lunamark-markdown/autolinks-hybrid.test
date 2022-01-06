@@ -9,6 +9,7 @@ commands, where both the labels and the URLs are escaped even though the
 
 <Value_of_life@Value_of_life.com>
 >>>
+documentBegin
 codeSpan: hybrid
 codeSpan: hybrid
 interblockSeparator
@@ -23,3 +24,4 @@ BEGIN link
 - URI: mailto:Value(underscore)of(underscore)life@Value(underscore)of(underscore)life.com
 - title: 
 END link
+documentEnd

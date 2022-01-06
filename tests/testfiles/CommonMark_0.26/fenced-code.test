@@ -162,6 +162,7 @@ Unclosed code blocks are closed by the end of the document (or the enclosing blo
 ```
 aaa
 >>>
+documentBegin
 interblockSeparator
 BEGIN fencedCode
 - src: ./_markdown_test/a5bb6f19317db18187d78abe91f5e93c.verbatim
@@ -313,3 +314,4 @@ BEGIN fencedCode
 - src: ./_markdown_test/bf41e9999cfc44d815c2a227bc67b1ab.verbatim
 - infostring: 
 END fencedCode
+documentEnd

@@ -120,6 +120,7 @@ This is a tag with unescaped backticks <span attr='`ticks`'>bar</span>.
 
 This is a tag with backslashes <span attr='\\backslashes\\'>bar</span>.
 >>>
+documentBegin
 interblockSeparator
 backslash
 interblockSeparator
@@ -190,3 +191,4 @@ codeSpan: ticks
 interblockSeparator
 backslash
 backslash
+documentEnd

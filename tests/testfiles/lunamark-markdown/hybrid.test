@@ -16,6 +16,7 @@ processed by lunamark in any way.
  * \char`~
  * \char`|
 >>>
+documentBegin
 codeSpan: hybrid
 interblockSeparator
 ulBeginTight
@@ -41,3 +42,4 @@ ulItemEnd
 ulItem
 ulItemEnd
 ulEndTight
+documentEnd

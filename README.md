@@ -130,8 +130,10 @@ We will receive the following output, where the markdown markup has been
 replaced by TeX commands:
 
 ``` tex
+\markdownDocumentBegin
 Hello \markdownRendererEmphasis{Markdown}!
-$a\markdownRendererEmphasis{x + b}x = c_x$\relax
+$a\markdownRendererEmphasis{x + b}x = c_x$
+\markdownDocumentEnd
 ```
 
 We can see right away that the Markdown package has incorrectly interpreted
@@ -141,8 +143,10 @@ We can see right away that the Markdown package has incorrectly interpreted
     docker run --rm -i witiko/markdown markdown-cli hybrid=true underscores=false < document.md
 
 ``` tex
+\markdownDocumentBegin
 Hello \markdownRendererEmphasis{Markdown}!
-$a_x + b_x = c_x$\relax
+$a_x + b_x = c_x$
+\markdownDocumentEnd
 ```
 
 Much better! If the Markdown package ever surprises you, use the Lua CLI to

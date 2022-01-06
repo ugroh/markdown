@@ -8,6 +8,7 @@ Foo [bar](/url/ "Title with "quotes" inside").
 
 
 >>>
+documentBegin
 BEGIN link
 - label: bar
 - URI: /url/
@@ -19,3 +20,4 @@ BEGIN link
 - URI: /url/
 - title: Title with "quotes" inside
 END link
+documentEnd

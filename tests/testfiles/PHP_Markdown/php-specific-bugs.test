@@ -23,6 +23,7 @@ Test with tabs for `_Detab`:
 	Code	'block'	with	some	"tabs"	and	"quotes"
 
 >>>
+documentBegin
 codeSpan: preg(underscore)replace
 codeSpan: /e
 codeSpan: (underscore)UnslashQuotes
@@ -37,3 +38,4 @@ interblockSeparator
 codeSpan: (underscore)Detab
 interblockSeparator
 inputVerbatim: ./_markdown_test/57e7cfa9cb0dc4b666bfe415c968fe70.verbatim
+documentEnd

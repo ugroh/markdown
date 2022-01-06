@@ -5,4 +5,6 @@ This test ensures that the plain TeX `\markdownOptionFrozenCache` option and
 the Lua `frozenCacheFileName` and `frozenCacheCounter` options correctly
 interact to load the content of a frozen cache.
 >>>
+documentBegin
 emphasis: This is the content of the frozen cache.
+documentEnd

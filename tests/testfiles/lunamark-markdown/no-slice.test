@@ -131,6 +131,7 @@ belong to the previous footnote.
     line.  In this way, multi-paragraph footnotes work like
     multi-paragraph list items.
 >>>
+documentBegin
 codeSpan: slice
 interblockSeparator
 headingOne: This is an H1
@@ -249,3 +250,4 @@ interblockSeparator
 circumflex
 circumflex
 circumflex
+documentEnd

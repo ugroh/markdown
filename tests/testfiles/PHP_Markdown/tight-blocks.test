@@ -18,6 +18,7 @@ Paragraph before blockquote:
 >Some quote.
 
 >>>
+documentBegin
 interblockSeparator
 interblockSeparator
 interblockSeparator
@@ -28,3 +29,4 @@ interblockSeparator
 interblockSeparator
 blockQuoteBegin
 blockQuoteEnd
+documentEnd

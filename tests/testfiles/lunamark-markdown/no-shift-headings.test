@@ -16,6 +16,7 @@ A level two heading
 ##### A level five heading
 ###### A level six heading
 >>>
+documentBegin
 codeSpan: shiftHeadings
 interblockSeparator
 headingOne: A level one heading
@@ -33,3 +34,4 @@ interblockSeparator
 headingFive: A level five heading
 interblockSeparator
 headingSix: A level six heading
+documentEnd

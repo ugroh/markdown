@@ -30,6 +30,7 @@ j j j
 n n n
 
 >>>
+documentBegin
 interblockSeparator
 horizontalRule
 interblockSeparator
@@ -49,3 +50,4 @@ interblockSeparator
 interblockSeparator
 interblockSeparator
 interblockSeparator
+documentEnd

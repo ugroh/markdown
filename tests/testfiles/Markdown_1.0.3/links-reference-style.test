@@ -68,6 +68,7 @@ breaks] across lines.
 [link breaks]: /url/
 
 >>>
+documentBegin
 BEGIN link
 - label: bar
 - URI: /url/
@@ -174,3 +175,4 @@ BEGIN link
 - URI: /url/
 - title: 
 END link
+documentEnd

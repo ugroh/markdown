@@ -7,6 +7,8 @@ cache directory.
 
     foo bar
 >>>
+documentBegin
 codeSpan: cacheDir
 interblockSeparator
 inputVerbatim: some-other-directory/327b6f07435811239bc47e1544353273.verbatim
+documentEnd
