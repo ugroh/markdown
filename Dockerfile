@@ -12,6 +12,7 @@ ARG AUXILIARY_FILES="\
 "
 
 ARG DEPENDENCIES="\
+    ca-certificates \
     curl \
     gawk \
     graphviz \
