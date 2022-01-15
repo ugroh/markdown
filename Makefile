@@ -131,7 +131,7 @@ dist: implode
 	$(MAKE) $(ARCHIVES)
 	git clone https://gitlab.com/Lotz/pkgcheck.git
 	unzip $(CTANARCHIVE) -d markdown
-	pkgcheck/bin/pkgcheck -d markdown/markdown -T $(TDSARCHIVE)
+	pkgcheck/bin/pkgcheck -d markdown/markdown -T $(TDSARCHIVE) --urlcheck
 	$(MAKE) clean
 
 # This target produces the TeX directory structure archive.
