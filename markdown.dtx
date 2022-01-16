@@ -18276,7 +18276,7 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                        * (P("---") + P("..."))
                        / function(text)
                            local tinyyaml = require("markdown-tinyyaml")
-                           data = tinyyaml.parse(text)
+                           data = tinyyaml.parse(text,{timestamps=false})
                            return writer.jekyllData(data, function(s)
                              return parse_blocks(s)
                            end, nil)
