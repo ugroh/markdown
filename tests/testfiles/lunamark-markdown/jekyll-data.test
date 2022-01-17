@@ -10,6 +10,7 @@ author:
   affiliation: University of Somewhere
 - name: Author **Two**
   affiliation: University of Nowhere
+date: 2022-01-12
 ...
 
 A document may contain *multiple* metadata blocks:
@@ -38,7 +39,7 @@ interblockSeparator
 jekyllDataBegin
 BEGIN jekyllDataMappingBegin
 - key: null
-- length: 2
+- length: 3
 END jekyllDataMappingBegin
 BEGIN jekyllDataSequenceBegin
 - key: author
@@ -71,6 +72,10 @@ BEGIN jekyllDataString
 END jekyllDataString
 jekyllDataMappingEnd
 jekyllDataSequenceEnd
+BEGIN jekyllDataString
+- key: date
+- value: 2022-01-12
+END jekyllDataString
 BEGIN jekyllDataString
 - key: title
 - value: The document title
