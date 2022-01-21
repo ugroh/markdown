@@ -20224,12 +20224,12 @@ end
 %
 % We can capitalize on the fact that the expansion of renderers is performed by
 % \TeX{} during the typesetting. Therefore, even if we don't know whether a
-% span of text is part of math formula or not when we are parsing markdown,^^A
-% ^[It may actually be neither. Suppose a span of text is a part of a macro
-% definition.  Then, whether the span of text is part of a math formula or not
-% depends on where the macro is later used, which may easily be *both* inside
-% and outside a math formula.] we can reliably detect math mode inside the
-% renderer.
+% span of text is part of math formula or not when we are parsing markdown,%
+% ^[This property may actually be undecidable. Suppose a span of text is a part
+% of a macro definition.  Then, whether the span of text is part of a math
+% formula or not depends on where the macro is later used, which may easily
+% be *both* inside and outside a math formula.] we can reliably detect math
+% mode inside the renderer.
 %
 % Here, we will redefine the code span renderer prototype to typeset upright
 % text in math formulae and typewriter text outside math formulae.
