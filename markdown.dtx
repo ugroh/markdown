@@ -20204,7 +20204,25 @@ end
     dlBeginTight = {\markdownRendererDlBegin},
     dlEndTight = {\markdownRendererDlEnd}}}}
 \RequirePackage{amsmath}
-\RequirePackage{amssymb}
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Unless the \pkg{unicode-math} package has been loaded, load the \pkg{amssymb}
+% package with symbols to be used for tickboxes.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\@ifpackageloaded{unicode-math}{
+  \markdownSetup{rendererPrototypes={
+    untickedBox = {$\mdlgwhtsquare$},
+  }}
+}{
+  \RequirePackage{amssymb}
+  \markdownSetup{rendererPrototypes={
+    untickedBox = {$\square$},
+  }}
+}
 \RequirePackage{csvsimple}
 \RequirePackage{fancyvrb}
 \RequirePackage{graphicx}
@@ -20285,7 +20303,6 @@ end
   emphasis = {\emph{#1}},
   tickedBox = {$\boxtimes$},
   halfTickedBox = {$\boxdot$},
-  untickedBox = {$\square$},
   blockQuoteBegin = {\begin{quotation}},
   blockQuoteEnd = {\end{quotation}},
   inputVerbatim = {\VerbatimInput{#1}},
