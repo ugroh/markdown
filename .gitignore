@@ -4,14 +4,12 @@ examples/context-mkii.markdown.lua
 examples/context-mkii.markdown.out
 examples/context-mkii-mpgraph.mp
 examples/context-mkii.pdf
-examples/context-mkii.tex
 examples/context-mkii.tmp
 examples/context-mkii.tui
 examples/context-mkii.tuo
 examples/context-mkiv.log
 examples/context-mkiv.markdown.in
 examples/context-mkiv.pdf
-examples/context-mkiv.tex
 examples/context-mkiv.tuc
 examples/example.tex
 examples/latex-luatex.aux
@@ -75,3 +73,4 @@ markdown.zip
 _minted-markdown/
 t-markdown.tex
 markdownthemewitiko_*.sty
+libraries/markdown-tinyyaml.lua

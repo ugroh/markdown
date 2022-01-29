@@ -2,7 +2,11 @@
 \usetypescript[modern][ec]
 \setupbodyfont[10pt,rm]
 \setupexternalfigures[location={local,global,default}]
+
+% Load the Markdown module.
 \usemodule[t][markdown]
+
+% Set options of the Markdown module.
 \def\markdownOptionHashEnumerators{true}
 \def\markdownOptionDefinitionLists{true}
 \def\markdownOptionSmartEllipses{true}
@@ -13,9 +17,29 @@
 \def\markdownOptionPipeTables{true}
 \def\markdownOptionTableCaptions{true}
 \def\markdownOptionTaskLists{true}
-\definetyping [latex]
-\setuptyping  [latex] [option=TEX]
+
+% Set renderers of the Markdown module.
+\definehighlight
+  [markdownRendererEmphasis]
+  [style=\em]
+
+\definehighlight
+  [markdownRendererStrongEmphasis]
+  [style=bold]
+
+\definehighlight
+  [markdownRendererCodeSpan]
+  [style=mono]
+
+\definetyping
+  [latex]
+
+\setuptyping
+  [latex]
+  [option=TEX]
+
 \starttext
+
 % Typeset the document `example.md` by letting the Markdown package handle
 % the conversion internally.
 \markdownInput{./example.md}
@@ -25,7 +49,9 @@
 % of the document `example.md`.
 \doiffileelse{./example.tex}{\input example}{}
 
+% Typeset inline markdown text.
 \startmarkdown
+
 Here are some non-ASCII characters: *ěščřžýáíé*
 and ConTeXt special characters: *|*.
 
@@ -33,5 +59,7 @@ Here is a hard line break that we inserted directly from the TeX source
 by typing two spaces at the end of a line.  
 This is stretching TeX's abilities and is only supported in ConTeXt MkIV
 and later.
+
 \stopmarkdown
+
 \stoptext

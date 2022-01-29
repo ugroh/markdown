@@ -1,7 +1,7 @@
 .PHONY: all clean
 
 AUXFILES=*.tmp *.tui *.tuo *.mp *.tuc *.markdown.in *.markdown.out \
-  *.markdown.lua *.log *.aux context-mkii.tex context-mkiv.tex \
+  *.markdown.lua *.log *.aux \
   latex-pdftex.tex latex-xetex.tex latex-luatex.tex example.tex
 AUXDIRS=_markdown_*/
 LUACLI_OPTIONS=cacheDir=_markdown_example hashEnumerators=true \
@@ -16,13 +16,11 @@ all: $(OUTPUT)
 	$(MAKE) clean
 
 # This target typesets the ConTeXt example using the Mark II format.
-context-mkii.pdf: context.tex example.tex
-	cp context.tex context-mkii.tex
+context-mkii.pdf: context-mkii.tex example.tex
 	texexec --passon="--shell-escape --8bit" context-mkii.tex
 
 # This target typesets the ConTeXt example using the Mark IV format.
-context-mkiv.pdf: context.tex example.tex
-	cp context.tex context-mkiv.tex
+context-mkiv.pdf: context-mkiv.tex example.tex
 	context context-mkiv.tex
 
 # This target typesets the LaTeX example using the pdfTeX engine.
