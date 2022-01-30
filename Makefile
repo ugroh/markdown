@@ -5,8 +5,8 @@ SHELL=/bin/bash
 AUXFILES=markdown.bbl markdown.cb markdown.cb2 markdown.glo markdown.bbl \
   markdown.run.xml markdown.markdown.in markdown.markdown.lua \
   markdown.markdown.out markdown-interfaces.md markdown-miscellanea.md \
-	markdown-options.md markdown-tokens.md $(TECHNICAL_DOCUMENTATION_RESOURCES) \
-	$(VERSION_FILE)
+  markdown-options.md markdown-tokens.md $(TECHNICAL_DOCUMENTATION_RESOURCES) \
+  $(VERSION_FILE)
 AUXDIRS=_minted-markdown _markdown_markdown markdown pkgcheck
 TDSARCHIVE=markdown.tds.zip
 CTANARCHIVE=markdown.ctan.zip
@@ -27,7 +27,7 @@ VERSION_FILE=VERSION
 DTXARCHIVE=markdown.dtx
 INSTALLER=markdown.ins docstrip.cfg
 TECHNICAL_DOCUMENTATION_RESOURCES=markdown.bib markdown-figure-block-diagram.tex \
-	markdownthemewitiko_markdown_techdoc.sty
+  markdownthemewitiko_markdown_techdoc.sty
 TECHNICAL_DOCUMENTATION=markdown.pdf
 MARKDOWN_USER_MANUAL=markdown.md markdown.css
 HTML_USER_MANUAL=markdown.html markdown.css
@@ -35,8 +35,8 @@ USER_MANUAL=$(MARKDOWN_USER_MANUAL) $(HTML_USER_MANUAL)
 DOCUMENTATION=$(TECHNICAL_DOCUMENTATION) $(HTML_USER_MANUAL) $(ROOT_README) $(VERSION_FILE)
 LIBRARIES=libraries/markdown-tinyyaml.lua
 INSTALLABLES=markdown.lua markdown-cli.lua markdown.tex markdown.sty t-markdown.tex \
-	markdownthemewitiko_dot.sty markdownthemewitiko_graphicx_http.sty \
-	markdownthemewitiko_tilde.sty
+  markdownthemewitiko_dot.sty markdownthemewitiko_graphicx_http.sty \
+  markdownthemewitiko_tilde.sty
 EXTRACTABLES=$(INSTALLABLES) $(MARKDOWN_USER_MANUAL) $(TECHNICAL_DOCUMENTATION_RESOURCES)
 MAKEABLES=$(TECHNICAL_DOCUMENTATION) $(USER_MANUAL) $(INSTALLABLES) $(EXAMPLES)
 RESOURCES=$(DOCUMENTATION) $(EXAMPLES_RESOURCES) $(EXAMPLES_SOURCES) $(EXAMPLES) \

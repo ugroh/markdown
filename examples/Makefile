@@ -7,7 +7,7 @@ AUXDIRS=_markdown_*/
 LUACLI_OPTIONS=cacheDir=_markdown_example hashEnumerators=true \
   definitionLists=true footnotes=true inlineFootnotes=true \
   smartEllipses=true fencedCode=true contentBlocks=true pipeTables=true \
-	tableCaptions=true taskLists=true
+  tableCaptions=true taskLists=true
 OUTPUT=context-mkii.pdf context-mkiv.pdf latex-pdftex.pdf \
   latex-luatex.pdf latex-xetex.pdf
 
