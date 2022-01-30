@@ -1,5 +1,7 @@
 .PHONY: all base clean implode dist test docker-image
 
+SHELL=/bin/bash
+
 AUXFILES=markdown.bbl markdown.cb markdown.cb2 markdown.glo markdown.bbl \
   markdown.run.xml markdown.markdown.in markdown.markdown.lua \
   markdown.markdown.out markdown-interfaces.md markdown-miscellanea.md \
@@ -131,7 +133,21 @@ dist: implode
 	$(MAKE) $(ARCHIVES)
 	git clone https://gitlab.com/Lotz/pkgcheck.git
 	unzip $(CTANARCHIVE) -d markdown
-	pkgcheck/bin/pkgcheck -d markdown/markdown -T $(TDSARCHIVE) --urlcheck
+	for RETRY in $$(seq 1 10); \
+	do \
+	    if (( RETRY > 1 )); \
+	    then \
+	        sleep $$((RETRY * 15)); \
+	    fi; \
+	    if pkgcheck/bin/pkgcheck -d markdown/markdown -T $(TDSARCHIVE) --urlcheck; \
+	    then \
+	        EXIT_CODE=0; \
+	        break; \
+	    else \
+	        EXIT_CODE=$?; \
+	    fi; \
+	done; \
+	exit $$EXIT_CODE
 	$(MAKE) clean
 
 # This target produces the TeX directory structure archive.
