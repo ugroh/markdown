@@ -1,4 +1,4 @@
-.PHONY: all base clean implode dist test docker-image
+.PHONY: all base clean implode dist test docker-image force
 
 SHELL=/bin/bash
 
@@ -78,11 +78,11 @@ $(EXTRACTABLES): $(INSTALLER) $(DTXARCHIVE)
 	    $(INSTALLABLES)
 
 # This target produces the version file.
-$(VERSION_FILE):
+$(VERSION_FILE): force
 	printf '%s (%s)\n' $(VERSION) $(LAST_MODIFIED) > $@
 
 # This target produces external Lua libraries.
-$(LIBRARIES):
+$(LIBRARIES): force
 	$(MAKE) -C libraries $(notdir $@)
 
 # This target typesets the manual.
@@ -94,7 +94,7 @@ $(TECHNICAL_DOCUMENTATION): $(DTXARCHIVE) $(TECHNICAL_DOCUMENTATION_RESOURCES)
 $(EXAMPLES): $(EXAMPLE_SOURCES) examples/example.tex
 	$(MAKE) -C examples $(notdir $@)
 
-examples/example.tex:
+examples/example.tex: force
 	$(MAKE) -C examples $(notdir $@)
 
 # This target converts the markdown user manual to an HTML page.
