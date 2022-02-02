@@ -12917,8 +12917,16 @@ various options locally.
 % \fi
 %  \begin{macrocode}
 \define@key{markdownOptions}{snippet}{%
-  \expandafter\markdownSetup\expandafter{%
-    \the\csname markdownLaTeXSetupSnippet#1\endcsname}}%
+  \@ifundefined
+    {markdownLaTeXSetupSnippet#1}{%
+      \markdownError
+        {Can't invoke setup snippet #1}%
+        {The setup snippet is undefined}%
+    }{%
+      \expandafter\markdownSetup\expandafter{%
+        \the\csname markdownLaTeXSetupSnippet#1\endcsname}%
+    }%
+  }%
 %    \end{macrocode}
 % \iffalse
 %</latex>
