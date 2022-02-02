@@ -1,4 +1,4 @@
-.PHONY: all implode
+.PHONY: all implode force
 
 TINYYAML=markdown-tinyyaml.lua
 OUTPUT=$(TINYYAML)
@@ -7,7 +7,7 @@ OUTPUT=$(TINYYAML)
 all: $(OUTPUT)
 
 # These targets produce the lua-tinyyaml external library.
-lua-tinyyaml:
+lua-tinyyaml: force
 	git submodule update --init --recursive -- $@
 	git submodule sync -- $@
 
