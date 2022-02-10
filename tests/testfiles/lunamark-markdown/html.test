@@ -6,7 +6,7 @@ the plain TeX interface.
 <div>
 *There is block tag support.*
 </div>
-*There is <inline tag="value"></inline> support.*
+*There is <inline tag="value"></inline> support.<br/>*
 _There is <!-- *comment* --> support._
 _There is <? *HTML instruction* ?> support._
 
@@ -25,7 +25,7 @@ documentBegin
 codeSpan: html
 interblockSeparator
 interblockSeparator
-emphasis: There is support.
+emphasis: There is (inlineHtmlTag: <inline tag="value">)(inlineHtmlTag: </inline>) support.(inlineHtmlTag: <br/>)
 emphasis: There is (inlineHtmlComment: (emphasis: comment)) support.
 emphasis: There is support.
 interblockSeparator

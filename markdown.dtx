@@ -11926,6 +11926,62 @@ The horizontal margins should contain the following text:
 %
 % \begin{markdown}
 
+#### Inline HTML Tag Renderer
+The \mdef{markdownRendererInlineHtmlTag} macro represents the contents of an
+opening, closing, or empty inline \acro{HTML} tag. This macro will only be
+produced, when the \Opt{html} option is enabled. The macro receives a single
+argument that corresponds to the contents of the \acro{HTML} tag.
+
+% \end{markdown}
+%
+% \iffalse
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\documentclass{article}
+\usepackage[html]{markdown}
+\usepackage{marginnote}
+\markdownSetup{
+  renderers = {
+    inlineHtmlTag = {\textbf{#1}},
+  },
+}
+\begin{document}
+\begin{markdown}
+<b>Hello, world!</b><br/>
+\end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex document.tex
+lualatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following body text:
+
+> **<b>**Hello, world!**</b><br/>**
+
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererInlineHtmlTag{%
+  \markdownRendererInlineHtmlTagPrototype}%
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
 ### Token Renderer Prototypes
 
 % \label{sec:texrendererprototypes}
@@ -12129,6 +12185,7 @@ following text:
 \def\markdownRendererTextCitePrototype#1{}%
 \def\markdownRendererTablePrototype#1#2#3{}%
 \def\markdownRendererInlineHtmlCommentPrototype#1{}%
+\def\markdownRendererInlineHtmlTagPrototype#1{}%
 \def\markdownRendererTickedBoxPrototype{}%
 \def\markdownRendererHalfTickedBoxPrototype{}%
 \def\markdownRendererUntickedBoxPrototype{}%
@@ -13258,6 +13315,8 @@ The following ordered list will be preceded by roman numerals:
   \renewcommand\markdownRendererTable[3]{#1}}%
 \define@key{markdownRenderers}{inlineHtmlComment}{%
   \renewcommand\markdownRendererInlineHtmlComment[1]{#1}}%
+\define@key{markdownRenderers}{inlineHtmlTag}{%
+  \renewcommand\markdownRendererInlineHtmlTag[1]{#1}}%
 \define@key{markdownRenderers}{tickedBox}{%
   \renewcommand\markdownRendererTickedBox{#1}}%
 \define@key{markdownRenderers}{halfTickedBox}{%
@@ -13433,6 +13492,8 @@ The following ordered list will be preceded by roman numerals:
   \renewcommand\markdownRendererTablePrototype[3]{#1}}%
 \define@key{markdownRendererPrototypes}{inlineHtmlComment}{%
   \renewcommand\markdownRendererInlineHtmlCommentPrototype[1]{#1}}%
+\define@key{markdownRendererPrototypes}{inlineHtmlTag}{%
+  \renewcommand\markdownRendererInlineHtmlCommentTag[1]{#1}}%
 \define@key{markdownRendererPrototypes}{tickedBox}{%
   \renewcommand\markdownRendererTickedBoxPrototype{#1}}%
 \define@key{markdownRendererPrototypes}{halfTickedBox}{%
@@ -16542,6 +16603,20 @@ function M.writer.new(options)
 % \par
 % \begin{markdown}
 %
+% Define \luamdef{writer->inline_html_tag} as a function that will
+% transform the contents of an opening, closing, or empty inline \acro{HTML}
+% tag to the output format, where `contents` are the contents of the
+% \acro{HTML} tag.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  function self.inline_html_tag(contents)
+    return {"\\markdownRendererInlineHtmlTag{",self.string(contents),"}"}
+  end
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
 % Define \luamdef{writer->definitionlist} as a function that will transform an
 % input definition list to the output format, where `items` is an array of
 % tables, each of the form `{ term = t, definitions = defs }`, where `t`
@@ -18413,12 +18488,12 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
 
   larsers.EscapedChar   = parsers.backslash * C(parsers.escapable) / writer.string
   
-  larsers.InlineHtml    = parsers.emptyelt_any
+  larsers.InlineHtml    = parsers.emptyelt_any / writer.inline_html_tag
                         + (parsers.htmlcomment / parse_inlines_no_html)
                         / writer.inline_html_comment
                         + parsers.htmlinstruction
-                        + parsers.openelt_any
-                        + parsers.closeelt_any
+                        + parsers.openelt_any / writer.inline_html_tag
+                        + parsers.closeelt_any / writer.inline_html_tag
   
   larsers.HtmlEntity    = parsers.hexentity / entities.hex_entity  / writer.string
                         + parsers.decentity / entities.dec_entity  / writer.string
