@@ -4,7 +4,7 @@ This test ensures that the Lua `html` option is disabled by default.
 <div>
 *There is no block tag support.*
 </div>
-*There is no <inline tag="tag"></inline> support.*
+*There is <inline tag="value"></inline> support.<br/>*
 _There is no <!-- comment --> support._
 _There is no <? HTML instruction ?> support._
 
@@ -23,7 +23,7 @@ documentBegin
 codeSpan: html
 interblockSeparator
 emphasis: There is no block tag support.
-emphasis: There is no <inline tag="tag"></inline> support.
+emphasis: There is <inline tag="value"></inline> support.<br/>
 emphasis: There is no <!-- comment --> support.
 emphasis: There is no <? HTML instruction ?> support.
 interblockSeparator
