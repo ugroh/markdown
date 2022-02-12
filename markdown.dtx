@@ -7737,27 +7737,6 @@ into account.
 
 ##### \LaTeX{} Example {.unnumbered}
 
-\def\markdownRendererDocumentEnd{%
-  \endgroup
-  This is the end of a document.\par
-}
-\def\markdownRendererDocumentBegin{%
-  This is the beginning of a document.\par
-  \begingroup
-  \def\markdownRendererDocumentBegin{%
-    This is the beginning of a nested document.\par
-    \begingroup
-    \def\markdownRendererDocumentBegin{%
-      This is the beginning of a nested document.\par
-      \begingroup
-    }%
-    \def\markdownRendererDocumentEnd{%
-      \endgroup
-      This is the end of a nested document.\par
-    }%
-  }%
-}
-
 Using a text editor, create a text document named `nested.md` with the
 following content:
 ``` md
@@ -11982,6 +11961,96 @@ following body text:
 %
 % \begin{markdown}
 
+#### Attribute Context Renderers
+The following macros are only produced, when the \Opt{headerAttributes} option
+is enabled.
+
+The \mdef{markdownRendererAttributeContextBegin} and
+\mdef{markdownRendererAttributeContextEnd} macros represent the beginning and
+the end of a context in which certain attributes apply. The macros receive no
+arguments.
+
+% \end{markdown}
+%
+% \iffalse
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\documentclass{article}
+\usepackage[headerAttributes]{markdown}
+\markdownSetup{
+  renderers = {
+    attributeContextBegin = {%
+      \par
+      \emph{(The beginning of an attribute context)}
+      \par
+    },
+    attributeContextBegin = {%
+      \par
+      \emph{(The end of an attribute context)}
+      \par
+    },
+  },
+}
+\begin{document}
+\begin{markdown}
+
+# First top-level heading
+
+## A subheading
+
+# Second top-level heading
+
+\end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> *(The beginning of an attribute context)*
+>
+> # First top-level heading
+>
+> *(The beginning of an attribute context)*
+>
+> ## A subheading
+>
+> *(The end of an attribute context)*
+>
+> *(The end of an attribute context)*
+>
+> *(The beginning of an attribute context)*
+>
+> # Second top-level heading
+>
+> *(The end of an attribute context)*
+
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererAttributeContextBegin{%
+  \markdownRendererAttributeContextBeginPrototype}%
+\def\markdownRendererAttributeContextEnd{%
+  \markdownRendererAttributeContextEndPrototype}%
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
 ### Token Renderer Prototypes
 
 % \label{sec:texrendererprototypes}
@@ -12113,6 +12182,8 @@ following text:
 %
 % \end{markdown}
 %  \begin{macrocode}
+\def\markdownRendererAttributeContextBeginPrototype{}%
+\def\markdownRendererAttributeContextEndPrototype{}%
 \def\markdownRendererDocumentBeginPrototype{}%
 \def\markdownRendererDocumentEndPrototype{}%
 \def\markdownRendererInterblockSeparatorPrototype{}%
@@ -13171,6 +13242,10 @@ The following ordered list will be preceded by roman numerals:
 %
 % \end{markdown}
 %  \begin{macrocode}
+\define@key{markdownRenderers}{attributeContextBegin}{%
+  \renewcommand\markdownRendererAttributeContextBegin{#1}}%
+\define@key{markdownRenderers}{attributeContextEnd}{%
+  \renewcommand\markdownRendererAttributeContextEnd{#1}}%
 \define@key{markdownRenderers}{documentBegin}{%
   \renewcommand\markdownRendererDocumentBegin{#1}}%
 \define@key{markdownRenderers}{documentEnd}{%
@@ -13348,6 +13423,10 @@ The following ordered list will be preceded by roman numerals:
 %
 % \end{markdown}
 %  \begin{macrocode}
+\define@key{markdownRendererPrototypes}{attributeContextBegin}{%
+  \renewcommand\markdownRendererAttributeContextBeginPrototype{#1}}%
+\define@key{markdownRendererPrototypes}{attributeContextEnd}{%
+  \renewcommand\markdownRendererAttributeContextEndPrototype{#1}}%
 \define@key{markdownRendererPrototypes}{documentBegin}{%
   \renewcommand\markdownRendererDocumentBeginPrototype{#1}}%
 \define@key{markdownRendererPrototypes}{documentEnd}{%
@@ -16746,8 +16825,20 @@ function M.writer.new(options)
 % \end{markdown}
 %  \begin{macrocode}
   function self.document(d)
-    return {"\\markdownRendererDocumentBegin\n", d,
-      "\\markdownRendererDocumentEnd"}
+    local active_headings = self.active_headings
+    local buf = {"\\markdownRendererDocumentBegin\n", d}
+
+    if options.headerAttributes then
+      while #active_headings > 0 do
+        -- insert attribute context end for sections that ended
+        table.insert(buf, "\\markdownRendererAttributeContextEnd")
+        table.remove(active_headings, #active_headings)
+      end
+    end
+
+    table.insert(buf, "\\markdownRendererDocumentEnd")
+
+    return buf
   end
 %    \end{macrocode}
 % \par
@@ -16872,9 +16963,14 @@ function M.writer.new(options)
     local slice_end_type = self.slice_end:sub(1, 1)
     local slice_end_identifier = self.slice_end:sub(2) or ""
 
-    while #active_headings < level do
+    local buf = {}
+
+    while #active_headings < level-1 do
       -- push empty identifiers for implied sections
       table.insert(active_headings, {})
+      if options.headerAttributes then
+        table.insert(buf, "\\markdownRendererAttributeContextBegin")
+      end
     end
 
     while #active_headings >= level do
@@ -16887,6 +16983,9 @@ function M.writer.new(options)
       if active_identifiers[slice_end_identifier] ~= nil
           and slice_end_type == "$" then
         self.is_writing = false
+      end
+      if options.headerAttributes then
+        table.insert(buf, "\\markdownRendererAttributeContextEnd")
       end
       table.remove(active_headings, #active_headings)
     end
@@ -16908,6 +17007,10 @@ function M.writer.new(options)
     end
     table.insert(active_headings, identifiers)
 
+    if options.headerAttributes then
+      table.insert(buf, "\\markdownRendererAttributeContextBegin")
+    end
+
     if not self.is_writing then return "" end
 
     local cmd
@@ -16927,7 +17030,9 @@ function M.writer.new(options)
     else
       cmd = ""
     end
-    return {cmd,"{",s,"}"}
+    table.insert(buf, {cmd, "{", s, "}"})
+
+    return buf
   end
 %    \end{macrocode}
 % \par
