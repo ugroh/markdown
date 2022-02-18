@@ -16825,14 +16825,14 @@ function M.writer.new(options)
 % \end{markdown}
 %  \begin{macrocode}
   function self.document(d)
-    local active_headings = self.active_headings
+    local active_attributes = self.active_attributes
     local buf = {"\\markdownRendererDocumentBegin\n", d}
 
     if options.headerAttributes then
-      while #active_headings > 0 do
+      while #active_attributes > 0 do
         -- insert attribute context end for sections that ended
         table.insert(buf, "\\markdownRendererAttributeContextEnd")
-        table.remove(active_headings, #active_headings)
+        table.remove(active_attributes, #active_attributes)
       end
     end
 
@@ -16939,13 +16939,13 @@ function M.writer.new(options)
 % \par
 % \begin{markdown}
 %
-% Define \luamdef{writer->active\_headings} as a stack of identifiers
+% Define \luamdef{writer->active\_attributes} as a stack of attributes
 % of the headings that are currently active. The
 % \luamref{writer->active\_headings} member variable is mutable.
 %
 % \end{markdown}
 %  \begin{macrocode}
-  self.active_headings = {}
+  self.active_attributes = {}
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -16957,7 +16957,7 @@ function M.writer.new(options)
 % \end{markdown}
 %  \begin{macrocode}
   function self.heading(s,level,attributes)
-    local active_headings = self.active_headings
+    local active_attributes = self.active_attributes
     local slice_begin_type = self.slice_begin:sub(1, 1)
     local slice_begin_identifier = self.slice_begin:sub(2) or ""
     local slice_end_type = self.slice_end:sub(1, 1)
@@ -16965,47 +16965,33 @@ function M.writer.new(options)
 
     local buf = {}
 
-    while #active_headings < level-1 do
+    while #active_attributes < level-1 do
       -- push empty identifiers for implied sections
-      table.insert(active_headings, {})
+      table.insert(active_attributes, {})
       if options.headerAttributes then
         table.insert(buf, "\\markdownRendererAttributeContextBegin")
       end
     end
 
-    while #active_headings >= level do
+    while #active_attributes >= level do
       -- pop identifiers for sections that have ended
-      local active_identifiers = active_headings[#active_headings]
-      if active_identifiers[slice_begin_identifier] ~= nil
+      local active_identifiers = active_attributes[#active_attributes]
+      if active_identifiers["#" .. slice_begin_identifier] ~= nil
           and slice_begin_type == "$" then
         self.is_writing = true
       end
-      if active_identifiers[slice_end_identifier] ~= nil
+      if active_identifiers["#" .. slice_end_identifier] ~= nil
           and slice_end_type == "$" then
         self.is_writing = false
       end
       if options.headerAttributes then
         table.insert(buf, "\\markdownRendererAttributeContextEnd")
       end
-      table.remove(active_headings, #active_headings)
+      table.remove(active_attributes, #active_attributes)
     end
 
     -- push identifiers for the new section
-    attributes = attributes or {}
-    local identifiers = {}
-    for index = 1, #attributes do
-      attribute = attributes[index]
-      identifiers[attribute:sub(2)] = true
-    end
-    if identifiers[slice_begin_identifier] ~= nil
-        and slice_begin_type == "^" then
-      self.is_writing = true
-    end
-    if identifiers[slice_end_identifier] ~= nil
-        and slice_end_type == "^" then
-      self.is_writing = false
-    end
-    table.insert(active_headings, identifiers)
+    table.insert(active_attributes, attributes or {})
 
     if options.headerAttributes then
       table.insert(buf, "\\markdownRendererAttributeContextBegin")
@@ -17088,7 +17074,7 @@ function M.writer.new(options)
   function self.get_state()
     return {
       is_writing=self.is_writing,
-      active_headings={table.unpack(self.active_headings)},
+      active_attributes={table.unpack(self.active_attributes)},
     }
   end
 %    \end{macrocode}
