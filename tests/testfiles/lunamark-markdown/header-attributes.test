@@ -21,19 +21,29 @@ A level two heading {#fourth4-id .2not-a-class}
 documentBegin
 codeSpan: headerAttributes
 interblockSeparator
+attributeContextBegin
 headingOne: A level one heading
 interblockSeparator
+attributeContextEnd
+attributeContextBegin
 headingOne: A level one heading
 interblockSeparator
+attributeContextBegin
 headingTwo: A level two heading
 interblockSeparator
+attributeContextEnd
 headingTwo: A level two heading (leftBrace)(hash)fourth4-id .2not-a-class(rightBrace)
 interblockSeparator
 headingThree: A level three heading (hash)(hash) (leftBrace)(hash)5not-the-fifth-id(rightBrace)
 interblockSeparator
 headingFour: A level four heading (leftBrace)(hash)-6not-the-sixth-id(rightBrace)
 interblockSeparator
+attributeContextBegin
 headingFive: A level five heading
 interblockSeparator
+attributeContextBegin
 headingSix: A level six heading
+attributeContextEnd
+attributeContextEnd
+attributeContextEnd
 documentEnd
