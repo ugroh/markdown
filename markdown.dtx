@@ -16828,10 +16828,13 @@ function M.writer.new(options)
     local active_attributes = self.active_attributes
     local buf = {"\\markdownRendererDocumentBegin\n", d}
 
-    if options.headerAttributes then
+    -- pop attributes for sections that have ended
+    if options.headerAttributes and self.is_writing then
       while #active_attributes > 0 do
-        -- insert attribute context end for sections that ended
-        table.insert(buf, "\\markdownRendererAttributeContextEnd")
+        local attributes = active_attributes[#active_attributes]
+        if #attributes > 0 then
+          table.insert(buf, "\\markdownRendererAttributeContextEnd")
+        end
         table.remove(active_attributes, #active_attributes)
       end
     end
@@ -16956,7 +16959,12 @@ function M.writer.new(options)
 %
 % \end{markdown}
 %  \begin{macrocode}
-  function self.heading(s,level,attributes)
+  function self.heading(s, level, attributes)
+    attributes = attributes or {}
+    for i = 1, #attributes do
+      attributes[attributes[i]] = true
+    end
+
     local active_attributes = self.active_attributes
     local slice_begin_type = self.slice_begin:sub(1, 1)
     local slice_begin_identifier = self.slice_begin:sub(2) or ""
@@ -16965,39 +16973,67 @@ function M.writer.new(options)
 
     local buf = {}
 
+    -- push empty attributes for implied sections
     while #active_attributes < level-1 do
-      -- push empty identifiers for implied sections
       table.insert(active_attributes, {})
-      if options.headerAttributes then
-        table.insert(buf, "\\markdownRendererAttributeContextBegin")
-      end
     end
 
+    -- pop attributes for sections that have ended
     while #active_attributes >= level do
-      -- pop identifiers for sections that have ended
       local active_identifiers = active_attributes[#active_attributes]
-      if active_identifiers["#" .. slice_begin_identifier] ~= nil
-          and slice_begin_type == "$" then
-        self.is_writing = true
-      end
+      -- tear down all active attributes at slice end
       if active_identifiers["#" .. slice_end_identifier] ~= nil
           and slice_end_type == "$" then
+        for header_level = #active_attributes, 1, -1 do
+          if options.headerAttributes and #active_attributes[header_level] > 0 then
+            table.insert(buf, "\\markdownRendererAttributeContextEnd")
+          end
+        end
         self.is_writing = false
       end
-      if options.headerAttributes then
+      table.remove(active_attributes, #active_attributes)
+      if self.is_writing and options.headerAttributes and #active_identifiers > 0 then
         table.insert(buf, "\\markdownRendererAttributeContextEnd")
       end
-      table.remove(active_attributes, #active_attributes)
+      -- apply all active attributes at slice beginning
+      if active_identifiers["#" .. slice_begin_identifier] ~= nil
+          and slice_begin_type == "$" then
+        for header_level = 1, #active_attributes do
+          if options.headerAttributes and #active_attributes[header_level] > 0 then
+            table.insert(buf, "\\markdownRendererAttributeContextBegin")
+          end
+        end
+        self.is_writing = true
+      end
     end
 
-    -- push identifiers for the new section
-    table.insert(active_attributes, attributes or {})
+    -- tear down all active attributes at slice end
+    if attributes["#" .. slice_end_identifier] ~= nil
+        and slice_end_type == "^" then
+      for header_level = #active_attributes, 1, -1 do
+        if options.headerAttributes and #active_attributes[header_level] > 0 then
+          table.insert(buf, "\\markdownRendererAttributeContextEnd")
+        end
+      end
+      self.is_writing = false
+    end
 
-    if options.headerAttributes then
+    -- push attributes for the new section
+    table.insert(active_attributes, attributes)
+    if self.is_writing and options.headerAttributes and #attributes > 0 then
       table.insert(buf, "\\markdownRendererAttributeContextBegin")
     end
 
-    if not self.is_writing then return "" end
+    -- apply all active attributes at slice beginning
+    if attributes["#" .. slice_begin_identifier] ~= nil
+        and slice_begin_type == "^" then
+      for header_level = 1, #active_attributes do
+        if options.headerAttributes and #active_attributes[header_level] > 0 then
+          table.insert(buf, "\\markdownRendererAttributeContextBegin")
+        end
+      end
+      self.is_writing = true
+    end
 
     local cmd
     level = level + options.shiftHeadings
@@ -17016,7 +17052,10 @@ function M.writer.new(options)
     else
       cmd = ""
     end
-    table.insert(buf, {cmd, "{", s, "}"})
+
+    if self.is_writing then
+      table.insert(buf, {cmd, "{", s, "}"})
+    end
 
     return buf
   end
