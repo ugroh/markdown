@@ -11961,6 +11961,108 @@ following body text:
 %
 % \begin{markdown}
 
+#### Attribute Renderers
+The following macros are only produced, when the \Opt{headerAttributes} option
+is enabled.
+  
+\mdef{markdownRendererAttributeIdentifier} represents the \meta{identifier} of
+a markdown element (`id="`\meta{identifier}`"` in HTML and `#`\meta{identifier}
+in Markdown's \Opt{headerAttributes} syntax extension). The macro receives a
+single attribute that corresponds to the \meta{identifier}.
+
+\mdef{markdownRendererAttributeClassName} represents the \meta{class name} of a
+markdown element (`class="`\meta{class name} ...`"` in HTML and
+`.`\meta{class name} in Markdown's \Opt{headerAttributes} syntax extension).
+The macro receives a single attribute that corresponds to the \meta{class
+name}.
+
+\mdef{markdownRendererAttributeKeyValue} represents a HTML attribute in the form
+\meta{key}`=`\meta{value} that is neither an identifier nor a class name.
+The macro receives two attributes that correspond to the \meta{key} and the
+\meta{value}, respectively.
+
+% \end{markdown}
+%
+% \iffalse
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\documentclass{article}
+\usepackage[headerAttributes, underscores=false]{markdown}
+\markdownSetup{
+  renderers = {
+    attributeIdentifier = {%
+      \par
+      \emph{(Identifier: #1)}
+      \par
+    },
+    attributeClassName = {%
+      \par
+      \emph{(Class name: #1)}
+      \par
+    },
+    attributeKeyValue = {%
+      \par
+      \emph{(Key: #1, Value: #2)}
+      \par
+    },
+  },
+}
+\begin{document}
+\begin{markdown}
+
+# First top-level heading {jane=doe}
+
+## A subheading {#identifier}
+
+# Second top-level heading {.class_name}
+
+\end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> # First top-level heading
+>
+> *(Key: Jane, Value: Doe)*
+>
+> ## A subheading
+>
+> *(Identifier: identifier)*
+>
+> # Second top-level heading
+>
+> *(Class name: class\_name)*
+
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererAttributeIdentifier{%
+  \markdownRendererAttributeIdentifierPrototype}%
+\def\markdownRendererAttributeClassName{%
+  \markdownRendererAttributeClassNamePrototype}%
+\def\markdownRendererAttributeKeyValue{%
+  \markdownRendererAttributeKeyValuePrototype}%
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
 #### Header Attribute Context Renderers
 The following macros are only produced, when the \Opt{headerAttributes} option
 is enabled.
@@ -12178,13 +12280,16 @@ following text:
 %
 % \end{markdown}
 %  \begin{macrocode}
-\def\markdownRendererHeaderAttributeContextBeginPrototype{}%
-\def\markdownRendererHeaderAttributeContextEndPrototype{}%
+\def\markdownRendererAttributeIdentifierPrototype{}%
+\def\markdownRendererAttributeClassNamePrototype{}%
+\def\markdownRendererAttributeKeyValuePrototype{}%
 \def\markdownRendererDocumentBeginPrototype{}%
 \def\markdownRendererDocumentEndPrototype{}%
 \def\markdownRendererInterblockSeparatorPrototype{}%
 \def\markdownRendererLineBreakPrototype{}%
 \def\markdownRendererEllipsisPrototype{}%
+\def\markdownRendererHeaderAttributeContextBeginPrototype{}%
+\def\markdownRendererHeaderAttributeContextEndPrototype{}%
 \def\markdownRendererNbspPrototype{}%
 \def\markdownRendererLeftBracePrototype{}%
 \def\markdownRendererRightBracePrototype{}%
@@ -13238,10 +13343,12 @@ The following ordered list will be preceded by roman numerals:
 %
 % \end{markdown}
 %  \begin{macrocode}
-\define@key{markdownRenderers}{headerAttributeContextBegin}{%
-  \renewcommand\markdownRendererHeaderAttributeContextBegin{#1}}%
-\define@key{markdownRenderers}{headerAttributeContextEnd}{%
-  \renewcommand\markdownRendererHeaderAttributeContextEnd{#1}}%
+\define@key{markdownRenderers}{attributeIdentifier}{%
+  \renewcommand\markdownRendererAttributeIdentifier[1]{#1}}%
+\define@key{markdownRenderers}{attributeClassName}{%
+  \renewcommand\markdownRendererAttributeClassName[1]{#1}}%
+\define@key{markdownRenderers}{attributeKeyValue}{%
+  \renewcommand\markdownRendererAttributeKeyValue[2]{#1}}%
 \define@key{markdownRenderers}{documentBegin}{%
   \renewcommand\markdownRendererDocumentBegin{#1}}%
 \define@key{markdownRenderers}{documentEnd}{%
@@ -13252,6 +13359,10 @@ The following ordered list will be preceded by roman numerals:
   \renewcommand\markdownRendererLineBreak{#1}}%
 \define@key{markdownRenderers}{ellipsis}{%
   \renewcommand\markdownRendererEllipsis{#1}}%
+\define@key{markdownRenderers}{headerAttributeContextBegin}{%
+  \renewcommand\markdownRendererHeaderAttributeContextBegin{#1}}%
+\define@key{markdownRenderers}{headerAttributeContextEnd}{%
+  \renewcommand\markdownRendererHeaderAttributeContextEnd{#1}}%
 \define@key{markdownRenderers}{nbsp}{%
   \renewcommand\markdownRendererNbsp{#1}}%
 \define@key{markdownRenderers}{leftBrace}{%
@@ -13419,10 +13530,12 @@ The following ordered list will be preceded by roman numerals:
 %
 % \end{markdown}
 %  \begin{macrocode}
-\define@key{markdownRendererPrototypes}{headerAttributeContextBegin}{%
-  \renewcommand\markdownRendererHeaderAttributeContextBeginPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{headerAttributeContextEnd}{%
-  \renewcommand\markdownRendererHeaderAttributeContextEndPrototype{#1}}%
+\define@key{markdownRendererPrototypes}{attributeIdentifier}{%
+  \renewcommand\markdownRendererAttributeIdentifierPrototype[1]{#1}}%
+\define@key{markdownRendererPrototypes}{attributeClassName}{%
+  \renewcommand\markdownRendererAttributeClassNamePrototype[1]{#1}}%
+\define@key{markdownRendererPrototypes}{attributeKeyValue}{%
+  \renewcommand\markdownRendererAttributeKeyValuePrototype[2]{#1}}%
 \define@key{markdownRendererPrototypes}{documentBegin}{%
   \renewcommand\markdownRendererDocumentBeginPrototype{#1}}%
 \define@key{markdownRendererPrototypes}{documentEnd}{%
@@ -13433,6 +13546,10 @@ The following ordered list will be preceded by roman numerals:
   \renewcommand\markdownRendererLineBreakPrototype{#1}}%
 \define@key{markdownRendererPrototypes}{ellipsis}{%
   \renewcommand\markdownRendererEllipsisPrototype{#1}}%
+\define@key{markdownRendererPrototypes}{headerAttributeContextBegin}{%
+  \renewcommand\markdownRendererHeaderAttributeContextBeginPrototype{#1}}%
+\define@key{markdownRendererPrototypes}{headerAttributeContextEnd}{%
+  \renewcommand\markdownRendererHeaderAttributeContextEndPrototype{#1}}%
 \define@key{markdownRendererPrototypes}{nbsp}{%
   \renewcommand\markdownRendererNbspPrototype{#1}}%
 \define@key{markdownRendererPrototypes}{leftBrace}{%
@@ -17048,9 +17165,26 @@ function M.writer.new(options)
     else
       cmd = ""
     end
-
     if self.is_writing then
       table.insert(buf, {cmd, "{", s, "}"})
+    end
+
+    if self.is_writing then
+      table.sort(attributes)
+      local key, value
+      for i = 1, #attributes do
+        if attributes[i]:sub(1, 1) == "#" then
+          table.insert(buf, {"\\markdownRendererAttributeIdentifier{",
+                             attributes[i]:sub(2), "}"})
+        elseif attributes[i]:sub(1, 1) == "." then
+          table.insert(buf, {"\\markdownRendererAttributeClassName{",
+                             attributes[i]:sub(2), "}"})
+        else
+          key, value = attributes[i]:match("(%w+)=(%w+)")
+          table.insert(buf, {"\\markdownRendererAttributeKeyValue{",
+                             key, "}{", value, "}"})
+        end
+      end
     end
 
     return buf
@@ -17349,12 +17483,12 @@ parsers.css_identifier         = (parsers.hash + parsers.period)
                                    * (parsers.css_identifier_char
                                      - parsers.digit)
                                    * parsers.css_identifier_char^0))
-parsers.attribute_name_char    = parsers.any - parsers.space
+parsers.attribute_key_char     = parsers.any - parsers.space
                                - parsers.squote - parsers.dquote
                                - parsers.more - parsers.slash
                                - parsers.equal
-parsers.attribute_value_char   = parsers.any - parsers.dquote
-                               - parsers.more
+parsers.attribute_value_char   = parsers.any - parsers.space
+                               - parsers.dquote - parsers.more
 
 -- block followed by 0 or more optionally
 -- indented blocks with first line indented.
@@ -17995,7 +18129,7 @@ parsers.dlchunk = Cs(parsers.line * (parsers.indentedline - parsers.blankline)^0
 % \end{markdown}
 %  \begin{macrocode}
 parsers.heading_attribute = C(parsers.css_identifier)
-                          + C((parsers.attribute_name_char
+                          + C((parsers.attribute_key_char
                              - parsers.rbrace)^1
                              * parsers.equal
                              * (parsers.attribute_value_char
@@ -20512,6 +20646,7 @@ end
   emphasis = {\emph{#1}},
   tickedBox = {$\boxtimes$},
   halfTickedBox = {$\boxdot$},
+  attributeIdentifier = {\label{#1}},
   blockQuoteBegin = {\begin{quotation}},
   blockQuoteEnd = {\end{quotation}},
   inputVerbatim = {\VerbatimInput{#1}},
