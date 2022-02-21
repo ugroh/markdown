@@ -16,7 +16,7 @@ Here are the definitions:
  [image]: http://image (This is the title of the image.)
 >>>
 documentBegin
-attributeContextBegin
+headerAttributeContextBegin
 headingOne: This is another section
 interblockSeparator
 footnote: This is the text of the footnote.
@@ -31,5 +31,5 @@ BEGIN image
 - title: This is the title of the image.
 END image
 interblockSeparator
-attributeContextEnd
+headerAttributeContextEnd
 documentEnd

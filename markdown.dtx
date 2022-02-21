@@ -11961,14 +11961,14 @@ following body text:
 %
 % \begin{markdown}
 
-#### Attribute Context Renderers
+#### Header Attribute Context Renderers
 The following macros are only produced, when the \Opt{headerAttributes} option
 is enabled.
 
-The \mdef{markdownRendererAttributeContextBegin} and
-\mdef{markdownRendererAttributeContextEnd} macros represent the beginning and
-the end of a context in which certain attributes apply. The macros receive no
-arguments.
+The \mdef{markdownRendererHeaderAttributeContextBegin} and
+\mdef{markdownRendererHeaderAttributeContextEnd} macros represent the beginning
+and the end of a section in which the attributes of a heading apply. The macros
+receive no arguments.
 
 % \end{markdown}
 %
@@ -11983,14 +11983,14 @@ following content:
 \usepackage[headerAttributes]{markdown}
 \markdownSetup{
   renderers = {
-    attributeContextBegin = {%
+    headerAttributeContextBegin = {%
       \par
-      \emph{(The beginning of an attribute context)}
+      \emph{(The beginning of a header attribute context)}
       \par
     },
-    attributeContextBegin = {%
+    headerAttributeContextBegin = {%
       \par
-      \emph{(The end of an attribute context)}
+      \emph{(The end of a header attribute context)}
       \par
     },
   },
@@ -12000,9 +12000,9 @@ following content:
 
 # First top-level heading
 
-## A subheading
+## A subheading {#identifier}
 
-# Second top-level heading
+# Second top-level heading {.class_name}
 
 \end{markdown}
 \end{document}
@@ -12014,33 +12014,29 @@ lualatex document.tex
 A PDF document named `document.pdf` should be produced and contain the
 following text:
 
-> *(The beginning of an attribute context)*
->
 > # First top-level heading
 >
-> *(The beginning of an attribute context)*
+> *(The beginning of a header attribute context)*
 >
 > ## A subheading
 >
-> *(The end of an attribute context)*
+> *(The end of a header attribute context)*
 >
-> *(The end of an attribute context)*
->
-> *(The beginning of an attribute context)*
+> *(The beginning of a header attribute context)*
 >
 > # Second top-level heading
 >
-> *(The end of an attribute context)*
+> *(The end of a header attribute context)*
 
 %</manual-tokens>
 %<*tex>
 % \fi
 %
 %  \begin{macrocode}
-\def\markdownRendererAttributeContextBegin{%
-  \markdownRendererAttributeContextBeginPrototype}%
-\def\markdownRendererAttributeContextEnd{%
-  \markdownRendererAttributeContextEndPrototype}%
+\def\markdownRendererHeaderAttributeContextBegin{%
+  \markdownRendererHeaderAttributeContextBeginPrototype}%
+\def\markdownRendererHeaderAttributeContextEnd{%
+  \markdownRendererHeaderAttributeContextEndPrototype}%
 %    \end{macrocode}
 % \par
 %
@@ -12182,8 +12178,8 @@ following text:
 %
 % \end{markdown}
 %  \begin{macrocode}
-\def\markdownRendererAttributeContextBeginPrototype{}%
-\def\markdownRendererAttributeContextEndPrototype{}%
+\def\markdownRendererHeaderAttributeContextBeginPrototype{}%
+\def\markdownRendererHeaderAttributeContextEndPrototype{}%
 \def\markdownRendererDocumentBeginPrototype{}%
 \def\markdownRendererDocumentEndPrototype{}%
 \def\markdownRendererInterblockSeparatorPrototype{}%
@@ -13242,10 +13238,10 @@ The following ordered list will be preceded by roman numerals:
 %
 % \end{markdown}
 %  \begin{macrocode}
-\define@key{markdownRenderers}{attributeContextBegin}{%
-  \renewcommand\markdownRendererAttributeContextBegin{#1}}%
-\define@key{markdownRenderers}{attributeContextEnd}{%
-  \renewcommand\markdownRendererAttributeContextEnd{#1}}%
+\define@key{markdownRenderers}{headerAttributeContextBegin}{%
+  \renewcommand\markdownRendererHeaderAttributeContextBegin{#1}}%
+\define@key{markdownRenderers}{headerAttributeContextEnd}{%
+  \renewcommand\markdownRendererHeaderAttributeContextEnd{#1}}%
 \define@key{markdownRenderers}{documentBegin}{%
   \renewcommand\markdownRendererDocumentBegin{#1}}%
 \define@key{markdownRenderers}{documentEnd}{%
@@ -13423,10 +13419,10 @@ The following ordered list will be preceded by roman numerals:
 %
 % \end{markdown}
 %  \begin{macrocode}
-\define@key{markdownRendererPrototypes}{attributeContextBegin}{%
-  \renewcommand\markdownRendererAttributeContextBeginPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{attributeContextEnd}{%
-  \renewcommand\markdownRendererAttributeContextEndPrototype{#1}}%
+\define@key{markdownRendererPrototypes}{headerAttributeContextBegin}{%
+  \renewcommand\markdownRendererHeaderAttributeContextBeginPrototype{#1}}%
+\define@key{markdownRendererPrototypes}{headerAttributeContextEnd}{%
+  \renewcommand\markdownRendererHeaderAttributeContextEndPrototype{#1}}%
 \define@key{markdownRendererPrototypes}{documentBegin}{%
   \renewcommand\markdownRendererDocumentBeginPrototype{#1}}%
 \define@key{markdownRendererPrototypes}{documentEnd}{%
@@ -16833,7 +16829,7 @@ function M.writer.new(options)
       while #active_attributes > 0 do
         local attributes = active_attributes[#active_attributes]
         if #attributes > 0 then
-          table.insert(buf, "\\markdownRendererAttributeContextEnd")
+          table.insert(buf, "\\markdownRendererHeaderAttributeContextEnd")
         end
         table.remove(active_attributes, #active_attributes)
       end
@@ -16986,21 +16982,21 @@ function M.writer.new(options)
           and slice_end_type == "$" then
         for header_level = #active_attributes, 1, -1 do
           if options.headerAttributes and #active_attributes[header_level] > 0 then
-            table.insert(buf, "\\markdownRendererAttributeContextEnd")
+            table.insert(buf, "\\markdownRendererHeaderAttributeContextEnd")
           end
         end
         self.is_writing = false
       end
       table.remove(active_attributes, #active_attributes)
       if self.is_writing and options.headerAttributes and #active_identifiers > 0 then
-        table.insert(buf, "\\markdownRendererAttributeContextEnd")
+        table.insert(buf, "\\markdownRendererHeaderAttributeContextEnd")
       end
       -- apply all active attributes at slice beginning
       if active_identifiers["#" .. slice_begin_identifier] ~= nil
           and slice_begin_type == "$" then
         for header_level = 1, #active_attributes do
           if options.headerAttributes and #active_attributes[header_level] > 0 then
-            table.insert(buf, "\\markdownRendererAttributeContextBegin")
+            table.insert(buf, "\\markdownRendererHeaderAttributeContextBegin")
           end
         end
         self.is_writing = true
@@ -17012,7 +17008,7 @@ function M.writer.new(options)
         and slice_end_type == "^" then
       for header_level = #active_attributes, 1, -1 do
         if options.headerAttributes and #active_attributes[header_level] > 0 then
-          table.insert(buf, "\\markdownRendererAttributeContextEnd")
+          table.insert(buf, "\\markdownRendererHeaderAttributeContextEnd")
         end
       end
       self.is_writing = false
@@ -17021,7 +17017,7 @@ function M.writer.new(options)
     -- push attributes for the new section
     table.insert(active_attributes, attributes)
     if self.is_writing and options.headerAttributes and #attributes > 0 then
-      table.insert(buf, "\\markdownRendererAttributeContextBegin")
+      table.insert(buf, "\\markdownRendererHeaderAttributeContextBegin")
     end
 
     -- apply all active attributes at slice beginning
@@ -17029,7 +17025,7 @@ function M.writer.new(options)
         and slice_begin_type == "^" then
       for header_level = 1, #active_attributes do
         if options.headerAttributes and #active_attributes[header_level] > 0 then
-          table.insert(buf, "\\markdownRendererAttributeContextBegin")
+          table.insert(buf, "\\markdownRendererHeaderAttributeContextBegin")
         end
       end
       self.is_writing = true

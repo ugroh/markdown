@@ -136,7 +136,7 @@ codeSpan: slice
 interblockSeparator
 headingOne: This is an H1
 interblockSeparator
-attributeContextBegin
+headerAttributeContextBegin
 headingTwo: This is an H2
 interblockSeparator
 headingThree: This is an H3
@@ -169,8 +169,8 @@ interblockSeparator
 interblockSeparator
 codeSpan: latex (backslash)documentclass(leftBrace)article(rightBrace) (backslash)begin(leftBrace)document(rightBrace) Hello world! (backslash)end(leftBrace)document(rightBrace) 
 interblockSeparator
-attributeContextEnd
-attributeContextBegin
+headerAttributeContextEnd
+headerAttributeContextBegin
 headingTwo: This is an H2
 interblockSeparator
 interblockSeparator
@@ -240,7 +240,7 @@ interblockSeparator
 interblockSeparator
 emphasis: Term 2
 interblockSeparator
-attributeContextEnd
+headerAttributeContextEnd
 headingTwo: This is an H2
 interblockSeparator
 interblockSeparator
