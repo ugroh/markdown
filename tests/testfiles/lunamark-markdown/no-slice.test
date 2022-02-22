@@ -138,6 +138,7 @@ headingOne: This is an H1
 interblockSeparator
 headerAttributeContextBegin
 headingTwo: This is an H2
+attributeIdentifier: first-h2
 interblockSeparator
 headingThree: This is an H3
 interblockSeparator
@@ -172,6 +173,7 @@ interblockSeparator
 headerAttributeContextEnd
 headerAttributeContextBegin
 headingTwo: This is an H2
+attributeIdentifier: second-h2
 interblockSeparator
 interblockSeparator
 ulBegin

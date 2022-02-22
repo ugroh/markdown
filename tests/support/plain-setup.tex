@@ -1,7 +1,14 @@
-\def\markdownRendererHeaderAttributeContextBegin{%
-  \TYPE{headerAttributeContextBegin}}%
-\def\markdownRendererHeaderAttributeContextEnd{%
-  \TYPE{headerAttributeContextEnd}}%
+\def\markdownRendererAttributeIdentifier#1{%
+  \TYPE{attributeIdentifier: #1}}%
+\def\markdownRendererAttributeClassName#1{%
+  \TYPE{attributeClassName:  #1}}%
+\def\markdownRendererAttributeKeyValue#1#2{%
+  \TYPE{BEGIN attributeKeyValue}%
+  \TYPE{- key:               #1}%
+  \TYPE{- value:             #2}%
+  \TYPE{END attributeKeyValue}}%
+\def\markdownRendererDocumentBegin{%
+  \TYPE{documentBegin}}%
 \def\markdownRendererDocumentBegin{%
   \TYPE{documentBegin}}%
 \def\markdownRendererDocumentEnd{%
@@ -12,6 +19,10 @@
   \TYPE{lineBreak}}%
 \def\markdownRendererEllipsis#1{%
   \TYPE{ellipsis}}%
+\def\markdownRendererHeaderAttributeContextBegin{%
+  \TYPE{headerAttributeContextBegin}}%
+\def\markdownRendererHeaderAttributeContextEnd{%
+  \TYPE{headerAttributeContextEnd}}%
 \def\markdownRendererNbsp#1{%
   \TYPE{nbsp}}%
 \def\markdownRendererLeftBrace#1{%
@@ -37,37 +48,37 @@
 \def\markdownRendererPipe#1{%
   \TYPE{pipe}}%
 \def\markdownRendererCodeSpan#1{%
-  \TYPE{codeSpan:          #1}}%
+  \TYPE{codeSpan:            #1}}%
 \def\markdownRendererLink#1#2#3#4{%
   \TYPE{BEGIN link}%
-  \TYPE{- label:           #1}%
-  \TYPE{- URI:             #2}%
-  \TYPE{- title:           #4}%
+  \TYPE{- label:             #1}%
+  \TYPE{- URI:               #2}%
+  \TYPE{- title:             #4}%
   \TYPE{END link}}%
 \def\markdownRendererImage#1#2#3#4{%
   \TYPE{BEGIN image}%
-  \TYPE{- label:           #1}%
-  \TYPE{- URI:             #2}%
-  \TYPE{- title:           #4}%
+  \TYPE{- label:             #1}%
+  \TYPE{- URI:               #2}%
+  \TYPE{- title:             #4}%
   \TYPE{END image}}%
 \def\markdownRendererContentBlock#1#2#3#4{%
   \TYPE{BEGIN contentBlock}%
-  \TYPE{- suffix:          #1}%
-  \TYPE{- URI:             #2}%
-  \TYPE{- title:           #4}%
+  \TYPE{- suffix:            #1}%
+  \TYPE{- URI:               #2}%
+  \TYPE{- title:             #4}%
   \TYPE{END contentBlock}}%
 \def\markdownRendererContentBlockOnlineImage#1#2#3#4{%
   \TYPE{BEGIN contentBlockOnlineImage}%
-  \TYPE{- suffix:          #1}%
-  \TYPE{- URI:             #2}%
-  \TYPE{- title:           #4}%
+  \TYPE{- suffix:            #1}%
+  \TYPE{- URI:               #2}%
+  \TYPE{- title:             #4}%
   \TYPE{END contentBlockOnlineImage}}%
 \def\markdownRendererContentBlockCode#1#2#3#4#5{%
   \TYPE{BEGIN contentBlockCode}%
-  \TYPE{- suffix:          #1}%
-  \TYPE{- language:        #2}%
-  \TYPE{- URI:             #3}%
-  \TYPE{- title:           #5}%
+  \TYPE{- suffix:            #1}%
+  \TYPE{- language:          #2}%
+  \TYPE{- URI:               #3}%
+  \TYPE{- title:             #5}%
   \TYPE{END contentBlockCode}}%
 \def\markdownRendererUlBegin{%
   \TYPE{ulBegin}}%
@@ -90,7 +101,7 @@
 \def\markdownRendererOlItemEnd{%
   \TYPE{olItemEnd}}%
 \def\markdownRendererOlItemWithNumber#1{%
-  \TYPE{olItemWithNumber:  #1}}%
+  \TYPE{olItemWithNumber:    #1}}%
 \def\markdownRendererOlEnd{%
   \TYPE{olEnd}}%
 \def\markdownRendererOlEndTight{%
@@ -100,7 +111,7 @@
 \def\markdownRendererDlBeginTight{%
   \TYPE{dlBeginTight}}%
 \def\markdownRendererDlItem#1{%
-  \TYPE{dlItem:            #1}}%
+  \TYPE{dlItem:              #1}}%
 \def\markdownRendererDlItemEnd{%
   \TYPE{dlItemEnd}}%
 \def\markdownRendererDlDefinitionBegin{%
@@ -112,36 +123,36 @@
 \def\markdownRendererDlEndTight{%
   \TYPE{dlEndTight}}%
 \def\markdownRendererEmphasis#1{%
-  \TYPE{emphasis:          #1}}%
+  \TYPE{emphasis:            #1}}%
 \def\markdownRendererStrongEmphasis#1{%
-  \TYPE{strongEmphasis:    #1}}%
+  \TYPE{strongEmphasis:      #1}}%
 \def\markdownRendererBlockQuoteBegin{%
   \TYPE{blockQuoteBegin}}%
 \def\markdownRendererBlockQuoteEnd{%
   \TYPE{blockQuoteEnd}}%
 \def\markdownRendererInputVerbatim#1{%
-  \TYPE{inputVerbatim:     #1}}%
+  \TYPE{inputVerbatim:       #1}}%
 \def\markdownRendererInputFencedCode#1#2{%
   \TYPE{BEGIN fencedCode}%
-  \TYPE{- src:             #1}%
-  \TYPE{- infostring:      #2}%
+  \TYPE{- src:               #1}%
+  \TYPE{- infostring:        #2}%
   \TYPE{END fencedCode}}%
 \def\markdownRendererHeadingOne#1{%
-  \TYPE{headingOne:        #1}}%
+  \TYPE{headingOne:          #1}}%
 \def\markdownRendererHeadingTwo#1{%
-  \TYPE{headingTwo:        #1}}%
+  \TYPE{headingTwo:          #1}}%
 \def\markdownRendererHeadingThree#1{%
-  \TYPE{headingThree:      #1}}%
+  \TYPE{headingThree:        #1}}%
 \def\markdownRendererHeadingFour#1{%
-  \TYPE{headingFour:       #1}}%
+  \TYPE{headingFour:         #1}}%
 \def\markdownRendererHeadingFive#1{%
-  \TYPE{headingFive:       #1}}%
+  \TYPE{headingFive:         #1}}%
 \def\markdownRendererHeadingSix#1{%
-  \TYPE{headingSix:        #1}}%
+  \TYPE{headingSix:          #1}}%
 \def\markdownRendererHorizontalRule{%
   \TYPE{horizontalRule}}%
 \def\markdownRendererFootnote#1{%
-  \TYPE{footnote:          #1}}%
+  \TYPE{footnote:            #1}}%
 \def\markdownRendererCite#1{%
   \CITATIONS{#1}}%
 \def\markdownRendererTextCite#1{%
@@ -149,7 +160,7 @@
 \def\markdownRendererTable#1#2#3{%
   \TABLE{#1}{#2}{#3}}%
 \def\markdownRendererInlineHtmlComment#1{%
-  \TYPE{inlineHtmlComment: #1}}%
+  \TYPE{inlineHtmlComment:   #1}}%
 \def\markdownRendererInlineHtmlTag#1{%
   \TYPE{inlineHtmlTag: #1}}%
 \def\markdownRendererTickedBox#1{%
@@ -160,20 +171,20 @@
   \TYPE{untickedBox}}%
 \def\markdownRendererJekyllDataBoolean#1#2{%
   \TYPE{BEGIN jekyllDataBoolean}%
-  \TYPE{- key:             #1}%
-  \TYPE{- value:           #2}%
+  \TYPE{- key:               #1}%
+  \TYPE{- value:             #2}%
   \TYPE{END jekyllDataBoolean}}%
 \def\markdownRendererJekyllDataEmpty#1{%
-  \TYPE{jekyllDataEmpty:   #1}}%
+  \TYPE{jekyllDataEmpty:     #1}}%
 \def\markdownRendererJekyllDataNumber#1#2{%
   \TYPE{BEGIN jekyllDataNumber}%
-  \TYPE{- key:             #1}%
-  \TYPE{- value:           #2}%
+  \TYPE{- key:               #1}%
+  \TYPE{- value:             #2}%
   \TYPE{END jekyllDataNumber}}%
 \def\markdownRendererJekyllDataString#1#2{%
   \TYPE{BEGIN jekyllDataString}%
-  \TYPE{- key:             #1}%
-  \TYPE{- value:           #2}%
+  \TYPE{- key:               #1}%
+  \TYPE{- value:             #2}%
   \TYPE{END jekyllDataString}}%
 \def\markdownRendererJekyllDataBegin{%
   \TYPE{jekyllDataBegin}}%
@@ -181,15 +192,15 @@
   \TYPE{jekyllDataEnd}}%
 \def\markdownRendererJekyllDataSequenceBegin#1#2{%
   \TYPE{BEGIN jekyllDataSequenceBegin}%
-  \TYPE{- key:             #1}%
-  \TYPE{- length:          #2}%
+  \TYPE{- key:               #1}%
+  \TYPE{- length:            #2}%
   \TYPE{END jekyllDataSequenceBegin}}%
 \def\markdownRendererJekyllDataSequenceEnd{%
   \TYPE{jekyllDataSequenceEnd}}%
 \def\markdownRendererJekyllDataMappingBegin#1#2{%
   \TYPE{BEGIN jekyllDataMappingBegin}%
-  \TYPE{- key:             #1}%
-  \TYPE{- length:          #2}%
+  \TYPE{- key:               #1}%
+  \TYPE{- length:            #2}%
   \TYPE{END jekyllDataMappingBegin}}%
 \def\markdownRendererJekyllDataMappingEnd{%
   \TYPE{jekyllDataMappingEnd}}%

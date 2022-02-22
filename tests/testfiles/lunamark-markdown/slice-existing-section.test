@@ -142,6 +142,7 @@ belong to the previous footnote.
 documentBegin
 headerAttributeContextBegin
 headingTwo: This is an H2
+attributeIdentifier: first-h2
 interblockSeparator
 headingThree: This is an H3
 interblockSeparator

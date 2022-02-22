@@ -18,6 +18,7 @@ Here are the definitions:
 documentBegin
 headerAttributeContextBegin
 headingOne: This is another section
+attributeIdentifier: section-with-deferred-content
 interblockSeparator
 footnote: This is the text of the footnote.
 BEGIN link
