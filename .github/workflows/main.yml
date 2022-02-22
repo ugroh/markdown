@@ -61,25 +61,25 @@ jobs:
       - name: Build distribution archives
         run: docker run -v "$PWD":/git-repo -w /git-repo witiko/markdown:${{ matrix.texlive }} make dist gh-pages
       - name: Upload artifact markdown.tds.zip
-        if: github.ref == 'refs/heads/main' && matrix.texlive == 'latest'
+        if: matrix.texlive == 'latest'
         uses: actions/upload-artifact@v2
         with:
           name: markdown.tds.zip
           path: markdown.tds.zip
       - name: Upload artifact markdown.ctan.zip
-        if: github.ref == 'refs/heads/main' && matrix.texlive == 'latest'
+        if: matrix.texlive == 'latest'
         uses: actions/upload-artifact@v2
         with:
           name: markdown.ctan.zip
           path: markdown.ctan.zip
       - name: Upload artifact markdown.zip
-        if: github.ref == 'refs/heads/main' && matrix.texlive == 'latest'
+        if: matrix.texlive == 'latest'
         uses: actions/upload-artifact@v2
         with:
           name: markdown.zip
           path: markdown.zip
       - name: Upload artifact markdown.pdf
-        if: github.ref == 'refs/heads/main' && matrix.texlive == 'latest'
+        if: matrix.texlive == 'latest'
         uses: actions/upload-artifact@v2
         with:
           name: markdown.pdf
