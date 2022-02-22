@@ -20632,7 +20632,6 @@ end
       \ifx\empty#4\empty\else
         \caption{#4}%
       \fi
-      \label{fig:#1}%
     \end{figure}},
   ulBegin = {\begin{itemize}},
   ulEnd = {\end{itemize}},
@@ -21563,7 +21562,7 @@ end
     \markdownInput{#3}%
   \fi}%
 \def\markdownRendererImagePrototype#1#2#3#4{%
-  \placefigure[][fig:#1]{#4}{\externalfigure[#3]}}%
+  \placefigure[][]{#4}{\externalfigure[#3]}}%
 \def\markdownRendererUlBeginPrototype{\startitemize}%
 \def\markdownRendererUlBeginTightPrototype{\startitemize[packed]}%
 \def\markdownRendererUlItemPrototype{\item}%
