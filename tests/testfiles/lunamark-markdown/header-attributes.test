@@ -17,23 +17,67 @@ A level two heading {#fourth4-id .2not-a-class}
 #### A level four heading {#-6not-the-sixth-id}
 ##### A level five heading ## {#--7the-seventh-id}
 ###### A level six heading {#-_the-eighth-id attribute=value}
+
+# Attributes {#should #appear .in .alphabetical order=ing and=not #the .order of=typing}
 >>>
 documentBegin
 codeSpan: headerAttributes
 interblockSeparator
+headerAttributeContextBegin
 headingOne: A level one heading
+attributeIdentifier: first-id
 interblockSeparator
+headerAttributeContextEnd
+headerAttributeContextBegin
 headingOne: A level one heading
+attributeIdentifier: second_id2
 interblockSeparator
+headerAttributeContextBegin
 headingTwo: A level two heading
+attributeIdentifier: third-3id
+attributeClassName: a-class
 interblockSeparator
+headerAttributeContextEnd
 headingTwo: A level two heading (leftBrace)(hash)fourth4-id .2not-a-class(rightBrace)
 interblockSeparator
 headingThree: A level three heading (hash)(hash) (leftBrace)(hash)5not-the-fifth-id(rightBrace)
 interblockSeparator
 headingFour: A level four heading (leftBrace)(hash)-6not-the-sixth-id(rightBrace)
 interblockSeparator
+headerAttributeContextBegin
 headingFive: A level five heading
+attributeIdentifier: --7the-seventh-id
 interblockSeparator
+headerAttributeContextBegin
 headingSix: A level six heading
+attributeIdentifier: -_the-eighth-id
+BEGIN attributeKeyValue
+- key: attribute
+- value: value
+END attributeKeyValue
+interblockSeparator
+headerAttributeContextEnd
+headerAttributeContextEnd
+headerAttributeContextEnd
+headerAttributeContextBegin
+headingOne: Attributes
+attributeIdentifier: appear
+attributeIdentifier: should
+attributeIdentifier: the
+attributeClassName: alphabetical
+attributeClassName: in
+attributeClassName: order
+BEGIN attributeKeyValue
+- key: and
+- value: not
+END attributeKeyValue
+BEGIN attributeKeyValue
+- key: of
+- value: typing
+END attributeKeyValue
+BEGIN attributeKeyValue
+- key: order
+- value: ing
+END attributeKeyValue
+headerAttributeContextEnd
 documentEnd

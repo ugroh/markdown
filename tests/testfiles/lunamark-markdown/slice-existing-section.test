@@ -140,7 +140,9 @@ belong to the previous footnote.
     multi-paragraph list items.
 >>>
 documentBegin
+headerAttributeContextBegin
 headingTwo: This is an H2
+attributeIdentifier: first-h2
 interblockSeparator
 headingThree: This is an H3
 interblockSeparator
@@ -181,4 +183,5 @@ BEGIN fencedCode
 - infostring: latex
 END fencedCode
 interblockSeparator
+headerAttributeContextEnd
 documentEnd

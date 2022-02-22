@@ -1,5 +1,14 @@
 \markdownSetupSnippet{snippet}{%
   renderers = {%
+    attributeIdentifier = {%
+      \TYPE{attributeIdentifier: #1}},
+    attributeClassName = {%
+      \TYPE{attributeClassName:  #1}},
+    attributeKeyValue = {%
+      \TYPE{BEGIN attributeKeyValue}%
+      \TYPE{- key:               #1}%
+      \TYPE{- value:             #2}%
+      \TYPE{END attributeKeyValue}},
     documentBegin = {%
       \TYPE{documentBegin}},
     documentEnd = {%
@@ -13,6 +22,10 @@
     ellipsis = {%
       \TYPE{ellipsis}%
       \GOBBLE},
+    headerAttributeContextBegin = {%
+      \TYPE{headerAttributeContextBegin}},
+    headerAttributeContextEnd = {%
+      \TYPE{headerAttributeContextEnd}},
     nbsp = {%
       \TYPE{nbsp}%
       \GOBBLE},
@@ -50,41 +63,38 @@
       \TYPE{pipe}%
       \GOBBLE},
     codeSpan = {%
-      \TYPE{codeSpan:          #1}},
+      \TYPE{codeSpan:            #1}},
     link = {%
       \TYPE{BEGIN link}%
-      \TYPE{- label:           #1}%
-      \TYPE{- URI:             #2}%
-      \TYPE{- title:           #4}%
+      \TYPE{- label:             #1}%
+      \TYPE{- URI:               #2}%
+      \TYPE{- title:             #4}%
       \TYPE{END link}},
     image = {%
       \TYPE{BEGIN image}%
-      \TYPE{- label:           #1}%
-      \TYPE{- URI:             #2}%
-      \TYPE{- title:           #4}%
+      \TYPE{- label:             #1}%
+      \TYPE{- URI:               #2}%
+      \TYPE{- title:             #4}%
       \TYPE{END image}},
     contentBlock = {%
       \TYPE{BEGIN contentBlock}%
-      \TYPE{- suffix:          #1}%
-      \TYPE{- URI:             #2}%
-      \TYPE{- title:           #4}%
-      \TYPE{END contentBlock}%
-    },
+      \TYPE{- suffix:            #1}%
+      \TYPE{- URI:               #2}%
+      \TYPE{- title:             #4}%
+      \TYPE{END contentBlock}},
     contentBlockOnlineImage = {%
       \TYPE{BEGIN contentBlockOnlineImage}%
-      \TYPE{- suffix:          #1}%
-      \TYPE{- URI:             #2}%
-      \TYPE{- title:           #4}%
-      \TYPE{END contentBlockOnlineImage}%
-    },
+      \TYPE{- suffix:            #1}%
+      \TYPE{- URI:               #2}%
+      \TYPE{- title:             #4}%
+      \TYPE{END contentBlockOnlineImage}},
     contentBlockCode = {%
       \TYPE{BEGIN contentBlockCode}%
-      \TYPE{- suffix:          #1}%
-      \TYPE{- language:        #2}%
-      \TYPE{- URI:             #3}%
-      \TYPE{- title:           #5}%
-      \TYPE{END contentBlockCode}%
-    },
+      \TYPE{- suffix:            #1}%
+      \TYPE{- language:          #2}%
+      \TYPE{- URI:               #3}%
+      \TYPE{- title:             #5}%
+      \TYPE{END contentBlockCode}},
     ulBegin = {%
       \TYPE{ulBegin}},
     ulBeginTight = {%
@@ -106,7 +116,7 @@
     olItemEnd = {%
       \TYPE{olItemEnd}},
     olItemWithNumber = {%
-      \TYPE{olItemWithNumber:  #1}},
+      \TYPE{olItemWithNumber:    #1}},
     olEnd = {%
       \TYPE{olEnd}},
     olEndTight = {%
@@ -116,7 +126,7 @@
     dlBeginTight = {%
       \TYPE{dlBeginTight}},
     dlItem = {%
-      \TYPE{dlItem:            #1}},
+      \TYPE{dlItem:              #1}},
     dlItemEnd = {%
       \TYPE{dlItemEnd}},
     dlDefinitionBegin = {%
@@ -128,36 +138,36 @@
     dlEndTight = {%
       \TYPE{dlEndTight}},
     emphasis = {%
-      \TYPE{emphasis:          #1}},
+      \TYPE{emphasis:            #1}},
     strongEmphasis = {%
-      \TYPE{strongEmphasis:    #1}},
+      \TYPE{strongEmphasis:      #1}},
     blockQuoteBegin = {%
       \TYPE{blockQuoteBegin}},
     blockQuoteEnd = {%
       \TYPE{blockQuoteEnd}},
     inputVerbatim = {%
-      \TYPE{inputVerbatim:     #1}},
+      \TYPE{inputVerbatim:       #1}},
     inputFencedCode = {%
       \TYPE{BEGIN fencedCode}%
-      \TYPE{- src:             #1}%
-      \TYPE{- infostring:      #2}%
+      \TYPE{- src:               #1}%
+      \TYPE{- infostring:        #2}%
       \TYPE{END fencedCode}},
     headingOne = {%
-      \TYPE{headingOne:        #1}},
+      \TYPE{headingOne:          #1}},
     headingTwo = {%
-      \TYPE{headingTwo:        #1}},
+      \TYPE{headingTwo:          #1}},
     headingThree = {%
-      \TYPE{headingThree:      #1}},
+      \TYPE{headingThree:        #1}},
     headingFour = {%
-      \TYPE{headingFour:       #1}},
+      \TYPE{headingFour:         #1}},
     headingFive = {%
-      \TYPE{headingFive:       #1}},
+      \TYPE{headingFive:         #1}},
     headingSix = {%
-      \TYPE{headingSix:        #1}},
+      \TYPE{headingSix:          #1}},
     horizontalRule = {%
       \TYPE{horizontalRule}},
     footnote = {%
-      \TYPE{footnote:          #1}},
+      \TYPE{footnote:            #1}},
     cite = {%
       \CITATIONS{#1}},
     textCite = {%
@@ -165,9 +175,9 @@
     table = {%
       \TABLE{#1}{#2}{#3}},
     inlineHtmlComment = {%
-      \TYPE{inlineHtmlComment: #1}},
+      \TYPE{inlineHtmlComment:   #1}},
     inlineHtmlTag = {%
-      \TYPE{inlineHtmlTag:     #1}},
+      \TYPE{inlineHtmlTag:       #1}},
     tickedBox = {%
       \TYPE{tickedBox}%
       \GOBBLE},
@@ -179,20 +189,20 @@
       \GOBBLE},
     jekyllDataBoolean = {%
       \TYPE{BEGIN jekyllDataBoolean}%
-      \TYPE{- key:             #1}%
-      \TYPE{- value:           #2}%
+      \TYPE{- key:               #1}%
+      \TYPE{- value:             #2}%
       \TYPE{END jekyllDataBoolean}},
     jekyllDataEmpty = {%
-      \TYPE{jekyllDataEmpty:   #1}},%
+      \TYPE{jekyllDataEmpty:     #1}},%
     jekyllDataNumber = {%
       \TYPE{BEGIN jekyllDataNumber}%
-      \TYPE{- key:             #1}%
-      \TYPE{- value:           #2}%
+      \TYPE{- key:               #1}%
+      \TYPE{- value:             #2}%
       \TYPE{END jekyllDataNumber}},
     jekyllDataString = {%
       \TYPE{BEGIN jekyllDataString}%
-      \TYPE{- key:             #1}%
-      \TYPE{- value:           #2}%
+      \TYPE{- key:               #1}%
+      \TYPE{- value:             #2}%
       \TYPE{END jekyllDataString}},
     jekyllDataBegin = {%
       \TYPE{jekyllDataBegin}},
@@ -200,15 +210,15 @@
       \TYPE{jekyllDataEnd}},
     jekyllDataSequenceBegin = {%
       \TYPE{BEGIN jekyllDataSequenceBegin}%
-      \TYPE{- key:             #1}%
-      \TYPE{- length:          #2}%
+      \TYPE{- key:               #1}%
+      \TYPE{- length:            #2}%
       \TYPE{END jekyllDataSequenceBegin}},
     jekyllDataSequenceEnd = {%
       \TYPE{jekyllDataSequenceEnd}},
     jekyllDataMappingBegin = {%
       \TYPE{BEGIN jekyllDataMappingBegin}%
-      \TYPE{- key:             #1}%
-      \TYPE{- length:          #2}%
+      \TYPE{- key:               #1}%
+      \TYPE{- length:            #2}%
       \TYPE{END jekyllDataMappingBegin}},
     jekyllDataMappingEnd = {%
       \TYPE{jekyllDataMappingEnd}},
