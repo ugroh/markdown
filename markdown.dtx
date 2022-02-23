@@ -812,7 +812,6 @@ abbr {
     dlEnd = {\end{optionlist}},
   }
 }
-\RequirePackage{expl3}
 \ExplSyntaxOn
 \keys_define:nn
   { markdown/jekyllData }
@@ -1236,9 +1235,13 @@ local md5 = require("md5")
 %
 %:    A package that enables the expl3 language from the \LaTeX3 kernel in
 %     \TeX{} Live${}\leq{}2019$. It is used in the default renderer prototypes
-%     for \acro{yaml} metadata, see Section \ref{sec:latexyamlmetadata}.
+%     for \acro{yaml} metadata, see Section \ref{sec:latexyamlmetadata} and
+%     in the implementation of \LaTeX{} themes.
 %
 % \end{markdown}
+%  \begin{macrocode}
+\RequirePackage{expl3}
+%    \end{macrocode}
 % \iffalse
 %</latex>
 %<*context>
@@ -12804,7 +12807,7 @@ would use the following code in the preamble of your document:
 %  \begin{macrocode}
 \newif\ifmarkdownLaTeXLoaded
   \markdownLaTeXLoadedfalse
-\AtEndOfPackage{\markdownLaTeXLoadedtrue}%
+\AtEndOfPackage{\markdownLaTeXLoadedtrue}
 \define@key{markdownOptions}{theme}{%
   \IfSubStr{#1}{/}{}{%
     \markdownError
@@ -12815,18 +12818,6 @@ would use the following code in the preamble of your document:
     markdowntheme\markdownLaTeXThemePackageName}%
   \expandafter\markdownLaTeXThemeLoad\expandafter{%
     \markdownLaTeXThemePackageName}{#1/}}%
-\newcommand\markdownLaTeXThemeName{}%
-\newcommand\markdownLaTeXThemeLoad[2]{%
-  \ifmarkdownLaTeXLoaded
-    \def\markdownLaTeXThemeName{#2}%
-    \RequirePackage{#1}%
-    \def\markdownLaTeXThemeName{}%
-  \else
-    \AtEndOfPackage{%
-      \def\markdownLaTeXThemeName{#2}%
-      \RequirePackage{#1}%
-      \def\markdownLaTeXThemeName{}}%
-  \fi}%
 %    \end{macrocode}
 % \begin{markdown}
 %
@@ -20235,35 +20226,51 @@ end
 % \par
 % \begin{markdown}
 %
-%### Options
-% The supplied package options are processed using the \mref{markdownSetup} macro.
-%
-% \end{markdown}
-%  \begin{macrocode}
-\DeclareOption*{%
-  \expandafter\markdownSetup\expandafter{\CurrentOption}}%
-\ProcessOptions\relax
-%    \end{macrocode}
-% \begin{markdown}
-%
-% After processing the options, activate the `renderers` and
-% `rendererPrototypes` keys.
-%
-% \end{markdown}
-%  \begin{macrocode}
-\define@key{markdownOptions}{renderers}{%
-  \setkeys{markdownRenderers}{#1}%
-  \def\KV@prefix{KV@markdownOptions@}}%
-\define@key{markdownOptions}{rendererPrototypes}{%
-  \setkeys{markdownRendererPrototypes}{#1}%
-  \def\KV@prefix{KV@markdownOptions@}}%
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
 %#### \LaTeX{} Themes
 % \label{sec:latexthemesimplementation}
-% This section implements example themes provided with the Markdown package.
+% This section implements the theme-loading mechanism and the example themes
+% provided with the Markdown package.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\ExplSyntaxOn
+%    \end{macrocode}
+% \begin{markdown}
+%
+% To keep track of our current place when packages themes have been nested,
+% we will maintain the \mdef{g_\@\@_latex_themes_seq} stack of theme names.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\newcommand\markdownLaTeXThemeName{}
+\seq_new:N \g_@@_latex_themes_seq
+\seq_put_right:NV
+  \g_@@_latex_themes_seq
+  \markdownLaTeXThemeName
+\newcommand\markdownLaTeXThemeLoad[2]{
+  \def\@tempa{%
+    \def\markdownLaTeXThemeName{#2}
+    \seq_put_right:NV
+      \g_@@_latex_themes_seq
+      \markdownLaTeXThemeName
+    \RequirePackage{#1}
+    \seq_pop_right:NN
+      \g_@@_latex_themes_seq
+      \l_tmpa_tl
+    \exp_args:NNV
+      \def
+      \markdownLaTeXThemeName
+      \l_tmpa_tl}
+  \ifmarkdownLaTeXLoaded
+    \@tempa
+  \else
+    \exp_args:No
+      \AtEndOfPackage
+      { \@tempa }
+  \fi}
+\ExplSyntaxOff
+%    \end{macrocode}
+% \begin{markdown}
 %
 % The `witiko/dot` theme enables the \Opt{fencedCode} Lua option:
 %
@@ -20488,6 +20495,32 @@ end
 %</latex-themes-witiko-tilde>
 %<*latex>
 % \fi
+% \par
+% \begin{markdown}
+%
+%### Options
+% The supplied package options are processed using the \mref{markdownSetup} macro.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\DeclareOption*{%
+  \expandafter\markdownSetup\expandafter{\CurrentOption}}%
+\ProcessOptions\relax
+%    \end{macrocode}
+% \begin{markdown}
+%
+% After processing the options, activate the `renderers` and
+% `rendererPrototypes` keys.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\define@key{markdownOptions}{renderers}{%
+  \setkeys{markdownRenderers}{#1}%
+  \def\KV@prefix{KV@markdownOptions@}}%
+\define@key{markdownOptions}{rendererPrototypes}{%
+  \setkeys{markdownRendererPrototypes}{#1}%
+  \def\KV@prefix{KV@markdownOptions@}}%
+%    \end{macrocode}
 % \par
 % \begin{markdown}
 %
@@ -21117,15 +21150,11 @@ end
 %
 %#### YAML Metadata
 % \label{sec:latexyamlmetadata}
-% To parse the \acro{yaml} metadata we will use the expl3 language from the
-% \LaTeX3 kernel.
 %
 % \end{markdown}
 %  \begin{macrocode}
-\RequirePackage{expl3}
 \ExplSyntaxOn
 %    \end{macrocode}
-% \par
 % \begin{markdown}
 %
 % To keep track of the current type of structure we inhabit when we are
