@@ -1,0 +1,26 @@
+\def\markdownOptionRelativeReferences{true}
+<<<
+This test ensures that the Lua `relativeReferences` option correctly propagates
+through the plain TeX interface.
+
+Here is a <#relative-reference> and <?here=is> another <./one>.
+>>>
+documentBegin
+codeSpan: relativeReferences
+interblockSeparator
+BEGIN link
+- label: (hash)relative-reference
+- URI: (hash)relative-reference
+- title: 
+END link
+BEGIN link
+- label: ?here=is
+- URI: ?here=is
+- title: 
+END link
+BEGIN link
+- label: ./one
+- URI: ./one
+- title: 
+END link
+documentEnd
