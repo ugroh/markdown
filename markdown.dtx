@@ -11964,7 +11964,7 @@ following body text:
 #### Attribute Renderers
 The following macros are only produced, when the \Opt{headerAttributes} option
 is enabled.
-  
+
 \mdef{markdownRendererAttributeIdentifier} represents the \meta{identifier} of
 a markdown element (`id="`\meta{identifier}`"` in HTML and `#`\meta{identifier}
 in Markdown's \Opt{headerAttributes} syntax extension). The macro receives a
@@ -12280,9 +12280,9 @@ following text:
 %
 % \end{markdown}
 %  \begin{macrocode}
-\def\markdownRendererAttributeIdentifierPrototype{}%
-\def\markdownRendererAttributeClassNamePrototype{}%
-\def\markdownRendererAttributeKeyValuePrototype{}%
+\def\markdownRendererAttributeIdentifierPrototype#1{}%
+\def\markdownRendererAttributeClassNamePrototype#1{}%
+\def\markdownRendererAttributeKeyValuePrototype#1#2{}%
 \def\markdownRendererDocumentBeginPrototype{}%
 \def\markdownRendererDocumentEndPrototype{}%
 \def\markdownRendererInterblockSeparatorPrototype{}%
