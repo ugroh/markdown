@@ -1,0 +1,11 @@
+<<<
+This test ensures that the Lua `relativeReferences` option is disabled by
+default.
+
+Here is a <#relative-reference> and <?here=is> another <./one>.
+>>>
+documentBegin
+codeSpan: relativeReferences
+interblockSeparator
+hash
+documentEnd
