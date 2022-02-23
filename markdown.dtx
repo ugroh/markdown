@@ -17148,6 +17148,24 @@ function M.writer.new(options)
       self.is_writing = true
     end
 
+    if self.is_writing then
+      table.sort(attributes)
+      local key, value
+      for i = 1, #attributes do
+        if attributes[i]:sub(1, 1) == "#" then
+          table.insert(buf, {"\\markdownRendererAttributeIdentifier{",
+                             attributes[i]:sub(2), "}"})
+        elseif attributes[i]:sub(1, 1) == "." then
+          table.insert(buf, {"\\markdownRendererAttributeClassName{",
+                             attributes[i]:sub(2), "}"})
+        else
+          key, value = attributes[i]:match("(%w+)=(%w+)")
+          table.insert(buf, {"\\markdownRendererAttributeKeyValue{",
+                             key, "}{", value, "}"})
+        end
+      end
+    end
+
     local cmd
     level = level + options.shiftHeadings
     if level <= 1 then
@@ -17167,24 +17185,6 @@ function M.writer.new(options)
     end
     if self.is_writing then
       table.insert(buf, {cmd, "{", s, "}"})
-    end
-
-    if self.is_writing then
-      table.sort(attributes)
-      local key, value
-      for i = 1, #attributes do
-        if attributes[i]:sub(1, 1) == "#" then
-          table.insert(buf, {"\\markdownRendererAttributeIdentifier{",
-                             attributes[i]:sub(2), "}"})
-        elseif attributes[i]:sub(1, 1) == "." then
-          table.insert(buf, {"\\markdownRendererAttributeClassName{",
-                             attributes[i]:sub(2), "}"})
-        else
-          key, value = attributes[i]:match("(%w+)=(%w+)")
-          table.insert(buf, {"\\markdownRendererAttributeKeyValue{",
-                             key, "}{", value, "}"})
-        end
-      end
     end
 
     return buf
@@ -20645,7 +20645,24 @@ end
   emphasis = {\emph{#1}},
   tickedBox = {$\boxtimes$},
   halfTickedBox = {$\boxdot$},
-  attributeIdentifier = {\label{#1}},
+  headerAttributeContextBegin = {
+    \markdownSetup{
+      rendererPrototypes = {
+        attributeIdentifier = {%
+          \begingroup
+          \def\@tempa{%
+            \label{##1}%
+            \endgroup}%
+          \apptocmd\markdownRendererHeadingOnePrototype\@tempa{}{}%
+          \apptocmd\markdownRendererHeadingTwoPrototype\@tempa{}{}%
+          \apptocmd\markdownRendererHeadingThreePrototype\@tempa{}{}%
+          \apptocmd\markdownRendererHeadingFourPrototype\@tempa{}{}%
+          \apptocmd\markdownRendererHeadingFivePrototype\@tempa{}{}%
+          \apptocmd\markdownRendererHeadingSixPrototype\@tempa{}{}%
+        },
+      },
+    }%
+  },
   blockQuoteBegin = {\begin{quotation}},
   blockQuoteEnd = {\end{quotation}},
   inputVerbatim = {\VerbatimInput{#1}},

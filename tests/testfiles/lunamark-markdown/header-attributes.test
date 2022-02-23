@@ -24,18 +24,18 @@ documentBegin
 codeSpan: headerAttributes
 interblockSeparator
 headerAttributeContextBegin
-headingOne: A level one heading
 attributeIdentifier: first-id
+headingOne: A level one heading
 interblockSeparator
 headerAttributeContextEnd
 headerAttributeContextBegin
-headingOne: A level one heading
 attributeIdentifier: second_id2
+headingOne: A level one heading
 interblockSeparator
 headerAttributeContextBegin
-headingTwo: A level two heading
 attributeIdentifier: third-3id
 attributeClassName: a-class
+headingTwo: A level two heading
 interblockSeparator
 headerAttributeContextEnd
 headingTwo: A level two heading (leftBrace)(hash)fourth4-id .2not-a-class(rightBrace)
@@ -45,22 +45,21 @@ interblockSeparator
 headingFour: A level four heading (leftBrace)(hash)-6not-the-sixth-id(rightBrace)
 interblockSeparator
 headerAttributeContextBegin
-headingFive: A level five heading
 attributeIdentifier: --7the-seventh-id
+headingFive: A level five heading
 interblockSeparator
 headerAttributeContextBegin
-headingSix: A level six heading
 attributeIdentifier: -_the-eighth-id
 BEGIN attributeKeyValue
 - key: attribute
 - value: value
 END attributeKeyValue
+headingSix: A level six heading
 interblockSeparator
 headerAttributeContextEnd
 headerAttributeContextEnd
 headerAttributeContextEnd
 headerAttributeContextBegin
-headingOne: Attributes
 attributeIdentifier: appear
 attributeIdentifier: should
 attributeIdentifier: the
@@ -79,5 +78,6 @@ BEGIN attributeKeyValue
 - key: order
 - value: ing
 END attributeKeyValue
+headingOne: Attributes
 headerAttributeContextEnd
 documentEnd
