@@ -768,7 +768,6 @@ abbr {
 \markdownSetup{
   renderers = {
     codeSpan = {\inline{#1}},
-    link = {#1\footnote{See \url{#3}.}},
     headingFour = {%
       \paragraph{#1}\leavevmode
       \def\markdownRendererInterblockSeparator{%
@@ -785,6 +784,8 @@ abbr {
     },
   },
 }
+\def\markdownLaTeXRendererLink#1#2#3#4{%
+  #1\footnote{See \url{#3}.}}
 \markdownSetupSnippet{options}{
   renderers = {
     dlBegin = {\begin{optionlist}},
@@ -1229,14 +1230,16 @@ local md5 = require("md5")
 %
 %:    A package that is used to polyfill the general hook management system in
 %     the default renderer prototypes for \acro{yaml} metadata, see Section
-%     \ref{sec:latexyamlmetadata}.
+%     \ref{sec:latexyamlmetadata}, and also in the default renderer prototype
+%     for attribute identifiers.
 %
 % \pkg{expl3}
 %
 %:    A package that enables the expl3 language from the \LaTeX3 kernel in
 %     \TeX{} Live${}\leq{}2019$. It is used in the default renderer prototypes
-%     for \acro{yaml} metadata, see Section \ref{sec:latexyamlmetadata} and
-%     in the implementation of \LaTeX{} themes.
+%     for links (see Section \ref{sec:latexlinks}), \acro{yaml} metadata (see
+%     Section \ref{sec:latexyamlmetadata}), and in the implementation of
+%     \LaTeX{} themes (see Section \ref{sec:latexthemesimplementation}).
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -5536,6 +5539,85 @@ defaultOptions.preserveTabs = false
 %</lua,lua-cli>
 %<*manual-options>
 
+#### Option `relativeReferences`
+
+`relativeReferences` (default value: `false`)
+
+% \fi
+% \begin{markdown}
+%
+% \Optitem[false]{relativeReferences}{\opt{true}, \opt{false}}
+%
+:    true
+
+     :  Enable [relative references][1] in autolinks:
+
+        ``` md
+        I conclude in Section <#conclusion>.
+
+        Conclusion {#conclusion}
+        ==========
+        In this paper, we have discovered that most
+        grandmas would rather eat dinner with their
+        grandchildren than get eaten. Begone, wolf!
+        ```
+
+:    false
+
+    :   Disable relative references in autolinks.
+
+ [1]: https://datatracker.ietf.org/doc/html/rfc3986#section-4.2
+
+% \end{markdown}
+% \iffalse
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\documentclass{article}
+\usepackage[headerAttributes, relativeReferences]{markdown}
+\begin{document}
+\begin{markdown}
+
+I conclude in Section <#conclusion>.
+
+Conclusion {#conclusion}
+==========
+In this paper, we have discovered that most
+grandmas would rather eat dinner with their
+grandchildren than get eaten. Begone, wolf!
+
+\end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX twice from the terminal:
+``` sh
+lualatex document.tex
+lualatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> I conclude in Section 1.
+>
+> # 1. Conclusion
+>
+> In this paper, we have discovered that most grandmas would rather eat dinner
+> with their grandchildren than get eaten. Begone, wolf!
+
+%</manual-options>
+%<*lua,lua-cli>
+% \fi
+%  \begin{macrocode}
+defaultOptions.relativeReferences = false
+%    \end{macrocode}
+% \par
+% \iffalse
+%</lua,lua-cli>
+%<*manual-options>
+
 #### Option `shiftHeadings`
 
 `shiftHeadings` (default value: `0`)
@@ -5878,7 +5960,6 @@ defaultOptions.slice = "^ $"
 % \iffalse
 %</lua,lua-cli>
 %<*manual-options>
-
 
 #### Option `smartEllipses`
 
@@ -7533,6 +7614,7 @@ bug](https://github.com/witiko/markdown/issues).
 \let\markdownOptionJekyllData\undefined
 \let\markdownOptionPipeTables\undefined
 \let\markdownOptionPreserveTabs\undefined
+\let\markdownOptionRelativeReferences\undefined
 \let\markdownOptionShiftHeadings\undefined
 \let\markdownOptionSlice\undefined
 \let\markdownOptionSmartEllipses\undefined
@@ -13250,6 +13332,8 @@ The following ordered list will be preceded by roman numerals:
   \def\markdownOptionPipeTables{#1}}%
 \define@key{markdownOptions}{preserveTabs}[true]{%
   \def\markdownOptionPreserveTabs{#1}}%
+\define@key{markdownOptions}{relativeReferences}[true]{%
+  \def\markdownOptionRelativeReferences{#1}}%
 \define@key{markdownOptions}{smartEllipses}[true]{%
   \def\markdownOptionSmartEllipses{#1}}%
 \define@key{markdownOptions}{shiftHeadings}{%
@@ -18683,6 +18767,14 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                                                "mailto:"..email)
                           end
 
+  larsers.AutoLinkRelativeReference
+                         = parsers.less
+                         * C(parsers.urlchar^1)
+                         * parsers.more
+                         / function(url)
+                             return writer.link(writer.escape(url), url)
+                           end
+
   larsers.DirectLink    = (parsers.tag / parse_inlines_no_link)  -- no links inside links
                         * parsers.spnl
                         * parsers.lparent
@@ -19058,6 +19150,7 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                             + V("Code")
                             + V("AutoLinkUrl")
                             + V("AutoLinkEmail")
+                            + V("AutoLinkRelativeReference")
                             + V("InlineHtml")
                             + V("HtmlEntity")
                             + V("EscapedChar")
@@ -19078,6 +19171,7 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                             + V("Code")
                             + V("AutoLinkUrl")
                             + V("AutoLinkEmail")
+                            + V("AutoLinkRelativeReference")
                             + V("InlineHtml")
                             + V("HtmlEntity")
                             + V("EscapedChar")
@@ -19099,6 +19193,8 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
       Code                  = larsers.Code,
       AutoLinkUrl           = larsers.AutoLinkUrl,
       AutoLinkEmail         = larsers.AutoLinkEmail,
+      AutoLinkRelativeReference
+                            = larsers.AutoLinkRelativeReference,
       InlineHtml            = larsers.InlineHtml,
       HtmlEntity            = larsers.HtmlEntity,
       EscapedChar           = larsers.EscapedChar,
@@ -19154,6 +19250,10 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
 
   if not options.smartEllipses then
     syntax.Smart = parsers.fail
+  end
+
+  if not options.relativeReferences then
+    syntax.AutoLinkRelativeReference = parsers.fail
   end
 
   local blocks_toplevel_t = util.table_copy(syntax)
@@ -19561,6 +19661,9 @@ end
 \fi
 \ifx\markdownOptionPreserveTabs\undefined\else
   preserveTabs = \markdownOptionPreserveTabs,
+\fi
+\ifx\markdownOptionRelativeReferences\undefined\else
+  relativeReferences = \markdownOptionRelativeReferences,
 \fi
 \ifx\markdownOptionShiftHeadings\undefined\else
   shiftHeadings = "\markdownOptionShiftHeadings",
@@ -20678,20 +20781,30 @@ end
   emphasis = {\emph{#1}},
   tickedBox = {$\boxtimes$},
   halfTickedBox = {$\boxdot$},
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% If identifier attributes appear at the beginning of a section, we make the
+% next heading produce the \mref{label} macro.
+%
+% \end{markdown}
+%  \begin{macrocode}
   headerAttributeContextBegin = {
     \markdownSetup{
       rendererPrototypes = {
         attributeIdentifier = {%
           \begingroup
-          \def\@tempa{%
-            \label{##1}%
-            \endgroup}%
-          \apptocmd\markdownRendererHeadingOnePrototype\@tempa{}{}%
-          \apptocmd\markdownRendererHeadingTwoPrototype\@tempa{}{}%
-          \apptocmd\markdownRendererHeadingThreePrototype\@tempa{}{}%
-          \apptocmd\markdownRendererHeadingFourPrototype\@tempa{}{}%
-          \apptocmd\markdownRendererHeadingFivePrototype\@tempa{}{}%
-          \apptocmd\markdownRendererHeadingSixPrototype\@tempa{}{}%
+          \def\next####1{%
+            \apptocmd####1{%
+              \label{sec:##1}%
+              \endgroup}{}{}}%
+          \next\markdownRendererHeadingOnePrototype
+          \next\markdownRendererHeadingTwoPrototype
+          \next\markdownRendererHeadingThreePrototype
+          \next\markdownRendererHeadingFourPrototype
+          \next\markdownRendererHeadingFivePrototype
+          \next\markdownRendererHeadingSixPrototype
         },
       },
     }%
@@ -21043,20 +21156,42 @@ end
 %#### Links
 % Before consuming the parameters for the hyperlink renderer, we change the
 % category code of the hash sign (`#`) to other, so that it cannot be
-% mistaken for a parameter character. After the hyperlink has been typeset,
-% we restore the original catcode.
-%
+% mistaken for a parameter character.
 % \end{markdown}
 %  \begin{macrocode}
 \RequirePackage{url}
-\def\markdownRendererLinkPrototype{%
+\RequirePackage{expl3}
+\ExplSyntaxOn
+\def\markdownRendererLinkPrototype{
   \begingroup
   \catcode`\#=12
-  \def\next##1##2##3##4{%
-    ##1\footnote{%
-      \ifx\empty##4\empty\else##4: \fi\texttt<\url{##3}\texttt>}%
-    \endgroup}%
-  \next}
+  \def\next##1##2##3##4{
+    \endgroup
+%    \end{macrocode}
+% \begin{markdown}
+% If the URL begins with a hash sign, then we assume that it is a relative
+% reference. Otherwise, we assume that it is an absolute URL.
+% \end{markdown}
+%  \begin{macrocode}
+    \tl_set:Nx
+      \l_tmpa_tl
+      { \str_range:nnn { ##3 } { 1 } { 1 } }
+    \str_if_eq:NNTF
+      \l_tmpa_tl
+      \c_hash_str
+      {
+        \exp_args:No
+          \ref
+          { \str_range:nnn { ##3 } { 2 } { -1 } }
+      }{
+        \markdownLaTeXRendererLink { ##1 } { ##2 } { ##3 } { ##4 }
+      }
+  }
+  \next
+}
+\ExplSyntaxOff
+\def\markdownLaTeXRendererLink#1#2#3#4{%
+  #1\footnote{\ifx\empty#4\empty\else#4: \fi\texttt<\url{#3}\texttt>}}
 %    \end{macrocode}
 % \par
 % \begin{markdown}
