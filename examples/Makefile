@@ -9,7 +9,7 @@ LUACLI_OPTIONS=cacheDir=_markdown_example hashEnumerators=true \
   smartEllipses=true fencedCode=true contentBlocks=true pipeTables=true \
   tableCaptions=true taskLists=true
 OUTPUT=context-mkii.pdf context-mkiv.pdf latex-pdftex.pdf \
-  latex-luatex.pdf latex-xetex.pdf
+  latex-luatex.pdf latex-xetex.pdf latex-tex4ht.html latex-tex4ht.css
 
 # This is the default pseudo-target.
 all: $(OUTPUT)
@@ -41,6 +41,14 @@ latex-luatex.pdf: latex.tex example.tex
 	lualatex latex-luatex
 	lualatex latex-luatex
 
+# This target typesets the LaTeX example using TeX4ht.
+latex-tex4ht.html latex-tex4ht.css: latex.tex example.tex
+	-make4ht --shell-escape latex fn-in
+	cp latex.html latex-tex4ht.html
+	sed -ri 's/latex\.(html|css)/latex-tex4ht.\1/g' latex-tex4ht.html
+	cp latex.css latex-tex4ht.css
+	make4ht -m clean latex
+
 # This target converts the markdown example to a plain TeX representation
 # using the Lua command-line interface for the Markdown package.
 example.tex: example.md
@@ -50,6 +58,7 @@ example.tex: example.md
 clean:
 	rm -f $(AUXFILES)
 	rm -rf $(AUXDIRS)
+	make4ht -m clean latex
 
 # This pseudo-target removes any makeable files.
 implode: clean
