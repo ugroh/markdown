@@ -20936,6 +20936,31 @@ end
 % \par
 % \begin{markdown}
 %
+%#### HTML elements
+% If the \Opt{html} option is enabled and we are using [\TeX{}4ht][1], we will
+% pass HTML elements to the output HTML document unchanged.
+%
+%  [1]: https://tug.org/tex4ht/
+%
+% \end{markdown}
+%  \begin{macrocode}
+\@ifundefined{HCode}{}{
+  \markdownSetup{
+    rendererPrototypes = {
+      inlineHtmlTag = {%
+        \ifvmode
+          \IgnorePar
+          \EndP
+        \fi
+        \HCode{#1}%
+      },
+    },
+  }
+}
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
 %#### Citations
 % Here is a basic implementation for citations that uses the \LaTeX{} \mref{cite}
 % macro. There are also implementations that use the \pkg{natbib} \mref{citep},
