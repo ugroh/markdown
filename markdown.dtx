@@ -4761,11 +4761,11 @@ defaultOptions.headerAttributes = false
 %
 :    true
 
-     :  Enable the recognition of HTML tags, block elements, comments, HTML
-        instructions, and entities in the input.  Tags, block elements (along
-        with contents), HTML instructions, and comments will be ignored and
-        HTML entities will be replaced with the corresponding Unicode
-        codepoints.
+     :  Enable the recognition of inline HTML tags, block HTML elements,
+        HTML comments, HTML instructions, and entities in the input. Inline
+        HTML tags, block HTML elements and HTML comments will be rendered, HTML
+        instructions will be ignored, and HTML entities will be replaced with
+        the corresponding Unicode codepoints.
 
 :    false
 
@@ -11946,11 +11946,16 @@ following text:
 %
 % \begin{markdown}
 
-#### Inline HTML Comment Renderer
+#### HTML Comment Renderers
+
 The \mdef{markdownRendererInlineHtmlComment} macro represents the contents of an
 inline \acro{HTML} comment. This macro will only be produced, when the
 \Opt{html} option is enabled. The macro receives a single argument that
 corresponds to the contents of the \acro{HTML} comment.
+
+The \mdef{markdownRendererBlockHtmlCommentBegin} and
+\mdef{markdownRendererBlockHtmlCommentEnd} macros represent the beginning
+and the end of a block \acro{HTML} comment. The macros receive no arguments.
 
 % \end{markdown}
 %
@@ -11967,13 +11972,23 @@ following content:
 \markdownSetup{
   renderers = {
     inlineHtmlComment = {\marginnote{#1}},
+    blockHtmlCommentBegin = {\begin{quote}},
+    blockHtmlCommentEnd = {\end{quote}},
   },
 }
 \begin{document}
 \begin{markdown}
-A useful use of HTML comments are side notes.
+A useful use of inline HTML comments are side notes.
 <!-- Side notes are displayed in the horizontal margins next to the relevant
-passages, which makes them easier for the reader to find than footnotes. -->
+passages, which makes them *easier for the reader to find* than footnotes. -->
+
+We can render block HTML comments as blockquotes:
+
+<!--
+Here is a block HTML comment with a code example that a programmer might understand:
+
+    foo = bar + baz - 42
+-->
 \end{markdown}
 \end{document}
 ```````
@@ -11986,11 +12001,18 @@ A PDF document named `document.pdf` should be produced and contain the
 following body text:
 
 > A useful use of HTML comments are side notes.
+>
+> We can render block HTML comments as blockquotes:
+> 
+> > Here is a block HTML comment with a code example that a programmer might
+> > understand:
+> >
+> >     foo = bar + baz - 42
 
 The horizontal margins should contain the following text:
 
 > Side notes are displayed in the horizontal margins next to the relevant
-> passages, which makes them easier for the reader to find than footnotes.
+> passages, which makes them *easier for the reader to find* than footnotes.
 
 %</manual-tokens>
 %<*tex>
@@ -11999,6 +12021,10 @@ The horizontal margins should contain the following text:
 %  \begin{macrocode}
 \def\markdownRendererInlineHtmlComment{%
   \markdownRendererInlineHtmlCommentPrototype}%
+\def\markdownRendererBlockHtmlCommentBegin{%
+  \markdownRendererBlockHtmlCommentBeginPrototype}%
+\def\markdownRendererBlockHtmlCommentEnd{%
+  \markdownRendererBlockHtmlCommentEndPrototype}%
 %    \end{macrocode}
 % \par
 %
@@ -12009,11 +12035,17 @@ The horizontal margins should contain the following text:
 %
 % \begin{markdown}
 
-#### Inline HTML Tag Renderer
-The \mdef{markdownRendererInlineHtmlTag} macro represents the contents of an
-opening, closing, or empty inline \acro{HTML} tag. This macro will only be
-produced, when the \Opt{html} option is enabled. The macro receives a single
-argument that corresponds to the contents of the \acro{HTML} tag.
+#### HTML Tag and Element Renderers
+
+The \mdef{markdownRendererInlineHtmlTag} macro represents an opening, closing,
+or empty inline \acro{HTML} tag. This macro will only be produced, when the
+\Opt{html} option is enabled. The macro receives a single argument that
+corresponds to the contents of the \acro{HTML} tag.
+
+The \mdef{markdownRendererInputBlockHtmlElement} macro represents a block
+\acro{HTML} element. This macro will only be produced, when the \Opt{html}
+option is enabled. The macro receives a single argument that filename of a file
+containing the contents of the \acro{HTML} element.
 
 % \end{markdown}
 %
@@ -12027,14 +12059,18 @@ following content:
 \documentclass{article}
 \usepackage[html]{markdown}
 \usepackage{marginnote}
+\usepackage{verbatim}
 \markdownSetup{
   renderers = {
     inlineHtmlTag = {\textbf{#1}},
+    inputBlockHtmlElement = {\verbatiminput{#1}},
   },
 }
 \begin{document}
 \begin{markdown}
-<b>Hello, world!</b><br/>
+<b>_Hello,_ world!</b><br/>
+
+<div>_Hello,_ world!</div>
 \end{markdown}
 \end{document}
 ```````
@@ -12046,7 +12082,9 @@ lualatex document.tex
 A PDF document named `document.pdf` should be produced and contain the
 following body text:
 
-> **<b>**Hello, world!**</b><br/>**
+> **<b>**_Hello,_ world!**</b><br/>**
+>
+>     <div>_Hello,_ world!</div>
 
 %</manual-tokens>
 %<*tex>
@@ -12055,6 +12093,8 @@ following body text:
 %  \begin{macrocode}
 \def\markdownRendererInlineHtmlTag{%
   \markdownRendererInlineHtmlTagPrototype}%
+\def\markdownRendererInputBlockHtmlElement{%
+  \markdownRendererInputBlockHtmlElementPrototype}%
 %    \end{macrocode}
 % \par
 %
@@ -12460,7 +12500,10 @@ following text:
 \def\markdownRendererTextCitePrototype#1{}%
 \def\markdownRendererTablePrototype#1#2#3{}%
 \def\markdownRendererInlineHtmlCommentPrototype#1{}%
+\def\markdownRendererBlockHtmlCommentBeginPrototype{\iffalse}%
+\def\markdownRendererBlockHtmlCommentEndPrototype{\fi}%
 \def\markdownRendererInlineHtmlTagPrototype#1{}%
+\def\markdownRendererInputBlockHtmlElementPrototype#1{}%
 \def\markdownRendererTickedBoxPrototype{}%
 \def\markdownRendererHalfTickedBoxPrototype{}%
 \def\markdownRendererUntickedBoxPrototype{}%
@@ -13586,8 +13629,14 @@ The following ordered list will be preceded by roman numerals:
   \renewcommand\markdownRendererTable[3]{#1}}%
 \define@key{markdownRenderers}{inlineHtmlComment}{%
   \renewcommand\markdownRendererInlineHtmlComment[1]{#1}}%
+\define@key{markdownRenderers}{blockHtmlCommentBegin}{%
+  \renewcommand\markdownRendererBlockHtmlCommentBegin{#1}}%
+\define@key{markdownRenderers}{blockHtmlCommentEnd}{%
+  \renewcommand\markdownRendererBlockHtmlCommentEnd{#1}}%
 \define@key{markdownRenderers}{inlineHtmlTag}{%
   \renewcommand\markdownRendererInlineHtmlTag[1]{#1}}%
+\define@key{markdownRenderers}{inputBlockHtmlElement}{%
+  \renewcommand\markdownRendererInputBlockHtmlElement[1]{#1}}%
 \define@key{markdownRenderers}{tickedBox}{%
   \renewcommand\markdownRendererTickedBox{#1}}%
 \define@key{markdownRenderers}{halfTickedBox}{%
@@ -13773,8 +13822,14 @@ The following ordered list will be preceded by roman numerals:
   \renewcommand\markdownRendererTablePrototype[3]{#1}}%
 \define@key{markdownRendererPrototypes}{inlineHtmlComment}{%
   \renewcommand\markdownRendererInlineHtmlCommentPrototype[1]{#1}}%
+\define@key{markdownRendererPrototypes}{blockHtmlCommentBegin}{%
+  \renewcommand\markdownRendererBlockHtmlCommentBeginPrototype{#1}}%
+\define@key{markdownRendererPrototypes}{blockHtmlCommentEnd}{%
+  \renewcommand\markdownRendererBlockHtmlCommentEndPrototype{#1}}%
 \define@key{markdownRendererPrototypes}{inlineHtmlTag}{%
-  \renewcommand\markdownRendererInlineHtmlCommentTag[1]{#1}}%
+  \renewcommand\markdownRendererInlineHtmlTagPrototype[1]{#1}}%
+\define@key{markdownRendererPrototypes}{inputBlockHtmlElement}{%
+  \renewcommand\markdownRendererInputBlockHtmlElementPrototype[1]{#1}}%
 \define@key{markdownRendererPrototypes}{tickedBox}{%
   \renewcommand\markdownRendererTickedBoxPrototype{#1}}%
 \define@key{markdownRendererPrototypes}{halfTickedBox}{%
@@ -16861,10 +16916,10 @@ function M.writer.new(options)
     local contents = util.intersperse(buffer,"\n")
     if tight and options.tightLists then
       return {"\\markdownRendererOlBeginTight\n",contents,
-        "\n\\markdownRendererOlEndTight "}
+              "\n\\markdownRendererOlEndTight "}
     else
       return {"\\markdownRendererOlBegin\n",contents,
-        "\n\\markdownRendererOlEnd "}
+              "\n\\markdownRendererOlEnd "}
     end
   end
 %    \end{macrocode}
@@ -16884,6 +16939,21 @@ function M.writer.new(options)
 % \par
 % \begin{markdown}
 %
+% Define \luamdef{writer->block_html_comment} as a function that will
+% transform the contents of a block \acro{HTML} comment, to the output
+% format, where `contents` are the contents of the \acro{HTML} comment.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  function self.block_html_comment(contents)
+    if not self.is_writing then return "" end
+    return {"\\markdownRendererBlockHtmlCommentBegin\n",contents,
+            "\n\\markdownRendererBlockHtmlCommentEnd "}
+  end
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
 % Define \luamdef{writer->inline_html_tag} as a function that will
 % transform the contents of an opening, closing, or empty inline \acro{HTML}
 % tag to the output format, where `contents` are the contents of the
@@ -16893,6 +16963,21 @@ function M.writer.new(options)
 %  \begin{macrocode}
   function self.inline_html_tag(contents)
     return {"\\markdownRendererInlineHtmlTag{",self.string(contents),"}"}
+  end
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Define \luamdef{writer->block_html_element} as a function that will
+% transform the contents of a block \acro{HTML} element to the output format,
+% where `s` are the contents of the \acro{HTML} element.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  function self.block_html_element(s)
+    if not self.is_writing then return "" end
+    local name = util.cache(options.cacheDir, s, nil, nil, ".verbatim")
+    return {"\\markdownRendererInputBlockHtmlElement{",name,"}"}
   end
 %    \end{macrocode}
 % \par
@@ -18099,11 +18184,6 @@ end
 parsers.in_matched_block_tags = parsers.less
                               * Cmt(#parsers.openelt_block, parse_matched_tags)
 
-parsers.displayhtml = parsers.htmlcomment / ""
-                    + parsers.emptyelt_block
-                    + parsers.openelt_exact("hr")
-                    + parsers.in_matched_block_tags
-                    + parsers.htmlinstruction
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -18868,7 +18948,12 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                        * parsers.contentblock_tail
                        / writer.contentblock
 
-  larsers.DisplayHtml  = parsers.displayhtml
+  larsers.DisplayHtml  = (parsers.htmlcomment / parse_blocks)
+                       / writer.block_html_comment
+                       + parsers.emptyelt_block / writer.block_html_element
+                       + parsers.openelt_exact("hr") / writer.block_html_element
+                       + parsers.in_matched_block_tags / writer.block_html_element
+                       + parsers.htmlinstruction
 
   larsers.Verbatim     = Cs( (parsers.blanklines
                            * ((parsers.indentedline - parsers.blankline))^1)^1
@@ -20953,6 +21038,15 @@ end
           \EndP
         \fi
         \HCode{#1}%
+      },
+      inputBlockHtmlElement = {%
+        \ifvmode
+          \IgnorePar
+        \fi
+        \EndP
+        \special{t4ht*<#1}%
+        \par
+        \ShowPar
       },
     },
   }
