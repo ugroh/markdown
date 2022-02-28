@@ -10,6 +10,16 @@ the plain TeX interface.
 _There is <!-- *comment* --> support._
 _There is <? *HTML instruction* ?> support._
 
+<!--
+
+Here is a *block comment*:
+
+1. item
+2. item
+3. item
+
+-->
+
 Here are several ways to write a pipe:
 
 - |
@@ -24,10 +34,24 @@ Unrecognized character entities are ignored: &nonsense;
 documentBegin
 codeSpan: html
 interblockSeparator
+inputBlockHtmlElement: ./_markdown_test/db2433856814aefaa62794558a22a63c.verbatim
 interblockSeparator
 emphasis: There is (inlineHtmlTag: <inline tag="value">)(inlineHtmlTag: </inline>) support.(inlineHtmlTag: <br/>)
 emphasis: There is (inlineHtmlComment: (emphasis: comment)) support.
 emphasis: There is support.
+interblockSeparator
+blockHtmlCommentBegin
+emphasis: block comment
+interblockSeparator
+olBeginTight
+olItemWithNumber: 1
+olItemEnd
+olItemWithNumber: 2
+olItemEnd
+olItemWithNumber: 3
+olItemEnd
+olEndTight
+blockHtmlCommentEnd
 interblockSeparator
 interblockSeparator
 ulBeginTight

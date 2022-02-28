@@ -1,15 +1,16 @@
 .PHONY: all clean
 
 AUXFILES=*.tmp *.tui *.tuo *.mp *.tuc *.markdown.in *.markdown.out \
-  *.markdown.lua *.log *.aux \
-  latex-pdftex.tex latex-xetex.tex latex-luatex.tex example.tex
+  *.markdown.lua *.log *.aux *.dvi *.idv *.lg *.tmp *.xref *.4ct *.4tc \
+  latex-pdftex.tex latex-xetex.tex latex-luatex.tex latex-tex4ht.tex \
+	example.tex
 AUXDIRS=_markdown_*/
 LUACLI_OPTIONS=cacheDir=_markdown_example hashEnumerators=true \
   definitionLists=true footnotes=true inlineFootnotes=true \
   smartEllipses=true fencedCode=true contentBlocks=true pipeTables=true \
   tableCaptions=true taskLists=true
 OUTPUT=context-mkii.pdf context-mkiv.pdf latex-pdftex.pdf \
-  latex-luatex.pdf latex-xetex.pdf
+  latex-luatex.pdf latex-xetex.pdf latex-tex4ht.html latex-tex4ht.css
 
 # This is the default pseudo-target.
 all: $(OUTPUT)
@@ -40,6 +41,13 @@ latex-luatex.pdf: latex.tex example.tex
 	cp latex.tex latex-luatex.tex
 	lualatex latex-luatex
 	lualatex latex-luatex
+
+# This target typesets the LaTeX example using TeX4ht.
+latex-tex4ht.html latex-tex4ht.css: latex.tex example.tex
+	cp latex.tex latex-tex4ht.tex
+	# A corresponding command for TeX Live >= 2020 would be: make4ht --shell-escape latex fn-in
+	htlatex latex-tex4ht "xhtml,fn-in,html5,charset=utf-8" " -cunihtf -utf8" '' -shell-escape
+	htlatex latex-tex4ht "xhtml,fn-in,html5,charset=utf-8" " -cunihtf -utf8" '' -shell-escape
 
 # This target converts the markdown example to a plain TeX representation
 # using the Lua command-line interface for the Markdown package.
