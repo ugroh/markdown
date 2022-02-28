@@ -21345,14 +21345,16 @@ end
 \newtoks\markdownLaTeXTable
 \newtoks\markdownLaTeXTableAlignment
 \newtoks\markdownLaTeXTableEnd
-\@ifpackageloaded{booktabs}{
-  \let\markdownLaTeXTopRule\toprule
-  \let\markdownLaTeXMidRule\midrule
-  \let\markdownLaTeXBottomRule\bottomrule
-}{
-  \let\markdownLaTeXTopRule\hline
-  \let\markdownLaTeXMidRule\hline
-  \let\markdownLaTeXBottomRule\hline
+\AtBeginDocument{%
+  \@ifpackageloaded{booktabs}{%
+    \def\markdownLaTeXTopRule{\toprule}%
+    \def\markdownLaTeXMidRule{\midrule}%
+    \def\markdownLaTeXBottomRule{\bottomrule}%
+  }{%
+    \def\markdownLaTeXTopRule{\hline}%
+    \def\markdownLaTeXMidRule{\hline}%
+    \def\markdownLaTeXBottomRule{\hline}%
+  }%
 }
 \markdownSetup{rendererPrototypes={
   table = {%
