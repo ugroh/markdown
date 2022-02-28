@@ -43,7 +43,9 @@ date:   \today
 % Typeset the document `example.tex` that we prepared separately using the
 % Lua command-line interface of the Markdown package and that contains a
 % plain TeX representation of the document `example.md`.
+\catcode`\%=12\relax
 \InputIfFileExists{./example.tex}{}{}
+\catcode`\%=14\relax
 
 \begin{markdown}
 Here are some non-ASCII characters: *ěščřžýáíé*.
