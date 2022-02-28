@@ -1,8 +1,9 @@
 .PHONY: all clean
 
 AUXFILES=*.tmp *.tui *.tuo *.mp *.tuc *.markdown.in *.markdown.out \
-  *.markdown.lua *.log *.aux \
-  latex-pdftex.tex latex-xetex.tex latex-luatex.tex example.tex
+  *.markdown.lua *.log *.aux *.dvi *.idv *.lg *.tmp *.xref *.4ct *.4tc \
+  latex-pdftex.tex latex-xetex.tex latex-luatex.tex latex-tex4ht.tex \
+	example.tex
 AUXDIRS=_markdown_*/
 LUACLI_OPTIONS=cacheDir=_markdown_example hashEnumerators=true \
   definitionLists=true footnotes=true inlineFootnotes=true \
@@ -43,11 +44,10 @@ latex-luatex.pdf: latex.tex example.tex
 
 # This target typesets the LaTeX example using TeX4ht.
 latex-tex4ht.html latex-tex4ht.css: latex.tex example.tex
-	-make4ht --shell-escape latex fn-in
-	cp latex.html latex-tex4ht.html
-	sed -ri 's/latex\.(html|css)/latex-tex4ht.\1/g' latex-tex4ht.html
-	cp latex.css latex-tex4ht.css
-	make4ht -m clean latex
+	cp latex.tex latex-tex4ht.tex
+	# A corresponding command for TeX Live >= 2020 would be: make4ht --shell-escape latex fn-in
+	htlatex latex-tex4ht "xhtml,fn-in,html5,charset=utf-8" " -cunihtf -utf8" '' -shell-escape
+	htlatex latex-tex4ht "xhtml,fn-in,html5,charset=utf-8" " -cunihtf -utf8" '' -shell-escape
 
 # This target converts the markdown example to a plain TeX representation
 # using the Lua command-line interface for the Markdown package.
@@ -58,7 +58,6 @@ example.tex: example.md
 clean:
 	rm -f $(AUXFILES)
 	rm -rf $(AUXDIRS)
-	make4ht -m clean latex
 
 # This pseudo-target removes any makeable files.
 implode: clean
