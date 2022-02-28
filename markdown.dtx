@@ -788,9 +788,12 @@ abbr {
           attributeIdentifier = {%
             \begingroup
             \def\next####1{%
-              \apptocmd####1{%
+              \def####1########1{%
+                \endgroup
+                ####1{########1}%
                 \label{sec:##1}%
-                \endgroup}{}{}}%
+              }%
+            }%
             \next\markdownRendererHeadingOne
             \next\markdownRendererHeadingTwo
             \next\markdownRendererHeadingThree
@@ -20896,9 +20899,12 @@ end
         attributeIdentifier = {%
           \begingroup
           \def\next####1{%
-            \apptocmd####1{%
-              \label{sec:##1}%
-              \endgroup}{}{}}%
+            \def####1########1{%
+              \endgroup
+              ####1{########1}%
+              \label{##1}%
+            }%
+          }%
           \next\markdownRendererHeadingOne
           \next\markdownRendererHeadingTwo
           \next\markdownRendererHeadingThree
