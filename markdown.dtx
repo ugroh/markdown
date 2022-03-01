@@ -12503,8 +12503,10 @@ following text:
 \def\markdownRendererTextCitePrototype#1{}%
 \def\markdownRendererTablePrototype#1#2#3{}%
 \def\markdownRendererInlineHtmlCommentPrototype#1{}%
-\def\markdownRendererBlockHtmlCommentBeginPrototype{\iffalse}%
-\def\markdownRendererBlockHtmlCommentEndPrototype{\fi}%
+\let\markdownRendererBlockHtmlCommentBeginPrototype=\iffalse
+\let\markdownRendererBlockHtmlCommentBegin=\iffalse
+\let\markdownRendererBlockHtmlCommentEndPrototype=\fi
+\let\markdownRendererBlockHtmlCommentEnd=\fi
 \def\markdownRendererInlineHtmlTagPrototype#1{}%
 \def\markdownRendererInputBlockHtmlElementPrototype#1{}%
 \def\markdownRendererTickedBoxPrototype{}%
