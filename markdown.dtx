@@ -1104,7 +1104,22 @@ local md5 = require("md5")
 %
 % The plain \TeX{} part of the package requires that the plain \TeX{}
 % format (or its superset) is loaded, all the Lua prerequisites (see
-% Section <#sec:luaprerequisites>), and the following Lua module:
+% Section <#sec:luaprerequisites>), and the following package:
+%
+% \pkg{expl3}
+%
+%:    A package that enables the expl3 language from the \LaTeX3 kernel in
+%     \TeX{} Live${}\leq{}2019$. It is not used for anything... yet.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\ifx\ExplSyntaxOn\undefined
+  \input expl3-generic\relax
+\fi
+%    \end{macrocode}
+% \begin{markdown}
+%
+% The plain \TeX{} part of the package also requires the following Lua module:
 %
 % \pkg{Lua File System}
 %
