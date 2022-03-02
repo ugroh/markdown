@@ -34,7 +34,7 @@ jobs:
       - markdownlint
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         texlive:
           - TL2019-historic
