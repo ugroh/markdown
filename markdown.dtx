@@ -879,7 +879,7 @@ Introduction
 ============
 The [Markdown package][pkg] converts [markdown][] markup to \TeX{} commands. The
 functionality is provided both as a Lua module and as plain \TeX{}, \LaTeX{}, and
-\Hologo{ConTeXt} macro packages that can be used to directly typeset \TeX documents
+\Hologo{ConTeXt} macro packages that can be used to directly typeset \TeX{} documents
 containing markdown markup. Unlike other convertors, the Markdown package
 does not require any external programs, and makes it easy to redefine how each
 and every markdown element is rendered.  Creative abuse of the markdown
@@ -3907,24 +3907,24 @@ defaultOptions.definitionLists = false
 %
 :    true
 
-     Converted markdown documents will be cached in \Opt{cacheDir}. This can be
-     useful for post-processing the converted documents and for recovering
-     historical versions of the documents from the cache.  However, it also
-     produces a large number of auxiliary files on the disk and obscures the
-     output of the Lua command-line interface when it is used for plumbing.
+     :  Converted markdown documents will be cached in \Opt{cacheDir}. This can be
+        useful for post-processing the converted documents and for recovering
+        historical versions of the documents from the cache.  However, it also
+        produces a large number of auxiliary files on the disk and obscures the
+        output of the Lua command-line interface when it is used for plumbing.
 
-     This behavior will always be used if the \Opt{finalizeCache} option is
-     enabled.
+        This behavior will always be used if the \Opt{finalizeCache} option is
+        enabled.
 
 :    false
 
-     Converted markdown documents will not be cached. This decreases the number
-     of auxiliary files that we produce and makes it easier to use the Lua
-     command-line interface for plumbing.
+     :  Converted markdown documents will not be cached. This decreases the number
+        of auxiliary files that we produce and makes it easier to use the Lua
+        command-line interface for plumbing.
 
-     This behavior will only be used when the \Opt{finalizeCache} option is
-     disabled. Furthermore, this behavior is planned to be the new default in
-     the next major release of the Markdown package.
+        This behavior will only be used when the \Opt{finalizeCache} option is
+        disabled. Furthermore, this behavior is planned to be the new default in
+        the next major release of the Markdown package.
 
 % \end{markdown}
 % \iffalse
@@ -6744,17 +6744,27 @@ defaultOptions.texComments = false
 %
 :    true
 
-     :   Lists whose bullets do not consist of multiple paragraphs will be
-         passed to the
-         \mref{markdownRendererOlBeginTight}, \mref{markdownRendererOlEndTight},
-         \mref{markdownRendererUlBeginTight}, \mref{markdownRendererUlEndTight},
-         \mref{markdownRendererDlBeginTight}, and
-         \mref{markdownRendererDlEndTight} \TeX{} macros.
+     :   Unordered and ordered Lists whose items do not consist of multiple
+         paragraphs will be considered *tight*. Tight lists will produce tight
+         renderers that may produce different output than lists that are not
+         tight:
+
+         ``` md
+         - This is
+         - a tight
+         - unordered list.
+
+         - This is
+
+           not a tight
+
+         - unordered list.
+         ```
 
 :    false
 
-     :   Lists whose bullets do not consist of multiple paragraphs will be
-         treated the same way as lists that do consist of multiple paragraphs.
+     :   Unordered and ordered lists whose items consist of multiple paragraphs
+         will be treated the same way as lists that consist of multiple paragraphs.
 
 % \end{markdown}
 % \iffalse
@@ -7656,7 +7666,7 @@ bug](https://github.com/witiko/markdown/issues).
 #### Package Documentation
 
 The \mdef{markdownOptionStripPercentSigns} macro controls whether a percent
-sign (`%`) at the beginning of a line will be discarded when reading Markdown
+sign (`\%`) at the beginning of a line will be discarded when reading Markdown
 input from a \TeX{} document. This enables the use of markdown when writing
 \TeX{} package documentation using the [Doc \LaTeX{} package][doc] by Frank
 Mittelbach. The recognized values of the macro are `true` (discard) and `false`
@@ -7696,7 +7706,7 @@ A PDF document named `document.pdf` should be produced and contain the text
 %#### Miscellaneous Options
 %
 % The \mdef{markdownOptionStripPercentSigns} macro controls whether a percent
-% sign (`%`) at the beginning of a line will be discarded when buffering
+% sign (`\%`) at the beginning of a line will be discarded when buffering
 % Markdown input (see Section <#sec:buffering>) or not. Notably, this
 % enables the use of markdown when writing \TeX{} package documentation using
 % the \pkg{Doc} \LaTeX{}~package~[@mittelbach17] or similar. The recognized
@@ -8414,7 +8424,7 @@ the active pipe character (`|`) of \Hologo{ConTeXt}, in the input text:
 - \mdef{markdownRendererDollarSign} replaces the dollar sign (`$`).
 - \mdef{markdownRendererHash} replaces the hash sign (`#`).
 - \mdef{markdownRendererLeftBrace} replaces the left brace (`{`).
-- \mdef{markdownRendererPercentSign} replaces the percent sign (`%`).
+- \mdef{markdownRendererPercentSign} replaces the percent sign (`\%`).
 - \mdef{markdownRendererPipe} replaces the pipe character (`|`).
 - \mdef{markdownRendererRightBrace} replaces the right brace (`}`).
 - \mdef{markdownRendererTilde} replaces the tilde (`~`).
@@ -19888,7 +19898,7 @@ end
 % Make the newline and tab characters active and swap the character codes of
 % the backslash symbol (`\`) and the pipe symbol (`|`), so that we can use the
 % backslash as an ordinary character inside the macro definition.  Likewise,
-% swap the character codes of the percent sign (`%`) and the ampersand (`@`),
+% swap the character codes of the percent sign (`\%`) and the ampersand (`@`),
 % so that we can remove percent signs from the beginning of lines when
 % \mref{markdownOptionStripPercentSigns} is enabled.
 % \end{markdown}
@@ -19928,7 +19938,7 @@ end
 %    \end{macrocode}
 % \begin{markdown}
 % The \mdef{markdownReadAndConvertStripPercentSigns} macro will process the
-% individual lines of output, stipping away leading percent signs (`%`) when
+% individual lines of output, stipping away leading percent signs (`\%`) when
 % \mref{markdownOptionStripPercentSigns} is enabled.
 % Notice the use of the comments (`@`) to ensure that the entire macro is at
 % a single line and therefore no (active) newline symbols
@@ -20275,7 +20285,7 @@ end
   |gdef|markdownInput#1{%
 %    \end{macrocode}
 % \begin{markdown}
-% Change the category code of the percent sign (`%`) to other, so that a user
+% Change the category code of the percent sign (`\%`) to other, so that a user
 % of the \Opt{hybrid} Lua option or a malevolent actor can't produce TeX
 % comments in the plain TeX output of the Markdown package.
 % \end{markdown}
