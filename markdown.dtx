@@ -13307,7 +13307,8 @@ various options locally.
   \markdownIfSnippetExists{#1}%
     {%
       \expandafter\markdownSetup\expandafter{%
-        \the\csname markdownLaTeXSetupSnippet#1\endcsname}%
+        \the\csname markdownLaTeXSetupSnippet%
+        \markdownLaTeXThemeName#1\endcsname}%
     }{%
       \markdownError
         {Can't invoke setup snippet #1}%
