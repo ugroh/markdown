@@ -12801,18 +12801,30 @@ pdflatex --shell-escape document.tex
 % \end{markdown}
 %  \begin{macrocode}
 \newcommand\markdownSetupSnippet[2]{%
-  \@ifundefined
-    {markdownLaTeXSetupSnippet\markdownLaTeXThemeName#1}{%
-      \newtoks\next
-        \next={#2}%
-      \expandafter\let\csname markdownLaTeXSetupSnippet%
-        \markdownLaTeXThemeName#1\endcsname=\next
-    }{%
+  \markdownIfSnippetExists{#1}%
+    {%
       \markdownWarning
         {Redefined setup snippet \markdownLaTeXThemeName#1}%
       \csname markdownLaTeXSetupSnippet%
         \markdownLaTeXThemeName#1\endcsname={#2}%
+    }{%
+      \newtoks\next
+        \next={#2}%
+      \expandafter\let\csname markdownLaTeXSetupSnippet%
+        \markdownLaTeXThemeName#1\endcsname=\next
     }}%
+%    \end{macrocode}
+% \begin{markdown}
+%
+% To decide whether a setup snippet exists, we can use the
+% \mdef{markdownIfSnippetExists} macro:
+%
+% \end{markdown}
+%  \begin{macrocode}
+\newcommand\markdownIfSnippetExists[3]{%
+  \@ifundefined
+    {markdownLaTeXSetupSnippet\markdownLaTeXThemeName#1}%
+    {#3}{#2}}%
 %    \end{macrocode}
 % \begin{markdown}
 %
@@ -13292,14 +13304,14 @@ various options locally.
 % \fi
 %  \begin{macrocode}
 \define@key{markdownOptions}{snippet}{%
-  \@ifundefined
-    {markdownLaTeXSetupSnippet#1}{%
+  \markdownIfSnippetExists{#1}%
+    {%
+      \expandafter\markdownSetup\expandafter{%
+        \the\csname markdownLaTeXSetupSnippet#1\endcsname}%
+    }{%
       \markdownError
         {Can't invoke setup snippet #1}%
         {The setup snippet is undefined}%
-    }{%
-      \expandafter\markdownSetup\expandafter{%
-        \the\csname markdownLaTeXSetupSnippet#1\endcsname}%
     }%
   }%
 %    \end{macrocode}
