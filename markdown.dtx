@@ -1819,6 +1819,22 @@ Lua options control the conversion from markdown to \TeX{}. They are supported
 by all interfaces of the Markdown package starting with the low-level Lua
 interfaces and all the way up to the \LaTeX{} and \Hologo{ConTeXt} interfaces.
 
+%</manual-options>
+%<*tex>
+% \fi
+% \begin{markdown}
+%
+% To enable the enumeration of Lua options, we will maintain the
+% \mdef{g_\@\@_lua_options_seq} sequence.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\ExplSyntaxOn
+\seq_new:N \g_@@_lua_options_seq
+%    \end{macrocode}
+% \iffalse
+%</tex>
+%<*manual-options>
 % \fi
 % \begin{markdown}
 % 
@@ -1968,6 +1984,15 @@ Markdown package will also be produced as we requested using the `cacheDir`
 option.
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {cacheDir}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -2186,6 +2211,15 @@ without accessing the shell or invoking Lua, but the change in the content of
 the markdown document from “Hello *world*!” to “Hi *world*!” was not reflected.
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {frozenCacheFileName}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -2400,6 +2434,15 @@ following text:
 > A paragraph > Not a quote.
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {blankBeforeBlockquote}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -2639,6 +2682,15 @@ following text:
 > A paragraph. ``` Not a code fence. ```
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {blankBeforeCodeFence}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -2861,6 +2913,15 @@ following text:
 > A paragraph. Not a heading. ==============
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {blankBeforeHeading}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -3075,6 +3136,15 @@ following text:
 > > Another block quote.
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {breakableBlockquotes}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -3159,6 +3229,15 @@ following text, where the middot (`·`) denotes a non-breaking space:
 >     Addison-Wesley, 1984.
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {citationNbsps}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -3250,6 +3329,15 @@ following text:
 >     Addison-Wesley, 1984.
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {citations}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -3458,6 +3546,15 @@ following text:
 > “This is a quote.” “This is another quote.”
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {codeSpans}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -3622,6 +3719,15 @@ following text:
 > This is a *transcluded markdown document*.
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {contentBlocks}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -3772,6 +3878,15 @@ following text:
 > This is a *transcluded markdown document*.
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {contentBlocksLanguageMap}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -3901,6 +4016,15 @@ following text:
 >     Third paragraph of definition 2.
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {definitionLists}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -3992,6 +4116,15 @@ Hello \markdownRendererEmphasis{world}!\relax
 ```
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {eagerCache}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -4150,6 +4283,15 @@ following text:
 > ```
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {fencedCode}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -4304,6 +4446,15 @@ without accessing the shell or invoking Lua, but the change in the content of
 the markdown document from “Hello *world*!” to “Hi *world*!” was not reflected.
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {finalizeCache}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -4463,6 +4614,15 @@ following text:
 > isn't indented.
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {footnotes}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -4518,6 +4678,15 @@ A PDF document named `document.pdf` should be produced and contain the text
 requested using the `frozenCacheCounter` option.
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {frozenCacheCounter}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -4592,6 +4761,15 @@ following text:
 > And the mome raths outgrabe.
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {hardLineBreaks}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -4713,6 +4891,15 @@ following text:
 > #. Parish
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {hashEnumerators}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -4758,6 +4945,15 @@ defaultOptions.hashEnumerators = false
 % \end{markdown}
 % \iffalse
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {headerAttributes}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -5010,6 +5206,15 @@ following text:
 > There is support. There is support. There is support.
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {html}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -5211,6 +5416,15 @@ following text:
 > √-̅1̅ *equals* $i$.
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {hybrid}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -5300,6 +5514,15 @@ following text:
 > move down to type the note.]
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {inlineFootnotes}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -5440,6 +5663,15 @@ following text:
 > Jane Doe is 99 years old.
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {jekyllData}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -5539,6 +5771,15 @@ following text:
 > |    1  |    1 |     1   |     1  |
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {pipeTables}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -5569,6 +5810,15 @@ defaultOptions.pipeTables = false
 % \end{markdown}
 % \iffalse
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {preserveTabs}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -5648,6 +5898,15 @@ following text:
 > with their grandchildren than get eaten. Begone, wolf!
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {relativeReferences}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -5783,6 +6042,15 @@ following text:
 > ### A section
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {shiftHeadings}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -5991,6 +6259,15 @@ following text:
 > Hamlet dies.
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {slice}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -6188,6 +6465,15 @@ following text:
 > . . . and this is a victorian ellipsis.
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {smartEllipses}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -6314,6 +6600,15 @@ following text:
 > 3. fifth item
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {startNumber}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -6417,6 +6712,15 @@ A PDF document named `document.pdf` should be produced and contain the
 text “Hello *world*!”
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {stripIndent}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -6531,6 +6835,15 @@ following text:
 >   : Demonstration of pipe table syntax.
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {tableCaptions}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -6631,6 +6944,15 @@ following text:
 > - Yes I can!
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {taskLists}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -6737,6 +7059,15 @@ A PDF document named `document.pdf` should be produced and contain the
 text “Hello *world*!”
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {texComments}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -6849,6 +7180,15 @@ following text:
 >   - third item
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {tightLists}
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -6981,6 +7321,16 @@ following text:
 > This is _emphasized text_ and this is a math subscript: *mₙ*.
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  {underscores}
+\ExplSyntaxOff
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
