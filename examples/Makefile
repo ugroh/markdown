@@ -45,7 +45,7 @@ latex-luatex.pdf: latex.tex example.tex
 # This target typesets the LaTeX example using TeX4ht.
 latex-tex4ht.html latex-tex4ht.css: latex.tex example.tex
 	cp latex.tex latex-tex4ht.tex
-	# A corresponding command for TeX Live >= 2020 would be: make4ht --shell-escape latex fn-in
+	# TODO: Replace with `make4ht --shell-escape latex fn-in` in TeX Live 2020.
 	htlatex latex-tex4ht "xhtml,fn-in,html5,charset=utf-8" " -cunihtf -utf8" '' -shell-escape
 	htlatex latex-tex4ht "xhtml,fn-in,html5,charset=utf-8" " -cunihtf -utf8" '' -shell-escape
 

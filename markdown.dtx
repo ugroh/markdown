@@ -20385,6 +20385,7 @@ end
   {
     \tl_set:Nn
       \l_tmpb_tl
+%       TODO: Replace with \str_uppercase:n in TeX Live 2020.
       { \str_upper_case:n { #1 } }
     \tl_set:Nx
       \l_tmpa_tl
@@ -22325,10 +22326,12 @@ end
 %  \begin{macrocode}
   },
 }
+% TODO: Remove the command definition in TeX Live 2021.
 \providecommand\IfFormatAtLeastTF{\@ifl@t@r\fmtversion}
 \markdownSetup{
   rendererPrototypes = {
     jekyllDataEnd = {
+%     TODO: Remove the else branch in TeX Live 2021.
       \IfFormatAtLeastTF
         { 2020-10-01 }
         { \AddToHook{begindocument/end}{\maketitle} }
