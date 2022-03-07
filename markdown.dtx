@@ -1225,10 +1225,8 @@ local md5 = require("md5")
 % \pkg{ifthen}
 %
 %:    A package that provides a concise syntax for the inspection of macro
-%     values. It is used to determine whether or not the \pkg{paralist} package
-%     should be loaded based on the user options, in the `witiko/dot` \LaTeX{}
-%     theme (see Section <#sec:latexthemes>), and to provide default token
-%     renderer prototypes.
+%     values. It is used in the `witiko/dot` \LaTeX{} theme (see Section
+%     <#sec:latexthemes>), and to provide default token renderer prototypes.
 %
 % \pkg{fancyvrb}
 %
@@ -21424,23 +21422,14 @@ end
 %    \end{macrocode}
 % \par
 % \begin{markdown}%
-% If the \mref{markdownOptionTightLists} macro expands to `false`, do not load
-% the \pkg{paralist} package. This is necessary for \Hologo{LaTeX2e} document
-% classes that do not play nice with \pkg{paralist}, such as \pkg{beamer}.
-% If the \mref{markdownOptionTightLists} is undefined and the \pkg{beamer}
-% document class is in use, then do not load the \pkg{paralist} package either.
+% If the \Opt{tightLists} Lua option is disabled or the current document class
+% is \pkg{beamer}, do not load the \pkg{paralist} package.
 %
 % \end{markdown}
 %  \begin{macrocode}
-\RequirePackage{ifthen}
-
-\ifx\markdownOptionTightLists\undefined
-  \@ifclassloaded{beamer}{}{%
-    \RequirePackage{paralist}}%
-\else
-  \ifthenelse{\equal{\markdownOptionTightLists}{false}}{}{%
-    \RequirePackage{paralist}}%
-\fi
+\markdownIfOption{tightLists}{
+  \@ifclassloaded{beamer}{}{\RequirePackage{paralist}}%
+}{}
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -21468,7 +21457,7 @@ end
     olEndTight = {\markdownRendererOlEnd},
     dlBeginTight = {\markdownRendererDlBegin},
     dlEndTight = {\markdownRendererDlEnd}}}}
-\RequirePackage{amsmath}
+\RequirePackage{amsmath,ifthen}
 %    \end{macrocode}
 % \par
 % \begin{markdown}
