@@ -20585,7 +20585,7 @@ end
 % open the \mref{markdownOptionInputTempFileName} file for writing.
 % \end{markdown}
 %  \begin{macrocode}
-    |markdownIfOption{FrozenCache}{}{@
+    |markdownIfOption{frozenCache}{}{@
       |immediate|openout|markdownOutputFileStream@
         |markdownOptionInputTempFileName|relax@
       |markdownInfo{Buffering markdown input into the temporary @
@@ -20614,7 +20614,7 @@ end
 % \end{markdown}
 %  \begin{macrocode}
     |def|markdownReadAndConvertStripPercentSign##1{@
-      |markdownIfOption{StripPercentSigns}{@
+      |markdownIfOption{stripPercentSigns}{@
         |if##1%@
           |expandafter|expandafter|expandafter@
             |markdownReadAndConvertProcessLine@
@@ -20649,7 +20649,7 @@ end
 % \end{markdown}
 %  \begin{macrocode}
       |ifx|relax##3|relax@
-        |markdownIfOption{FrozenCache}{}{@
+        |markdownIfOption{frozenCache}{}{@
           |immediate|write|markdownOutputFileStream{##1}@
         }@
       |else@
@@ -20665,7 +20665,7 @@ end
 %  \begin{macrocode}
         |def^^M{@
           |markdownInfo{The ending token sequence was found}@
-          |markdownIfOption{FrozenCache}{}{@
+          |markdownIfOption{frozenCache}{}{@
             |immediate|closeout|markdownOutputFileStream@
           }@
           |endgroup@
@@ -20967,7 +20967,7 @@ end
 % \mref{markdownFrozenCacheCounter}.
 % \end{markdown}
 %  \begin{macrocode}
-    |markdownIfOption{FrozenCache}{%
+    |markdownIfOption{frozenCache}{%
       |ifnum|markdownFrozenCacheCounter=0|relax
         |markdownInfo{Reading frozen cache from
           "|markdownOptionFrozenCacheFileName"}%
@@ -21009,7 +21009,7 @@ end
 % \mref{markdownFrozenCacheCounter}.
 % \end{markdown}
 %  \begin{macrocode}
-      |markdownIfOption{FinalizeCache}{%
+      |markdownIfOption{finalizeCache}{%
         |global|advance|markdownFrozenCacheCounter by 1|relax
       }%
     }%
@@ -21199,7 +21199,7 @@ end
 \renewcommand\markdownRendererInputFencedCode[2]{%
   \def\next##1 ##2\relax{%
     \ifthenelse{\equal{##1}{dot}}{%
-      \markdownIfOption{FrozenCache}{}{%
+      \markdownIfOption{frozenCache}{}{%
         \immediate\write18{%
           if ! test -e #1.pdf.source || ! diff #1 #1.pdf.source;
           then
@@ -21309,7 +21309,7 @@ end
 %
 % \end{markdown}
 %  \begin{macrocode}
-    \markdownIfOption{FrozenCache}{}{^^A
+    \markdownIfOption{frozenCache}{}{^^A
       \immediate\write18{^^A
         if printf '%s' "#3" | grep -q -E '^https?:';
         then
