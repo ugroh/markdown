@@ -4817,6 +4817,23 @@ A PDF document named `document.pdf` should be produced and contain the text
 requested using the `frozenCacheCounter` option.
 
 %</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  { frozenCacheCounter }
+\prop_put:Nnn
+  \g_@@_lua_option_types_prop
+  { frozenCacheCounter }
+  { counter }
+\prop_put:Nnn
+  \g_@@_default_lua_options_prop
+  { frozenCacheCounter }
+  { 0 }
+%    \end{macrocode}
+% \iffalse
+%</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
@@ -20372,7 +20389,8 @@ end
 %  \begin{macrocode}
 \ExplSyntaxOn
 \tl_new:N \g_@@_formatted_lua_options_tl
-\tl_const:Nn \c_@@_lua_option_type_string { string }
+\tl_const:Nn \c_@@_lua_option_type_string  { string  }
+\tl_const:Nn \c_@@_lua_option_type_counter { counter }
 \cs_new:Nn \@@_format_lua_options:
   {
     \tl_gclear:N 
@@ -20411,18 +20429,24 @@ end
               { #1~=~" \cs:w \l_tmpa_tl \cs_end: ",~ }
           }
           {
-            \tl_gput_right:Nx
-              \g_@@_formatted_lua_options_tl
-              { #1~=~  \cs:w \l_tmpa_tl \cs_end:  ,~ }
+            \tl_if_eq:NNTF
+              \l_tmpb_tl
+              \c_@@_lua_option_type_counter
+              {
+                \tl_gput_right:Nx
+                  \g_@@_formatted_lua_options_tl
+                  { #1~=~ \the \cs:w \l_tmpa_tl \cs_end: ,~ }
+              }
+              {
+                \tl_gput_right:Nx
+                  \g_@@_formatted_lua_options_tl
+                  { #1~=~      \cs:w \l_tmpa_tl \cs_end: ,~ }
+              }
           }
       }
   }
-\let\markdownPrepareLuaOptions
-  \@@_format_lua_options:
-\def\markdownLuaOptions{{
-  frozenCacheCounter~=~\the\markdownFrozenCacheCounter,~
-  \g_@@_formatted_lua_options_tl
-}}
+\let\markdownPrepareLuaOptions=\@@_format_lua_options:
+\def\markdownLuaOptions{{ \g_@@_formatted_lua_options_tl }}
 \ExplSyntaxOff
 %    \end{macrocode}
 % \par
