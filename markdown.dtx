@@ -14961,174 +14961,52 @@ The following ordered list will be preceded by roman numerals:
 %
 % \end{markdown}
 %  \begin{macrocode}
-\define@key{markdownRenderers}{attributeIdentifier}{%
-  \renewcommand\markdownRendererAttributeIdentifier[1]{#1}}%
-\define@key{markdownRenderers}{attributeClassName}{%
-  \renewcommand\markdownRendererAttributeClassName[1]{#1}}%
-\define@key{markdownRenderers}{attributeKeyValue}{%
-  \renewcommand\markdownRendererAttributeKeyValue[2]{#1}}%
-\define@key{markdownRenderers}{documentBegin}{%
-  \renewcommand\markdownRendererDocumentBegin{#1}}%
-\define@key{markdownRenderers}{documentEnd}{%
-  \renewcommand\markdownRendererDocumentEnd{#1}}%
-\define@key{markdownRenderers}{interblockSeparator}{%
-  \renewcommand\markdownRendererInterblockSeparator{#1}}%
-\define@key{markdownRenderers}{lineBreak}{%
-  \renewcommand\markdownRendererLineBreak{#1}}%
-\define@key{markdownRenderers}{ellipsis}{%
-  \renewcommand\markdownRendererEllipsis{#1}}%
-\define@key{markdownRenderers}{headerAttributeContextBegin}{%
-  \renewcommand\markdownRendererHeaderAttributeContextBegin{#1}}%
-\define@key{markdownRenderers}{headerAttributeContextEnd}{%
-  \renewcommand\markdownRendererHeaderAttributeContextEnd{#1}}%
-\define@key{markdownRenderers}{nbsp}{%
-  \renewcommand\markdownRendererNbsp{#1}}%
-\define@key{markdownRenderers}{leftBrace}{%
-  \renewcommand\markdownRendererLeftBrace{#1}}%
-\define@key{markdownRenderers}{rightBrace}{%
-  \renewcommand\markdownRendererRightBrace{#1}}%
-\define@key{markdownRenderers}{dollarSign}{%
-  \renewcommand\markdownRendererDollarSign{#1}}%
-\define@key{markdownRenderers}{percentSign}{%
-  \renewcommand\markdownRendererPercentSign{#1}}%
-\define@key{markdownRenderers}{ampersand}{%
-  \renewcommand\markdownRendererAmpersand{#1}}%
-\define@key{markdownRenderers}{underscore}{%
-  \renewcommand\markdownRendererUnderscore{#1}}%
-\define@key{markdownRenderers}{hash}{%
-  \renewcommand\markdownRendererHash{#1}}%
-\define@key{markdownRenderers}{circumflex}{%
-  \renewcommand\markdownRendererCircumflex{#1}}%
-\define@key{markdownRenderers}{backslash}{%
-  \renewcommand\markdownRendererBackslash{#1}}%
-\define@key{markdownRenderers}{tilde}{%
-  \renewcommand\markdownRendererTilde{#1}}%
-\define@key{markdownRenderers}{pipe}{%
-  \renewcommand\markdownRendererPipe{#1}}%
-\define@key{markdownRenderers}{codeSpan}{%
-  \renewcommand\markdownRendererCodeSpan[1]{#1}}%
-\define@key{markdownRenderers}{link}{%
-  \renewcommand\markdownRendererLink[4]{#1}}%
-\define@key{markdownRenderers}{contentBlock}{%
-  \renewcommand\markdownRendererContentBlock[4]{#1}}%
-\define@key{markdownRenderers}{contentBlockOnlineImage}{%
-  \renewcommand\markdownRendererContentBlockOnlineImage[4]{#1}}%
-\define@key{markdownRenderers}{contentBlockCode}{%
-  \renewcommand\markdownRendererContentBlockCode[5]{#1}}%
-\define@key{markdownRenderers}{image}{%
-  \renewcommand\markdownRendererImage[4]{#1}}%
-\define@key{markdownRenderers}{ulBegin}{%
-  \renewcommand\markdownRendererUlBegin{#1}}%
-\define@key{markdownRenderers}{ulBeginTight}{%
-  \renewcommand\markdownRendererUlBeginTight{#1}}%
-\define@key{markdownRenderers}{ulItem}{%
-  \renewcommand\markdownRendererUlItem{#1}}%
-\define@key{markdownRenderers}{ulItemEnd}{%
-  \renewcommand\markdownRendererUlItemEnd{#1}}%
-\define@key{markdownRenderers}{ulEnd}{%
-  \renewcommand\markdownRendererUlEnd{#1}}%
-\define@key{markdownRenderers}{ulEndTight}{%
-  \renewcommand\markdownRendererUlEndTight{#1}}%
-\define@key{markdownRenderers}{olBegin}{%
-  \renewcommand\markdownRendererOlBegin{#1}}%
-\define@key{markdownRenderers}{olBeginTight}{%
-  \renewcommand\markdownRendererOlBeginTight{#1}}%
-\define@key{markdownRenderers}{olItem}{%
-  \renewcommand\markdownRendererOlItem{#1}}%
-\define@key{markdownRenderers}{olItemWithNumber}{%
-  \renewcommand\markdownRendererOlItemWithNumber[1]{#1}}%
-\define@key{markdownRenderers}{olItemEnd}{%
-  \renewcommand\markdownRendererOlItemEnd{#1}}%
-\define@key{markdownRenderers}{olEnd}{%
-  \renewcommand\markdownRendererOlEnd{#1}}%
-\define@key{markdownRenderers}{olEndTight}{%
-  \renewcommand\markdownRendererOlEndTight{#1}}%
-\define@key{markdownRenderers}{dlBegin}{%
-  \renewcommand\markdownRendererDlBegin{#1}}%
-\define@key{markdownRenderers}{dlBeginTight}{%
-  \renewcommand\markdownRendererDlBeginTight{#1}}%
-\define@key{markdownRenderers}{dlItem}{%
-  \renewcommand\markdownRendererDlItem[1]{#1}}%
-\define@key{markdownRenderers}{dlItemEnd}{%
-  \renewcommand\markdownRendererDlItemEnd{#1}}%
-\define@key{markdownRenderers}{dlDefinitionBegin}{%
-  \renewcommand\markdownRendererDlDefinitionBegin{#1}}%
-\define@key{markdownRenderers}{dlDefinitionEnd}{%
-  \renewcommand\markdownRendererDlDefinitionEnd{#1}}%
-\define@key{markdownRenderers}{dlEnd}{%
-  \renewcommand\markdownRendererDlEnd{#1}}%
-\define@key{markdownRenderers}{dlEndTight}{%
-  \renewcommand\markdownRendererDlEndTight{#1}}%
-\define@key{markdownRenderers}{emphasis}{%
-  \renewcommand\markdownRendererEmphasis[1]{#1}}%
-\define@key{markdownRenderers}{strongEmphasis}{%
-  \renewcommand\markdownRendererStrongEmphasis[1]{#1}}%
-\define@key{markdownRenderers}{blockQuoteBegin}{%
-  \renewcommand\markdownRendererBlockQuoteBegin{#1}}%
-\define@key{markdownRenderers}{blockQuoteEnd}{%
-  \renewcommand\markdownRendererBlockQuoteEnd{#1}}%
-\define@key{markdownRenderers}{inputVerbatim}{%
-  \renewcommand\markdownRendererInputVerbatim[1]{#1}}%
-\define@key{markdownRenderers}{inputFencedCode}{%
-  \renewcommand\markdownRendererInputFencedCode[2]{#1}}%
-\define@key{markdownRenderers}{jekyllDataBoolean}{%
-  \renewcommand\markdownRendererJekyllDataBoolean[2]{#1}}%
-\define@key{markdownRenderers}{jekyllDataEmpty}{%
-  \renewcommand\markdownRendererJekyllDataEmpty[1]{#1}}%
-\define@key{markdownRenderers}{jekyllDataNumber}{%
-  \renewcommand\markdownRendererJekyllDataNumber[2]{#1}}%
-\define@key{markdownRenderers}{jekyllDataString}{%
-  \renewcommand\markdownRendererJekyllDataString[2]{#1}}%
-\define@key{markdownRenderers}{jekyllDataBegin}{%
-  \renewcommand\markdownRendererJekyllDataBegin{#1}}%
-\define@key{markdownRenderers}{jekyllDataEnd}{%
-  \renewcommand\markdownRendererJekyllDataEnd{#1}}%
-\define@key{markdownRenderers}{jekyllDataSequenceBegin}{%
-  \renewcommand\markdownRendererJekyllDataSequenceBegin[2]{#1}}%
-\define@key{markdownRenderers}{jekyllDataSequenceEnd}{%
-  \renewcommand\markdownRendererJekyllDataSequenceEnd{#1}}%
-\define@key{markdownRenderers}{jekyllDataMappingBegin}{%
-  \renewcommand\markdownRendererJekyllDataMappingBegin[2]{#1}}%
-\define@key{markdownRenderers}{jekyllDataMappingEnd}{%
-  \renewcommand\markdownRendererJekyllDataMappingEnd{#1}}%
-\define@key{markdownRenderers}{headingOne}{%
-  \renewcommand\markdownRendererHeadingOne[1]{#1}}%
-\define@key{markdownRenderers}{headingTwo}{%
-  \renewcommand\markdownRendererHeadingTwo[1]{#1}}%
-\define@key{markdownRenderers}{headingThree}{%
-  \renewcommand\markdownRendererHeadingThree[1]{#1}}%
-\define@key{markdownRenderers}{headingFour}{%
-  \renewcommand\markdownRendererHeadingFour[1]{#1}}%
-\define@key{markdownRenderers}{headingFive}{%
-  \renewcommand\markdownRendererHeadingFive[1]{#1}}%
-\define@key{markdownRenderers}{headingSix}{%
-  \renewcommand\markdownRendererHeadingSix[1]{#1}}%
-\define@key{markdownRenderers}{horizontalRule}{%
-  \renewcommand\markdownRendererHorizontalRule{#1}}%
-\define@key{markdownRenderers}{footnote}{%
-  \renewcommand\markdownRendererFootnote[1]{#1}}%
-\define@key{markdownRenderers}{cite}{%
-  \renewcommand\markdownRendererCite[1]{#1}}%
-\define@key{markdownRenderers}{textCite}{%
-  \renewcommand\markdownRendererTextCite[1]{#1}}%
-\define@key{markdownRenderers}{table}{%
-  \renewcommand\markdownRendererTable[3]{#1}}%
-\define@key{markdownRenderers}{inlineHtmlComment}{%
-  \renewcommand\markdownRendererInlineHtmlComment[1]{#1}}%
-\define@key{markdownRenderers}{blockHtmlCommentBegin}{%
-  \renewcommand\markdownRendererBlockHtmlCommentBegin{#1}}%
-\define@key{markdownRenderers}{blockHtmlCommentEnd}{%
-  \renewcommand\markdownRendererBlockHtmlCommentEnd{#1}}%
-\define@key{markdownRenderers}{inlineHtmlTag}{%
-  \renewcommand\markdownRendererInlineHtmlTag[1]{#1}}%
-\define@key{markdownRenderers}{inputBlockHtmlElement}{%
-  \renewcommand\markdownRendererInputBlockHtmlElement[1]{#1}}%
-\define@key{markdownRenderers}{tickedBox}{%
-  \renewcommand\markdownRendererTickedBox{#1}}%
-\define@key{markdownRenderers}{halfTickedBox}{%
-  \renewcommand\markdownRendererHalfTickedBox{#1}}%
-\define@key{markdownRenderers}{untickedBox}{%
-  \renewcommand\markdownRendererUntickedBox{#1}}%
+\ExplSyntaxOn
+\cs_new:Nn \@@_latex_define_renderers:
+  {
+    \seq_map_function:NN
+      \g_@@_renderers_seq
+      \@@_latex_define_renderer:n
+  }
+\cs_new:Nn \@@_latex_define_renderer:n
+  {
+    \tl_set:Nn
+      \l_tmpb_tl
+%     TODO: Replace with \str_uppercase:n in TeX Live 2020.
+      { \str_upper_case:n { #1 } }
+    \tl_set:Nx
+      \l_tmpa_tl
+      {
+        markdownRenderer
+        \tl_head:f { \l_tmpb_tl }
+        \tl_tail:n { #1 }
+      }
+    \prop_get:NnN
+      \g_@@_renderer_arities_prop
+      { #1 }
+      \l_tmpb_tl
+    \@@_latex_define_renderer:ncV
+      { #1 }
+      { \l_tmpa_tl }
+      \l_tmpb_tl
+  }
+\cs_new:Nn \@@_latex_define_renderer:nNn
+  {
+    \define@key
+      { markdownRenderers }
+      { #1 }
+      {
+        \cs_generate_from_arg_count:NNnn
+          #2
+          \cs_set:Npn
+          { #3 }
+          { ##1 }
+      }
+  }
+\cs_generate_variant:Nn
+  \@@_latex_define_renderer:nNn
+  { ncV }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -21833,6 +21711,18 @@ end
 \def\markdownVersionSpace{ }%
 \ProvidesPackage{markdown}[\markdownLastModified\markdownVersionSpace v%
   \markdownVersion\markdownVersionSpace markdown renderer]%
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Use reflection to define the `renderers` and `rendererPrototypes` keys of
+% \mref{markdownSetup} as well as the keys that correspond to Lua options.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\ExplSyntaxOn
+\@@_latex_define_renderers:
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 % \begin{markdown}
