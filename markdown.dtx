@@ -15032,174 +15032,53 @@ The following ordered list will be preceded by roman numerals:
 %
 % \end{markdown}
 %  \begin{macrocode}
-\define@key{markdownRendererPrototypes}{attributeIdentifier}{%
-  \renewcommand\markdownRendererAttributeIdentifierPrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{attributeClassName}{%
-  \renewcommand\markdownRendererAttributeClassNamePrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{attributeKeyValue}{%
-  \renewcommand\markdownRendererAttributeKeyValuePrototype[2]{#1}}%
-\define@key{markdownRendererPrototypes}{documentBegin}{%
-  \renewcommand\markdownRendererDocumentBeginPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{documentEnd}{%
-  \renewcommand\markdownRendererDocumentEndPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{interblockSeparator}{%
-  \renewcommand\markdownRendererInterblockSeparatorPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{lineBreak}{%
-  \renewcommand\markdownRendererLineBreakPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{ellipsis}{%
-  \renewcommand\markdownRendererEllipsisPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{headerAttributeContextBegin}{%
-  \renewcommand\markdownRendererHeaderAttributeContextBeginPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{headerAttributeContextEnd}{%
-  \renewcommand\markdownRendererHeaderAttributeContextEndPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{nbsp}{%
-  \renewcommand\markdownRendererNbspPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{leftBrace}{%
-  \renewcommand\markdownRendererLeftBracePrototype{#1}}%
-\define@key{markdownRendererPrototypes}{rightBrace}{%
-  \renewcommand\markdownRendererRightBracePrototype{#1}}%
-\define@key{markdownRendererPrototypes}{dollarSign}{%
-  \renewcommand\markdownRendererDollarSignPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{percentSign}{%
-  \renewcommand\markdownRendererPercentSignPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{ampersand}{%
-  \renewcommand\markdownRendererAmpersandPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{underscore}{%
-  \renewcommand\markdownRendererUnderscorePrototype{#1}}%
-\define@key{markdownRendererPrototypes}{hash}{%
-  \renewcommand\markdownRendererHashPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{circumflex}{%
-  \renewcommand\markdownRendererCircumflexPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{backslash}{%
-  \renewcommand\markdownRendererBackslashPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{tilde}{%
-  \renewcommand\markdownRendererTildePrototype{#1}}%
-\define@key{markdownRendererPrototypes}{pipe}{%
-  \renewcommand\markdownRendererPipePrototype{#1}}%
-\define@key{markdownRendererPrototypes}{codeSpan}{%
-  \renewcommand\markdownRendererCodeSpanPrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{link}{%
-  \renewcommand\markdownRendererLinkPrototype[4]{#1}}%
-\define@key{markdownRendererPrototypes}{contentBlock}{%
-  \renewcommand\markdownRendererContentBlockPrototype[4]{#1}}%
-\define@key{markdownRendererPrototypes}{contentBlockOnlineImage}{%
-  \renewcommand\markdownRendererContentBlockOnlineImagePrototype[4]{#1}}%
-\define@key{markdownRendererPrototypes}{contentBlockCode}{%
-  \renewcommand\markdownRendererContentBlockCodePrototype[5]{#1}}%
-\define@key{markdownRendererPrototypes}{image}{%
-  \renewcommand\markdownRendererImagePrototype[4]{#1}}%
-\define@key{markdownRendererPrototypes}{ulBegin}{%
-  \renewcommand\markdownRendererUlBeginPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{ulBeginTight}{%
-  \renewcommand\markdownRendererUlBeginTightPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{ulItem}{%
-  \renewcommand\markdownRendererUlItemPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{ulItemEnd}{%
-  \renewcommand\markdownRendererUlItemEndPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{ulEnd}{%
-  \renewcommand\markdownRendererUlEndPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{ulEndTight}{%
-  \renewcommand\markdownRendererUlEndTightPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{olBegin}{%
-  \renewcommand\markdownRendererOlBeginPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{olBeginTight}{%
-  \renewcommand\markdownRendererOlBeginTightPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{olItem}{%
-  \renewcommand\markdownRendererOlItemPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{olItemWithNumber}{%
-  \renewcommand\markdownRendererOlItemWithNumberPrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{olItemEnd}{%
-  \renewcommand\markdownRendererOlItemEndPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{olEnd}{%
-  \renewcommand\markdownRendererOlEndPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{olEndTight}{%
-  \renewcommand\markdownRendererOlEndTightPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{dlBegin}{%
-  \renewcommand\markdownRendererDlBeginPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{dlBeginTight}{%
-  \renewcommand\markdownRendererDlBeginTightPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{dlItem}{%
-  \renewcommand\markdownRendererDlItemPrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{dlItemEnd}{%
-  \renewcommand\markdownRendererDlItemEndPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{dlDefinitionBegin}{%
-  \renewcommand\markdownRendererDlDefinitionBeginPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{dlDefinitionEnd}{%
-  \renewcommand\markdownRendererDlDefinitionEndPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{dlEnd}{%
-  \renewcommand\markdownRendererDlEndPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{dlEndTight}{%
-  \renewcommand\markdownRendererDlEndTightPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{emphasis}{%
-  \renewcommand\markdownRendererEmphasisPrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{strongEmphasis}{%
-  \renewcommand\markdownRendererStrongEmphasisPrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{blockQuoteBegin}{%
-  \renewcommand\markdownRendererBlockQuoteBeginPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{blockQuoteEnd}{%
-  \renewcommand\markdownRendererBlockQuoteEndPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{inputVerbatim}{%
-  \renewcommand\markdownRendererInputVerbatimPrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{inputFencedCode}{%
-  \renewcommand\markdownRendererInputFencedCodePrototype[2]{#1}}%
-\define@key{markdownRendererPrototypes}{jekyllDataBoolean}{%
-  \renewcommand\markdownRendererJekyllDataBooleanPrototype[2]{#1}}%
-\define@key{markdownRendererPrototypes}{jekyllDataEmpty}{%
-  \renewcommand\markdownRendererJekyllDataEmptyPrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{jekyllDataNumber}{%
-  \renewcommand\markdownRendererJekyllDataNumberPrototype[2]{#1}}%
-\define@key{markdownRendererPrototypes}{jekyllDataString}{%
-  \renewcommand\markdownRendererJekyllDataStringPrototype[2]{#1}}%
-\define@key{markdownRendererPrototypes}{jekyllDataBegin}{%
-  \renewcommand\markdownRendererJekyllDataBeginPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{jekyllDataEnd}{%
-  \renewcommand\markdownRendererJekyllDataEndPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{jekyllDataSequenceBegin}{%
-  \renewcommand\markdownRendererJekyllDataSequenceBeginPrototype[2]{#1}}%
-\define@key{markdownRendererPrototypes}{jekyllDataSequenceEnd}{%
-  \renewcommand\markdownRendererJekyllDataSequenceEndPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{jekyllDataMappingBegin}{%
-  \renewcommand\markdownRendererJekyllDataMappingBeginPrototype[2]{#1}}%
-\define@key{markdownRendererPrototypes}{jekyllDataMappingEnd}{%
-  \renewcommand\markdownRendererJekyllDataMappingEndPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{headingOne}{%
-  \renewcommand\markdownRendererHeadingOnePrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{headingTwo}{%
-  \renewcommand\markdownRendererHeadingTwoPrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{headingThree}{%
-  \renewcommand\markdownRendererHeadingThreePrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{headingFour}{%
-  \renewcommand\markdownRendererHeadingFourPrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{headingFive}{%
-  \renewcommand\markdownRendererHeadingFivePrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{headingSix}{%
-  \renewcommand\markdownRendererHeadingSixPrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{horizontalRule}{%
-  \renewcommand\markdownRendererHorizontalRulePrototype{#1}}%
-\define@key{markdownRendererPrototypes}{footnote}{%
-  \renewcommand\markdownRendererFootnotePrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{cite}{%
-  \renewcommand\markdownRendererCitePrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{textCite}{%
-  \renewcommand\markdownRendererTextCitePrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{table}{%
-  \renewcommand\markdownRendererTablePrototype[3]{#1}}%
-\define@key{markdownRendererPrototypes}{inlineHtmlComment}{%
-  \renewcommand\markdownRendererInlineHtmlCommentPrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{blockHtmlCommentBegin}{%
-  \renewcommand\markdownRendererBlockHtmlCommentBeginPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{blockHtmlCommentEnd}{%
-  \renewcommand\markdownRendererBlockHtmlCommentEndPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{inlineHtmlTag}{%
-  \renewcommand\markdownRendererInlineHtmlTagPrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{inputBlockHtmlElement}{%
-  \renewcommand\markdownRendererInputBlockHtmlElementPrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{tickedBox}{%
-  \renewcommand\markdownRendererTickedBoxPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{halfTickedBox}{%
-  \renewcommand\markdownRendererHalfTickedBoxPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{untickedBox}{%
-  \renewcommand\markdownRendererUntickedBoxPrototype{#1}}%
+\ExplSyntaxOn
+\cs_new:Nn \@@_latex_define_renderer_prototypes:
+  {
+    \seq_map_function:NN
+      \g_@@_renderers_seq
+      \@@_latex_define_renderer_prototype:n
+  }
+\cs_new:Nn \@@_latex_define_renderer_prototype:n
+  {
+    \tl_set:Nn
+      \l_tmpb_tl
+%     TODO: Replace with \str_uppercase:n in TeX Live 2020.
+      { \str_upper_case:n { #1 } }
+    \tl_set:Nx
+      \l_tmpa_tl
+      {
+        markdownRenderer
+        \tl_head:f { \l_tmpb_tl }
+        \tl_tail:n { #1 }
+        Prototype
+      }
+    \prop_get:NnN
+      \g_@@_renderer_arities_prop
+      { #1 }
+      \l_tmpb_tl
+    \@@_latex_define_renderer_prototype:ncV
+      { #1 }
+      { \l_tmpa_tl }
+      \l_tmpb_tl
+  }
+\cs_new:Nn \@@_latex_define_renderer_prototype:nNn
+  {
+    \define@key
+      { markdownRendererPrototypes }
+      { #1 }
+      {
+        \cs_generate_from_arg_count:NNnn
+          #2
+          \cs_set:Npn
+          { #3 }
+          { ##1 }
+      }
+  }
+\cs_generate_variant:Nn
+  \@@_latex_define_renderer_prototype:nNn
+  { ncV }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -21722,6 +21601,7 @@ end
 %  \begin{macrocode}
 \ExplSyntaxOn
 \@@_latex_define_renderers:
+\@@_latex_define_renderer_prototypes:
 \ExplSyntaxOff
 %    \end{macrocode}
 % \par
