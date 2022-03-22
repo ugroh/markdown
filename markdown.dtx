@@ -8418,6 +8418,38 @@ In this section, I will describe the individual token renderers.
 % macros are intended to be redefined by the user who is typesetting a
 % document. By default, they point to the corresponding prototypes (see Section
 % <#sec:texrendererprototypes>).
+%
+% \end{markdown}
+%
+% \iffalse
+%</manual-tokens>
+%<*tex>
+% \fi
+% \begin{markdown}
+%
+% To enable the enumeration of token renderers, we will maintain the
+% \mdef{g_\@\@_renderers_seq} sequence.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\ExplSyntaxOn
+\seq_new:N \g_@@_renderers_seq
+%    \end{macrocode}
+% \begin{markdown}
+%
+% To enable the reflection of token renderers and their parameters, we will
+% maintain the \mdef{g_\@\@_renderer_arities_prop} property list.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\prop_new:N \g_@@_renderer_arities_prop
+\ExplSyntaxOff
+%    \end{macrocode}
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+% \begin{markdown}
 
 #### Tickbox Renderers
 The macros named \mdef{markdownRendererTickedBox},
@@ -8494,10 +8526,37 @@ following text:
 %  \begin{macrocode}
 \def\markdownRendererTickedBox{%
   \markdownRendererTickedBoxPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { tickedBox }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { tickedBox }
+  { 0 }
+\ExplSyntaxOff
 \def\markdownRendererHalfTickedBox{%
   \markdownRendererHalfTickedBoxPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { halfTickedBox }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { halfTickedBox }
+  { 0 }
+\ExplSyntaxOff
 \def\markdownRendererUntickedBox{%
   \markdownRendererUntickedBoxPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { untickedBox }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { untickedBox }
+  { 0 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -8631,8 +8690,26 @@ following text:
 %  \begin{macrocode}
 \def\markdownRendererDocumentBegin{%
   \markdownRendererDocumentBeginPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { documentBegin }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { documentBegin }
+  { 0 }
+\ExplSyntaxOff
 \def\markdownRendererDocumentEnd{%
   \markdownRendererDocumentEndPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { documentEnd }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { documentEnd }
+  { 0 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -8758,6 +8835,15 @@ following text:
 %  \begin{macrocode}
 \def\markdownRendererInterblockSeparator{%
   \markdownRendererInterblockSeparatorPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { interblockSeparator }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { interblockSeparator }
+  { 0 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -8895,6 +8981,15 @@ following text:
 %  \begin{macrocode}
 \def\markdownRendererLineBreak{%
   \markdownRendererLineBreakPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { lineBreak }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { lineBreak }
+  { 0 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -8997,6 +9092,15 @@ following text:
 %  \begin{macrocode}
 \def\markdownRendererEllipsis{%
   \markdownRendererEllipsisPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { ellipsis }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { ellipsis }
+  { 0 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -9073,6 +9177,15 @@ following text:
 %  \begin{macrocode}
 \def\markdownRendererNbsp{%
   \markdownRendererNbspPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { nbsp }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { nbsp }
+  { 0 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -9189,26 +9302,125 @@ following text, where the middot (`·`) denotes a non-breaking space:
 %  \begin{macrocode}
 \def\markdownRendererLeftBrace{%
   \markdownRendererLeftBracePrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { leftBrace }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { leftBrace }
+  { 0 }
+\ExplSyntaxOff
 \def\markdownRendererRightBrace{%
   \markdownRendererRightBracePrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { rightBrace }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { rightBrace }
+  { 0 }
+\ExplSyntaxOff
 \def\markdownRendererDollarSign{%
   \markdownRendererDollarSignPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { dollarSign }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { dollarSign }
+  { 0 }
+\ExplSyntaxOff
 \def\markdownRendererPercentSign{%
   \markdownRendererPercentSignPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { percentSign }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { percentSign }
+  { 0 }
+\ExplSyntaxOff
 \def\markdownRendererAmpersand{%
   \markdownRendererAmpersandPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { ampersand }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { ampersand }
+  { 0 }
+\ExplSyntaxOff
 \def\markdownRendererUnderscore{%
   \markdownRendererUnderscorePrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { underscore }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { underscore }
+  { 0 }
+\ExplSyntaxOff
 \def\markdownRendererHash{%
   \markdownRendererHashPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { hash }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { hash }
+  { 0 }
+\ExplSyntaxOff
 \def\markdownRendererCircumflex{%
   \markdownRendererCircumflexPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { circumflex }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { circumflex }
+  { 0 }
+\ExplSyntaxOff
 \def\markdownRendererBackslash{%
   \markdownRendererBackslashPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { backslash }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { backslash }
+  { 0 }
+\ExplSyntaxOff
 \def\markdownRendererTilde{%
   \markdownRendererTildePrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { tilde }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { tilde }
+  { 0 }
+\ExplSyntaxOff
 \def\markdownRendererPipe{%
   \markdownRendererPipePrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { pipe }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { pipe }
+  { 0 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -9345,6 +9557,15 @@ following text:
 %  \begin{macrocode}
 \def\markdownRendererCodeSpan{%
   \markdownRendererCodeSpanPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { codeSpan }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { codeSpan }
+  { 1 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -9460,6 +9681,15 @@ following text:
 %  \begin{macrocode}
 \def\markdownRendererLink{%
   \markdownRendererLinkPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { link }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { link }
+  { 4 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -9541,6 +9771,15 @@ that the \TeX{} engine has shell access.
 %  \begin{macrocode}
 \def\markdownRendererImage{%
   \markdownRendererImagePrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { image }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { image }
+  { 4 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -9569,6 +9808,15 @@ and the title of the content block.
 %  \begin{macrocode}
 \def\markdownRendererContentBlock{%
   \markdownRendererContentBlockPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { contentBlock }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { contentBlock }
+  { 4 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -9593,6 +9841,15 @@ as \mref{markdownRendererContentBlock}.
 %  \begin{macrocode}
 \def\markdownRendererContentBlockOnlineImage{%
   \markdownRendererContentBlockOnlineImagePrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { contentBlockOnlineImage }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { contentBlockOnlineImage }
+  { 4 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -9779,6 +10036,15 @@ following text:
 %  \begin{macrocode}
 \def\markdownRendererContentBlockCode{%
   \markdownRendererContentBlockCodePrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { contentBlockCode }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { contentBlockCode }
+  { 5 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -9804,6 +10070,15 @@ list is not tight). The macro receives no arguments.
 %  \begin{macrocode}
 \def\markdownRendererUlBegin{%
   \markdownRendererUlBeginPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { ulBegin }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { ulBegin }
+  { 0 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -9829,6 +10104,15 @@ is `false`. The macro receives no arguments.
 %  \begin{macrocode}
 \def\markdownRendererUlBeginTight{%
   \markdownRendererUlBeginTightPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { ulBeginTight }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { ulBeginTight }
+  { 0 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -9852,6 +10136,15 @@ list. The macro receives no arguments.
 %  \begin{macrocode}
 \def\markdownRendererUlItem{%
   \markdownRendererUlItemPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { ulItem }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { ulItem }
+  { 0 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -9875,6 +10168,15 @@ bulleted list. The macro receives no arguments.
 %  \begin{macrocode}
 \def\markdownRendererUlItemEnd{%
   \markdownRendererUlItemEndPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { ulItemEnd }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { ulItemEnd }
+  { 0 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -9899,6 +10201,15 @@ tight). The macro receives no arguments.
 %  \begin{macrocode}
 \def\markdownRendererUlEnd{%
   \markdownRendererUlEndPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { ulEnd }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { ulEnd }
+  { 0 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -10126,6 +10437,15 @@ following text:
 %  \begin{macrocode}
 \def\markdownRendererUlEndTight{%
   \markdownRendererUlEndTightPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { ulEndTight }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { ulEndTight }
+  { 0 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -10151,6 +10471,15 @@ list is not tight). The macro receives no arguments.
 %  \begin{macrocode}
 \def\markdownRendererOlBegin{%
   \markdownRendererOlBeginPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { olBegin }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { olBegin }
+  { 0 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -10176,6 +10505,15 @@ option is `false`. The macro receives no arguments.
 %  \begin{macrocode}
 \def\markdownRendererOlBeginTight{%
   \markdownRendererOlBeginTightPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { olBeginTight }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { olBeginTight }
+  { 0 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -10200,6 +10538,15 @@ This macro will only be produced, when the \Opt{startNumber} option is
 %  \begin{macrocode}
 \def\markdownRendererOlItem{%
   \markdownRendererOlItemPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { olItem }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { olItem }
+  { 0 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -10223,6 +10570,15 @@ an ordered list. The macro receives no arguments.
 %  \begin{macrocode}
 \def\markdownRendererOlItemEnd{%
   \markdownRendererOlItemEndPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { olItemEnd }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { olItemEnd }
+  { 0 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -10248,6 +10604,15 @@ corresponds to the item number.
 %  \begin{macrocode}
 \def\markdownRendererOlItemWithNumber{%
   \markdownRendererOlItemWithNumberPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { olItemWithNumber }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { olItemWithNumber }
+  { 1 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -10272,6 +10637,15 @@ tight). The macro receives no arguments.
 %  \begin{macrocode}
 \def\markdownRendererOlEnd{%
   \markdownRendererOlEndPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { olEnd }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { olEnd }
+  { 0 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -10551,6 +10925,15 @@ following text:
 %  \begin{macrocode}
 \def\markdownRendererOlEndTight{%
   \markdownRendererOlEndTightPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { olEndTight }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { olEndTight }
+  { 0 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -10579,6 +10962,15 @@ list is not tight). The macro receives no arguments.
 %  \begin{macrocode}
 \def\markdownRendererDlBegin{%
   \markdownRendererDlBeginPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { dlBegin }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { dlBegin }
+  { 0 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -10604,6 +10996,15 @@ list is not tight). This macro will only be produced, when the
 %  \begin{macrocode}
 \def\markdownRendererDlBeginTight{%
   \markdownRendererDlBeginTightPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { dlBeginTight }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { dlBeginTight }
+  { 0 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -10628,6 +11029,15 @@ being defined.
 %  \begin{macrocode}
 \def\markdownRendererDlItem{%
   \markdownRendererDlItemPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { dlItem }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { dlItem }
+  { 1 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -10651,6 +11061,15 @@ definitions for a single term.
 %  \begin{macrocode}
 \def\markdownRendererDlItemEnd{%
   \markdownRendererDlItemEndPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { dlItemEnd }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { dlItemEnd }
+  { 0 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -10675,6 +11094,15 @@ a single term.
 %  \begin{macrocode}
 \def\markdownRendererDlDefinitionBegin{%
   \markdownRendererDlDefinitionBeginPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { dlDefinitionBegin }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { dlDefinitionBegin }
+  { 0 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -10699,6 +11127,15 @@ single term.
 %  \begin{macrocode}
 \def\markdownRendererDlDefinitionEnd{%
   \markdownRendererDlDefinitionEndPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { dlDefinitionEnd }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { dlDefinitionEnd }
+  { 0 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -10723,6 +11160,15 @@ tight). The macro receives no arguments.
 %  \begin{macrocode}
 \def\markdownRendererDlEnd{%
   \markdownRendererDlEndPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { dlEnd }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { dlEnd }
+  { 0 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -11080,6 +11526,15 @@ following text:
 %  \begin{macrocode}
 \def\markdownRendererDlEndTight{%
   \markdownRendererDlEndTightPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { dlEndTight }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { dlEndTight }
+  { 0 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -11191,6 +11646,15 @@ following text:
 %  \begin{macrocode}
 \def\markdownRendererEmphasis{%
   \markdownRendererEmphasisPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { emphasis }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { emphasis }
+  { 1 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -11215,6 +11679,15 @@ corresponds to the emphasized span of text.
 %  \begin{macrocode}
 \def\markdownRendererStrongEmphasis{%
   \markdownRendererStrongEmphasisPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { strongEmphasis }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { strongEmphasis }
+  { 1 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -11239,6 +11712,15 @@ a block quote. The macro receives no arguments.
 %  \begin{macrocode}
 \def\markdownRendererBlockQuoteBegin{%
   \markdownRendererBlockQuoteBeginPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { blockQuoteBegin }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { blockQuoteBegin }
+  { 0 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -11375,6 +11857,15 @@ following text:
 %  \begin{macrocode}
 \def\markdownRendererBlockQuoteEnd{%
   \markdownRendererBlockQuoteEndPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { blockQuoteEnd }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { blockQuoteEnd }
+  { 0 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -11400,6 +11891,15 @@ filename of a file contaning the code block contents.
 %  \begin{macrocode}
 \def\markdownRendererInputVerbatim{%
   \markdownRendererInputVerbatimPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { inputVerbatim }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { inputVerbatim }
+  { 1 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -11507,6 +12007,15 @@ following text except for the filename, which may differ:
 %  \begin{macrocode}
 \def\markdownRendererInputFencedCode{%
   \markdownRendererInputFencedCodePrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { inputFencedCode }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { inputFencedCode }
+  { 2 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -11531,6 +12040,15 @@ option is enabled. The macro receives no arguments.
 %  \begin{macrocode}
 \def\markdownRendererJekyllDataBegin{%
   \markdownRendererJekyllDataBeginPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { jekyllDataBegin }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { jekyllDataBegin }
+  { 0 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -11555,6 +12073,15 @@ The \mdef{markdownRendererJekyllDataEnd} macro represents the end of a
 %  \begin{macrocode}
 \def\markdownRendererJekyllDataEnd{%
   \markdownRendererJekyllDataEndPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { jekyllDataEnd }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { jekyllDataEnd }
+  { 0 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -11581,6 +12108,15 @@ arguments: the scalar key in the parent structure, cast to a string following
 %  \begin{macrocode}
 \def\markdownRendererJekyllDataMappingBegin{%
   \markdownRendererJekyllDataMappingBeginPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { jekyllDataMappingBegin }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { jekyllDataMappingBegin }
+  { 2 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -11605,6 +12141,15 @@ when the \Opt{jekyllData} option is enabled. The macro receives no arguments.
 %  \begin{macrocode}
 \def\markdownRendererJekyllDataMappingEnd{%
   \markdownRendererJekyllDataMappingEndPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { jekyllDataMappingEnd }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { jekyllDataMappingEnd }
+  { 0 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -11631,6 +12176,15 @@ arguments: the scalar key in the parent structure, cast to a string following
 %  \begin{macrocode}
 \def\markdownRendererJekyllDataSequenceBegin{%
   \markdownRendererJekyllDataSequenceBeginPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { jekyllDataSequenceBegin }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { jekyllDataSequenceBegin }
+  { 2 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -11655,6 +12209,15 @@ when the \Opt{jekyllData} option is enabled. The macro receives no arguments.
 %  \begin{macrocode}
 \def\markdownRendererJekyllDataSequenceEnd{%
   \markdownRendererJekyllDataSequenceEndPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { jekyllDataSequenceEnd }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { jekyllDataSequenceEnd }
+  { 0 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -11681,6 +12244,15 @@ following \acro{yaml} serialization rules.
 %  \begin{macrocode}
 \def\markdownRendererJekyllDataBoolean{%
   \markdownRendererJekyllDataBooleanPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { jekyllDataBoolean }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { jekyllDataBoolean }
+  { 2 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -11707,6 +12279,15 @@ following \acro{yaml} serialization rules.
 %  \begin{macrocode}
 \def\markdownRendererJekyllDataNumber{%
   \markdownRendererJekyllDataNumberPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { jekyllDataNumber }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { jekyllDataNumber }
+  { 2 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -11733,6 +12314,15 @@ serialization rules, and the scalar value.
 %  \begin{macrocode}
 \def\markdownRendererJekyllDataString{%
   \markdownRendererJekyllDataStringPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { jekyllDataString }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { jekyllDataString }
+  { 2 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -11759,6 +12349,15 @@ serialization rules.
 %  \begin{macrocode}
 \def\markdownRendererJekyllDataEmpty{%
   \markdownRendererJekyllDataEmptyPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { jekyllDataEmpty }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { jekyllDataEmpty }
+  { 1 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -11877,6 +12476,15 @@ The macro receives a single argument that corresponds to the heading text.
 %  \begin{macrocode}
 \def\markdownRendererHeadingOne{%
   \markdownRendererHeadingOnePrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { headingOne }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { headingOne }
+  { 1 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -11901,6 +12509,15 @@ text.
 %  \begin{macrocode}
 \def\markdownRendererHeadingTwo{%
   \markdownRendererHeadingTwoPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { headingTwo }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { headingTwo }
+  { 1 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -11925,6 +12542,15 @@ text.
 %  \begin{macrocode}
 \def\markdownRendererHeadingThree{%
   \markdownRendererHeadingThreePrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { headingThree }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { headingThree }
+  { 1 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -11949,6 +12575,15 @@ text.
 %  \begin{macrocode}
 \def\markdownRendererHeadingFour{%
   \markdownRendererHeadingFourPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { headingFour }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { headingFour }
+  { 1 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -11973,6 +12608,15 @@ text.
 %  \begin{macrocode}
 \def\markdownRendererHeadingFive{%
   \markdownRendererHeadingFivePrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { headingFive }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { headingFive }
+  { 1 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -12098,6 +12742,15 @@ following text:
 %  \begin{macrocode}
 \def\markdownRendererHeadingSix{%
   \markdownRendererHeadingSixPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { headingSix }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { headingSix }
+  { 1 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -12217,6 +12870,15 @@ following text:
 %  \begin{macrocode}
 \def\markdownRendererHorizontalRule{%
   \markdownRendererHorizontalRulePrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { horizontalRule }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { horizontalRule }
+  { 0 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -12330,6 +12992,15 @@ following text:
 %  \begin{macrocode}
 \def\markdownRendererFootnote{%
   \markdownRendererFootnotePrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { footnote }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { footnote }
+  { 1 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -12418,6 +13089,15 @@ following text:
 %  \begin{macrocode}
 \def\markdownRendererCite{%
   \markdownRendererCitePrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { cite }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { cite }
+  { 1 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -12501,6 +13181,15 @@ following text:
 %  \begin{macrocode}
 \def\markdownRendererTextCite{%
   \markdownRendererTextCitePrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { textCite }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { textCite }
+  { 1 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -12619,6 +13308,15 @@ following text:
 %  \begin{macrocode}
 \def\markdownRendererTable{%
   \markdownRendererTablePrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { table }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { table }
+  { 3 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -12704,10 +13402,37 @@ The horizontal margins should contain the following text:
 %  \begin{macrocode}
 \def\markdownRendererInlineHtmlComment{%
   \markdownRendererInlineHtmlCommentPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { inlineHtmlComment }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { inlineHtmlComment }
+  { 1 }
+\ExplSyntaxOff
 \def\markdownRendererBlockHtmlCommentBegin{%
   \markdownRendererBlockHtmlCommentBeginPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { blockHtmlCommentBegin }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { blockHtmlCommentBegin }
+  { 0 }
+\ExplSyntaxOff
 \def\markdownRendererBlockHtmlCommentEnd{%
   \markdownRendererBlockHtmlCommentEndPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { blockHtmlCommentEnd }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { blockHtmlCommentEnd }
+  { 0 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -12776,8 +13501,26 @@ following body text:
 %  \begin{macrocode}
 \def\markdownRendererInlineHtmlTag{%
   \markdownRendererInlineHtmlTagPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { inlineHtmlTag }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { inlineHtmlTag }
+  { 1 }
+\ExplSyntaxOff
 \def\markdownRendererInputBlockHtmlElement{%
   \markdownRendererInputBlockHtmlElementPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { inputBlockHtmlElement }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { inputBlockHtmlElement }
+  { 1 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -12876,10 +13619,37 @@ following text:
 %  \begin{macrocode}
 \def\markdownRendererAttributeIdentifier{%
   \markdownRendererAttributeIdentifierPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { attributeIdentifier }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { attributeIdentifier }
+  { 1 }
+\ExplSyntaxOff
 \def\markdownRendererAttributeClassName{%
   \markdownRendererAttributeClassNamePrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { attributeClassName }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { attributeClassName }
+  { 1 }
+\ExplSyntaxOff
 \def\markdownRendererAttributeKeyValue{%
   \markdownRendererAttributeKeyValuePrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { attributeKeyValue }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { attributeKeyValue }
+  { 2 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -12964,8 +13734,26 @@ following text:
 %  \begin{macrocode}
 \def\markdownRendererHeaderAttributeContextBegin{%
   \markdownRendererHeaderAttributeContextBeginPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { headerAttributeContextBegin }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { headerAttributeContextBegin }
+  { 0 }
+\ExplSyntaxOff
 \def\markdownRendererHeaderAttributeContextEnd{%
   \markdownRendererHeaderAttributeContextEndPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { headerAttributeContextEnd }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { headerAttributeContextEnd }
+  { 0 }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 %
@@ -14173,174 +14961,52 @@ The following ordered list will be preceded by roman numerals:
 %
 % \end{markdown}
 %  \begin{macrocode}
-\define@key{markdownRenderers}{attributeIdentifier}{%
-  \renewcommand\markdownRendererAttributeIdentifier[1]{#1}}%
-\define@key{markdownRenderers}{attributeClassName}{%
-  \renewcommand\markdownRendererAttributeClassName[1]{#1}}%
-\define@key{markdownRenderers}{attributeKeyValue}{%
-  \renewcommand\markdownRendererAttributeKeyValue[2]{#1}}%
-\define@key{markdownRenderers}{documentBegin}{%
-  \renewcommand\markdownRendererDocumentBegin{#1}}%
-\define@key{markdownRenderers}{documentEnd}{%
-  \renewcommand\markdownRendererDocumentEnd{#1}}%
-\define@key{markdownRenderers}{interblockSeparator}{%
-  \renewcommand\markdownRendererInterblockSeparator{#1}}%
-\define@key{markdownRenderers}{lineBreak}{%
-  \renewcommand\markdownRendererLineBreak{#1}}%
-\define@key{markdownRenderers}{ellipsis}{%
-  \renewcommand\markdownRendererEllipsis{#1}}%
-\define@key{markdownRenderers}{headerAttributeContextBegin}{%
-  \renewcommand\markdownRendererHeaderAttributeContextBegin{#1}}%
-\define@key{markdownRenderers}{headerAttributeContextEnd}{%
-  \renewcommand\markdownRendererHeaderAttributeContextEnd{#1}}%
-\define@key{markdownRenderers}{nbsp}{%
-  \renewcommand\markdownRendererNbsp{#1}}%
-\define@key{markdownRenderers}{leftBrace}{%
-  \renewcommand\markdownRendererLeftBrace{#1}}%
-\define@key{markdownRenderers}{rightBrace}{%
-  \renewcommand\markdownRendererRightBrace{#1}}%
-\define@key{markdownRenderers}{dollarSign}{%
-  \renewcommand\markdownRendererDollarSign{#1}}%
-\define@key{markdownRenderers}{percentSign}{%
-  \renewcommand\markdownRendererPercentSign{#1}}%
-\define@key{markdownRenderers}{ampersand}{%
-  \renewcommand\markdownRendererAmpersand{#1}}%
-\define@key{markdownRenderers}{underscore}{%
-  \renewcommand\markdownRendererUnderscore{#1}}%
-\define@key{markdownRenderers}{hash}{%
-  \renewcommand\markdownRendererHash{#1}}%
-\define@key{markdownRenderers}{circumflex}{%
-  \renewcommand\markdownRendererCircumflex{#1}}%
-\define@key{markdownRenderers}{backslash}{%
-  \renewcommand\markdownRendererBackslash{#1}}%
-\define@key{markdownRenderers}{tilde}{%
-  \renewcommand\markdownRendererTilde{#1}}%
-\define@key{markdownRenderers}{pipe}{%
-  \renewcommand\markdownRendererPipe{#1}}%
-\define@key{markdownRenderers}{codeSpan}{%
-  \renewcommand\markdownRendererCodeSpan[1]{#1}}%
-\define@key{markdownRenderers}{link}{%
-  \renewcommand\markdownRendererLink[4]{#1}}%
-\define@key{markdownRenderers}{contentBlock}{%
-  \renewcommand\markdownRendererContentBlock[4]{#1}}%
-\define@key{markdownRenderers}{contentBlockOnlineImage}{%
-  \renewcommand\markdownRendererContentBlockOnlineImage[4]{#1}}%
-\define@key{markdownRenderers}{contentBlockCode}{%
-  \renewcommand\markdownRendererContentBlockCode[5]{#1}}%
-\define@key{markdownRenderers}{image}{%
-  \renewcommand\markdownRendererImage[4]{#1}}%
-\define@key{markdownRenderers}{ulBegin}{%
-  \renewcommand\markdownRendererUlBegin{#1}}%
-\define@key{markdownRenderers}{ulBeginTight}{%
-  \renewcommand\markdownRendererUlBeginTight{#1}}%
-\define@key{markdownRenderers}{ulItem}{%
-  \renewcommand\markdownRendererUlItem{#1}}%
-\define@key{markdownRenderers}{ulItemEnd}{%
-  \renewcommand\markdownRendererUlItemEnd{#1}}%
-\define@key{markdownRenderers}{ulEnd}{%
-  \renewcommand\markdownRendererUlEnd{#1}}%
-\define@key{markdownRenderers}{ulEndTight}{%
-  \renewcommand\markdownRendererUlEndTight{#1}}%
-\define@key{markdownRenderers}{olBegin}{%
-  \renewcommand\markdownRendererOlBegin{#1}}%
-\define@key{markdownRenderers}{olBeginTight}{%
-  \renewcommand\markdownRendererOlBeginTight{#1}}%
-\define@key{markdownRenderers}{olItem}{%
-  \renewcommand\markdownRendererOlItem{#1}}%
-\define@key{markdownRenderers}{olItemWithNumber}{%
-  \renewcommand\markdownRendererOlItemWithNumber[1]{#1}}%
-\define@key{markdownRenderers}{olItemEnd}{%
-  \renewcommand\markdownRendererOlItemEnd{#1}}%
-\define@key{markdownRenderers}{olEnd}{%
-  \renewcommand\markdownRendererOlEnd{#1}}%
-\define@key{markdownRenderers}{olEndTight}{%
-  \renewcommand\markdownRendererOlEndTight{#1}}%
-\define@key{markdownRenderers}{dlBegin}{%
-  \renewcommand\markdownRendererDlBegin{#1}}%
-\define@key{markdownRenderers}{dlBeginTight}{%
-  \renewcommand\markdownRendererDlBeginTight{#1}}%
-\define@key{markdownRenderers}{dlItem}{%
-  \renewcommand\markdownRendererDlItem[1]{#1}}%
-\define@key{markdownRenderers}{dlItemEnd}{%
-  \renewcommand\markdownRendererDlItemEnd{#1}}%
-\define@key{markdownRenderers}{dlDefinitionBegin}{%
-  \renewcommand\markdownRendererDlDefinitionBegin{#1}}%
-\define@key{markdownRenderers}{dlDefinitionEnd}{%
-  \renewcommand\markdownRendererDlDefinitionEnd{#1}}%
-\define@key{markdownRenderers}{dlEnd}{%
-  \renewcommand\markdownRendererDlEnd{#1}}%
-\define@key{markdownRenderers}{dlEndTight}{%
-  \renewcommand\markdownRendererDlEndTight{#1}}%
-\define@key{markdownRenderers}{emphasis}{%
-  \renewcommand\markdownRendererEmphasis[1]{#1}}%
-\define@key{markdownRenderers}{strongEmphasis}{%
-  \renewcommand\markdownRendererStrongEmphasis[1]{#1}}%
-\define@key{markdownRenderers}{blockQuoteBegin}{%
-  \renewcommand\markdownRendererBlockQuoteBegin{#1}}%
-\define@key{markdownRenderers}{blockQuoteEnd}{%
-  \renewcommand\markdownRendererBlockQuoteEnd{#1}}%
-\define@key{markdownRenderers}{inputVerbatim}{%
-  \renewcommand\markdownRendererInputVerbatim[1]{#1}}%
-\define@key{markdownRenderers}{inputFencedCode}{%
-  \renewcommand\markdownRendererInputFencedCode[2]{#1}}%
-\define@key{markdownRenderers}{jekyllDataBoolean}{%
-  \renewcommand\markdownRendererJekyllDataBoolean[2]{#1}}%
-\define@key{markdownRenderers}{jekyllDataEmpty}{%
-  \renewcommand\markdownRendererJekyllDataEmpty[1]{#1}}%
-\define@key{markdownRenderers}{jekyllDataNumber}{%
-  \renewcommand\markdownRendererJekyllDataNumber[2]{#1}}%
-\define@key{markdownRenderers}{jekyllDataString}{%
-  \renewcommand\markdownRendererJekyllDataString[2]{#1}}%
-\define@key{markdownRenderers}{jekyllDataBegin}{%
-  \renewcommand\markdownRendererJekyllDataBegin{#1}}%
-\define@key{markdownRenderers}{jekyllDataEnd}{%
-  \renewcommand\markdownRendererJekyllDataEnd{#1}}%
-\define@key{markdownRenderers}{jekyllDataSequenceBegin}{%
-  \renewcommand\markdownRendererJekyllDataSequenceBegin[2]{#1}}%
-\define@key{markdownRenderers}{jekyllDataSequenceEnd}{%
-  \renewcommand\markdownRendererJekyllDataSequenceEnd{#1}}%
-\define@key{markdownRenderers}{jekyllDataMappingBegin}{%
-  \renewcommand\markdownRendererJekyllDataMappingBegin[2]{#1}}%
-\define@key{markdownRenderers}{jekyllDataMappingEnd}{%
-  \renewcommand\markdownRendererJekyllDataMappingEnd{#1}}%
-\define@key{markdownRenderers}{headingOne}{%
-  \renewcommand\markdownRendererHeadingOne[1]{#1}}%
-\define@key{markdownRenderers}{headingTwo}{%
-  \renewcommand\markdownRendererHeadingTwo[1]{#1}}%
-\define@key{markdownRenderers}{headingThree}{%
-  \renewcommand\markdownRendererHeadingThree[1]{#1}}%
-\define@key{markdownRenderers}{headingFour}{%
-  \renewcommand\markdownRendererHeadingFour[1]{#1}}%
-\define@key{markdownRenderers}{headingFive}{%
-  \renewcommand\markdownRendererHeadingFive[1]{#1}}%
-\define@key{markdownRenderers}{headingSix}{%
-  \renewcommand\markdownRendererHeadingSix[1]{#1}}%
-\define@key{markdownRenderers}{horizontalRule}{%
-  \renewcommand\markdownRendererHorizontalRule{#1}}%
-\define@key{markdownRenderers}{footnote}{%
-  \renewcommand\markdownRendererFootnote[1]{#1}}%
-\define@key{markdownRenderers}{cite}{%
-  \renewcommand\markdownRendererCite[1]{#1}}%
-\define@key{markdownRenderers}{textCite}{%
-  \renewcommand\markdownRendererTextCite[1]{#1}}%
-\define@key{markdownRenderers}{table}{%
-  \renewcommand\markdownRendererTable[3]{#1}}%
-\define@key{markdownRenderers}{inlineHtmlComment}{%
-  \renewcommand\markdownRendererInlineHtmlComment[1]{#1}}%
-\define@key{markdownRenderers}{blockHtmlCommentBegin}{%
-  \renewcommand\markdownRendererBlockHtmlCommentBegin{#1}}%
-\define@key{markdownRenderers}{blockHtmlCommentEnd}{%
-  \renewcommand\markdownRendererBlockHtmlCommentEnd{#1}}%
-\define@key{markdownRenderers}{inlineHtmlTag}{%
-  \renewcommand\markdownRendererInlineHtmlTag[1]{#1}}%
-\define@key{markdownRenderers}{inputBlockHtmlElement}{%
-  \renewcommand\markdownRendererInputBlockHtmlElement[1]{#1}}%
-\define@key{markdownRenderers}{tickedBox}{%
-  \renewcommand\markdownRendererTickedBox{#1}}%
-\define@key{markdownRenderers}{halfTickedBox}{%
-  \renewcommand\markdownRendererHalfTickedBox{#1}}%
-\define@key{markdownRenderers}{untickedBox}{%
-  \renewcommand\markdownRendererUntickedBox{#1}}%
+\ExplSyntaxOn
+\cs_new:Nn \@@_latex_define_renderers:
+  {
+    \seq_map_function:NN
+      \g_@@_renderers_seq
+      \@@_latex_define_renderer:n
+  }
+\cs_new:Nn \@@_latex_define_renderer:n
+  {
+    \tl_set:Nn
+      \l_tmpb_tl
+%     TODO: Replace with \str_uppercase:n in TeX Live 2020.
+      { \str_upper_case:n { #1 } }
+    \tl_set:Nx
+      \l_tmpa_tl
+      {
+        markdownRenderer
+        \tl_head:f { \l_tmpb_tl }
+        \tl_tail:n { #1 }
+      }
+    \prop_get:NnN
+      \g_@@_renderer_arities_prop
+      { #1 }
+      \l_tmpb_tl
+    \@@_latex_define_renderer:ncV
+      { #1 }
+      { \l_tmpa_tl }
+      \l_tmpb_tl
+  }
+\cs_new:Nn \@@_latex_define_renderer:nNn
+  {
+    \define@key
+      { markdownRenderers }
+      { #1 }
+      {
+        \cs_generate_from_arg_count:NNnn
+          #2
+          \cs_set:Npn
+          { #3 }
+          { ##1 }
+      }
+  }
+\cs_generate_variant:Nn
+  \@@_latex_define_renderer:nNn
+  { ncV }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -14366,174 +15032,53 @@ The following ordered list will be preceded by roman numerals:
 %
 % \end{markdown}
 %  \begin{macrocode}
-\define@key{markdownRendererPrototypes}{attributeIdentifier}{%
-  \renewcommand\markdownRendererAttributeIdentifierPrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{attributeClassName}{%
-  \renewcommand\markdownRendererAttributeClassNamePrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{attributeKeyValue}{%
-  \renewcommand\markdownRendererAttributeKeyValuePrototype[2]{#1}}%
-\define@key{markdownRendererPrototypes}{documentBegin}{%
-  \renewcommand\markdownRendererDocumentBeginPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{documentEnd}{%
-  \renewcommand\markdownRendererDocumentEndPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{interblockSeparator}{%
-  \renewcommand\markdownRendererInterblockSeparatorPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{lineBreak}{%
-  \renewcommand\markdownRendererLineBreakPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{ellipsis}{%
-  \renewcommand\markdownRendererEllipsisPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{headerAttributeContextBegin}{%
-  \renewcommand\markdownRendererHeaderAttributeContextBeginPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{headerAttributeContextEnd}{%
-  \renewcommand\markdownRendererHeaderAttributeContextEndPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{nbsp}{%
-  \renewcommand\markdownRendererNbspPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{leftBrace}{%
-  \renewcommand\markdownRendererLeftBracePrototype{#1}}%
-\define@key{markdownRendererPrototypes}{rightBrace}{%
-  \renewcommand\markdownRendererRightBracePrototype{#1}}%
-\define@key{markdownRendererPrototypes}{dollarSign}{%
-  \renewcommand\markdownRendererDollarSignPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{percentSign}{%
-  \renewcommand\markdownRendererPercentSignPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{ampersand}{%
-  \renewcommand\markdownRendererAmpersandPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{underscore}{%
-  \renewcommand\markdownRendererUnderscorePrototype{#1}}%
-\define@key{markdownRendererPrototypes}{hash}{%
-  \renewcommand\markdownRendererHashPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{circumflex}{%
-  \renewcommand\markdownRendererCircumflexPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{backslash}{%
-  \renewcommand\markdownRendererBackslashPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{tilde}{%
-  \renewcommand\markdownRendererTildePrototype{#1}}%
-\define@key{markdownRendererPrototypes}{pipe}{%
-  \renewcommand\markdownRendererPipePrototype{#1}}%
-\define@key{markdownRendererPrototypes}{codeSpan}{%
-  \renewcommand\markdownRendererCodeSpanPrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{link}{%
-  \renewcommand\markdownRendererLinkPrototype[4]{#1}}%
-\define@key{markdownRendererPrototypes}{contentBlock}{%
-  \renewcommand\markdownRendererContentBlockPrototype[4]{#1}}%
-\define@key{markdownRendererPrototypes}{contentBlockOnlineImage}{%
-  \renewcommand\markdownRendererContentBlockOnlineImagePrototype[4]{#1}}%
-\define@key{markdownRendererPrototypes}{contentBlockCode}{%
-  \renewcommand\markdownRendererContentBlockCodePrototype[5]{#1}}%
-\define@key{markdownRendererPrototypes}{image}{%
-  \renewcommand\markdownRendererImagePrototype[4]{#1}}%
-\define@key{markdownRendererPrototypes}{ulBegin}{%
-  \renewcommand\markdownRendererUlBeginPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{ulBeginTight}{%
-  \renewcommand\markdownRendererUlBeginTightPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{ulItem}{%
-  \renewcommand\markdownRendererUlItemPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{ulItemEnd}{%
-  \renewcommand\markdownRendererUlItemEndPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{ulEnd}{%
-  \renewcommand\markdownRendererUlEndPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{ulEndTight}{%
-  \renewcommand\markdownRendererUlEndTightPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{olBegin}{%
-  \renewcommand\markdownRendererOlBeginPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{olBeginTight}{%
-  \renewcommand\markdownRendererOlBeginTightPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{olItem}{%
-  \renewcommand\markdownRendererOlItemPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{olItemWithNumber}{%
-  \renewcommand\markdownRendererOlItemWithNumberPrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{olItemEnd}{%
-  \renewcommand\markdownRendererOlItemEndPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{olEnd}{%
-  \renewcommand\markdownRendererOlEndPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{olEndTight}{%
-  \renewcommand\markdownRendererOlEndTightPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{dlBegin}{%
-  \renewcommand\markdownRendererDlBeginPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{dlBeginTight}{%
-  \renewcommand\markdownRendererDlBeginTightPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{dlItem}{%
-  \renewcommand\markdownRendererDlItemPrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{dlItemEnd}{%
-  \renewcommand\markdownRendererDlItemEndPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{dlDefinitionBegin}{%
-  \renewcommand\markdownRendererDlDefinitionBeginPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{dlDefinitionEnd}{%
-  \renewcommand\markdownRendererDlDefinitionEndPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{dlEnd}{%
-  \renewcommand\markdownRendererDlEndPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{dlEndTight}{%
-  \renewcommand\markdownRendererDlEndTightPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{emphasis}{%
-  \renewcommand\markdownRendererEmphasisPrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{strongEmphasis}{%
-  \renewcommand\markdownRendererStrongEmphasisPrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{blockQuoteBegin}{%
-  \renewcommand\markdownRendererBlockQuoteBeginPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{blockQuoteEnd}{%
-  \renewcommand\markdownRendererBlockQuoteEndPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{inputVerbatim}{%
-  \renewcommand\markdownRendererInputVerbatimPrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{inputFencedCode}{%
-  \renewcommand\markdownRendererInputFencedCodePrototype[2]{#1}}%
-\define@key{markdownRendererPrototypes}{jekyllDataBoolean}{%
-  \renewcommand\markdownRendererJekyllDataBooleanPrototype[2]{#1}}%
-\define@key{markdownRendererPrototypes}{jekyllDataEmpty}{%
-  \renewcommand\markdownRendererJekyllDataEmptyPrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{jekyllDataNumber}{%
-  \renewcommand\markdownRendererJekyllDataNumberPrototype[2]{#1}}%
-\define@key{markdownRendererPrototypes}{jekyllDataString}{%
-  \renewcommand\markdownRendererJekyllDataStringPrototype[2]{#1}}%
-\define@key{markdownRendererPrototypes}{jekyllDataBegin}{%
-  \renewcommand\markdownRendererJekyllDataBeginPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{jekyllDataEnd}{%
-  \renewcommand\markdownRendererJekyllDataEndPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{jekyllDataSequenceBegin}{%
-  \renewcommand\markdownRendererJekyllDataSequenceBeginPrototype[2]{#1}}%
-\define@key{markdownRendererPrototypes}{jekyllDataSequenceEnd}{%
-  \renewcommand\markdownRendererJekyllDataSequenceEndPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{jekyllDataMappingBegin}{%
-  \renewcommand\markdownRendererJekyllDataMappingBeginPrototype[2]{#1}}%
-\define@key{markdownRendererPrototypes}{jekyllDataMappingEnd}{%
-  \renewcommand\markdownRendererJekyllDataMappingEndPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{headingOne}{%
-  \renewcommand\markdownRendererHeadingOnePrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{headingTwo}{%
-  \renewcommand\markdownRendererHeadingTwoPrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{headingThree}{%
-  \renewcommand\markdownRendererHeadingThreePrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{headingFour}{%
-  \renewcommand\markdownRendererHeadingFourPrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{headingFive}{%
-  \renewcommand\markdownRendererHeadingFivePrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{headingSix}{%
-  \renewcommand\markdownRendererHeadingSixPrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{horizontalRule}{%
-  \renewcommand\markdownRendererHorizontalRulePrototype{#1}}%
-\define@key{markdownRendererPrototypes}{footnote}{%
-  \renewcommand\markdownRendererFootnotePrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{cite}{%
-  \renewcommand\markdownRendererCitePrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{textCite}{%
-  \renewcommand\markdownRendererTextCitePrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{table}{%
-  \renewcommand\markdownRendererTablePrototype[3]{#1}}%
-\define@key{markdownRendererPrototypes}{inlineHtmlComment}{%
-  \renewcommand\markdownRendererInlineHtmlCommentPrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{blockHtmlCommentBegin}{%
-  \renewcommand\markdownRendererBlockHtmlCommentBeginPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{blockHtmlCommentEnd}{%
-  \renewcommand\markdownRendererBlockHtmlCommentEndPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{inlineHtmlTag}{%
-  \renewcommand\markdownRendererInlineHtmlTagPrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{inputBlockHtmlElement}{%
-  \renewcommand\markdownRendererInputBlockHtmlElementPrototype[1]{#1}}%
-\define@key{markdownRendererPrototypes}{tickedBox}{%
-  \renewcommand\markdownRendererTickedBoxPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{halfTickedBox}{%
-  \renewcommand\markdownRendererHalfTickedBoxPrototype{#1}}%
-\define@key{markdownRendererPrototypes}{untickedBox}{%
-  \renewcommand\markdownRendererUntickedBoxPrototype{#1}}%
+\ExplSyntaxOn
+\cs_new:Nn \@@_latex_define_renderer_prototypes:
+  {
+    \seq_map_function:NN
+      \g_@@_renderers_seq
+      \@@_latex_define_renderer_prototype:n
+  }
+\cs_new:Nn \@@_latex_define_renderer_prototype:n
+  {
+    \tl_set:Nn
+      \l_tmpb_tl
+%     TODO: Replace with \str_uppercase:n in TeX Live 2020.
+      { \str_upper_case:n { #1 } }
+    \tl_set:Nx
+      \l_tmpa_tl
+      {
+        markdownRenderer
+        \tl_head:f { \l_tmpb_tl }
+        \tl_tail:n { #1 }
+        Prototype
+      }
+    \prop_get:NnN
+      \g_@@_renderer_arities_prop
+      { #1 }
+      \l_tmpb_tl
+    \@@_latex_define_renderer_prototype:ncV
+      { #1 }
+      { \l_tmpa_tl }
+      \l_tmpb_tl
+  }
+\cs_new:Nn \@@_latex_define_renderer_prototype:nNn
+  {
+    \define@key
+      { markdownRendererPrototypes }
+      { #1 }
+      {
+        \cs_generate_from_arg_count:NNnn
+          #2
+          \cs_set:Npn
+          { #3 }
+          { ##1 }
+      }
+  }
+\cs_generate_variant:Nn
+  \@@_latex_define_renderer_prototype:nNn
+  { ncV }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -21045,6 +21590,19 @@ end
 \def\markdownVersionSpace{ }%
 \ProvidesPackage{markdown}[\markdownLastModified\markdownVersionSpace v%
   \markdownVersion\markdownVersionSpace markdown renderer]%
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Use reflection to define the `renderers` and `rendererPrototypes` keys of
+% \mref{markdownSetup} as well as the keys that correspond to Lua options.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\ExplSyntaxOn
+\@@_latex_define_renderers:
+\@@_latex_define_renderer_prototypes:
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 % \begin{markdown}
