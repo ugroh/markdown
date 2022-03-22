@@ -21954,8 +21954,9 @@ end
 %    \end{macrocode}
 % \begin{markdown}
 %
-% After processing the options, activate the `renderers` and
-% `rendererPrototypes` keys.
+% After processing the options, activate the `renderers`, `rendererPrototypes`,
+% and `code` keys. The `code` key is used to immediately expand and execute code,
+% which can be especially useful in \LaTeX{} setup snippets.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -21965,6 +21966,7 @@ end
 \define@key{markdownOptions}{rendererPrototypes}{%
   \setkeys{markdownRendererPrototypes}{#1}%
   \def\KV@prefix{KV@markdownOptions@}}%
+\define@key{markdownOptions}{code}{#1}%
 %    \end{macrocode}
 % \par
 % \begin{markdown}
