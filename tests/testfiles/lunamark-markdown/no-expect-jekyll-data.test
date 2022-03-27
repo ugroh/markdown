@@ -1,9 +1,5 @@
 \def\markdownOptionJekyllData{true}
 <<<
-This test ensures that the Lua `jekyllData` option correctly propagates
-through the plain TeX interface.
-
----
 title: The document title
 author:
 
@@ -13,6 +9,10 @@ author:
   affiliation: University of Nowhere
 date: 2022-01-12
 ...
+
+This test ensures that the Lua `jekyllData` option correctly propagates through
+the plain TeX interface and that the Lua `expectJekyllData` option is disabled
+by default.
 
 A document may contain *multiple* metadata blocks:
 
@@ -35,54 +35,18 @@ abstract: |
 ---
 >>>
 documentBegin
-codeSpan: jekyllData
 interblockSeparator
-jekyllDataBegin
-BEGIN jekyllDataMappingBegin
-- key: null
-- length: 3
-END jekyllDataMappingBegin
-BEGIN jekyllDataSequenceBegin
-- key: author
-- length: 2
-END jekyllDataSequenceBegin
-BEGIN jekyllDataMappingBegin
-- key: 1
-- length: 2
-END jekyllDataMappingBegin
-BEGIN jekyllDataString
-- key: affiliation
-- value: University of Somewhere
-END jekyllDataString
-BEGIN jekyllDataString
-- key: name
-- value: Author (emphasis: One)
-END jekyllDataString
-jekyllDataMappingEnd
-BEGIN jekyllDataMappingBegin
-- key: 2
-- length: 2
-END jekyllDataMappingBegin
-BEGIN jekyllDataString
-- key: affiliation
-- value: University of Nowhere
-END jekyllDataString
-BEGIN jekyllDataString
-- key: name
-- value: Author (strongEmphasis: Two)
-END jekyllDataString
-jekyllDataMappingEnd
-jekyllDataSequenceEnd
-BEGIN jekyllDataString
-- key: date
-- value: 2022-01-12
-END jekyllDataString
-BEGIN jekyllDataString
-- key: title
-- value: The document title
-END jekyllDataString
-jekyllDataMappingEnd
-jekyllDataEnd
+ulBeginTight
+ulItem
+emphasis: One
+ulItemEnd
+ulItem
+strongEmphasis: Two
+ulItemEnd
+ulEndTight
+interblockSeparator
+codeSpan: jekyllData
+codeSpan: expectJekyllData
 interblockSeparator
 emphasis: multiple
 interblockSeparator

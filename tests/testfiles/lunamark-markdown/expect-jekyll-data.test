@@ -1,9 +1,6 @@
 \def\markdownOptionJekyllData{true}
+\def\markdownOptionExpectJekyllData{true}
 <<<
-This test ensures that the Lua `jekyllData` option correctly propagates
-through the plain TeX interface.
-
----
 title: The document title
 author:
 
@@ -13,6 +10,9 @@ author:
   affiliation: University of Nowhere
 date: 2022-01-12
 ...
+
+This test ensures that the Lua `jekyllData` and `expectJekyllData` options
+correctly propagate through the plain TeX interface.
 
 A document may contain *multiple* metadata blocks:
 
@@ -35,8 +35,6 @@ abstract: |
 ---
 >>>
 documentBegin
-codeSpan: jekyllData
-interblockSeparator
 jekyllDataBegin
 BEGIN jekyllDataMappingBegin
 - key: null
@@ -83,6 +81,9 @@ BEGIN jekyllDataString
 END jekyllDataString
 jekyllDataMappingEnd
 jekyllDataEnd
+interblockSeparator
+codeSpan: jekyllData
+codeSpan: expectJekyllData
 interblockSeparator
 emphasis: multiple
 interblockSeparator

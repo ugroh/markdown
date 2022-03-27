@@ -4248,6 +4248,135 @@ defaultOptions.eagerCache = true
 %</lua,lua-cli>
 %<*manual-options>
 
+#### Option `expectJekyllData`
+
+`expectJekyllData` (default value: `false`)
+
+% \fi
+% \markdownBegin
+%
+% \Optitem[false]{expectJekyllData}{\opt{true}, \opt{false}}
+%
+:    false
+
+     :  When the \Opt{jekyllData} option is enabled, then a markdown document
+        may begin with \acro{yaml} metadata if and only if the metadata begin
+        with the end-of-directives marker (`---`) and they end with either the
+        end-of-directives or the end-of-document (`...`) marker:
+
+        ~~~~~ latex
+        \documentclass{article}
+        \usepackage[jekyllData]{markdown}
+        \begin{document}
+        \begin{markdown}
+        ---
+        - this
+        - is
+        - YAML
+        ...
+        - followed
+        - by
+        - Markdown
+        \end{markdown}
+        \begin{markdown}
+        - this
+        - is
+        - Markdown
+        \end{markdown}
+        \end{document}
+        ~~~~~~~~~~~
+
+:    true
+
+     :  When the \Opt{jekyllData} option is enabled, then a markdown document may
+        begin directly with \acro{yaml} metadata and may contain nothing but
+        \acro{yaml} metadata.
+
+        ~~~~~ latex
+        \documentclass{article}
+        \usepackage[jekyllData, expectJekyllData]{markdown}
+        \begin{document}
+        \begin{markdown}
+        - this
+        - is
+        - YAML
+        ...
+        - followed
+        - by
+        - Markdown
+        \end{markdown}
+        \begin{markdown}
+        - this
+        - is
+        - YAML
+        \end{markdown}
+        \end{document}
+        ~~~~~~~~~~~
+
+% \markdownEnd
+% \iffalse
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `jane-doe.yml` with the
+following content:
+``` yaml
+name: Jane Doe
+age:  99
+```
+Using a text editor, create also a text document named `document.tex` with the
+following content:
+``` tex
+\documentclass{article}
+\usepackage[jekyllData]{markdown}
+\markdownSetup{
+  renderers = {
+    jekyllDataString = {\gdef\name{#2}},
+    jekyllDataNumber = {\gdef\age{#2}},
+    jekyllDataEnd = {\name{} is \age{} years old.},
+  }
+}
+\begin{document}
+\markdownInput[expectJekyllData]{jane-doe.yml}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> Jane Doe is 99 years old.
+
+%</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_lua_options_seq
+  { expectJekyllData }
+\prop_put:Nnn
+  \g_@@_lua_option_types_prop
+  { expectJekyllData }
+  { boolean }
+\prop_put:Nnn
+  \g_@@_default_lua_options_prop
+  { expectJekyllData }
+  { false }
+%    \end{macrocode}
+% \iffalse
+%</tex>
+%<*lua,lua-cli>
+% \fi
+%  \begin{macrocode}
+defaultOptions.expectJekyllData = false
+%    \end{macrocode}
+% \par
+% \iffalse
+%</lua,lua-cli>
+%<*manual-options>
+
 #### Option `fencedCode`
 
 `fencedCode` (default value: `false`)
@@ -14854,6 +14983,8 @@ The following ordered list will be preceded by roman numerals:
   \def\markdownOptionDefinitionLists{#1}}%
 \define@key{markdownOptions}{eagerCache}[true]{%
   \def\markdownOptionEagerCache{#1}}%
+\define@key{markdownOptions}{expectJekyllData}[true]{%
+  \def\markdownOptionExpectJekyllData{#1}}%
 \define@key{markdownOptions}{footnotes}[true]{%
   \def\markdownOptionFootnotes{#1}}%
 \define@key{markdownOptions}{fencedCode}[true]{%
@@ -19479,8 +19610,6 @@ parsers.urlchar      = parsers.anyescaped - parsers.newline - parsers.more
 %
 % \end{markdown}
 %  \begin{macrocode}
-parsers.Block        = V("Block")
-
 parsers.OnlineImageURL
                      = parsers.leader
                      * parsers.onlineimageurl
@@ -19733,13 +19862,13 @@ function M.reader.new(writer, options)
     = create_parser("parse_blocks",
                     function()
                       return larsers.blocks
-                    end, false)
-
-  local parse_blocks_toplevel
-    = create_parser("parse_blocks_toplevel",
-                    function()
-                      return larsers.blocks_toplevel
                     end, true)
+
+  local parse_blocks_nested
+    = create_parser("parse_blocks_nested",
+                    function()
+                      return larsers.blocks_nested
+                    end, false)
 
   local parse_inlines
     = create_parser("parse_inlines",
@@ -19860,7 +19989,7 @@ function M.reader.new(writer, options)
     return writer.defer_call(function()
       local found = rawnotes[normalize_tag(ref)]
       if found then
-        return writer.note(parse_blocks_toplevel(found))
+        return writer.note(parse_blocks_nested(found))
       else
         return {"[", parse_inlines("^" .. ref), "]"}
       end
@@ -20191,7 +20320,7 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                        * parsers.contentblock_tail
                        / writer.contentblock
 
-  larsers.DisplayHtml  = (parsers.htmlcomment / parse_blocks)
+  larsers.DisplayHtml  = (parsers.htmlcomment / parse_blocks_nested)
                        / writer.block_html_comment
                        + parsers.emptyelt_block / writer.block_html_element
                        + parsers.openelt_exact("hr") / writer.block_html_element
@@ -20209,21 +20338,40 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                                                     expandtabs(code))
                          end
 
-  larsers.JekyllData   = P("---")
+  larsers.JekyllData   = Cmt( C((parsers.line - P("---") - P("..."))^0)
+                            , function(s, i, text)
+                                local data
+                                local ran_ok, error = pcall(function()
+                                  local tinyyaml = require("markdown-tinyyaml")
+                                  data = tinyyaml.parse(text, {timestamps=false})
+                                end)
+                                if ran_ok and data ~= nil then
+                                  return true, writer.jekyllData(data, function(s)
+                                    return parse_blocks_nested(s)
+                                  end, nil)
+                                else
+                                  return false
+                                end
+                              end
+                            )
+
+  larsers.UnexpectedJekyllData
+                       = P("---")
                        * parsers.blankline / 0
                        * #(-parsers.blankline)  -- if followed by blank, it's an hrule
-                       * C((parsers.line - P("---") - P("..."))^0)
+                       * larsers.JekyllData
                        * (P("---") + P("..."))
-                       / function(text)
-                           local tinyyaml = require("markdown-tinyyaml")
-                           data = tinyyaml.parse(text,{timestamps=false})
-                           return writer.jekyllData(data, function(s)
-                             return parse_blocks(s)
-                           end, nil)
-                         end
+
+  larsers.ExpectedJekyllData
+                       = ( P("---")
+                         * parsers.blankline / 0
+                         * #(-parsers.blankline)  -- if followed by blank, it's an hrule
+                         )^-1
+                       * larsers.JekyllData
+                       * (P("---") + P("..."))^-1
 
   larsers.Blockquote   = Cs(larsers.blockquote_body^1)
-                       / parse_blocks_toplevel / writer.blockquote
+                       / parse_blocks_nested / writer.blockquote
 
   larsers.HorizontalRule = ( parsers.lineof(parsers.asterisk)
                            + parsers.lineof(parsers.dash)
@@ -20233,15 +20381,6 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
   larsers.Reference    = parsers.define_reference_parser / register_link
 
   larsers.Paragraph    = parsers.nonindentspace * Ct(parsers.Inline^1)
-                       * parsers.newline
-                       * ( parsers.blankline^1
-                         + #parsers.hash
-                         + #(parsers.leader * parsers.more * parsers.space^-1)
-                         )
-                       / writer.paragraph
-
-  larsers.ToplevelParagraph
-                       = parsers.nonindentspace * Ct(parsers.Inline^1)
                        * ( parsers.newline
                        * ( parsers.blankline^1
                          + #parsers.hash
@@ -20290,7 +20429,7 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
   larsers.TightListItem = function(starter)
       return -larsers.HorizontalRule
              * (Cs(starter / "" * larsers.tickbox^-1 * larsers.ListBlock * larsers.NestedList^-1)
-               / parse_blocks)
+               / parse_blocks_nested)
              * -(parsers.blanklines * parsers.indent)
   end
 
@@ -20299,7 +20438,7 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
              * Cs( starter / "" * larsers.tickbox^-1 * larsers.ListBlock * Cc("\n")
                * (larsers.NestedList + larsers.ListContinuationBlock^0)
                * (parsers.blanklines / "\n\n")
-               ) / parse_blocks
+               ) / parse_blocks_nested
   end
 
   larsers.BulletList = ( Ct(larsers.TightListItem(parsers.bullet)^1) * Cc(true)
@@ -20336,12 +20475,12 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
   larsers.DefinitionListItemLoose = C(parsers.line) * parsers.skipblanklines
                                   * Ct((parsers.defstart
                                        * parsers.indented_blocks(parsers.dlchunk)
-                                       / parse_blocks_toplevel)^1)
+                                       / parse_blocks_nested)^1)
                                   * Cc(false) / definition_list_item
 
   larsers.DefinitionListItemTight = C(parsers.line)
                                   * Ct((parsers.defstart * parsers.dlchunk
-                                       / parse_blocks)^1)
+                                       / parse_blocks_nested)^1)
                                   * Cc(true) / definition_list_item
 
   larsers.DefinitionList = ( Ct(larsers.DefinitionListItemLoose^1) * Cc(false)
@@ -20440,17 +20579,22 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
   local syntax =
     { "Blocks",
 
-      Blocks                = larsers.Blank^0 * parsers.Block^-1
-                            * (larsers.Blank^0 / writer.interblocksep
-                              * parsers.Block)^0
-                            * larsers.Blank^0 * parsers.eof,
+      Blocks                = ( V("ExpectedJekyllData")
+                              * (V("Blank")^0 / writer.interblocksep)
+                              )^-1
+                            * V("Blank")^0
+                            * V("Block")^-1
+                            * (V("Blank")^0 / writer.interblocksep
+                              * V("Block"))^0
+                            * V("Blank")^0 * parsers.eof,
 
       Blank                 = larsers.Blank,
 
-      JekyllData            = larsers.JekyllData,
+      UnexpectedJekyllData  = larsers.UnexpectedJekyllData,
+      ExpectedJekyllData    = larsers.ExpectedJekyllData,
 
       Block                 = V("ContentBlock")
-                            + V("JekyllData")
+                            + V("UnexpectedJekyllData")
                             + V("Blockquote")
                             + V("PipeTable")
                             + V("Verbatim")
@@ -20579,7 +20723,11 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
   end
 
   if not options.jekyllData then
-    syntax.JekyllData = parsers.fail
+    syntax.UnexpectedJekyllData = parsers.fail
+  end
+
+  if not options.jekyllData or not options.expectJekyllData then
+    syntax.ExpectedJekyllData = parsers.fail
   end
 
   if options.preserveTabs then
@@ -20598,9 +20746,9 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
     syntax.AutoLinkRelativeReference = parsers.fail
   end
 
-  local blocks_toplevel_t = util.table_copy(syntax)
-  blocks_toplevel_t.Paragraph = larsers.ToplevelParagraph
-  larsers.blocks_toplevel = Ct(blocks_toplevel_t)
+  local blocks_nested_t = util.table_copy(syntax)
+  blocks_nested_t.ExpectedJekyllData = parsers.fail
+  larsers.blocks_nested = Ct(blocks_nested_t)
 
   larsers.blocks = Ct(syntax)
 
@@ -20665,7 +20813,7 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
 % \end{markdown}
 %  \begin{macrocode}
     local function convert(input)
-      local document = parse_blocks_toplevel(input)
+      local document = parse_blocks(input)
       return util.rope_to_string(writer.document(document))
     end
     if options.eagerCache or options.finalizeCache then
