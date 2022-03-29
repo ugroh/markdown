@@ -4329,10 +4329,16 @@ following content:
 ``` tex
 \documentclass{article}
 \usepackage[jekyllData]{markdown}
+\ExplSyntaxOn
+\keys_define:nn
+  { markdown/jekyllData }
+  {
+    name .code:n = { \gdef\name{#2} },
+    age  .code:n = { \gdef\age{#2}  },
+  }
+\ExplSyntaxOff
 \markdownSetup{
   renderers = {
-    jekyllDataString = {\gdef\name{#2}},
-    jekyllDataNumber = {\gdef\age{#2}},
     jekyllDataEnd = {\name{} is \age{} years old.},
   }
 }
@@ -5898,8 +5904,14 @@ following content:
 ``` tex
 \input markdown
 \def\markdownOptionJekyllData{true}
-\def\markdownRendererJekyllDataString#1#2{\gdef\name{#2}}
-\def\markdownRendererJekyllDataNumber#1#2{\gdef\age{#2}}
+\ExplSyntaxOn
+\keys_define:nn
+  { markdown/jekyllData }
+  {
+    name .code:n = { \gdef\name{#2} },
+    age  .code:n = { \gdef\age{#2}  },
+  }
+\ExplSyntaxOff
 \def\markdownRendererJekyllDataEnd{%
   \name{} is \age{} years old.}
 \markdownBegin
@@ -5926,10 +5938,16 @@ following content:
 ``` tex
 \documentclass{article}
 \usepackage[jekyllData]{markdown}
+\ExplSyntaxOn
+\keys_define:nn
+  { markdown/jekyllData }
+  {
+    name .code:n = { \gdef\name{#2} },
+    age  .code:n = { \gdef\age{#2}  },
+  }
+\ExplSyntaxOff
 \markdownSetup{
   renderers = {
-    jekyllDataString = {\gdef\name{#2}},
-    jekyllDataNumber = {\gdef\age{#2}},
     jekyllDataEnd = {\name{} is \age{} years old.},
   }
 }
@@ -5960,8 +5978,14 @@ following content:
 ``` tex
 \usemodule[t][markdown]
 \def\markdownOptionJekyllData{true}
-\def\markdownRendererJekyllDataString#1#2{\gdef\name{#2}}
-\def\markdownRendererJekyllDataNumber#1#2{\gdef\age{#2}}
+\ExplSyntaxOn
+\keys_define:nn
+  { markdown/jekyllData }
+  {
+    name .code:n = { \gdef\name{#2} },
+    age  .code:n = { \gdef\age{#2}  },
+  }
+\ExplSyntaxOff
 \def\markdownRendererJekyllDataEnd{%
   \name{} is \age{} years old.}
 \starttext
@@ -12154,7 +12178,8 @@ following text except for the filename, which may differ:
 % \fi
 % \begin{markdown}
 
-#### YAML Metadata Renderers
+#### YAML Metadata Renderers {#yamlmetadatarenderers}
+
 The \mdef{markdownRendererJekyllDataBegin} macro represents the beginning of a
 \acro{yaml} document. This macro will only be produced when the \Opt{jekyllData}
 option is enabled. The macro receives no arguments.
@@ -12468,6 +12493,10 @@ value in a \acro{yaml} document. This macro will only be produced when the
 scalar key in the parent structure, cast to a string following \acro{yaml}
 serialization rules.
 
+% See also Section <#sec:expl3yamlmetadata> for the description of the
+% high-level expl3 interface that you can also use to react to \acro{yaml}
+% metadata.
+%
 % \end{markdown}
 %
 % \iffalse
@@ -13895,16 +13924,11 @@ following text:
 
 ### Token Renderer Prototypes {#texrendererprototypes}
 
-%
 % \end{markdown}
 % \iffalse
 
 By default, token renderers point to package-defined \TeX{} macros, further
 referred to as *prototypes*, which provide useful default definitions.
-
-% \fi
-%
-% \iffalse
 
 ##### Plain \TeX{} Example {.unnumbered}
 
@@ -14008,9 +14032,140 @@ following text:
 >
 > User-defined token renderers take precedence.
 
+% \fi
+%
+% \begin{markdown}
+
+#### YAML Metadata Renderer Prototypes {#expl3yamlmetadata}
+
+By default, the renderer prototypes for YAML metadata provide a high-level
+interface that can be programmed using the `markdown/jekyllData` key--values
+from the l3keys module of the \LaTeX3 kernel.
+
+% \end{markdown}
+% \iffalse
+
+##### Plain \TeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\input markdown
+\def\markdownOptionJekyllData{true}
+\ExplSyntaxOn
+\keys_define:nn
+  { markdown/jekyllData }
+  {
+    name .code:n = { \gdef\name{#2} },
+    age  .code:n = { \gdef\age{#2}  },
+  }
+\ExplSyntaxOff
+\def\markdownRendererJekyllDataEnd{%
+  \name{} is \age{} years old.}
+\markdownBegin
+---
+name: Jane Doe
+age:  99
+---
+\markdownEnd
+\bye
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+luatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> Jane Doe is 99 years old.
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\documentclass{article}
+\usepackage[jekyllData]{markdown}
+\ExplSyntaxOn
+\keys_define:nn
+  { markdown/jekyllData }
+  {
+    name .code:n = { \gdef\name{#2} },
+    age  .code:n = { \gdef\age{#2}  },
+  }
+\ExplSyntaxOff
+\markdownSetup{
+  renderers = {
+    jekyllDataEnd = {\name{} is \age{} years old.},
+  }
+}
+\begin{document}
+
+\begin{markdown}
+---
+name: Jane Doe
+age:  99
+---
+\end{markdown}
+
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> Jane Doe is 99 years old.
+
+##### \Hologo{ConTeXt} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\usemodule[t][markdown]
+\def\markdownOptionJekyllData{true}
+\ExplSyntaxOn
+\keys_define:nn
+  { markdown/jekyllData }
+  {
+    name .code:n = { \gdef\name{#2} },
+    age  .code:n = { \gdef\age{#2}  },
+  }
+\ExplSyntaxOff
+\def\markdownRendererJekyllDataEnd{%
+  \name{} is \age{} years old.}
+\starttext
+
+\startmarkdown
+---
+name: Jane Doe
+age:  99
+---
+\stopmarkdown
+
+\stoptext
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+context document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> Jane Doe is 99 years old.
+
 %</manual-tokens>
 %<*tex>
 % \fi
+%  \begin{macrocode}
+\ExplSyntaxOn
+\keys_define:nn
+  { markdown/jekyllData }
+  { }
+\ExplSyntaxOff
+%    \end{macrocode}
 %
 % \begin{markdown}
 %
@@ -14078,16 +14233,8 @@ following text:
 \def\markdownRendererBlockQuoteEndPrototype{}%
 \def\markdownRendererInputVerbatimPrototype#1{}%
 \def\markdownRendererInputFencedCodePrototype#1#2{}%
-\def\markdownRendererJekyllDataBooleanPrototype#1#2{}%
-\def\markdownRendererJekyllDataEmptyPrototype#1{}%
-\def\markdownRendererJekyllDataNumberPrototype#1#2{}%
-\def\markdownRendererJekyllDataStringPrototype#1#2{}%
 \def\markdownRendererJekyllDataBeginPrototype{}%
 \def\markdownRendererJekyllDataEndPrototype{}%
-\def\markdownRendererJekyllDataSequenceBeginPrototype#1#2{}%
-\def\markdownRendererJekyllDataSequenceEndPrototype{}%
-\def\markdownRendererJekyllDataMappingBeginPrototype#1#2{}%
-\def\markdownRendererJekyllDataMappingEndPrototype{}%
 \def\markdownRendererHeadingOnePrototype#1{}%
 \def\markdownRendererHeadingTwoPrototype#1{}%
 \def\markdownRendererHeadingThreePrototype#1{}%
@@ -21070,6 +21217,243 @@ end
 % \par
 % \begin{markdown}
 %
+%#### YAML Metadata Renderer Prototypes {#expl3yamlmetadataimplementation}
+%
+% To keep track of the current type of structure we inhabit when we are
+% traversing a \acro{yaml} document, we will maintain the
+% \mdef{g_\@\@_jekyll_data_datatypes_seq} stack. At every step of the traversal,
+% the stack will contain one of the following constants at any position $p$:
+%
+% \mdef{c_\@\@_jekyll_data_sequence_tl}
+%
+%:    The currently traversed branch of the \acro{yaml} document contains a sequence
+%     at depth $p$.
+%
+% \mdef{c_\@\@_jekyll_data_mapping_tl}
+%
+%:    The currently traversed branch of the \acro{yaml} document contains a mapping
+%     at depth $p$.
+%
+% \mdef{c_\@\@_jekyll_data_scalar_tl}
+%
+%:    The currently traversed branch of the \acro{yaml} document contains a scalar
+%     value at depth $p$.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\ExplSyntaxOn
+\seq_new:N   \g_@@_jekyll_data_datatypes_seq
+\tl_const:Nn \c_@@_jekyll_data_sequence_tl   { sequence }
+\tl_const:Nn \c_@@_jekyll_data_mapping_tl    { mapping  }
+\tl_const:Nn \c_@@_jekyll_data_scalar_tl     { scalar   }
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% To keep track of our current place when we are traversing a \acro{yaml}
+% document, we will maintain the
+% \mdef{g_\@\@_jekyll_data_wildcard_absolute_address_seq} stack of keys using
+% the \mdef{markdown_jekyll_data_push_address_segment:n} macro.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\seq_new:N \g_@@_jekyll_data_wildcard_absolute_address_seq
+\cs_new:Nn \markdown_jekyll_data_push_address_segment:n
+  {
+    \seq_if_empty:NF
+      \g_@@_jekyll_data_datatypes_seq
+      {
+        \seq_get_right:NN
+          \g_@@_jekyll_data_datatypes_seq
+          \l_tmpa_tl
+%    \end{macrocode}
+% \begin{markdown}
+%
+% If we are currently in a sequence, we will put an asterisk (`*`) instead of
+% a key into \mref{g_\@\@_jekyll_data_wildcard_absolute_address_seq} to make
+% it represent a *wildcard*. Keeping a wildcard instead of a precise address
+% makes it easy for the users to react to *any* item of a sequence regardless
+% of how many there are, which can often be useful.
+%
+% \end{markdown}
+%  \begin{macrocode}
+      \tl_if_eq:NNTF
+        \l_tmpa_tl
+        \c_@@_jekyll_data_sequence_tl
+        {
+          \seq_put_right:Nn
+            \g_@@_jekyll_data_wildcard_absolute_address_seq
+            { *  }
+        }
+        {
+          \seq_put_right:Nn
+            \g_@@_jekyll_data_wildcard_absolute_address_seq
+            { #1 }
+        }
+      }
+  }
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Out of \mref{g_\@\@_jekyll_data_wildcard_absolute_address_seq}, we will
+% construct the following two token lists:
+%
+% \mdef{g_\@\@_jekyll_data_wildcard_absolute_address_tl}
+%
+%:    An *absolute wildcard*: The wildcard from the root of the document
+%     prefixed with a slash (`/`) with individual keys and asterisks also
+%     delimited by slashes. Allows the users to react to complex
+%     context-sensitive structures with ease.
+%
+%:    For example, the `name` key in the following \acro{yaml} document
+%     would correspond to the `/*/person/name` absolute wildcard:
+%     ``` yaml
+%     [{person: {name: Elon, surname: Musk}}]
+%     ```
+%
+% \mdef{g_\@\@_jekyll_data_wildcard_relative_address_tl}
+%
+%:    A *relative wildcard*: The rightmost segment of the wildcard. Allows the
+%     users to react to simple context-free structures.
+%
+%:    For example, the `name` key in the following \acro{yaml} document
+%     would correspond to the `name` relative wildcard:
+%     ``` yaml
+%     [{person: {name: Elon, surname: Musk}}]
+%     ```
+%
+% We will construct \mref{g_\@\@_jekyll_data_wildcard_absolute_address_tl}
+% using the \mdef{markdown_jekyll_data_concatenate_address:NN} macro and
+% we will construct both token lists using the
+% \mdef{markdown_jekyll_data_update_address_tls:} macro.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\tl_new:N  \g_@@_jekyll_data_wildcard_absolute_address_tl
+\tl_new:N  \g_@@_jekyll_data_wildcard_relative_address_tl
+\cs_new:Nn \markdown_jekyll_data_concatenate_address:NN
+  {
+    \seq_pop_left:NN #1 \l_tmpa_tl
+    \tl_set:Nx #2 { / \seq_use:Nn #1 { / } }
+    \seq_put_left:NV #1 \l_tmpa_tl
+  }
+\cs_new:Nn \markdown_jekyll_data_update_address_tls:
+  {
+    \markdown_jekyll_data_concatenate_address:NN
+      \g_@@_jekyll_data_wildcard_absolute_address_seq
+      \g_@@_jekyll_data_wildcard_absolute_address_tl
+    \seq_get_right:NN
+      \g_@@_jekyll_data_wildcard_absolute_address_seq
+      \g_@@_jekyll_data_wildcard_relative_address_tl
+  }
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% To make sure that the stacks and token lists stay in sync, we will use the
+% \mdef{markdown_jekyll_data_push:nN} and \mdef{markdown_jekyll_data_pop:}
+% macros.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\cs_new:Nn \markdown_jekyll_data_push:nN
+  {
+    \markdown_jekyll_data_push_address_segment:n
+      { #1 }
+    \seq_put_right:NV
+     \g_@@_jekyll_data_datatypes_seq
+     #2
+    \markdown_jekyll_data_update_address_tls:
+  }
+\cs_new:Nn \markdown_jekyll_data_pop:
+  {
+    \seq_pop_right:NN
+      \g_@@_jekyll_data_wildcard_absolute_address_seq
+      \l_tmpa_tl
+    \seq_pop_right:NN
+      \g_@@_jekyll_data_datatypes_seq
+      \l_tmpa_tl
+    \markdown_jekyll_data_update_address_tls:
+  }
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% To set a single key--value, we will use the
+% \mdef{markdown_jekyll_data_set_keyval:Nn} macro, ignoring unknown keys.
+% To set key--values for both absolute and relative wildcards, we will use the
+% \mdef{markdown_jekyll_data_set_keyvals:nn} macro.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\cs_new:Nn \markdown_jekyll_data_set_keyval:nn
+  {
+    \keys_set_known:nn
+      { markdown/jekyllData }
+      { { #1 } = { #2 } }
+  }
+\cs_generate_variant:Nn
+  \markdown_jekyll_data_set_keyval:nn
+  { Vn }
+\cs_new:Nn \markdown_jekyll_data_set_keyvals:nn
+  {
+    \markdown_jekyll_data_push:nN
+      { #1 }
+      \c_@@_jekyll_data_scalar_tl
+    \markdown_jekyll_data_set_keyval:Vn
+      \g_@@_jekyll_data_wildcard_absolute_address_tl
+      { #2 }
+    \markdown_jekyll_data_set_keyval:Vn
+      \g_@@_jekyll_data_wildcard_relative_address_tl
+      { #2 }
+    \markdown_jekyll_data_pop:
+  }
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Finally, we will register our macros as token renderer prototypes
+% to be able to react to the traversal of a \acro{yaml} document.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\def\markdownRendererJekyllDataSequenceBeginPrototype#1#2{
+  \markdown_jekyll_data_push:nN
+    { #1 }
+    \c_@@_jekyll_data_sequence_tl
+}
+\def\markdownRendererJekyllDataMappingBegin#1#2{
+  \markdown_jekyll_data_push:nN
+    { #1 }
+    \c_@@_jekyll_data_mapping_tl
+}
+\def\markdownRendererJekyllDataSequenceEnd{
+  \markdown_jekyll_data_pop:
+}
+\def\markdownRendererJekyllDataMappingEnd{
+  \markdown_jekyll_data_pop:
+}
+\def\markdownRendererJekyllDataBoolean#1#2{
+  \markdown_jekyll_data_set_keyvals:nn
+    { #1 }
+    { #2 }
+}
+\def\markdownRendererJekyllDataEmpty#1{}
+\def\markdownRendererJekyllDataNumber#1#2{
+  \markdown_jekyll_data_set_keyvals:nn
+    { #1 }
+    { #2 }
+}
+\def\markdownRendererJekyllDataString#1#2{
+  \markdown_jekyll_data_set_keyvals:nn
+    { #1 }
+    { #2 }
+}
+\ExplSyntaxOff
+%    \end{macrocode}
+% \begin{markdown}
+%
 %### Lua Snippets
 % After the \mdef{markdownPrepareLuaOptions} macro has been fully expanded,
 % the \mdef{markdownLuaOptions} macro will expands to a Lua table that
@@ -22875,180 +23259,14 @@ end
 %
 %#### YAML Metadata {#latexyamlmetadata}
 %
+% The default setup of \acro{yaml} metadata will invoke the \mref{title},
+% \mref{author}, and \mref{date} macros when scalar values for keys that
+% correspond to the `title`, `author`, and `date` relative wildcards are
+% encountered, respectively.
+%
 % \end{markdown}
 %  \begin{macrocode}
 \ExplSyntaxOn
-%    \end{macrocode}
-% \begin{markdown}
-%
-% To keep track of the current type of structure we inhabit when we are
-% traversing a \acro{yaml} document, we will maintain the
-% \mdef{g_\@\@_jekyll_data_datatypes_seq} stack. At every step of the traversal,
-% the stack will contain one of the following constants at any position $p$:
-%
-% \mdef{c_\@\@_jekyll_data_sequence_tl}
-%
-%:    The currently traversed branch of the \acro{yaml} document contains a sequence
-%     at depth $p$.
-%
-% \mdef{c_\@\@_jekyll_data_mapping_tl}
-%
-%:    The currently traversed branch of the \acro{yaml} document contains a mapping
-%     at depth $p$.
-%
-% \mdef{c_\@\@_jekyll_data_scalar_tl}
-%
-%:    The currently traversed branch of the \acro{yaml} document contains a scalar
-%     value at depth $p$.
-%
-% \end{markdown}
-%  \begin{macrocode}
-\seq_new:N   \g_@@_jekyll_data_datatypes_seq
-\tl_const:Nn \c_@@_jekyll_data_sequence_tl   { sequence }
-\tl_const:Nn \c_@@_jekyll_data_mapping_tl    { mapping  }
-\tl_const:Nn \c_@@_jekyll_data_scalar_tl     { scalar   }
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
-% To keep track of our current place when we are traversing a \acro{yaml}
-% document, we will maintain the
-% \mdef{g_\@\@_jekyll_data_wildcard_absolute_address_seq} stack of keys using
-% the \mdef{markdown_jekyll_data_push_address_segment:n} macro.
-%
-% \end{markdown}
-%  \begin{macrocode}
-\seq_new:N \g_@@_jekyll_data_wildcard_absolute_address_seq
-\cs_new:Nn \markdown_jekyll_data_push_address_segment:n
-  {
-    \seq_if_empty:NF
-      \g_@@_jekyll_data_datatypes_seq
-      {
-        \seq_get_right:NN
-          \g_@@_jekyll_data_datatypes_seq
-          \l_tmpa_tl
-%    \end{macrocode}
-% \begin{markdown}
-%
-% If we are currently in a sequence, we will put an asterisk (`*`) instead of
-% a key into \mref{g_\@\@_jekyll_data_wildcard_absolute_address_seq} to make
-% it represent a *wildcard*. Keeping a wildcard instead of a precise address
-% makes it easy for the users to react to *any* item of a sequence regardless
-% of how many there are, which can often be useful.
-%
-% \end{markdown}
-%  \begin{macrocode}
-      \tl_if_eq:NNTF
-        \l_tmpa_tl
-        \c_@@_jekyll_data_sequence_tl
-        {
-          \seq_put_right:Nn
-            \g_@@_jekyll_data_wildcard_absolute_address_seq
-            { *  }
-        }
-        {
-          \seq_put_right:Nn
-            \g_@@_jekyll_data_wildcard_absolute_address_seq
-            { #1 }
-        }
-      }
-  }
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
-% Out of \mref{g_\@\@_jekyll_data_wildcard_absolute_address_seq}, we will
-% construct the following two token lists:
-%
-% \mdef{g_\@\@_jekyll_data_wildcard_absolute_address_tl}
-%
-%:    An *absolute wildcard*: The wildcard from the root of the document
-%     prefixed with a slash (`/`) with individual keys and asterisks also
-%     delimited by slashes. Allows the users to react to complex
-%     context-sensitive structures with ease.
-%
-%:    For example, the `name` key in the following \acro{yaml} document
-%     would correspond to the `/*/person/name` absolute wildcard:
-%     ``` yaml
-%     [{person: {name: Elon, surname: Musk}}]
-%     ```
-%
-% \mdef{g_\@\@_jekyll_data_wildcard_relative_address_tl}
-%
-%:    A *relative wildcard*: The rightmost segment of the wildcard. Allows the
-%     users to react to simple context-free structures.
-%
-%:    For example, the `name` key in the following \acro{yaml} document
-%     would correspond to the `name` relative wildcard:
-%     ``` yaml
-%     [{person: {name: Elon, surname: Musk}}]
-%     ```
-%
-% We will construct \mref{g_\@\@_jekyll_data_wildcard_absolute_address_tl}
-% using the \mdef{markdown_jekyll_data_concatenate_address:NN} macro and
-% we will construct both token lists using the
-% \mdef{markdown_jekyll_data_update_address_tls:} macro.
-%
-% \end{markdown}
-%  \begin{macrocode}
-\tl_new:N  \g_@@_jekyll_data_wildcard_absolute_address_tl
-\tl_new:N  \g_@@_jekyll_data_wildcard_relative_address_tl
-\cs_new:Nn \markdown_jekyll_data_concatenate_address:NN
-  {
-    \seq_pop_left:NN #1 \l_tmpa_tl
-    \tl_set:Nx #2 { / \seq_use:Nn #1 { / } }
-    \seq_put_left:NV #1 \l_tmpa_tl
-  }
-\cs_new:Nn \markdown_jekyll_data_update_address_tls:
-  {
-    \markdown_jekyll_data_concatenate_address:NN
-      \g_@@_jekyll_data_wildcard_absolute_address_seq
-      \g_@@_jekyll_data_wildcard_absolute_address_tl
-    \seq_get_right:NN
-      \g_@@_jekyll_data_wildcard_absolute_address_seq
-      \g_@@_jekyll_data_wildcard_relative_address_tl
-  }
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
-% To make sure that the stacks and token lists stay in sync, we will use the
-% \mdef{markdown_jekyll_data_push:nN} and \mdef{markdown_jekyll_data_pop:}
-% macros.
-%
-% \end{markdown}
-%  \begin{macrocode}
-\cs_new:Nn \markdown_jekyll_data_push:nN
-  {
-    \markdown_jekyll_data_push_address_segment:n
-      { #1 }
-    \seq_put_right:NV
-     \g_@@_jekyll_data_datatypes_seq
-     #2
-    \markdown_jekyll_data_update_address_tls:
-  }
-\cs_new:Nn \markdown_jekyll_data_pop:
-  {
-    \seq_pop_right:NN
-      \g_@@_jekyll_data_wildcard_absolute_address_seq
-      \l_tmpa_tl
-    \seq_pop_right:NN
-      \g_@@_jekyll_data_datatypes_seq
-      \l_tmpa_tl
-    \markdown_jekyll_data_update_address_tls:
-  }
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
-% To interface with the user, we use `markdown/jekyllData` key--values from the
-% l3keys module of the \LaTeX3 kernel. The default setup will invoke the
-% \mref{title}, \mref{author}, and \mref{date} macros when scalar values for
-% keys that correspond to the `title`, `author`, and `date` relative wildcards
-% are encountered, respectively.
-%
-% \end{markdown}
-%  \begin{macrocode}
 \keys_define:nn
   { markdown/jekyllData }
   {
@@ -23056,81 +23274,6 @@ end
     date    .code:n = { \date{#1}   },
     title   .code:n = { \title{#1}  },
   }
-%    \end{macrocode}
-% \begin{markdown}
-%
-% To set a single key--value, we will use the
-% \mdef{markdown_jekyll_data_set_keyval:Nn} macro, ignoring unknown keys.
-% To set key--values for both absolute and relative wildcards, we will use the
-% \mdef{markdown_jekyll_data_set_keyvals:nn} macro.
-%
-% \end{markdown}
-%  \begin{macrocode}
-\cs_new:Nn \markdown_jekyll_data_set_keyval:nn
-  {
-    \keys_set_known:nn
-      { markdown/jekyllData }
-      { { #1 } = { #2 } }
-  }
-\cs_generate_variant:Nn
-  \markdown_jekyll_data_set_keyval:nn
-  { Vn }
-\cs_new:Nn \markdown_jekyll_data_set_keyvals:nn
-  {
-    \markdown_jekyll_data_push:nN
-      { #1 }
-      \c_@@_jekyll_data_scalar_tl
-    \markdown_jekyll_data_set_keyval:Vn
-      \g_@@_jekyll_data_wildcard_absolute_address_tl
-      { #2 }
-    \markdown_jekyll_data_set_keyval:Vn
-      \g_@@_jekyll_data_wildcard_relative_address_tl
-      { #2 }
-    \markdown_jekyll_data_pop:
-  }
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
-% Finally, we will register our macros as token renderer prototypes
-% to be able to react to the traversal of a \acro{yaml} document.
-%
-% \end{markdown}
-%  \begin{macrocode}
-\markdownSetup{
-  rendererPrototypes = {
-    jekyllDataSequenceBegin = {
-      \markdown_jekyll_data_push:nN
-        { #1 }
-        \c_@@_jekyll_data_sequence_tl
-    },
-    jekyllDataMappingBegin = {
-      \markdown_jekyll_data_push:nN
-        { #1 }
-        \c_@@_jekyll_data_mapping_tl
-    },
-    jekyllDataSequenceEnd = {
-      \markdown_jekyll_data_pop:
-    },
-    jekyllDataMappingEnd = {
-      \markdown_jekyll_data_pop:
-    },
-    jekyllDataBoolean = {
-      \markdown_jekyll_data_set_keyvals:nn
-        { #1 }
-        { #2 }
-    },
-    jekyllDataEmpty = { },
-    jekyllDataNumber = {
-      \markdown_jekyll_data_set_keyvals:nn
-        { #1 }
-        { #2 }
-    },
-    jekyllDataString = {
-      \markdown_jekyll_data_set_keyvals:nn
-        { #1 }
-        { #2 }
-    },
 %    \end{macrocode}
 % \begin{markdown}
 %
@@ -23142,8 +23285,6 @@ end
 %
 % \end{markdown}
 %  \begin{macrocode}
-  },
-}
 % TODO: Remove the command definition in TeX Live 2021.
 \providecommand\IfFormatAtLeastTF{\@ifl@t@r\fmtversion}
 \markdownSetup{
@@ -23166,7 +23307,6 @@ end
     },
   },
 }
-
 \ExplSyntaxOff
 %    \end{macrocode}
 % \par
