@@ -21423,29 +21423,29 @@ end
     { #1 }
     \c_@@_jekyll_data_sequence_tl
 }
-\def\markdownRendererJekyllDataMappingBegin#1#2{
+\def\markdownRendererJekyllDataMappingBeginPrototype#1#2{
   \markdown_jekyll_data_push:nN
     { #1 }
     \c_@@_jekyll_data_mapping_tl
 }
-\def\markdownRendererJekyllDataSequenceEnd{
+\def\markdownRendererJekyllDataSequenceEndPrototype{
   \markdown_jekyll_data_pop:
 }
-\def\markdownRendererJekyllDataMappingEnd{
+\def\markdownRendererJekyllDataMappingEndPrototype{
   \markdown_jekyll_data_pop:
 }
-\def\markdownRendererJekyllDataBoolean#1#2{
+\def\markdownRendererJekyllDataBooleanPrototype#1#2{
   \markdown_jekyll_data_set_keyvals:nn
     { #1 }
     { #2 }
 }
-\def\markdownRendererJekyllDataEmpty#1{}
-\def\markdownRendererJekyllDataNumber#1#2{
+\def\markdownRendererJekyllDataEmptyPrototype#1{}
+\def\markdownRendererJekyllDataNumberPrototype#1#2{
   \markdown_jekyll_data_set_keyvals:nn
     { #1 }
     { #2 }
 }
-\def\markdownRendererJekyllDataString#1#2{
+\def\markdownRendererJekyllDataStringPrototype#1#2{
   \markdown_jekyll_data_set_keyvals:nn
     { #1 }
     { #2 }
