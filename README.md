@@ -245,8 +245,8 @@ Acknowledgements
  [option-slice]:          https://mirrors.ctan.org/macros/generic/markdown/markdown.html#slice                "Markdown Package User Manual"
  [option-table-captions]: https://mirrors.ctan.org/macros/generic/markdown/markdown.html#option-tablecaptions "Markdown Package User Manual"
 
-Contributing
-------------
+Contributing to the Development of Markdown
+-------------------------------------------
 
 Apart from the example markdown documents, tests, and continuous integration,
 which are placed in the `examples/`, `tests/`, and `.github/` directories,
@@ -281,6 +281,14 @@ reproduced by running the `docker build` command on `Dockerfile` (`docker build
  [LaTeXMK]:              https://ctan.org/pkg/latexmk                       "latexmk – Fully automated LaTeX document generation"
  [literate programming]: https://en.wikipedia.org/wiki/Literate_programming "Literate programming"
  [ltxdockit]:            https://ctan.org/pkg/ltxdockit                     "ltxdockit – Documentation support"
+
+Contributed Software
+--------------------
+
+Links to contributed third-party software for the Markdown package are
+available in the `contributions/` directory. The intention is to show
+interesting tools for the Markdown package and to give them wider exposure
+without taking responsibility for their development or maintenance.
 
 Citing Markdown
 ---------------
