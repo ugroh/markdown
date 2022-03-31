@@ -4,3 +4,6 @@
 [submodule "contributions/pandoc-to-markdown"]
 	path = contributions/pandoc-to-markdown
 	url = https://github.com/drehak/pandoc-to-markdown.git
+[submodule "contributions/md-templates"]
+	path = contributions/book-templates
+	url = https://github.com/xvrabcov/md-templates
