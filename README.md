@@ -181,8 +181,9 @@ For further information, consult one of the following:
 4. My journal articles published by [TUGboat][]:
     - [Using Markdown inside TeX documents][tb119],
     - [Markdown 2.7.0: Towards lightweight markup in TeX][tb124],
-    - [Making Markdown into a Microwave Meal][tb129], and
-    - [Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX][tb131].
+    - [Making Markdown into a Microwave Meal][tb129],
+    - [Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX][tb131], and
+    - [Markdown 2.15.0: What's New?][tb133].
 5. Journal articles of me and my students published by [CSTUG][] (in Czech and Slovak):
     - [Rendering Markdown inside TeX Documents][10.5300/2016-1-4/78],
     - [Markdown 2.8.1: Boldly Unto the Throne of Lightweight Markup in TeX][10.5300/2020-1-2/48],
@@ -199,10 +200,11 @@ For further information, consult one of the following:
  [overleaf-5]: https://www.overleaf.com/latex/examples/writing-posters-with-markdown/jtbgmmgqrqmh       "Writing Posters with Markdown"
  [overleaf-6]: https://www.overleaf.com/latex/examples/using-markdown-in-latex-documents/whdrnpcpnwrm   "Using Markdown in LaTeX documents"
 
- [tb119]: https://www.tug.org/TUGboat/tb38-2/tb119novotny.pdf          "Using Markdown inside TeX documents"
- [tb124]: https://www.tug.org/TUGboat/tb40-1/tb124novotny-markdown.pdf "Markdown 2.7.0: Towards lightweight markup in TeX"
- [tb129]: https://www.tug.org/TUGboat/tb41-3/tb129novotny-frozen.pdf   "Making Markdown into a Microwave Meal"
- [tb131]: https://tug.org/TUGboat/tb42-2/tb131novotny-markdown.pdf     "Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX"
+ [tb119]: https://www.tug.org/TUGboat/tb38-2/tb119novotny.pdf               "Using Markdown inside TeX documents"
+ [tb124]: https://www.tug.org/TUGboat/tb40-1/tb124novotny-markdown.pdf      "Markdown 2.7.0: Towards lightweight markup in TeX"
+ [tb129]: https://www.tug.org/TUGboat/tb41-3/tb129novotny-frozen.pdf        "Making Markdown into a Microwave Meal"
+ [tb131]: https://tug.org/TUGboat/tb42-2/tb131novotny-markdown.pdf          "Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX"
+ [tb133]: https://tug.org/TUGboat/production/43-1/tb133novotny-markdown.pdf "Markdown 2.15.0: What's New?"
 
  [tb131-slides]:   https://tug.org/tug2021/assets/pdf/tug2021-novotny-slides.pdf   "Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX"
  [tb131-video]:    https://youtu.be/i2GJMnLCZls                                    "Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX"
