@@ -14178,84 +14178,52 @@ following text:
 %
 % \end{markdown}
 %  \begin{macrocode}
-\def\markdownRendererAttributeIdentifierPrototype#1{}%
-\def\markdownRendererAttributeClassNamePrototype#1{}%
-\def\markdownRendererAttributeKeyValuePrototype#1#2{}%
-\def\markdownRendererDocumentBeginPrototype{}%
-\def\markdownRendererDocumentEndPrototype{}%
-\def\markdownRendererInterblockSeparatorPrototype{}%
-\def\markdownRendererLineBreakPrototype{}%
-\def\markdownRendererEllipsisPrototype{}%
-\def\markdownRendererHeaderAttributeContextBeginPrototype{}%
-\def\markdownRendererHeaderAttributeContextEndPrototype{}%
-\def\markdownRendererNbspPrototype{}%
-\def\markdownRendererLeftBracePrototype{}%
-\def\markdownRendererRightBracePrototype{}%
-\def\markdownRendererDollarSignPrototype{}%
-\def\markdownRendererPercentSignPrototype{}%
-\def\markdownRendererAmpersandPrototype{}%
-\def\markdownRendererUnderscorePrototype{}%
-\def\markdownRendererHashPrototype{}%
-\def\markdownRendererCircumflexPrototype{}%
-\def\markdownRendererBackslashPrototype{}%
-\def\markdownRendererTildePrototype{}%
-\def\markdownRendererPipePrototype{}%
-\def\markdownRendererCodeSpanPrototype#1{}%
-\def\markdownRendererLinkPrototype#1#2#3#4{}%
-\def\markdownRendererImagePrototype#1#2#3#4{}%
-\def\markdownRendererContentBlockPrototype#1#2#3#4{}%
-\def\markdownRendererContentBlockOnlineImagePrototype#1#2#3#4{}%
-\def\markdownRendererContentBlockCodePrototype#1#2#3#4#5{}%
-\def\markdownRendererUlBeginPrototype{}%
-\def\markdownRendererUlBeginTightPrototype{}%
-\def\markdownRendererUlItemPrototype{}%
-\def\markdownRendererUlItemEndPrototype{}%
-\def\markdownRendererUlEndPrototype{}%
-\def\markdownRendererUlEndTightPrototype{}%
-\def\markdownRendererOlBeginPrototype{}%
-\def\markdownRendererOlBeginTightPrototype{}%
-\def\markdownRendererOlItemPrototype{}%
-\def\markdownRendererOlItemWithNumberPrototype#1{}%
-\def\markdownRendererOlItemEndPrototype{}%
-\def\markdownRendererOlEndPrototype{}%
-\def\markdownRendererOlEndTightPrototype{}%
-\def\markdownRendererDlBeginPrototype{}%
-\def\markdownRendererDlBeginTightPrototype{}%
-\def\markdownRendererDlItemPrototype#1{}%
-\def\markdownRendererDlItemEndPrototype{}%
-\def\markdownRendererDlDefinitionBeginPrototype{}%
-\def\markdownRendererDlDefinitionEndPrototype{}%
-\def\markdownRendererDlEndPrototype{}%
-\def\markdownRendererDlEndTightPrototype{}%
-\def\markdownRendererEmphasisPrototype#1{}%
-\def\markdownRendererStrongEmphasisPrototype#1{}%
-\def\markdownRendererBlockQuoteBeginPrototype{}%
-\def\markdownRendererBlockQuoteEndPrototype{}%
-\def\markdownRendererInputVerbatimPrototype#1{}%
-\def\markdownRendererInputFencedCodePrototype#1#2{}%
-\def\markdownRendererJekyllDataBeginPrototype{}%
-\def\markdownRendererJekyllDataEndPrototype{}%
-\def\markdownRendererHeadingOnePrototype#1{}%
-\def\markdownRendererHeadingTwoPrototype#1{}%
-\def\markdownRendererHeadingThreePrototype#1{}%
-\def\markdownRendererHeadingFourPrototype#1{}%
-\def\markdownRendererHeadingFivePrototype#1{}%
-\def\markdownRendererHeadingSixPrototype#1{}%
-\def\markdownRendererHorizontalRulePrototype{}%
-\def\markdownRendererFootnotePrototype#1{}%
-\def\markdownRendererCitePrototype#1{}%
-\def\markdownRendererTextCitePrototype#1{}%
-\def\markdownRendererTablePrototype#1#2#3{}%
-\def\markdownRendererInlineHtmlCommentPrototype#1{}%
-\let\markdownRendererBlockHtmlCommentBeginPrototype=\iffalse
-\let\markdownRendererBlockHtmlCommentBegin=\iffalse
-\let\markdownRendererBlockHtmlCommentEndPrototype=\fi
-\let\markdownRendererBlockHtmlCommentEnd=\fi
-\def\markdownRendererInlineHtmlTagPrototype#1{}%
-\def\markdownRendererInputBlockHtmlElementPrototype#1{}%
-\def\markdownRendererTickedBoxPrototype{}%
-\def\markdownRendererHalfTickedBoxPrototype{}%
-\def\markdownRendererUntickedBoxPrototype{}%
+\ExplSyntaxOn
+\cs_new:Nn \@@_plaintex_define_renderer_prototypes:
+  {
+    \seq_map_function:NN
+      \g_@@_renderers_seq
+      \@@_plaintex_define_renderer_prototype:n
+    \let\markdownRendererBlockHtmlCommentBeginPrototype=\iffalse
+    \let\markdownRendererBlockHtmlCommentBegin=\iffalse
+    \let\markdownRendererBlockHtmlCommentEndPrototype=\fi
+    \let\markdownRendererBlockHtmlCommentEnd=\fi
+  }
+\cs_new:Nn \@@_plaintex_define_renderer_prototype:n
+  {
+    \tl_set:Nn
+      \l_tmpb_tl
+%     TODO: Replace with \str_uppercase:n in TeX Live 2020.
+      { \str_upper_case:n { #1 } }
+    \tl_set:Nx
+      \l_tmpa_tl
+      {
+        markdownRenderer
+        \tl_head:f { \l_tmpb_tl }
+        \tl_tail:n { #1 }
+        Prototype
+      }
+    \prop_get:NnN
+      \g_@@_renderer_arities_prop
+      { #1 }
+      \l_tmpb_tl
+    \@@_plaintex_define_renderer_prototype:cV
+      { \l_tmpa_tl }
+      \l_tmpb_tl
+  }
+\cs_new:Nn \@@_plaintex_define_renderer_prototype:Nn
+  {
+    \cs_generate_from_arg_count:NNnn
+      #1
+      \cs_set:Npn
+      { #2 }
+      { }
+  }
+\cs_generate_variant:Nn
+  \@@_plaintex_define_renderer_prototype:Nn
+  { cV }
+\@@_plaintex_define_renderer_prototypes:
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 % \begin{markdown}
