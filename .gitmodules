@@ -7,3 +7,6 @@
 [submodule "contributions/md-templates"]
 	path = contributions/book-templates
 	url = https://github.com/xvrabcov/md-templates
+[submodule "contributions/doctoral-thesis"]
+	path = contributions/doctoral-thesis
+	url = https://github.com/witiko/doctoral-thesis
