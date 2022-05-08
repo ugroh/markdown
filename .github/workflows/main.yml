@@ -39,6 +39,7 @@ jobs:
         texlive:
           - TL2019-historic
           - TL2020-historic
+          - TL2021-historic
           - latest
           - latest-with-cache
     steps:
