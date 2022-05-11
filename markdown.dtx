@@ -101,7 +101,8 @@
 \newunicodechar{☐}{\markdownRendererUntickedBox}
 \IfFileExists{emoji.sty}{
   \usepackage{emoji}
-  \newunicodechar{😉}{\emoji{winking-face}}
+  \setemojifont
+  \newunicodechar{😉}{\emoji{wink}}
 }{
   \newunicodechar{😉}{;-)}
 }
