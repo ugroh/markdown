@@ -99,13 +99,14 @@
 \newunicodechar{☒}{\markdownRendererTickedBox}
 \newunicodechar{⌛}{\markdownRendererHalfTickedBox}
 \newunicodechar{☐}{\markdownRendererUntickedBox}
-\IfFileExists{emoji.sty}{
+\makeatletter
+\@ifpackagelater{emoji}{2020/03/16}{
   \usepackage{emoji}
-  \setemojifont
-  \newunicodechar{😉}{\emoji{wink}}
+  \newunicodechar{😉}{\emoji{winking-face}}
 }{
   \newunicodechar{😉}{;-)}
 }
+\makeatother
 
 % Set up the catcodes.
 \catcode`\_=12 % We won't be typesetting much math and Lua contains lots of `_`.
