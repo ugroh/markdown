@@ -22469,6 +22469,7 @@ end
 %  \begin{macrocode}
     \markdownIfOption{frozenCache}{}{^^A
       \immediate\write18{^^A
+        mkdir -p "\markdownOptionCacheDir";
         if printf '%s' "#3" | grep -q -E '^https?:';
         then
 %    \end{macrocode}
