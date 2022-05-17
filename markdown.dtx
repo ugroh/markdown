@@ -22469,6 +22469,7 @@ end
 %  \begin{macrocode}
     \markdownIfOption{frozenCache}{}{^^A
       \immediate\write18{^^A
+        mkdir -p "\markdownOptionCacheDir";
         if printf '%s' "#3" | grep -q -E '^https?:';
         then
 %    \end{macrocode}
@@ -23141,31 +23142,63 @@ end
     \endgroup
 %    \end{macrocode}
 % \begin{markdown}
-% If the URL begins with a hash sign, then we assume that it is a relative
-% reference. Otherwise, we assume that it is an absolute URL.
+% If the label and the fully-escaped URI are equivalent and the title is
+% empty, assume that the link is an autolink. Otherwise, assume that the
+% link is either direct or indirect.
 % \end{markdown}
 %  \begin{macrocode}
-    \tl_set:Nx
-      \l_tmpa_tl
-      { \str_range:nnn { ##3 } { 1 } { 1 } }
-    \str_if_eq:NNTF
-      \l_tmpa_tl
-      \c_hash_str
+    \tl_set:Nn \l_tmpa_tl { ##1 }
+    \tl_set:Nn \l_tmpb_tl { ##2 }
+    \bool_set:Nn
+      \l_tmpa_bool
       {
-        \exp_args:No
-          \markdownLaTeXRendererRelativeLink
-          { \str_range:nnn { ##3 } { 2 } { -1 } }
+        \tl_if_eq_p:NN
+          \l_tmpa_tl
+          \l_tmpb_tl
+      }
+    \tl_set:Nn \l_tmpa_tl { ##4 }
+    \bool_set:Nn
+      \l_tmpb_bool
+      {
+        \tl_if_empty_p:N
+          \l_tmpa_tl
+      }
+    \bool_if:nTF
+      {
+        \l_tmpa_bool && \l_tmpb_bool
+      }
+      {
+        \markdownLaTeXRendererAutolink { ##2 } { ##3 }
       }{
-        \markdownLaTeXRendererAbsoluteLink { ##1 } { ##2 } { ##3 } { ##4 }
+        \markdownLaTeXRendererDirectOrIndirectLink { ##1 } { ##2 } { ##3 } { ##4 }
       }
   }
   \next
 }
+\def\markdownLaTeXRendererAutolink#1#2{%
+%    \end{macrocode}
+% \begin{markdown}
+% If the URL begins with a hash sign, then we assume that it is a relative
+% reference. Otherwise, we assume that it is an absolute URL.
+% \end{markdown}
+%  \begin{macrocode}
+  \tl_set:Nx
+    \l_tmpa_tl
+    { \str_range:nnn { #2 } { 1 } { 1 } }
+  \str_if_eq:NNTF
+    \l_tmpa_tl
+    \c_hash_str
+    {
+      \exp_args:No
+        \ref
+        { \str_range:nnn { #2 } { 2 } { -1 } }
+    }{
+      \url { #2 }
+    }
+}
 \ExplSyntaxOff
-\def\markdownLaTeXRendererAbsoluteLink#1#2#3#4{%
-  #1\footnote{\ifx\empty#4\empty\else#4: \fi\texttt<\url{#3}\texttt>}}
-\def\markdownLaTeXRendererRelativeLink#1{%
-  \ref{#1}}
+\def\markdownLaTeXRendererDirectOrIndirectLink#1#2#3#4{%
+  #1\footnote{\ifx\empty#4\empty\else#4: \fi\url{#3}}}
 %    \end{macrocode}
 % \par
 % \begin{markdown}
