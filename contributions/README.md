@@ -8,3 +8,10 @@ been contributed to the Markdown package:
  [book-templates]: https://github.com/xvrabcov/md-templates
  [pandoc-to-markdown]: https://github.com/drehak/pandoc-to-markdown
  [doctoral-thesis]: https://github.com/witiko/doctoral-thesis
+
+Here are some other repositories that have been contributed to the Markdown
+package but cannot be directly included as Git submodules:
+
+- [LaTeX Markdown Templates][l4070] from @TeXhackse: Document templates for German schools using the Markdown package
+
+ [l4070]: https://gitlab.com/l4070
