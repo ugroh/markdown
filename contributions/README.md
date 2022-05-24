@@ -5,8 +5,8 @@ been contributed to the Markdown package:
 - [doctoral-thesis][] from [witiko][]: A doctoral thesis written using the Markdown package
 - [pandoc-to-markdown][] from [drehak][]: A proof-of-concept that shows how Pandoc can be integrated with the Markdown package, so that we can typeset and style any document format understood by Pandoc directly from TeX
 
- [doctoral-thesis]: https://github.com/witiko/doctoral-thesis
  [book-templates]: https://github.com/xvrabcov/md-templates
+ [doctoral-thesis]: https://github.com/witiko/doctoral-thesis
  [pandoc-to-markdown]: https://github.com/drehak/pandoc-to-markdown
 
 Here are some other repositories that have been contributed to the Markdown
