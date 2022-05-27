@@ -808,7 +808,7 @@ abbr {
     },
   },
 }
-\def\markdownLaTeXRendererAbsoluteLink#1#2#3#4{%
+\renewcommand\markdownLaTeXRendererDirectOrIndirectLink[4]{%
   #1\footnote{See \url{#3}.}}
 \RequirePackage{varioref}
 \vrefwarning
