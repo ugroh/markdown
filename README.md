@@ -203,8 +203,8 @@ For further information, consult one of the following:
  [tb119]: https://www.tug.org/TUGboat/tb38-2/tb119novotny.pdf               "Using Markdown inside TeX documents"
  [tb124]: https://www.tug.org/TUGboat/tb40-1/tb124novotny-markdown.pdf      "Markdown 2.7.0: Towards lightweight markup in TeX"
  [tb129]: https://www.tug.org/TUGboat/tb41-3/tb129novotny-frozen.pdf        "Making Markdown into a Microwave Meal"
- [tb131]: https://tug.org/TUGboat/tb42-2/tb131novotny-markdown.pdf          "Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX"
- [tb133]: https://tug.org/TUGboat/production/43-1/tb133novotny-markdown.pdf "Markdown 2.15.0: What's New?"
+ [tb131]: https://www.tug.org/TUGboat/tb42-2/tb131novotny-markdown.pdf      "Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX"
+ [tb133]: https://www.overleaf.com/read/pshkckczmmjn                        "Markdown 2.15.0: What's New?"
 
  [tb131-slides]:   https://tug.org/tug2021/assets/pdf/tug2021-novotny-slides.pdf   "Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX"
  [tb131-video]:    https://youtu.be/i2GJMnLCZls                                    "Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX"
@@ -262,7 +262,7 @@ such as XeTeX (`xetex markdown.ins`) or LuaTeX (`luatex markdown.ins`), several
 files are produced from the `markdown.dtx` document. The `make base` command
 is provided by `Makefile` for convenience. In `markdown.dtx`, the boundaries
 between the produced files are marked up using an XML-like syntax provided by
-the [DocStrip][] plain TeX package.
+the [l3docstrip][] plain TeX package.
 
 Running the [LaTeXMK][] tool on the `markdown.dtx` file
 (`latexmk markdown.dtx`) after the Markdown package has been
@@ -279,7 +279,7 @@ reproduced by running the `docker build` command on `Dockerfile` (`docker build
 `Makefile` for convenience.
 
  [doc]:                  https://ctan.org/pkg/doc                           "doc – Format LaTeX documentation"
- [DocStrip]:             https://ctan.org/pkg/docstrip                      "docstrip – Remove comments from file"
+ [l3docstrip]:           https://ctan.org/pkg/l3docstrip                    "l3docstrip – Strip documentation in LaTeX3 source"
  [LaTeXMK]:              https://ctan.org/pkg/latexmk                       "latexmk – Fully automated LaTeX document generation"
  [literate programming]: https://en.wikipedia.org/wiki/Literate_programming "Literate programming"
  [ltxdockit]:            https://ctan.org/pkg/ltxdockit                     "ltxdockit – Documentation support"

@@ -145,7 +145,7 @@ dist: implode
 	        EXIT_CODE=0; \
 	        break; \
 	    else \
-	        EXIT_CODE=$?; \
+	        EXIT_CODE=$$?; \
 	    fi; \
 	done; \
 	exit $$EXIT_CODE

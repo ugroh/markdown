@@ -99,12 +99,14 @@
 \newunicodechar{☒}{\markdownRendererTickedBox}
 \newunicodechar{⌛}{\markdownRendererHalfTickedBox}
 \newunicodechar{☐}{\markdownRendererUntickedBox}
-\IfFileExists{emoji.sty}{
-  \usepackage{emoji}
+\usepackage{emoji}
+\makeatletter
+\@ifpackagelater{emoji}{2020/03/16}{
   \newunicodechar{😉}{\emoji{winking-face}}
 }{
   \newunicodechar{😉}{;-)}
 }
+\makeatother
 
 % Set up the catcodes.
 \catcode`\_=12 % We won't be typesetting much math and Lua contains lots of `_`.
@@ -806,12 +808,10 @@ abbr {
     },
   },
 }
-\def\markdownLaTeXRendererAbsoluteLink#1#2#3#4{%
+\renewcommand\markdownLaTeXRendererDirectOrIndirectLink[4]{%
   #1\footnote{See \url{#3}.}}
 \RequirePackage{varioref}
 \vrefwarning
-\def\markdownLaTeXRendererRelativeLink#1{%
-  \ref{#1}}
 \markdownSetupSnippet{options}{
   rendererPrototypes = {
     dlBegin = {\begin{optionlist}},
@@ -4167,8 +4167,8 @@ defaultOptions.definitionLists = false
         command-line interface for plumbing.
 
         This behavior will only be used when the \Opt{finalizeCache} option is
-        disabled. Furthermore, this behavior is planned to be the new default in
-        the next major release of the Markdown package.
+        disabled. Recursive nesting of markdown document fragments is undefined
+        behavior when \Opt{eagerCache} is disabled.
 
 % \end{markdown}
 % \iffalse
@@ -8286,7 +8286,7 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 % The \mdef{markdownOptionInputTempFileName} macro sets the filename of the
 % temporary input file that is created during the conversion from markdown to
 % plain \TeX{} in \mref{markdownMode} other than `2`. It defaults to
-% \mref{jobname}`.markdown.out`. The same limitations as in the case of the
+% \mref{jobname}`.markdown.in`. The same limitations as in the case of the
 % \mref{markdownOptionHelperScriptFileName} macro apply here.
 %
 % \end{markdown}
@@ -22011,7 +22011,7 @@ end
 %
 % The direct Lua access version of the \mref{markdownLuaExecute} macro is defined
 % in terms of the \mref{directlua} primitive. The \luamref{print} function is set as
-% an alias to the \mref{tex.print} method in order to mimic the behaviour of the
+% an alias to the \luamref{tex.print} method in order to mimic the behaviour of the
 % \mref{markdownLuaExecute} definition from Section <#sec:luabridge>,
 %
 % \end{markdown}
@@ -22435,6 +22435,7 @@ end
 %  \begin{macrocode}
     \markdownIfOption{frozenCache}{}{^^A
       \immediate\write18{^^A
+        mkdir -p "\markdownOptionCacheDir";
         if printf '%s' "#3" | grep -q -E '^https?:';
         then
 %    \end{macrocode}
@@ -23107,31 +23108,81 @@ end
     \endgroup
 %    \end{macrocode}
 % \begin{markdown}
-% If the URL begins with a hash sign, then we assume that it is a relative
-% reference. Otherwise, we assume that it is an absolute URL.
+% If the label and the fully-escaped URI are equivalent and the title is
+% empty, assume that the link is an autolink. Otherwise, assume that the
+% link is either direct or indirect.
 % \end{markdown}
 %  \begin{macrocode}
-    \tl_set:Nx
-      \l_tmpa_tl
-      { \str_range:nnn { ##3 } { 1 } { 1 } }
-    \str_if_eq:NNTF
-      \l_tmpa_tl
-      \c_hash_str
+    \tl_set:Nn \l_tmpa_tl { ##1 }
+    \tl_set:Nn \l_tmpb_tl { ##2 }
+    \bool_set:Nn
+      \l_tmpa_bool
       {
-        \exp_args:No
-          \markdownLaTeXRendererRelativeLink
-          { \str_range:nnn { ##3 } { 2 } { -1 } }
+        \tl_if_eq_p:NN
+          \l_tmpa_tl
+          \l_tmpb_tl
+      }
+    \tl_set:Nn \l_tmpa_tl { ##4 }
+    \bool_set:Nn
+      \l_tmpb_bool
+      {
+        \tl_if_empty_p:N
+          \l_tmpa_tl
+      }
+    \bool_if:nTF
+      {
+        \l_tmpa_bool && \l_tmpb_bool
+      }
+      {
+        \markdownLaTeXRendererAutolink { ##2 } { ##3 }
       }{
-        \markdownLaTeXRendererAbsoluteLink { ##1 } { ##2 } { ##3 } { ##4 }
+        \markdownLaTeXRendererDirectOrIndirectLink { ##1 } { ##2 } { ##3 } { ##4 }
       }
   }
   \next
 }
+\def\markdownLaTeXRendererAutolink#1#2{%
+%    \end{macrocode}
+% \begin{markdown}
+% If the URL begins with a hash sign, then we assume that it is a relative
+% reference. Otherwise, we assume that it is an absolute URL.
+% \end{markdown}
+%  \begin{macrocode}
+  \tl_set:Nn
+    \l_tmpa_tl
+    { #2 }
+  \tl_trim_spaces:N
+    \l_tmpa_tl
+  \tl_set:Nx
+    \l_tmpb_tl
+    {
+      \tl_range:Nnn
+        \l_tmpa_tl
+        { 1 }
+        { 1 }
+    }
+  \str_if_eq:NNTF
+    \l_tmpb_tl
+    \c_hash_str
+    {
+      \tl_set:Nx
+        \l_tmpb_tl
+        {
+          \tl_range:Nnn
+            \l_tmpa_tl
+            { 2 }
+            { -1 }
+        }
+      \exp_args:NV
+        \ref
+        \l_tmpb_tl
+    }{
+      \url { #2 }
+    }
+}
 \ExplSyntaxOff
-\def\markdownLaTeXRendererAbsoluteLink#1#2#3#4{%
-  #1\footnote{\ifx\empty#4\empty\else#4: \fi\texttt<\url{#3}\texttt>}}
-\def\markdownLaTeXRendererRelativeLink#1{%
-  \ref{#1}}
+\def\markdownLaTeXRendererDirectOrIndirectLink#1#2#3#4{%
+  #1\footnote{\ifx\empty#4\empty\else#4: \fi\url{#3}}}
 %    \end{macrocode}
 % \par
 % \begin{markdown}
