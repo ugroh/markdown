@@ -8177,7 +8177,25 @@ pdftex --shell-escape document.tex
 % Section <#sec:luaoptions>), while some of them are specific to the plain
 % \TeX{} interface.
 %
+% To enable the enumeration of plain \TeX{} options, we will maintain the
+% \mdef{g_\@\@_plain_tex_options_seq} sequence.
+%
 % \end{markdown}
+%  \begin{macrocode}
+\ExplSyntaxOn
+\seq_new:N \g_@@_plain_tex_options_seq
+%    \end{macrocode}
+% \begin{markdown}
+%
+% To enable the reflection of default plain \TeX{} options and their types, we
+% will maintain the \mdef{g_\@\@_default_plain_tex_options_prop} and
+% \mdef{g_\@\@_plain_tex_option_types_prop} property lists, respectively.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\prop_new:N \g_@@_plain_tex_option_types_prop
+\prop_new:N \g_@@_default_plain_tex_options_prop
+%    \end{macrocode}
 % \iffalse
 %</tex>
 %<*manual-options>
@@ -8278,7 +8296,24 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 %
 % \end{markdown}
 %  \begin{macrocode}
-\def\markdownOptionHelperScriptFileName{\jobname.markdown.lua}%
+\seq_put_right:Nn
+  \g_@@_plain_tex_options_seq
+  { helperScriptFileName }
+\prop_put:Nnn
+  \g_@@_plain_tex_option_types_prop
+  { helperScriptFileName }
+  { string }
+\prop_put:Nnx
+  \g_@@_default_plain_tex_options_prop
+  { helperScriptFileName }
+  { \jobname.markdown.lua }
+\tl_gset:Nx
+  \markdownOptionHelperScriptFileName
+  {
+    \prop_item:Nn
+      \g_@@_default_plain_tex_options_prop
+      { helperScriptFileName }
+  }
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -8291,7 +8326,24 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 %
 % \end{markdown}
 %  \begin{macrocode}
-\def\markdownOptionInputTempFileName{\jobname.markdown.in}%
+\seq_put_right:Nn
+  \g_@@_plain_tex_options_seq
+  { inputTempFileName }
+\prop_put:Nnn
+  \g_@@_plain_tex_option_types_prop
+  { inputTempFileName }
+  { string }
+\prop_put:Nnx
+  \g_@@_default_plain_tex_options_prop
+  { inputTempFileName }
+  { \jobname.markdown.in }
+\tl_gset:Nx
+  \markdownOptionInputTempFileName
+  {
+    \prop_item:Nn
+      \g_@@_default_plain_tex_options_prop
+      { inputTempFileName }
+  }
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -8304,7 +8356,24 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 %
 % \end{markdown}
 %  \begin{macrocode}
-\def\markdownOptionOutputTempFileName{\jobname.markdown.out}%
+\seq_put_right:Nn
+  \g_@@_plain_tex_options_seq
+  { outputTempFileName }
+\prop_put:Nnn
+  \g_@@_plain_tex_option_types_prop
+  { outputTempFileName }
+  { string }
+\prop_put:Nnx
+  \g_@@_default_plain_tex_options_prop
+  { outputTempFileName }
+  { \jobname.markdown.out }
+\tl_gset:Nx
+  \markdownOptionOutputTempFileName
+  {
+    \prop_item:Nn
+      \g_@@_default_plain_tex_options_prop
+      { outputTempFileName }
+  }
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -8318,7 +8387,24 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 %
 % \end{markdown}
 %  \begin{macrocode}
-\def\markdownOptionErrorTempFileName{\jobname.markdown.err}%
+\seq_put_right:Nn
+  \g_@@_plain_tex_options_seq
+  { errorTempFileName }
+\prop_put:Nnn
+  \g_@@_plain_tex_option_types_prop
+  { errorTempFileName }
+  { string }
+\prop_put:Nnx
+  \g_@@_default_plain_tex_options_prop
+  { errorTempFileName }
+  { \jobname.markdown.err }
+\tl_gset:Nx
+  \markdownOptionErrorTempFileName
+  {
+    \prop_item:Nn
+      \g_@@_default_plain_tex_options_prop
+      { errorTempFileName }
+  }
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -8336,7 +8422,24 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 %
 % \end{markdown}
 %  \begin{macrocode}
-\def\markdownOptionOutputDir{.}%
+\seq_put_right:Nn
+  \g_@@_plain_tex_options_seq
+  { outputDir }
+\prop_put:Nnn
+  \g_@@_plain_tex_option_types_prop
+  { outputDir }
+  { string }
+\prop_put:Nnn
+  \g_@@_default_plain_tex_options_prop
+  { outputDir }
+  { . }
+\tl_gset:Nx
+  \markdownOptionOutputDir
+  {
+    \prop_item:Nn
+      \g_@@_default_plain_tex_options_prop
+      { outputDir }
+  }
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -8350,7 +8453,29 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 %
 % \end{markdown}
 %  \begin{macrocode}
-\def\markdownOptionCacheDir{\markdownOptionOutputDir/_markdown_\jobname}%
+\seq_put_right:Nn
+  \g_@@_plain_tex_options_seq
+  { cacheDir }
+\prop_put:Nnn
+  \g_@@_plain_tex_option_types_prop
+  { cacheDir }
+  { string }
+\prop_put:Nnx
+  \g_@@_default_plain_tex_options_prop
+  { cacheDir }
+  {
+    \prop_item:Nn
+      \g_@@_default_plain_tex_options_prop
+      { outputDir }
+    / _markdown_\jobname
+  }
+\tl_gset:Nx
+  \markdownOptionCacheDir
+  {
+    \prop_item:Nn
+      \g_@@_default_plain_tex_options_prop
+      { cacheDir }
+  }
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -8364,7 +8489,30 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 %
 % \end{markdown}
 %  \begin{macrocode}
-\def\markdownOptionFrozenCacheFileName{\markdownOptionCacheDir/frozenCache.tex}
+\seq_put_right:Nn
+  \g_@@_plain_tex_options_seq
+  { frozenCacheFileName }
+\prop_put:Nnn
+  \g_@@_plain_tex_option_types_prop
+  { frozenCacheFileName }
+  { string }
+\prop_put:Nnx
+  \g_@@_default_plain_tex_options_prop
+  { frozenCacheFileName }
+  {
+    \prop_item:Nn
+      \g_@@_default_plain_tex_options_prop
+      { cacheDir }
+    / frozenCache.tex
+  }
+\tl_gset:Nx
+  \markdownOptionFrozenCacheFileName
+  {
+    \prop_item:Nn
+      \g_@@_default_plain_tex_options_prop
+      { frozenCacheFileName }
+  }
+\ExplSyntaxOff
 %    \end{macrocode}
 %
 % \iffalse
