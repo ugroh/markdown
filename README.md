@@ -262,7 +262,7 @@ such as XeTeX (`xetex markdown.ins`) or LuaTeX (`luatex markdown.ins`), several
 files are produced from the `markdown.dtx` document. The `make base` command
 is provided by `Makefile` for convenience. In `markdown.dtx`, the boundaries
 between the produced files are marked up using an XML-like syntax provided by
-the [DocStrip][] plain TeX package.
+the [l3docstrip][] plain TeX package.
 
 Running the [LaTeXMK][] tool on the `markdown.dtx` file
 (`latexmk markdown.dtx`) after the Markdown package has been
@@ -279,7 +279,7 @@ reproduced by running the `docker build` command on `Dockerfile` (`docker build
 `Makefile` for convenience.
 
  [doc]:                  https://ctan.org/pkg/doc                           "doc – Format LaTeX documentation"
- [DocStrip]:             https://ctan.org/pkg/docstrip                      "docstrip – Remove comments from file"
+ [l3docstrip]:           https://ctan.org/pkg/l3docstrip                    "l3docstrip – Strip documentation in LaTeX3 source"
  [LaTeXMK]:              https://ctan.org/pkg/latexmk                       "latexmk – Fully automated LaTeX document generation"
  [literate programming]: https://en.wikipedia.org/wiki/Literate_programming "Literate programming"
  [ltxdockit]:            https://ctan.org/pkg/ltxdockit                     "ltxdockit – Documentation support"
