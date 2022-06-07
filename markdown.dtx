@@ -99,9 +99,9 @@
 \newunicodechar{☒}{\markdownRendererTickedBox}
 \newunicodechar{⌛}{\markdownRendererHalfTickedBox}
 \newunicodechar{☐}{\markdownRendererUntickedBox}
+\usepackage{emoji}
 \makeatletter
 \@ifpackagelater{emoji}{2020/03/16}{
-  \usepackage{emoji}
   \newunicodechar{😉}{\emoji{winking-face}}
 }{
   \newunicodechar{😉}{;-)}
