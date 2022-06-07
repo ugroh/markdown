@@ -2002,7 +2002,7 @@ option.
 \prop_put:Nnn
   \g_@@_lua_option_types_prop
   { cacheDir }
-  { string }
+  { path }
 \prop_put:Nnn
   \g_@@_default_lua_options_prop
   { cacheDir }
@@ -2237,7 +2237,7 @@ the markdown document from “Hello *world*!” to “Hi *world*!” was not ref
 \prop_put:Nnn
   \g_@@_lua_option_types_prop
   { frozenCacheFileName }
-  { string }
+  { path }
 \prop_put:Nnn
   \g_@@_default_lua_options_prop
   { frozenCacheFileName }
@@ -3976,7 +3976,7 @@ following text:
 \prop_put:Nnn
   \g_@@_lua_option_types_prop
   { contentBlocksLanguageMap }
-  { string }
+  { path }
 \prop_put:Nnn
   \g_@@_default_lua_options_prop
   { contentBlocksLanguageMap }
@@ -6654,7 +6654,7 @@ following text:
 \prop_put:Nnn
   \g_@@_lua_option_types_prop
   { slice }
-  { string }
+  { slice }
 \prop_put:Nnn
   \g_@@_default_lua_options_prop
   { slice }
@@ -8302,7 +8302,7 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 \prop_put:Nnn
   \g_@@_plain_tex_option_types_prop
   { helperScriptFileName }
-  { string }
+  { path }
 \prop_put:Nnx
   \g_@@_default_plain_tex_options_prop
   { helperScriptFileName }
@@ -8332,7 +8332,7 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 \prop_put:Nnn
   \g_@@_plain_tex_option_types_prop
   { inputTempFileName }
-  { string }
+  { path }
 \prop_put:Nnx
   \g_@@_default_plain_tex_options_prop
   { inputTempFileName }
@@ -8362,7 +8362,7 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 \prop_put:Nnn
   \g_@@_plain_tex_option_types_prop
   { outputTempFileName }
-  { string }
+  { path }
 \prop_put:Nnx
   \g_@@_default_plain_tex_options_prop
   { outputTempFileName }
@@ -8393,7 +8393,7 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 \prop_put:Nnn
   \g_@@_plain_tex_option_types_prop
   { errorTempFileName }
-  { string }
+  { path }
 \prop_put:Nnx
   \g_@@_default_plain_tex_options_prop
   { errorTempFileName }
@@ -8428,7 +8428,7 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 \prop_put:Nnn
   \g_@@_plain_tex_option_types_prop
   { outputDir }
-  { string }
+  { path }
 \prop_put:Nnn
   \g_@@_default_plain_tex_options_prop
   { outputDir }
@@ -8459,7 +8459,7 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 \prop_put:Nnn
   \g_@@_plain_tex_option_types_prop
   { cacheDir }
-  { string }
+  { path }
 \prop_put:Nnx
   \g_@@_default_plain_tex_options_prop
   { cacheDir }
@@ -8495,7 +8495,7 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 \prop_put:Nnn
   \g_@@_plain_tex_option_types_prop
   { frozenCacheFileName }
-  { string }
+  { path }
 \prop_put:Nnx
   \g_@@_default_plain_tex_options_prop
   { frozenCacheFileName }
@@ -21580,10 +21580,19 @@ end
 %  \begin{macrocode}
 \ExplSyntaxOn
 \tl_new:N \g_@@_formatted_lua_options_tl
-\tl_const:Nn \c_@@_lua_option_type_boolean { boolean }
-\tl_const:Nn \c_@@_lua_option_type_counter { counter }
-\tl_const:Nn \c_@@_lua_option_type_number  { number  }
-\tl_const:Nn \c_@@_lua_option_type_string  { string  }
+\seq_new:N \g_@@_option_types_seq
+\tl_const:Nn \c_@@_option_type_boolean { boolean }
+\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_boolean
+\tl_const:Nn \c_@@_option_type_counter { counter }
+\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_counter
+\tl_const:Nn \c_@@_option_type_number  { number  }
+\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_number
+\tl_const:Nn \c_@@_option_type_path    { path    }
+\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_path
+\tl_const:Nn \c_@@_option_type_slice   { slice   }
+\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_slice
+\tl_const:Nn \c_@@_option_type_string  { string  }
+\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_string
 \cs_new:Nn \@@_format_lua_options:
   {
     \tl_gclear:N
@@ -21617,23 +21626,29 @@ end
         \tl_case:NnF
           \l_tmpb_tl
           {
-            \c_@@_lua_option_type_string
+            \c_@@_option_type_boolean
               {
                 \tl_gput_right:Nx
                   \g_@@_formatted_lua_options_tl
-                  { #1~=~"     \cs:w \l_tmpa_tl \cs_end: ",~ }
+                  { #1~=~      \cs:w \l_tmpa_tl \cs_end:  ,~ }
               }
-            \c_@@_lua_option_type_counter
+            \c_@@_option_type_number
               {
                 \tl_gput_right:Nx
                   \g_@@_formatted_lua_options_tl
-                  { #1~=~ \the \cs:w \l_tmpa_tl \cs_end: ,~ }
+                  { #1~=~      \cs:w \l_tmpa_tl \cs_end:  ,~ }
+              }
+            \c_@@_option_type_counter
+              {
+                \tl_gput_right:Nx
+                  \g_@@_formatted_lua_options_tl
+                  { #1~=~ \the \cs:w \l_tmpa_tl \cs_end:  ,~ }
               }
           }
           {
             \tl_gput_right:Nx
               \g_@@_formatted_lua_options_tl
-              {     #1~=~      \cs:w \l_tmpa_tl \cs_end: ,~ }
+              {     #1~=~"     \cs:w \l_tmpa_tl \cs_end: ",~ }
           }
       }
   }
@@ -21642,6 +21657,12 @@ end
   { undefined-lua-option }
   {
     Lua~option~#1~is~undefined.
+  }
+\msg_new:nnn
+  { markdown }
+  { unknown-lua-option-type }
+  {
+    Lua~option~#1~has~unknown~type~#2.
   }
 \msg_new:nnn
   { markdown }
@@ -21668,6 +21689,16 @@ end
       { #1 }
       \l_tmpb_tl
       {
+        \seq_if_in:NVF
+          \g_@@_option_types_seq
+          \l_tmpb_tl
+          {
+            \msg_error:nnxx
+              { markdown }
+              { unknown-lua-option-type }
+              { #1 }
+              { \l_tmpb_tl }
+          }
         \cs_if_free:cTF
           { \l_tmpa_tl }
           { }
