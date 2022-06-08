@@ -1846,9 +1846,9 @@ interfaces and all the way up to the \LaTeX{} and \Hologo{ConTeXt} interfaces.
 %<*manual-options>
 % \fi
 % \begin{markdown}
-% 
+%
 %### File and Directory Names
-% 
+%
 % \end{markdown}
 % \par
 % \iffalse
@@ -2006,7 +2006,7 @@ option.
 \prop_put:Nnn
   \g_@@_default_lua_options_prop
   { cacheDir }
-  { . }
+  { \markdownOptionOutputDir / _markdown_\jobname }
 %    \end{macrocode}
 % \iffalse
 %</tex>
@@ -2241,7 +2241,7 @@ the markdown document from “Hello *world*!” to “Hi *world*!” was not ref
 \prop_put:Nnn
   \g_@@_default_lua_options_prop
   { frozenCacheFileName }
-  { frozenCache.tex }
+  { \markdownOptionCacheDir / frozenCache.tex }
 %    \end{macrocode}
 % \iffalse
 %</tex>
@@ -8307,13 +8307,6 @@ For more information, see the examples for the \Opt{finalizeCache} option.
   \g_@@_default_plain_tex_options_prop
   { helperScriptFileName }
   { \jobname.markdown.lua }
-\tl_gset:Nx
-  \markdownOptionHelperScriptFileName
-  {
-    \prop_item:Nn
-      \g_@@_default_plain_tex_options_prop
-      { helperScriptFileName }
-  }
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -8337,13 +8330,6 @@ For more information, see the examples for the \Opt{finalizeCache} option.
   \g_@@_default_plain_tex_options_prop
   { inputTempFileName }
   { \jobname.markdown.in }
-\tl_gset:Nx
-  \markdownOptionInputTempFileName
-  {
-    \prop_item:Nn
-      \g_@@_default_plain_tex_options_prop
-      { inputTempFileName }
-  }
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -8367,13 +8353,6 @@ For more information, see the examples for the \Opt{finalizeCache} option.
   \g_@@_default_plain_tex_options_prop
   { outputTempFileName }
   { \jobname.markdown.out }
-\tl_gset:Nx
-  \markdownOptionOutputTempFileName
-  {
-    \prop_item:Nn
-      \g_@@_default_plain_tex_options_prop
-      { outputTempFileName }
-  }
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -8398,13 +8377,6 @@ For more information, see the examples for the \Opt{finalizeCache} option.
   \g_@@_default_plain_tex_options_prop
   { errorTempFileName }
   { \jobname.markdown.err }
-\tl_gset:Nx
-  \markdownOptionErrorTempFileName
-  {
-    \prop_item:Nn
-      \g_@@_default_plain_tex_options_prop
-      { errorTempFileName }
-  }
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -8433,85 +8405,79 @@ For more information, see the examples for the \Opt{finalizeCache} option.
   \g_@@_default_plain_tex_options_prop
   { outputDir }
   { . }
-\tl_gset:Nx
-  \markdownOptionOutputDir
-  {
-    \prop_item:Nn
-      \g_@@_default_plain_tex_options_prop
-      { outputDir }
-  }
 %    \end{macrocode}
 % \par
 % \begin{markdown}
 %
-% The \mdef{markdownOptionCacheDir} macro corresponds to the Lua interface
-% \Opt{cacheDir} option that sets the path to the directory that will contain
-% the produced cache files. The option defaults to `_markdown_`\mref{jobname},
-% which is a similar naming scheme to the one used by the \pkg{minted} \LaTeX{}
-% package. The same limitations apply here as in the case of the
+% Here, we automatically define all the above macros for plain \TeX{} options.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\cs_new:Nn \@@_plain_tex_define_options:
+  {
+    \seq_map_function:NN
+      \g_@@_lua_options_seq
+      \@@_plain_tex_define_lua_option:n
+%    \end{macrocode}
+% \begin{markdown}
+%
+%#### Lua Interface Options
+% Furthemore, we also define macros that map directly to the options recognized
+% by the Lua interface, such as \mdef{markdownOptionHybrid} for the
+% \Opt{hybrid} Lua option (see Section <#sec:luaoptions>), which are not
+% processed by the plain \TeX{} implementation, only passed along to Lua.
+%
+% For the macros that correspond to the non-boolean options recognized by the
+% Lua interface, the same limitations apply here in the case of the
 % \mref{markdownOptionHelperScriptFileName} macro.
 %
 % \end{markdown}
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_plain_tex_options_seq
-  { cacheDir }
-\prop_put:Nnn
-  \g_@@_plain_tex_option_types_prop
-  { cacheDir }
-  { path }
-\prop_put:Nnx
-  \g_@@_default_plain_tex_options_prop
-  { cacheDir }
-  {
-    \prop_item:Nn
-      \g_@@_default_plain_tex_options_prop
-      { outputDir }
-    / _markdown_\jobname
+    \seq_map_function:NN
+      \g_@@_plain_tex_options_seq
+      \@@_plain_tex_define_plain_tex_option:n
   }
-\tl_gset:Nx
-  \markdownOptionCacheDir
+\cs_new:Nn \@@_plain_tex_define_lua_option:n
   {
-    \prop_item:Nn
-      \g_@@_default_plain_tex_options_prop
-      { cacheDir }
+    \@@_plain_tex_define_option:nN
+      { #1 }
+      \g_@@_default_lua_options_prop
   }
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
-% The \mdef{markdownOptionFrozenCacheFileName} macro corresponds to the Lua
-% interface \Opt{frozenCacheFileName} option that sets the path to an output
-% file (frozen cache) that will contain a mapping between an enumeration of the
-% markdown documents in the plain \TeX{} document and their auxiliary cache
-% files. The option defaults to `frozenCache.tex`. The same limitations apply
-% here as in the case of the \mref{markdownOptionHelperScriptFileName} macro.
-%
-% \end{markdown}
-%  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_plain_tex_options_seq
-  { frozenCacheFileName }
-\prop_put:Nnn
-  \g_@@_plain_tex_option_types_prop
-  { frozenCacheFileName }
-  { path }
-\prop_put:Nnx
-  \g_@@_default_plain_tex_options_prop
-  { frozenCacheFileName }
+\cs_new:Nn \@@_plain_tex_define_plain_tex_option:n
   {
-    \prop_item:Nn
+    \@@_plain_tex_define_option:nN
+      { #1 }
       \g_@@_default_plain_tex_options_prop
-      { cacheDir }
-    / frozenCache.tex
   }
-\tl_gset:Nx
-  \markdownOptionFrozenCacheFileName
+\cs_new:Nn \@@_plain_tex_define_option:nN
   {
-    \prop_item:Nn
-      \g_@@_default_plain_tex_options_prop
-      { frozenCacheFileName }
+    \@@_option_tl_to_cs:nN
+      { #1 }
+      \l_tmpa_tl
+    \prop_get:NnN
+      #2
+      { #1 }
+      \l_tmpb_tl
+    \exp_args:NNo
+      \cs_new:cpn
+        \l_tmpa_tl
+        { \l_tmpb_tl }
   }
+\cs_new:Nn \@@_option_tl_to_cs:nN
+  {
+    \tl_set:Nn
+      \l_tmpa_tl
+%     TODO: Replace with \str_uppercase:n in TeX Live 2020.
+      { \str_upper_case:n { #1 } }
+    \tl_set:Nx
+      #2
+      {
+        markdownOption
+        \tl_head:f { \l_tmpa_tl }
+        \tl_tail:n { #1 }
+      }
+  }
+\@@_plain_tex_define_options:
 \ExplSyntaxOff
 %    \end{macrocode}
 %
@@ -8578,61 +8544,6 @@ No document named `error-output.txt` should be produced in the folder named
 `output-directory`. This document would only be produced if an error had occured
 while executing the Lua code. If this happens, please [file a
 bug](https://github.com/witiko/markdown/issues).
-
-%</manual-options>
-%<*tex>
-% \fi
-% \par
-% \begin{markdown}
-%
-%#### Lua Interface Options
-% The following macros map directly to the options recognized by the Lua
-% interface (see Section <#sec:luaoptions>) and are not processed by the
-% plain \TeX{} implementation, only passed along to Lua. They are undefined, which
-% makes them fall back to the default values provided by the Lua interface.
-%
-% For the macros that correspond to the non-boolean options recognized by the
-% Lua interface, the same limitations apply here in the case of the
-% \mref{markdownOptionHelperScriptFileName} macro.
-%
-% \end{markdown}
-%  \begin{macrocode}
-\let\markdownOptionBlankBeforeBlockquote\undefined
-\let\markdownOptionBlankBeforeCodeFence\undefined
-\let\markdownOptionBlankBeforeHeading\undefined
-\let\markdownOptionBreakableBlockquotes\undefined
-\let\markdownOptionCitations\undefined
-\let\markdownOptionCitationNbsps\undefined
-\let\markdownOptionContentBlocks\undefined
-\let\markdownOptionContentBlocksLanguageMap\undefined
-\let\markdownOptionDefinitionLists\undefined
-\let\markdownOptionEagerCache\undefined
-\let\markdownOptionFootnotes\undefined
-\let\markdownOptionFencedCode\undefined
-\let\markdownOptionHardLineBreaks\undefined
-\let\markdownOptionHashEnumerators\undefined
-\let\markdownOptionHeaderAttributes\undefined
-\let\markdownOptionHtml\undefined
-\let\markdownOptionHybrid\undefined
-\let\markdownOptionInlineFootnotes\undefined
-\let\markdownOptionJekyllData\undefined
-\let\markdownOptionPipeTables\undefined
-\let\markdownOptionPreserveTabs\undefined
-\let\markdownOptionRelativeReferences\undefined
-\let\markdownOptionShiftHeadings\undefined
-\let\markdownOptionSlice\undefined
-\let\markdownOptionSmartEllipses\undefined
-\let\markdownOptionStartNumber\undefined
-\let\markdownOptionStripIndent\undefined
-\let\markdownOptionTableCaptions\undefined
-\let\markdownOptionTaskLists\undefined
-\let\markdownOptionTexComments\undefined
-\let\markdownOptionTightLists\undefined
-%    \end{macrocode}
-% \par
-% \iffalse
-%</tex>
-%<*manual-options>
 
 #### Package Documentation
 
@@ -14339,18 +14250,9 @@ following text:
   }
 \cs_new:Nn \@@_plaintex_define_renderer_prototype:n
   {
-    \tl_set:Nn
-      \l_tmpb_tl
-%     TODO: Replace with \str_uppercase:n in TeX Live 2020.
-      { \str_upper_case:n { #1 } }
-    \tl_set:Nx
+    \@@_renderer_prototype_tl_to_cs:nN
+      { #1 }
       \l_tmpa_tl
-      {
-        markdownRenderer
-        \tl_head:f { \l_tmpb_tl }
-        \tl_tail:n { #1 }
-        Prototype
-      }
     \prop_get:NnN
       \g_@@_renderer_arities_prop
       { #1 }
@@ -14358,6 +14260,21 @@ following text:
     \@@_plaintex_define_renderer_prototype:cV
       { \l_tmpa_tl }
       \l_tmpb_tl
+  }
+\cs_new:Nn \@@_renderer_prototype_tl_to_cs:nN
+  {
+    \tl_set:Nn
+      \l_tmpa_tl
+%     TODO: Replace with \str_uppercase:n in TeX Live 2020.
+      { \str_upper_case:n { #1 } }
+    \tl_set:Nx
+      #2
+      {
+        markdownRenderer
+        \tl_head:f { \l_tmpa_tl }
+        \tl_tail:n { #1 }
+        Prototype
+      }
   }
 \cs_new:Nn \@@_plaintex_define_renderer_prototype:Nn
   {
@@ -15364,17 +15281,9 @@ The following ordered list will be preceded by roman numerals:
   }
 \cs_new:Nn \@@_latex_define_renderer:n
   {
-    \tl_set:Nn
-      \l_tmpb_tl
-%     TODO: Replace with \str_uppercase:n in TeX Live 2020.
-      { \str_upper_case:n { #1 } }
-    \tl_set:Nx
+    \@@_renderer_tl_to_cs:nN
+      { #1 }
       \l_tmpa_tl
-      {
-        markdownRenderer
-        \tl_head:f { \l_tmpb_tl }
-        \tl_tail:n { #1 }
-      }
     \prop_get:NnN
       \g_@@_renderer_arities_prop
       { #1 }
@@ -15383,6 +15292,20 @@ The following ordered list will be preceded by roman numerals:
       { #1 }
       { \l_tmpa_tl }
       \l_tmpb_tl
+  }
+\cs_new:Nn \@@_renderer_tl_to_cs:nN
+  {
+    \tl_set:Nn
+      \l_tmpa_tl
+%     TODO: Replace with \str_uppercase:n in TeX Live 2020.
+      { \str_upper_case:n { #1 } }
+    \tl_set:Nx
+      #2
+      {
+        markdownRenderer
+        \tl_head:f { \l_tmpa_tl }
+        \tl_tail:n { #1 }
+      }
   }
 \cs_new:Nn \@@_latex_define_renderer:nNn
   {
@@ -15435,18 +15358,9 @@ The following ordered list will be preceded by roman numerals:
   }
 \cs_new:Nn \@@_latex_define_renderer_prototype:n
   {
-    \tl_set:Nn
-      \l_tmpb_tl
-%     TODO: Replace with \str_uppercase:n in TeX Live 2020.
-      { \str_upper_case:n { #1 } }
-    \tl_set:Nx
+    \@@_renderer_prototype_tl_to_cs:nN
+      { #1 }
       \l_tmpa_tl
-      {
-        markdownRenderer
-        \tl_head:f { \l_tmpb_tl }
-        \tl_tail:n { #1 }
-        Prototype
-      }
     \prop_get:NnN
       \g_@@_renderer_arities_prop
       { #1 }
@@ -21603,18 +21517,11 @@ end
   }
 \cs_new:Nn \@@_format_lua_option:n
   {
-    \@@_typecheck_lua_option:n { #1 }
-    \tl_set:Nn
-      \l_tmpb_tl
-%     TODO: Replace with \str_uppercase:n in TeX Live 2020.
-      { \str_upper_case:n { #1 } }
-    \tl_set:Nx
+    \@@_typecheck_lua_option:n
+      { #1 }
+    \@@_option_tl_to_cs:nN
+      { #1 }
       \l_tmpa_tl
-      {
-        markdownOption
-        \tl_head:f { \l_tmpb_tl }
-        \tl_tail:n { #1 }
-      }
     \prop_get:NnN
       \g_@@_lua_option_types_prop
       { #1 }
@@ -21673,17 +21580,9 @@ end
   }
 \cs_new:Nn \@@_typecheck_lua_option:n
   {
-    \tl_set:Nn
-      \l_tmpb_tl
-%     TODO: Replace with \str_uppercase:n in TeX Live 2020.
-      { \str_upper_case:n { #1 } }
-    \tl_set:Nx
+    \@@_option_tl_to_cs:nN
+      { #1 }
       \l_tmpa_tl
-      {
-        markdownOption
-        \tl_head:f { \l_tmpb_tl }
-        \tl_tail:n { #1 }
-      }
     \prop_get:NnNTF
       \g_@@_lua_option_types_prop
       { #1 }
@@ -21785,17 +21684,9 @@ end
 \tl_const:Nn \c_@@_lua_option_value_false { false }
 \cs_new:Nn \@@_if_option:nTF
   {
-    \tl_set:Nn
-      \l_tmpb_tl
-%     TODO: Replace with \str_uppercase:n in TeX Live 2020.
-      { \str_upper_case:n { #1 } }
-    \tl_set:Nx
+    \@@_option_tl_to_cs:nN
+      { #1 }
       \l_tmpa_tl
-      {
-        markdownOption
-        \tl_head:f { \l_tmpb_tl }
-        \tl_tail:n { #1 }
-      }
     \cs_if_free:cTF
       { \l_tmpa_tl }
       {
