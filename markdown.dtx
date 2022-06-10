@@ -21628,7 +21628,7 @@ end
                     \c_@@_lua_option_value_false { }
                   }
                   {
-                    \msg_error:nnxx
+                    \msg_error:nnxv
                       { markdown }
                       { failed-typecheck-for-boolean-option }
                       { #1 }
@@ -21638,6 +21638,9 @@ end
           }
       }
   }
+\cs_generate_variant:Nn
+  \msg_error:nnnn
+  { nnxv }
 \msg_new:nnn
   { markdown }
   { unknown-option-type }
