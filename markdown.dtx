@@ -21624,8 +21624,8 @@ end
                 \tl_case:cnF
                   { \l_tmpa_tl }
                   {
-                    \c_@@_lua_option_value_true  { }
-                    \c_@@_lua_option_value_false { }
+                    \c_@@_option_value_true  { }
+                    \c_@@_option_value_false { }
                   }
                   {
                     \msg_error:nnxv
@@ -21755,8 +21755,8 @@ end
 % \end{markdown}
 %  \begin{macrocode}
 \ExplSyntaxOn
-\tl_const:Nn \c_@@_lua_option_value_true  { true  }
-\tl_const:Nn \c_@@_lua_option_value_false { false }
+\tl_const:Nn \c_@@_option_value_true  { true  }
+\tl_const:Nn \c_@@_option_value_false { false }
 \msg_new:nnn
   { markdown }
   { expected-boolean-option }
@@ -21797,7 +21797,7 @@ end
       }
     \tl_if_eq:NNTF
       \l_tmpb_tl
-      \c_@@_lua_option_value_true
+      \c_@@_option_value_true
       { #2 }
       { #3 }
   }
