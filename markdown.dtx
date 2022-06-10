@@ -21557,36 +21557,17 @@ end
     \@@_get_option_type:nN
       { #1 }
       \l_tmpa_tl
-    \tl_case:NnF
-      \l_tmpa_tl
+    \bool_if:nTF
       {
-        \c_@@_option_type_boolean_tl
-          {
-            \@@_get_option:nN
-              { #1 }
-              \l_tmpa_tl
-            \tl_gput_right:Nx
-              \g_@@_formatted_lua_options_tl
-              { #1~=~  \l_tmpa_tl   ,~ }
-          }
-        \c_@@_option_type_number_tl
-          {
-            \@@_get_option:nN
-              { #1 }
-              \l_tmpa_tl
-            \tl_gput_right:Nx
-              \g_@@_formatted_lua_options_tl
-              { #1~=~  \l_tmpa_tl   ,~ }
-          }
-        \c_@@_option_type_counter_tl
-          {
-            \@@_get_option:nN
-              { #1 }
-              \l_tmpa_tl
-            \tl_gput_right:Nx
-              \g_@@_formatted_lua_options_tl
-              { #1~=~  \l_tmpa_tl   ,~ }
-          }
+        \str_if_eq_p:VV
+          \l_tmpa_tl
+          \c_@@_option_type_boolean_tl ||
+        \str_if_eq_p:VV
+          \l_tmpa_tl
+          \c_@@_option_type_number_tl ||
+        \str_if_eq_p:VV
+          \l_tmpa_tl
+          \c_@@_option_type_counter_tl
       }
       {
         \@@_get_option:nN
@@ -21594,7 +21575,15 @@ end
           \l_tmpa_tl
         \tl_gput_right:Nx
           \g_@@_formatted_lua_options_tl
-          {     #1~=~ " \l_tmpa_tl " ,~ }
+          { #1~=~  \l_tmpa_tl   ,~ }
+      }
+      {
+        \@@_get_option:nN
+          { #1 }
+          \l_tmpa_tl
+        \tl_gput_right:Nx
+          \g_@@_formatted_lua_options_tl
+          { #1~=~ " \l_tmpa_tl " ,~ }
       }
   }
 \msg_new:nnn
