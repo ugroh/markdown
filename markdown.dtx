@@ -8470,8 +8470,8 @@ For more information, see the examples for the \Opt{finalizeCache} option.
       \g_@@_plain_tex_option_types_prop
   }
 \seq_new:N \g_@@_option_types_seq
-\tl_const:Nn \c_@@_option_type_counter { counter }
-\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_counter
+\tl_const:Nn \c_@@_option_type_counter_tl { counter }
+\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_counter_tl
 \cs_new:Nn \@@_plain_tex_define_option:nNN
   {
     \@@_option_tl_to_cs:nN
@@ -8484,7 +8484,7 @@ For more information, see the examples for the \Opt{finalizeCache} option.
     \tl_case:NnF
       \l_tmpb_tl
       {
-        \c_@@_option_type_counter
+        \c_@@_option_type_counter_tl
           {
             \prop_get:NnN
               #2
@@ -21532,16 +21532,16 @@ end
 %  \begin{macrocode}
 \ExplSyntaxOn
 \tl_new:N \g_@@_formatted_lua_options_tl
-\tl_const:Nn \c_@@_option_type_boolean { boolean }
-\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_boolean
-\tl_const:Nn \c_@@_option_type_number  { number  }
-\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_number
-\tl_const:Nn \c_@@_option_type_path    { path    }
-\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_path
-\tl_const:Nn \c_@@_option_type_slice   { slice   }
-\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_slice
-\tl_const:Nn \c_@@_option_type_string  { string  }
-\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_string
+\tl_const:Nn \c_@@_option_type_boolean_tl { boolean }
+\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_boolean_tl
+\tl_const:Nn \c_@@_option_type_number_tl  { number  }
+\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_number_tl
+\tl_const:Nn \c_@@_option_type_path_tl    { path    }
+\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_path_tl
+\tl_const:Nn \c_@@_option_type_slice_tl   { slice   }
+\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_slice_tl
+\tl_const:Nn \c_@@_option_type_string_tl  { string  }
+\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_string_tl
 \cs_new:Nn \@@_format_lua_options:
   {
     \tl_gclear:N
@@ -21568,19 +21568,19 @@ end
         \tl_case:NnF
           \l_tmpb_tl
           {
-            \c_@@_option_type_boolean
+            \c_@@_option_type_boolean_tl
               {
                 \tl_gput_right:Nx
                   \g_@@_formatted_lua_options_tl
                   { #1~=~      \cs:w \l_tmpa_tl \cs_end:  ,~ }
               }
-            \c_@@_option_type_number
+            \c_@@_option_type_number_tl
               {
                 \tl_gput_right:Nx
                   \g_@@_formatted_lua_options_tl
                   { #1~=~      \cs:w \l_tmpa_tl \cs_end:  ,~ }
               }
-            \c_@@_option_type_counter
+            \c_@@_option_type_counter_tl
               {
                 \tl_gput_right:Nx
                   \g_@@_formatted_lua_options_tl
@@ -21615,7 +21615,7 @@ end
         \tl_case:Nn
           \l_tmpa_tl
           {
-            \c_@@_option_type_boolean
+            \c_@@_option_type_boolean_tl
               {
                 \@@_option_tl_to_cs:nN
                   { #1 }
@@ -21624,10 +21624,10 @@ end
                   {
                     \str_if_eq_p:vV
                       { \l_tmpa_tl }
-                      \c_@@_option_value_true ||
+                      \c_@@_option_value_true_tl ||
                     \str_if_eq_p:vV
                       { \l_tmpa_tl }
-                      \c_@@_option_value_false
+                      \c_@@_option_value_false_tl
                   }
                   {
                     \msg_error:nnxv
@@ -21761,8 +21761,8 @@ end
 % \end{markdown}
 %  \begin{macrocode}
 \ExplSyntaxOn
-\tl_const:Nn \c_@@_option_value_true  { true  }
-\tl_const:Nn \c_@@_option_value_false { false }
+\tl_const:Nn \c_@@_option_value_true_tl  { true  }
+\tl_const:Nn \c_@@_option_value_false_tl { false }
 \msg_new:nnn
   { markdown }
   { expected-boolean-option }
@@ -21778,7 +21778,7 @@ end
       \l_tmpa_tl
     \tl_if_eq:NNF
       \l_tmpa_tl
-      \c_@@_option_type_boolean
+      \c_@@_option_type_boolean_tl
       {
         \msg_error:nnxx
           { markdown }
@@ -21803,7 +21803,7 @@ end
       }
     \tl_if_eq:NNTF
       \l_tmpb_tl
-      \c_@@_option_value_true
+      \c_@@_option_value_true_tl
       { #2 }
       { #3 }
   }
