@@ -21554,43 +21554,47 @@ end
   {
     \@@_typecheck_option:n
       { #1 }
-    \@@_option_tl_to_cs:nN
+    \@@_get_option_type:nN
       { #1 }
       \l_tmpa_tl
-    \prop_get:NnN
-      \g_@@_lua_option_types_prop
-      { #1 }
-      \l_tmpb_tl
-    \cs_if_free:cF
-      { \l_tmpa_tl }
+    \tl_case:NnF
+      \l_tmpa_tl
       {
-        \tl_case:NnF
-          \l_tmpb_tl
+        \c_@@_option_type_boolean_tl
           {
-            \c_@@_option_type_boolean_tl
-              {
-                \tl_gput_right:Nx
-                  \g_@@_formatted_lua_options_tl
-                  { #1~=~      \cs:w \l_tmpa_tl \cs_end:  ,~ }
-              }
-            \c_@@_option_type_number_tl
-              {
-                \tl_gput_right:Nx
-                  \g_@@_formatted_lua_options_tl
-                  { #1~=~      \cs:w \l_tmpa_tl \cs_end:  ,~ }
-              }
-            \c_@@_option_type_counter_tl
-              {
-                \tl_gput_right:Nx
-                  \g_@@_formatted_lua_options_tl
-                  { #1~=~ \the \cs:w \l_tmpa_tl \cs_end:  ,~ }
-              }
-          }
-          {
+            \@@_get_option:nN
+              { #1 }
+              \l_tmpa_tl
             \tl_gput_right:Nx
               \g_@@_formatted_lua_options_tl
-              {     #1~=~"     \cs:w \l_tmpa_tl \cs_end: ",~ }
+              { #1~=~  \l_tmpa_tl   ,~ }
           }
+        \c_@@_option_type_number_tl
+          {
+            \@@_get_option:nN
+              { #1 }
+              \l_tmpa_tl
+            \tl_gput_right:Nx
+              \g_@@_formatted_lua_options_tl
+              { #1~=~  \l_tmpa_tl   ,~ }
+          }
+        \c_@@_option_type_counter_tl
+          {
+            \@@_get_option:nN
+              { #1 }
+              \l_tmpa_tl
+            \tl_gput_right:Nx
+              \g_@@_formatted_lua_options_tl
+              { #1~=~  \l_tmpa_tl   ,~ }
+          }
+      }
+      {
+        \@@_get_option:nN
+          { #1 }
+          \l_tmpa_tl
+        \tl_gput_right:Nx
+          \g_@@_formatted_lua_options_tl
+          {     #1~=~ " \l_tmpa_tl " ,~ }
       }
   }
 \msg_new:nnn
@@ -21602,39 +21606,32 @@ end
   }
 \cs_new:Nn \@@_typecheck_option:n
   {
-    \@@_option_tl_to_cs:nN
+    \@@_get_option_type:nN
       { #1 }
       \l_tmpa_tl
-    \cs_if_free:cF
-      { \l_tmpa_tl }
+    \tl_case:Nn
+      \l_tmpa_tl
       {
-        \@@_get_option_type:nN
-          { #1 }
-          \l_tmpa_tl
-        \tl_case:Nn
-          \l_tmpa_tl
+        \c_@@_option_type_boolean_tl
           {
-            \c_@@_option_type_boolean_tl
+            \@@_get_option:nN
+              { #1 }
+              \l_tmpa_tl
+            \bool_if:nF
               {
-                \@@_option_tl_to_cs:nN
+                \str_if_eq_p:VV
+                  \l_tmpa_tl
+                  \c_@@_option_value_true_tl ||
+                \str_if_eq_p:VV
+                  \l_tmpa_tl
+                  \c_@@_option_value_false_tl
+              }
+              {
+                \msg_error:nnnV
+                  { markdown }
+                  { failed-typecheck-for-boolean-option }
                   { #1 }
                   \l_tmpa_tl
-                \bool_if:nF
-                  {
-                    \str_if_eq_p:vV
-                      { \l_tmpa_tl }
-                      \c_@@_option_value_true_tl ||
-                    \str_if_eq_p:vV
-                      { \l_tmpa_tl }
-                      \c_@@_option_value_false_tl
-                  }
-                  {
-                    \msg_error:nnxv
-                      { markdown }
-                      { failed-typecheck-for-boolean-option }
-                      { #1 }
-                      { \l_tmpa_tl }
-                  }
               }
           }
       }
@@ -21645,7 +21642,7 @@ end
   { p  }
 \cs_generate_variant:Nn
   \msg_error:nnnn
-  { nnxv }
+  { nnnV }
 \msg_new:nnn
   { markdown }
   { unknown-option-type }
@@ -21785,6 +21782,18 @@ end
           { #1 }
           { \l_tmpa_tl }
       }
+    \@@_get_option:nN
+      { #1 }
+      \l_tmpa_tl
+    \str_if_eq:NNTF
+      \l_tmpa_tl
+      \c_@@_option_value_true_tl
+      { #2 }
+      { #3 }
+  }
+\cs_new:Nn
+  \@@_get_option:nN
+  {
     \@@_option_tl_to_cs:nN
       { #1 }
       \l_tmpa_tl
@@ -21793,18 +21802,32 @@ end
       {
         \@@_get_default_option:nN
           { #1 }
-          \l_tmpb_tl
+          #2
       }
       {
-        \tl_set:Nf
-          \l_tmpb_tl
-          { \cs:w \l_tmpa_tl \cs_end: }
+        \@@_get_option_type:nN
+          { #1 }
+          \l_tmpa_tl
+        \str_if_eq:NNTF
+          \c_@@_option_type_counter_tl
+          \l_tmpa_tl
+          {
+            \@@_option_tl_to_cs:nN
+              { #1 }
+              \l_tmpa_tl
+            \tl_set:Nx
+              #2
+              { \the \cs:w \l_tmpa_tl \cs_end: }
+          }
+          {
+            \@@_option_tl_to_cs:nN
+              { #1 }
+              \l_tmpa_tl
+            \tl_set:Nv
+              #2
+              { \l_tmpa_tl }
+          }
       }
-    \str_if_eq:NNTF
-      \l_tmpb_tl
-      \c_@@_option_value_true_tl
-      { #2 }
-      { #3 }
   }
 \let\markdownIfOption=\@@_if_option:nTF
 \ExplSyntaxOff
