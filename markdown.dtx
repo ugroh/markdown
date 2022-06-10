@@ -8249,6 +8249,30 @@ result, the plain \TeX{} document becomes more portable, but further changes
 in the order and the content of markdown documents will not be reflected. It
 defaults to `false`.
 
+% \end{markdown}
+% \iffalse
+%</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\seq_put_right:Nn
+  \g_@@_plain_tex_options_seq
+  { frozenCache }
+\prop_put:Nnn
+  \g_@@_plain_tex_option_types_prop
+  { frozenCache }
+  { boolean }
+\prop_put:Nnx
+  \g_@@_default_plain_tex_options_prop
+  { frozenCache }
+  { false }
+%    \end{macrocode}
+% \iffalse
+%</tex>
+%<*manual-options>
+% \fi
+% \begin{markdown}
+%
 % The standard usage of the above two options is as follows:
 % \iffalse
 The standard usage of the \Opt{finalizeCache} and \Opt{frozenCache}
@@ -21519,7 +21543,7 @@ end
   }
 \cs_new:Nn \@@_format_lua_option:n
   {
-    \@@_typecheck_lua_option:n
+    \@@_typecheck_option:n
       { #1 }
     \@@_option_tl_to_cs:nN
       { #1 }
@@ -21573,17 +21597,20 @@ end
     \@@_option_tl_to_cs:nN
       { #1 }
       \l_tmpa_tl
-    \@@_get_option_type:nN
-      { #1 }
-      \l_tmpb_tl
     \cs_if_free:cF
       { \l_tmpa_tl }
       {
+        \@@_get_option_type:nN
+          { #1 }
+          \l_tmpa_tl
         \tl_case:Nn
-          \l_tmpb_tl
+          \l_tmpa_tl
           {
             \c_@@_option_type_boolean
               {
+                \@@_option_tl_to_cs:nN
+                  { #1 }
+                  \l_tmpa_tl
                 \tl_case:cnF
                   { \l_tmpa_tl }
                   {
