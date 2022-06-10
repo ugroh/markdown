@@ -21621,11 +21621,14 @@ end
                 \@@_option_tl_to_cs:nN
                   { #1 }
                   \l_tmpa_tl
-                \tl_case:cnF
-                  { \l_tmpa_tl }
+                \bool_if:nF
                   {
-                    \c_@@_option_value_true  { }
-                    \c_@@_option_value_false { }
+                    \str_if_eq_p:vV
+                      { \l_tmpa_tl }
+                      \c_@@_option_value_true ||
+                    \str_if_eq_p:vV
+                      { \l_tmpa_tl }
+                      \c_@@_option_value_false
                   }
                   {
                     \msg_error:nnxv
@@ -21638,6 +21641,10 @@ end
           }
       }
   }
+\prg_generate_conditional_variant:Nnn
+  \str_if_eq:nn
+  { vV }
+  { p  }
 \cs_generate_variant:Nn
   \msg_error:nnnn
   { nnxv }
