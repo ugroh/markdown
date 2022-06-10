@@ -21570,7 +21570,7 @@ end
           \c_@@_option_type_counter_tl
       }
       {
-        \@@_get_option:nN
+        \@@_get_option_value:nN
           { #1 }
           \l_tmpa_tl
         \tl_gput_right:Nx
@@ -21578,7 +21578,7 @@ end
           { #1~=~  \l_tmpa_tl   ,~ }
       }
       {
-        \@@_get_option:nN
+        \@@_get_option_value:nN
           { #1 }
           \l_tmpa_tl
         \tl_gput_right:Nx
@@ -21603,7 +21603,7 @@ end
       {
         \c_@@_option_type_boolean_tl
           {
-            \@@_get_option:nN
+            \@@_get_option_value:nN
               { #1 }
               \l_tmpa_tl
             \bool_if:nF
@@ -21771,7 +21771,7 @@ end
           { #1 }
           { \l_tmpa_tl }
       }
-    \@@_get_option:nN
+    \@@_get_option_value:nN
       { #1 }
       \l_tmpa_tl
     \str_if_eq:NNTF
@@ -21781,7 +21781,7 @@ end
       { #3 }
   }
 \cs_new:Nn
-  \@@_get_option:nN
+  \@@_get_option_value:nN
   {
     \@@_option_tl_to_cs:nN
       { #1 }
