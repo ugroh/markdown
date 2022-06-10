@@ -21345,7 +21345,7 @@ end
 %
 % \end{markdown}
 %  \begin{macrocode}
-      \tl_if_eq:NNTF
+      \str_if_eq:NNTF
         \l_tmpa_tl
         \c_@@_jekyll_data_sequence_tl
         {
@@ -21776,7 +21776,7 @@ end
     \@@_get_option_type:nN
       { #1 }
       \l_tmpa_tl
-    \tl_if_eq:NNF
+    \str_if_eq:NNF
       \l_tmpa_tl
       \c_@@_option_type_boolean_tl
       {
@@ -21801,7 +21801,7 @@ end
           \l_tmpb_tl
           { \cs:w \l_tmpa_tl \cs_end: }
       }
-    \tl_if_eq:NNTF
+    \str_if_eq:NNTF
       \l_tmpb_tl
       \c_@@_option_value_true_tl
       { #2 }
