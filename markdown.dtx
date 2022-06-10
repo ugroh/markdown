@@ -8474,7 +8474,7 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 \seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_counter_tl
 \cs_new:Nn \@@_plain_tex_define_option:nNN
   {
-    \@@_option_tl_to_cs:nN
+    \@@_option_tl_to_csname:nN
       { #1 }
       \l_tmpa_tl
     \prop_get:NnN
@@ -8508,7 +8508,7 @@ For more information, see the examples for the \Opt{finalizeCache} option.
             { \l_tmpb_tl }
       }
   }
-\cs_new:Nn \@@_option_tl_to_cs:nN
+\cs_new:Nn \@@_option_tl_to_csname:nN
   {
     \tl_set:Nn
       \l_tmpa_tl
@@ -14305,7 +14305,7 @@ following text:
   }
 \cs_new:Nn \@@_plaintex_define_renderer_prototype:n
   {
-    \@@_renderer_prototype_tl_to_cs:nN
+    \@@_renderer_prototype_tl_to_csname:nN
       { #1 }
       \l_tmpa_tl
     \prop_get:NnN
@@ -14316,7 +14316,7 @@ following text:
       { \l_tmpa_tl }
       \l_tmpb_tl
   }
-\cs_new:Nn \@@_renderer_prototype_tl_to_cs:nN
+\cs_new:Nn \@@_renderer_prototype_tl_to_csname:nN
   {
     \tl_set:Nn
       \l_tmpa_tl
@@ -15336,7 +15336,7 @@ The following ordered list will be preceded by roman numerals:
   }
 \cs_new:Nn \@@_latex_define_renderer:n
   {
-    \@@_renderer_tl_to_cs:nN
+    \@@_renderer_tl_to_csname:nN
       { #1 }
       \l_tmpa_tl
     \prop_get:NnN
@@ -15348,7 +15348,7 @@ The following ordered list will be preceded by roman numerals:
       { \l_tmpa_tl }
       \l_tmpb_tl
   }
-\cs_new:Nn \@@_renderer_tl_to_cs:nN
+\cs_new:Nn \@@_renderer_tl_to_csname:nN
   {
     \tl_set:Nn
       \l_tmpa_tl
@@ -15413,7 +15413,7 @@ The following ordered list will be preceded by roman numerals:
   }
 \cs_new:Nn \@@_latex_define_renderer_prototype:n
   {
-    \@@_renderer_prototype_tl_to_cs:nN
+    \@@_renderer_prototype_tl_to_csname:nN
       { #1 }
       \l_tmpa_tl
     \prop_get:NnN
@@ -21783,7 +21783,7 @@ end
 \cs_new:Nn
   \@@_get_option_value:nN
   {
-    \@@_option_tl_to_cs:nN
+    \@@_option_tl_to_csname:nN
       { #1 }
       \l_tmpa_tl
     \cs_if_free:cTF
@@ -21801,7 +21801,7 @@ end
           \c_@@_option_type_counter_tl
           \l_tmpa_tl
           {
-            \@@_option_tl_to_cs:nN
+            \@@_option_tl_to_csname:nN
               { #1 }
               \l_tmpa_tl
             \tl_set:Nx
@@ -21809,7 +21809,7 @@ end
               { \the \cs:w \l_tmpa_tl \cs_end: }
           }
           {
-            \@@_option_tl_to_cs:nN
+            \@@_option_tl_to_csname:nN
               { #1 }
               \l_tmpa_tl
             \tl_set:Nv
