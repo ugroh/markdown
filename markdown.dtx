@@ -8524,7 +8524,6 @@ For more information, see the examples for the \Opt{finalizeCache} option.
       }
   }
 \@@_plain_tex_define_options:
-\ExplSyntaxOff
 %    \end{macrocode}
 %
 % \iffalse
@@ -8643,7 +8642,18 @@ A PDF document named `document.pdf` should be produced and contain the text
 %
 % \end{markdown}
 %  \begin{macrocode}
-\def\markdownOptionStripPercentSigns{false}%
+\seq_put_right:Nn
+  \g_@@_plain_tex_options_seq
+  { stripPercentSigns }
+\prop_put:Nnn
+  \g_@@_plain_tex_option_types_prop
+  { stripPercentSigns }
+  { boolean }
+\prop_put:Nnx
+  \g_@@_default_plain_tex_options_prop
+  { stripPercentSigns }
+  { false }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \iffalse
 %</tex>
