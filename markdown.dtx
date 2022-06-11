@@ -8156,11 +8156,11 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 %
 % \end{markdown}
 %  \begin{macrocode}
-\cs_new:Nn \@@_plain_tex_define_options:
+\cs_new:Nn \@@_plain_tex_define_option_commands:
   {
     \seq_map_function:NN
       \g_@@_lua_options_seq
-      \@@_plain_tex_define_lua_option:n
+      \@@_plain_tex_define_lua_option_command:n
 %    \end{macrocode}
 % \begin{markdown}
 %
@@ -8178,18 +8178,18 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 %  \begin{macrocode}
     \seq_map_function:NN
       \g_@@_plain_tex_options_seq
-      \@@_plain_tex_define_plain_tex_option:n
+      \@@_plain_tex_define_plain_tex_option_command:n
   }
-\cs_new:Nn \@@_plain_tex_define_lua_option:n
+\cs_new:Nn \@@_plain_tex_define_lua_option_command:n
   {
-    \@@_plain_tex_define_option:nNN
+    \@@_plain_tex_define_option_command:nNN
       { #1 }
       \g_@@_default_lua_options_prop
       \g_@@_lua_option_types_prop
   }
-\cs_new:Nn \@@_plain_tex_define_plain_tex_option:n
+\cs_new:Nn \@@_plain_tex_define_plain_tex_option_command:n
   {
-    \@@_plain_tex_define_option:nNN
+    \@@_plain_tex_define_option_command:nNN
       { #1 }
       \g_@@_default_plain_tex_options_prop
       \g_@@_plain_tex_option_types_prop
@@ -8197,7 +8197,7 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 \seq_new:N \g_@@_option_types_seq
 \tl_const:Nn \c_@@_option_type_counter_tl { counter }
 \seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_counter_tl
-\cs_new:Nn \@@_plain_tex_define_option:nNN
+\cs_new:Nn \@@_plain_tex_define_option_command:nNN
   {
     \@@_option_tl_to_csname:nN
       { #1 }
@@ -8247,7 +8247,7 @@ For more information, see the examples for the \Opt{finalizeCache} option.
         \tl_tail:n { #1 }
       }
   }
-\@@_plain_tex_define_options:
+\@@_plain_tex_define_option_commands:
 %    \end{macrocode}
 %
 % \iffalse
