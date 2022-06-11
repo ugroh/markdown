@@ -1840,6 +1840,30 @@ interfaces and all the way up to the \LaTeX{} and \Hologo{ConTeXt} interfaces.
 %  \begin{macrocode}
 \prop_new:N \g_@@_lua_option_types_prop
 \prop_new:N \g_@@_default_lua_options_prop
+\cs_new:Nn
+  \@@_add_lua_option:nnn
+  {
+    \@@_add_option:nnnn
+      { lua }
+      { #1 }
+      { #2 }
+      { #3 }
+  }
+\cs_new:Nn
+  \@@_add_option:nnnn
+  {
+    \seq_put_right:cn
+      { g_@@_ #1 _options_seq }
+      { #2 }
+    \prop_put:cnn
+      { g_@@_ #1 _option_types_prop }
+      { #2 }
+      { #3 }
+    \prop_put:cnn
+      { g_@@_default_ #1 _options_prop }
+      { #2 }
+      { #4 }
+  }
 %    \end{macrocode}
 % \iffalse
 %</tex>
@@ -1996,16 +2020,9 @@ option.
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { cacheDir }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { cacheDir }
   { path }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { cacheDir }
   { \markdownOptionOutputDir / _markdown_\jobname }
 %    \end{macrocode}
 % \iffalse
@@ -2231,16 +2248,9 @@ the markdown document from “Hello *world*!” to “Hi *world*!” was not ref
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { frozenCacheFileName }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { frozenCacheFileName }
   { path }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { frozenCacheFileName }
   { \markdownOptionCacheDir / frozenCache.tex }
 %    \end{macrocode}
 % \iffalse
@@ -2462,16 +2472,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { blankBeforeBlockquote }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { blankBeforeBlockquote }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { blankBeforeBlockquote }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -2718,16 +2721,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { blankBeforeCodeFence }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { blankBeforeCodeFence }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { blankBeforeCodeFence }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -2957,16 +2953,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { blankBeforeHeading }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { blankBeforeHeading }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { blankBeforeHeading }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -3188,16 +3177,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { breakableBlockquotes }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { breakableBlockquotes }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { breakableBlockquotes }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -3289,16 +3271,9 @@ following text, where the middot (`·`) denotes a non-breaking space:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { citationNbsps }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { citationNbsps }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { citationNbsps }
   { true }
 %    \end{macrocode}
 % \iffalse
@@ -3397,16 +3372,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { citations }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { citations }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { citations }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -3622,16 +3590,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { codeSpans }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { codeSpans }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { codeSpans }
   { true }
 %    \end{macrocode}
 % \iffalse
@@ -3803,16 +3764,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { contentBlocks }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { contentBlocks }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { contentBlocks }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -3970,16 +3924,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { contentBlocksLanguageMap }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { contentBlocksLanguageMap }
   { path }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { contentBlocksLanguageMap }
   { markdown-languages.json }
 %    \end{macrocode}
 % \iffalse
@@ -4116,16 +4063,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { definitionLists }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { definitionLists }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { definitionLists }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -4224,16 +4164,9 @@ Hello \markdownRendererEmphasis{world}!\relax
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { eagerCache }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { eagerCache }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { eagerCache }
   { true }
 %    \end{macrocode}
 % \iffalse
@@ -4359,16 +4292,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { expectJekyllData }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { expectJekyllData }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { expectJekyllData }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -4534,16 +4460,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { fencedCode }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { fencedCode }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { fencedCode }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -4705,16 +4624,9 @@ the markdown document from “Hello *world*!” to “Hi *world*!” was not ref
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { finalizeCache }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { finalizeCache }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { finalizeCache }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -4881,16 +4793,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { footnotes }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { footnotes }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { footnotes }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -4953,16 +4858,9 @@ requested using the `frozenCacheCounter` option.
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { frozenCacheCounter }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { frozenCacheCounter }
   { counter }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { frozenCacheCounter }
   { 0 }
 %    \end{macrocode}
 % \iffalse
@@ -5044,16 +4942,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { hardLineBreaks }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { hardLineBreaks }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { hardLineBreaks }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -5182,16 +5073,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { hashEnumerators }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { hashEnumerators }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { hashEnumerators }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -5244,16 +5128,9 @@ defaultOptions.hashEnumerators = false
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { headerAttributes }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { headerAttributes }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { headerAttributes }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -5513,16 +5390,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { html }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { html }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { html }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -5731,16 +5601,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { hybrid }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { hybrid }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { hybrid }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -5837,16 +5700,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { inlineFootnotes }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { inlineFootnotes }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { inlineFootnotes }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -6012,16 +5868,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { jekyllData }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { jekyllData }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { jekyllData }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -6128,16 +5977,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { pipeTables }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { pipeTables }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { pipeTables }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -6175,16 +6017,9 @@ defaultOptions.pipeTables = false
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { preserveTabs }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { preserveTabs }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { preserveTabs }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -6271,16 +6106,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { relativeReferences }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { relativeReferences }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { relativeReferences }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -6423,16 +6251,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { shiftHeadings }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { shiftHeadings }
   { number }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { shiftHeadings }
   { 0 }
 %    \end{macrocode}
 % \iffalse
@@ -6648,15 +6469,8 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
+\@@_add_lua_option:nnn
   { slice }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
-  { slice }
-  { slice }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
   { slice }
   { ^~$ }
 %    \end{macrocode}
@@ -6862,16 +6676,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { smartEllipses }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { smartEllipses }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { smartEllipses }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -7005,16 +6812,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { startNumber }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { startNumber }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { startNumber }
   { true }
 %    \end{macrocode}
 % \iffalse
@@ -7125,16 +6925,9 @@ text “Hello *world*!”
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { stripIndent }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { stripIndent }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { stripIndent }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -7256,16 +7049,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { tableCaptions }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { tableCaptions }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { tableCaptions }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -7373,16 +7159,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { taskLists }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { taskLists }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { taskLists }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -7496,16 +7275,9 @@ text “Hello *world*!”
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { texComments }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { texComments }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { texComments }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -7625,16 +7397,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { tightLists }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { tightLists }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { tightLists }
   { true }
 %    \end{macrocode}
 % \iffalse
@@ -7774,16 +7539,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { underscores }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { underscores }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { underscores }
   { true }
 \ExplSyntaxOff
 %    \end{macrocode}
@@ -8195,6 +7953,15 @@ pdftex --shell-escape document.tex
 %  \begin{macrocode}
 \prop_new:N \g_@@_plain_tex_option_types_prop
 \prop_new:N \g_@@_default_plain_tex_options_prop
+\cs_new:Nn
+  \@@_add_plain_tex_option:nnn
+  {
+    \@@_add_option:nnnn
+      { plain_tex }
+      { #1 }
+      { #2 }
+      { #3 }
+  }
 %    \end{macrocode}
 % \iffalse
 %</tex>
@@ -8254,16 +8021,9 @@ defaults to `false`.
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_plain_tex_options_seq
-  { frozenCache }
-\prop_put:Nnn
-  \g_@@_plain_tex_option_types_prop
+\@@_add_plain_tex_option:nnn
   { frozenCache }
   { boolean }
-\prop_put:Nnx
-  \g_@@_default_plain_tex_options_prop
-  { frozenCache }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -8314,16 +8074,9 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 %
 % \end{markdown}
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_plain_tex_options_seq
-  { helperScriptFileName }
-\prop_put:Nnn
-  \g_@@_plain_tex_option_types_prop
+\@@_add_plain_tex_option:nnn
   { helperScriptFileName }
   { path }
-\prop_put:Nnx
-  \g_@@_default_plain_tex_options_prop
-  { helperScriptFileName }
   { \jobname.markdown.lua }
 %    \end{macrocode}
 % \par
@@ -8337,16 +8090,9 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 %
 % \end{markdown}
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_plain_tex_options_seq
-  { inputTempFileName }
-\prop_put:Nnn
-  \g_@@_plain_tex_option_types_prop
+\@@_add_plain_tex_option:nnn
   { inputTempFileName }
   { path }
-\prop_put:Nnx
-  \g_@@_default_plain_tex_options_prop
-  { inputTempFileName }
   { \jobname.markdown.in }
 %    \end{macrocode}
 % \par
@@ -8360,16 +8106,9 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 %
 % \end{markdown}
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_plain_tex_options_seq
-  { outputTempFileName }
-\prop_put:Nnn
-  \g_@@_plain_tex_option_types_prop
+\@@_add_plain_tex_option:nnn
   { outputTempFileName }
   { path }
-\prop_put:Nnx
-  \g_@@_default_plain_tex_options_prop
-  { outputTempFileName }
   { \jobname.markdown.out }
 %    \end{macrocode}
 % \par
@@ -8384,16 +8123,9 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 %
 % \end{markdown}
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_plain_tex_options_seq
-  { errorTempFileName }
-\prop_put:Nnn
-  \g_@@_plain_tex_option_types_prop
+\@@_add_plain_tex_option:nnn
   { errorTempFileName }
   { path }
-\prop_put:Nnx
-  \g_@@_default_plain_tex_options_prop
-  { errorTempFileName }
   { \jobname.markdown.err }
 %    \end{macrocode}
 % \par
@@ -8412,16 +8144,9 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 %
 % \end{markdown}
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_plain_tex_options_seq
-  { outputDir }
-\prop_put:Nnn
-  \g_@@_plain_tex_option_types_prop
+\@@_add_plain_tex_option:nnn
   { outputDir }
   { path }
-\prop_put:Nnn
-  \g_@@_default_plain_tex_options_prop
-  { outputDir }
   { . }
 %    \end{macrocode}
 % \par
