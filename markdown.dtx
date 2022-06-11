@@ -1840,11 +1840,14 @@ interfaces and all the way up to the \LaTeX{} and \Hologo{ConTeXt} interfaces.
 %  \begin{macrocode}
 \prop_new:N \g_@@_lua_option_types_prop
 \prop_new:N \g_@@_default_lua_options_prop
+\seq_new:N \g_@@_option_categories_seq
+\tl_const:Nn \c_@@_option_category_lua_tl { lua }
+\seq_put_right:NV \g_@@_option_categories_seq \c_@@_option_category_lua_tl
 \cs_new:Nn
   \@@_add_lua_option:nnn
   {
-    \@@_add_option:nnnn
-      { lua }
+    \@@_add_option:Vnnn
+      \c_@@_option_category_lua_tl
       { #1 }
       { #2 }
       { #3 }
@@ -1863,6 +1866,196 @@ interfaces and all the way up to the \LaTeX{} and \Hologo{ConTeXt} interfaces.
       { g_@@_default_ #1 _options_prop }
       { #2 }
       { #4 }
+    \@@_typecheck_option:n
+      { #2 }
+  }
+\cs_generate_variant:Nn
+  \@@_add_option:nnnn
+  { Vnnn }
+\tl_const:Nn \c_@@_option_value_true_tl  { true  }
+\tl_const:Nn \c_@@_option_value_false_tl { false }
+\cs_new:Nn \@@_typecheck_option:n
+  {
+    \@@_get_option_type:nN
+      { #1 }
+      \l_tmpa_tl
+    \tl_case:Nn
+      \l_tmpa_tl
+      {
+        \c_@@_option_type_boolean_tl
+          {
+            \@@_get_option_value:nN
+              { #1 }
+              \l_tmpa_tl
+            \bool_if:nF
+              {
+                \str_if_eq_p:VV
+                  \l_tmpa_tl
+                  \c_@@_option_value_true_tl ||
+                \str_if_eq_p:VV
+                  \l_tmpa_tl
+                  \c_@@_option_value_false_tl
+              }
+              {
+                \msg_error:nnnV
+                  { markdown }
+                  { failed-typecheck-for-boolean-option }
+                  { #1 }
+                  \l_tmpa_tl
+              }
+          }
+      }
+  }
+\msg_new:nnn
+  { markdown }
+  { failed-typecheck-for-boolean-option }
+  {
+    Option~#1~has~value~#2,~
+    but~a~boolean~(true~or~false)~was~expected.
+  }
+\prg_generate_conditional_variant:Nnn
+  \str_if_eq:nn
+  { vV }
+  { p  }
+\cs_generate_variant:Nn
+  \msg_error:nnnn
+  { nnnV }
+\seq_new:N \g_@@_option_types_seq
+\tl_const:Nn \c_@@_option_type_counter_tl { counter }
+\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_counter_tl
+\tl_const:Nn \c_@@_option_type_boolean_tl { boolean }
+\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_boolean_tl
+\tl_const:Nn \c_@@_option_type_number_tl  { number  }
+\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_number_tl
+\tl_const:Nn \c_@@_option_type_path_tl    { path    }
+\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_path_tl
+\tl_const:Nn \c_@@_option_type_slice_tl   { slice   }
+\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_slice_tl
+\tl_const:Nn \c_@@_option_type_string_tl  { string  }
+\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_string_tl
+\cs_new:Nn
+  \@@_get_option_type:nN
+  {
+    \prop_get:NnNF
+      \g_@@_lua_option_types_prop
+      { #1 }
+      \l_tmpa_tl
+      {
+        \prop_get:NnNF
+          \g_@@_plain_tex_option_types_prop
+          { #1 }
+          \l_tmpa_tl
+          {
+            \msg_error:nnn
+              { markdown }
+              { undefined-option }
+              { #1 }
+          }
+      }
+    \seq_if_in:NVF
+      \g_@@_option_types_seq
+      \l_tmpa_tl
+      {
+        \msg_error:nnxx
+          { markdown }
+          { unknown-option-type }
+          { #1 }
+          { \l_tmpa_tl }
+      }
+    \tl_set_eq:NN
+      #2
+      \l_tmpa_tl
+  }
+\msg_new:nnn
+  { markdown }
+  { unknown-option-type }
+  {
+    Option~#1~has~unknown~type~#2.
+  }
+\msg_new:nnn
+  { markdown }
+  { undefined-option }
+  {
+    Option~#1~is~undefined.
+  }
+\cs_new:Nn
+  \@@_get_default_option:nN
+  {
+    \bool_set_false:N
+      \l_tmpa_bool
+    \seq_map_inline:Nn
+      \g_@@_option_categories_seq
+      {
+        \prop_get:cnNT
+          { g_@@_default_ ##1 _options_prop }
+          { #1 }
+          #2
+          {
+            \bool_set_true:N
+              \l_tmpa_bool
+            \seq_map_break:
+          }
+      }
+    \bool_if:nF
+      \l_tmpa_bool
+      {
+        \msg_error:nnn
+          { markdown }
+          { undefined-lua-or-plain-tex-option }
+          { #1 }
+      }
+  }
+\cs_new:Nn
+  \@@_get_option_value:nN
+  {
+    \@@_option_tl_to_csname:nN
+      { #1 }
+      \l_tmpa_tl
+    \cs_if_free:cTF
+      { \l_tmpa_tl }
+      {
+        \@@_get_default_option:nN
+          { #1 }
+          #2
+      }
+      {
+        \@@_get_option_type:nN
+          { #1 }
+          \l_tmpa_tl
+        \str_if_eq:NNTF
+          \c_@@_option_type_counter_tl
+          \l_tmpa_tl
+          {
+            \@@_option_tl_to_csname:nN
+              { #1 }
+              \l_tmpa_tl
+            \tl_set:Nx
+              #2
+              { \the \cs:w \l_tmpa_tl \cs_end: }
+          }
+          {
+            \@@_option_tl_to_csname:nN
+              { #1 }
+              \l_tmpa_tl
+            \tl_set:Nv
+              #2
+              { \l_tmpa_tl }
+          }
+      }
+  }
+\cs_new:Nn \@@_option_tl_to_csname:nN
+  {
+    \tl_set:Nn
+      \l_tmpa_tl
+%     TODO: Replace with \str_uppercase:n in TeX Live 2020.
+      { \str_upper_case:n { #1 } }
+    \tl_set:Nx
+      #2
+      {
+        markdownOption
+        \tl_head:f { \l_tmpa_tl }
+        \tl_tail:n { #1 }
+      }
   }
 %    \end{macrocode}
 % \iffalse
@@ -7953,11 +8146,13 @@ pdftex --shell-escape document.tex
 %  \begin{macrocode}
 \prop_new:N \g_@@_plain_tex_option_types_prop
 \prop_new:N \g_@@_default_plain_tex_options_prop
+\tl_const:Nn \c_@@_option_category_plain_tex_tl { plain_tex }
+\seq_put_right:NV \g_@@_option_categories_seq \c_@@_option_category_plain_tex_tl
 \cs_new:Nn
   \@@_add_plain_tex_option:nnn
   {
-    \@@_add_option:nnnn
-      { plain_tex }
+    \@@_add_option:Vnnn
+      \c_@@_option_category_plain_tex_tl
       { #1 }
       { #2 }
       { #3 }
@@ -8194,9 +8389,6 @@ For more information, see the examples for the \Opt{finalizeCache} option.
       \g_@@_default_plain_tex_options_prop
       \g_@@_plain_tex_option_types_prop
   }
-\seq_new:N \g_@@_option_types_seq
-\tl_const:Nn \c_@@_option_type_counter_tl { counter }
-\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_counter_tl
 \cs_new:Nn \@@_plain_tex_define_option_command:nNN
   {
     \@@_option_tl_to_csname:nN
@@ -8231,20 +8423,6 @@ For more information, see the examples for the \Opt{finalizeCache} option.
           \cs_new:cpn
             \l_tmpa_tl
             { \l_tmpb_tl }
-      }
-  }
-\cs_new:Nn \@@_option_tl_to_csname:nN
-  {
-    \tl_set:Nn
-      \l_tmpa_tl
-%     TODO: Replace with \str_uppercase:n in TeX Live 2020.
-      { \str_upper_case:n { #1 } }
-    \tl_set:Nx
-      #2
-      {
-        markdownOption
-        \tl_head:f { \l_tmpa_tl }
-        \tl_tail:n { #1 }
       }
   }
 \@@_plain_tex_define_option_commands:
@@ -21257,16 +21435,6 @@ end
 %  \begin{macrocode}
 \ExplSyntaxOn
 \tl_new:N \g_@@_formatted_lua_options_tl
-\tl_const:Nn \c_@@_option_type_boolean_tl { boolean }
-\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_boolean_tl
-\tl_const:Nn \c_@@_option_type_number_tl  { number  }
-\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_number_tl
-\tl_const:Nn \c_@@_option_type_path_tl    { path    }
-\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_path_tl
-\tl_const:Nn \c_@@_option_type_slice_tl   { slice   }
-\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_slice_tl
-\tl_const:Nn \c_@@_option_type_string_tl  { string  }
-\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_string_tl
 \cs_new:Nn \@@_format_lua_options:
   {
     \tl_gclear:N
@@ -21309,117 +21477,6 @@ end
         \tl_gput_right:Nx
           \g_@@_formatted_lua_options_tl
           { #1~=~ " \l_tmpa_tl " ,~ }
-      }
-  }
-\msg_new:nnn
-  { markdown }
-  { failed-typecheck-for-boolean-option }
-  {
-    Option~#1~has~value~#2,~
-    but~a~boolean~(true~or~false)~was~expected.
-  }
-\cs_new:Nn \@@_typecheck_option:n
-  {
-    \@@_get_option_type:nN
-      { #1 }
-      \l_tmpa_tl
-    \tl_case:Nn
-      \l_tmpa_tl
-      {
-        \c_@@_option_type_boolean_tl
-          {
-            \@@_get_option_value:nN
-              { #1 }
-              \l_tmpa_tl
-            \bool_if:nF
-              {
-                \str_if_eq_p:VV
-                  \l_tmpa_tl
-                  \c_@@_option_value_true_tl ||
-                \str_if_eq_p:VV
-                  \l_tmpa_tl
-                  \c_@@_option_value_false_tl
-              }
-              {
-                \msg_error:nnnV
-                  { markdown }
-                  { failed-typecheck-for-boolean-option }
-                  { #1 }
-                  \l_tmpa_tl
-              }
-          }
-      }
-  }
-\prg_generate_conditional_variant:Nnn
-  \str_if_eq:nn
-  { vV }
-  { p  }
-\cs_generate_variant:Nn
-  \msg_error:nnnn
-  { nnnV }
-\msg_new:nnn
-  { markdown }
-  { unknown-option-type }
-  {
-    Option~#1~has~unknown~type~#2.
-  }
-\msg_new:nnn
-  { markdown }
-  { undefined-option }
-  {
-    Option~#1~is~undefined.
-  }
-\cs_new:Nn
-  \@@_get_option_type:nN
-  {
-    \prop_get:NnNF
-      \g_@@_lua_option_types_prop
-      { #1 }
-      \l_tmpa_tl
-      {
-        \prop_get:NnNF
-          \g_@@_plain_tex_option_types_prop
-          { #1 }
-          \l_tmpa_tl
-          {
-            \msg_error:nnn
-              { markdown }
-              { undefined-option }
-              { #1 }
-          }
-      }
-    \seq_if_in:NVF
-      \g_@@_option_types_seq
-      \l_tmpa_tl
-      {
-        \msg_error:nnxx
-          { markdown }
-          { unknown-option-type }
-          { #1 }
-          { \l_tmpa_tl }
-      }
-    \tl_set_eq:NN
-      #2
-      \l_tmpa_tl
-  }
-\cs_new:Nn
-  \@@_get_default_option:nN
-  {
-    \prop_get:NnNF
-      \g_@@_default_lua_options_prop
-      { #1 }
-      #2
-      {
-        \prop_get:NnNF
-          \g_@@_default_plain_tex_options_prop
-          { #1 }
-          #2
-          {
-            \msg_error:nnn
-              { markdown }
-              { undefined-lua-or-plain-tex-option }
-              { #1 }
-          }
       }
   }
 \let\markdownPrepareLuaOptions=\@@_format_lua_options:
@@ -21471,15 +21528,6 @@ end
 % \end{markdown}
 %  \begin{macrocode}
 \ExplSyntaxOn
-\tl_const:Nn \c_@@_option_value_true_tl  { true  }
-\tl_const:Nn \c_@@_option_value_false_tl { false }
-\msg_new:nnn
-  { markdown }
-  { expected-boolean-option }
-  {
-    Option~#1~has~type~#2,~
-    but~a~boolean~was~expected.
-  }
 \cs_new:Nn
   \@@_if_option:nTF
   {
@@ -21505,43 +21553,12 @@ end
       { #2 }
       { #3 }
   }
-\cs_new:Nn
-  \@@_get_option_value:nN
+\msg_new:nnn
+  { markdown }
+  { expected-boolean-option }
   {
-    \@@_option_tl_to_csname:nN
-      { #1 }
-      \l_tmpa_tl
-    \cs_if_free:cTF
-      { \l_tmpa_tl }
-      {
-        \@@_get_default_option:nN
-          { #1 }
-          #2
-      }
-      {
-        \@@_get_option_type:nN
-          { #1 }
-          \l_tmpa_tl
-        \str_if_eq:NNTF
-          \c_@@_option_type_counter_tl
-          \l_tmpa_tl
-          {
-            \@@_option_tl_to_csname:nN
-              { #1 }
-              \l_tmpa_tl
-            \tl_set:Nx
-              #2
-              { \the \cs:w \l_tmpa_tl \cs_end: }
-          }
-          {
-            \@@_option_tl_to_csname:nN
-              { #1 }
-              \l_tmpa_tl
-            \tl_set:Nv
-              #2
-              { \l_tmpa_tl }
-          }
-      }
+    Option~#1~has~type~#2,~
+    but~a~boolean~was~expected.
   }
 \let\markdownIfOption=\@@_if_option:nTF
 \ExplSyntaxOff
