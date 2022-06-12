@@ -1935,31 +1935,38 @@ interfaces and all the way up to the \LaTeX{} and \Hologo{ConTeXt} interfaces.
 \cs_new:Nn
   \@@_get_option_type:nN
   {
-    \prop_get:NnNF
-      \g_@@_lua_option_types_prop
-      { #1 }
-      \l_tmpa_tl
+    \bool_set_false:N
+      \l_tmpa_bool
+    \seq_map_inline:Nn
+      \g_@@_option_categories_seq
       {
-        \prop_get:NnNF
-          \g_@@_plain_tex_option_types_prop
+        \prop_get:cnNT
+          { g_@@_ ##1 _option_types_prop }
           { #1 }
           \l_tmpa_tl
           {
-            \msg_error:nnn
-              { markdown }
-              { undefined-option }
-              { #1 }
+            \bool_set_true:N
+              \l_tmpa_bool
+            \seq_map_break:
           }
+      }
+    \bool_if:nF
+      \l_tmpa_bool
+      {
+        \msg_error:nnn
+          { markdown }
+          { undefined-option }
+          { #1 }
       }
     \seq_if_in:NVF
       \g_@@_option_types_seq
       \l_tmpa_tl
       {
-        \msg_error:nnxx
+        \msg_error:nnnV
           { markdown }
           { unknown-option-type }
           { #1 }
-          { \l_tmpa_tl }
+          \l_tmpa_tl
       }
     \tl_set_eq:NN
       #2
@@ -2000,7 +2007,7 @@ interfaces and all the way up to the \LaTeX{} and \Hologo{ConTeXt} interfaces.
       {
         \msg_error:nnn
           { markdown }
-          { undefined-lua-or-plain-tex-option }
+          { undefined-option }
           { #1 }
       }
   }
@@ -14409,6 +14416,19 @@ pdflatex --shell-escape document.tex
 % are rendered. The rest of the interface is inherited from the plain \TeX{}
 % interface (see Section <#sec:texinterface>).
 %
+% The \LaTeX{} implementation redefines the plain \TeX{} logging macros (see
+% Section <#sec:texinterfacelogging>) to use the \LaTeX{} \mref{PackageInfo},
+% \mref{PackageWarning}, and \mref{PackageError} macros.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\newcommand\markdownInfo[1]{\PackageInfo{markdown}{#1}}%
+\newcommand\markdownWarning[1]{\PackageWarning{markdown}{#1}}%
+\newcommand\markdownError[2]{\PackageError{markdown}{#1}{#2.}}%
+\input markdown/markdown
+%    \end{macrocode}
+% \begin{markdown}
+%
 % The \LaTeX{} interface is implemented by the `markdown.sty` file, which
 % can be loaded from the \LaTeX{} document preamble as follows:
 % \end{markdown}
@@ -14588,8 +14608,46 @@ document:
 }
 ```
 
+%</manual-options>
+%<*latex>
 % \fi
 % \par
+% \begin{markdown}
+%
+% To enable the enumeration of \LaTeX{} options, we will maintain the
+% \mdef{g_\@\@_latex_options_seq} sequence.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\ExplSyntaxOn
+\seq_new:N \g_@@_latex_options_seq
+%    \end{macrocode}
+% \begin{markdown}
+%
+% To enable the reflection of default \LaTeX{} options and their types, we
+% will maintain the \mdef{g_\@\@_default_latex_options_prop} and
+% \mdef{g_\@\@_latex_option_types_prop} property lists, respectively.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\prop_new:N \g_@@_latex_option_types_prop
+\prop_new:N \g_@@_default_latex_options_prop
+\tl_const:Nn \c_@@_option_category_latex_tl { latex }
+\seq_put_right:NV \g_@@_option_categories_seq \c_@@_option_category_latex_tl
+\cs_new:Nn
+  \@@_add_latex_option:nnn
+  {
+    \@@_add_option:Vnnn
+      \c_@@_option_category_latex_tl
+      { #1 }
+      { #2 }
+      { #3 }
+  }
+%    \end{macrocode}
+% \iffalse
+%</latex>
+%<*manual-options>
+% \fi
 % \begin{markdown}
 
 #### No default token renderer prototypes {#latexplain}
@@ -14614,6 +14672,11 @@ from being loaded:
 %<*latex>
 % \fi
 %  \begin{macrocode}
+\@@_add_latex_option:nnn
+  { plain }
+  { boolean }
+  { false }
+\ExplSyntaxOff
 \newif\ifmarkdownLaTeXPlain
   \markdownLaTeXPlainfalse
 \define@key{markdownOptions}{plain}[true]{%
@@ -22063,16 +22126,8 @@ end
 % format~[@latex17, Section 9]. As a consequence, we can directly reuse the
 % existing plain \TeX{} implementation.
 %
-% The \LaTeX{} implementation redefines the plain \TeX{} logging macros (see
-% Section <#sec:texinterfacelogging>) to use the \LaTeX{} \mref{PackageInfo},
-% \mref{PackageWarning}, and \mref{PackageError} macros.
-%
 % \end{markdown}
 %  \begin{macrocode}
-\newcommand\markdownInfo[1]{\PackageInfo{markdown}{#1}}%
-\newcommand\markdownWarning[1]{\PackageWarning{markdown}{#1}}%
-\newcommand\markdownError[2]{\PackageError{markdown}{#1}{#2.}}%
-\input markdown/markdown
 \def\markdownVersionSpace{ }%
 \ProvidesPackage{markdown}[\markdownLastModified\markdownVersionSpace v%
   \markdownVersion\markdownVersionSpace markdown renderer]%
