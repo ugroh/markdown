@@ -1879,10 +1879,10 @@ interfaces and all the way up to the \LaTeX{} and \Hologo{ConTeXt} interfaces.
     \@@_get_option_type:nN
       { #1 }
       \l_tmpa_tl
-    \tl_case:Nn
+    \str_case_e:Vn
       \l_tmpa_tl
       {
-        \c_@@_option_type_boolean_tl
+        { \c_@@_option_type_boolean_tl }
           {
             \@@_get_option_value:nN
               { #1 }
@@ -1913,10 +1913,9 @@ interfaces and all the way up to the \LaTeX{} and \Hologo{ConTeXt} interfaces.
     Option~#1~has~value~#2,~
     but~a~boolean~(true~or~false)~was~expected.
   }
-\prg_generate_conditional_variant:Nnn
-  \str_if_eq:nn
-  { vV }
-  { p  }
+\cs_generate_variant:Nn
+  \str_case_e:nn
+  { Vn }
 \cs_generate_variant:Nn
   \msg_error:nnnn
   { nnnV }
@@ -8398,21 +8397,19 @@ For more information, see the examples for the \Opt{finalizeCache} option.
       #3
       { #1 }
       \l_tmpb_tl
-    \tl_case:NnF
+    \str_if_eq:VVTF
       \l_tmpb_tl
+      \c_@@_option_type_counter_tl
       {
-        \c_@@_option_type_counter_tl
-          {
-            \prop_get:NnN
-              #2
-              { #1 }
-              \l_tmpb_tl
-            \int_new:c
-              { \l_tmpa_tl }
-            \int_gset:cn
-              { \l_tmpa_tl }
-              { \l_tmpb_tl }
-          }
+        \prop_get:NnN
+          #2
+          { #1 }
+          \l_tmpb_tl
+        \int_new:c
+          { \l_tmpa_tl }
+        \int_gset:cn
+          { \l_tmpa_tl }
+          { \l_tmpb_tl }
       }
       {
         \prop_get:NnN
