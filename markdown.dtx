@@ -14662,14 +14662,12 @@ from being loaded:
   { boolean }
   { false }
 \ExplSyntaxOff
-\newif\ifmarkdownLaTeXPlain
-  \markdownLaTeXPlainfalse
 \define@key{markdownOptions}{plain}[true]{%
   \ifmarkdownLaTeXLoaded
     \markdownWarning
       {The plain option must be specified when loading the package}%
   \else
-    \markdownLaTeXPlaintrue
+    \renewcommand\markdownOptionPlain{#1}%
   \fi}
 %    \end{macrocode}
 % \iffalse
@@ -22505,7 +22503,7 @@ end
 % it will take effect.
 % \end{markdown}
 %  \begin{macrocode}
-\ifmarkdownLaTeXPlain\else
+\markdownIfOption{plain}{\iffalse}{\iftrue}
 %    \end{macrocode}
 % \par
 % \begin{markdown}%
