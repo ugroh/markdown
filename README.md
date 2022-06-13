@@ -205,7 +205,7 @@ For further information, consult one of the following:
  [tb133]: https://www.overleaf.com/read/pshkckczmmjn                        "Markdown 2.15.0: What's New?"
 
  [tb131-slides]:   https://tug.org/tug2021/assets/pdf/tug2021-novotny-slides.pdf   "Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX"
- [tb131-video]:    https://youtu.be/i2GJMnLCZls                                    "Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX"
+ [tb131-video]:    https://youtu.be/THmPkAncMnc                                    "Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX"
 
  [10.5300/2016-1-4/78]: https://bulletin.cstug.cz/pdf/2016-1-4.pdf#page=80 "Rendering Markdown inside TeX Documents"
  [10.5300/2020-1-2/48]: https://bulletin.cstug.cz/pdf/2020-1-2.pdf#page=50 "Markdown 2.8.1: Boldly Unto the Throne of Lightweight Markup in TeX"
