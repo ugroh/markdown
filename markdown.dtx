@@ -8355,17 +8355,6 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 %
 % Here, we automatically define all the above macros for plain \TeX{} options.
 %
-% \end{markdown}
-%  \begin{macrocode}
-\cs_new:Nn \@@_plain_tex_define_option_commands:
-  {
-    \seq_map_function:NN
-      \g_@@_lua_options_seq
-      \@@_plain_tex_define_lua_option_command:n
-%    \end{macrocode}
-% \begin{markdown}
-%
-%#### Lua Interface Options
 % Furthemore, we also define macros that map directly to the options recognized
 % by the Lua interface, such as \mdef{markdownOptionHybrid} for the
 % \Opt{hybrid} Lua option (see Section <#sec:luaoptions>), which are not
@@ -8377,40 +8366,36 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 %
 % \end{markdown}
 %  \begin{macrocode}
-    \seq_map_function:NN
-      \g_@@_plain_tex_options_seq
-      \@@_plain_tex_define_plain_tex_option_command:n
-  }
-\cs_new:Nn \@@_plain_tex_define_lua_option_command:n
+\cs_new:Nn \@@_plain_tex_define_option_commands:
   {
-    \@@_plain_tex_define_option_command:nNN
-      { #1 }
-      \g_@@_default_lua_options_prop
-      \g_@@_lua_option_types_prop
+    \seq_map_inline:Nn
+      \g_@@_option_categories_seq
+      {
+        \seq_map_inline:cn
+          { g_@@_ ##1 _options_seq }
+          {
+              \@@_plain_tex_define_option_command:nn
+                { ##1 }
+                { ####1 }
+          }
+      }
   }
-\cs_new:Nn \@@_plain_tex_define_plain_tex_option_command:n
-  {
-    \@@_plain_tex_define_option_command:nNN
-      { #1 }
-      \g_@@_default_plain_tex_options_prop
-      \g_@@_plain_tex_option_types_prop
-  }
-\cs_new:Nn \@@_plain_tex_define_option_command:nNN
+\cs_new:Nn \@@_plain_tex_define_option_command:nn
   {
     \@@_option_tl_to_csname:nN
-      { #1 }
+      { #2 }
       \l_tmpa_tl
-    \prop_get:NnN
-      #3
-      { #1 }
+    \prop_get:cnN
+      { g_@@_ #1 _option_types_prop }
+      { #2 }
       \l_tmpb_tl
     \str_if_eq:VVTF
       \l_tmpb_tl
       \c_@@_option_type_counter_tl
       {
-        \prop_get:NnN
-          #2
-          { #1 }
+        \prop_get:cnN
+          { g_@@_default_ #1 _options_prop }
+          { #2 }
           \l_tmpb_tl
         \int_new:c
           { \l_tmpa_tl }
@@ -8419,9 +8404,9 @@ For more information, see the examples for the \Opt{finalizeCache} option.
           { \l_tmpb_tl }
       }
       {
-        \prop_get:NnN
-          #2
-          { #1 }
+        \prop_get:cnN
+          { g_@@_default_ #1 _options_prop }
+          { #2 }
           \l_tmpb_tl
         \exp_args:NNo
           \cs_new:cpn
