@@ -1840,14 +1840,14 @@ interfaces and all the way up to the \LaTeX{} and \Hologo{ConTeXt} interfaces.
 %  \begin{macrocode}
 \prop_new:N \g_@@_lua_option_types_prop
 \prop_new:N \g_@@_default_lua_options_prop
-\seq_new:N \g_@@_option_categories_seq
-\tl_const:Nn \c_@@_option_category_lua_tl { lua }
-\seq_put_right:NV \g_@@_option_categories_seq \c_@@_option_category_lua_tl
+\seq_new:N \g_@@_option_layers_seq
+\tl_const:Nn \c_@@_option_layer_lua_tl { lua }
+\seq_put_right:NV \g_@@_option_layers_seq \c_@@_option_layer_lua_tl
 \cs_new:Nn
   \@@_add_lua_option:nnn
   {
     \@@_add_option:Vnnn
-      \c_@@_option_category_lua_tl
+      \c_@@_option_layer_lua_tl
       { #1 }
       { #2 }
       { #3 }
@@ -1938,7 +1938,7 @@ interfaces and all the way up to the \LaTeX{} and \Hologo{ConTeXt} interfaces.
     \bool_set_false:N
       \l_tmpa_bool
     \seq_map_inline:Nn
-      \g_@@_option_categories_seq
+      \g_@@_option_layers_seq
       {
         \prop_get:cnNT
           { g_@@_ ##1 _option_types_prop }
@@ -1990,7 +1990,7 @@ interfaces and all the way up to the \LaTeX{} and \Hologo{ConTeXt} interfaces.
     \bool_set_false:N
       \l_tmpa_bool
     \seq_map_inline:Nn
-      \g_@@_option_categories_seq
+      \g_@@_option_layers_seq
       {
         \prop_get:cnNT
           { g_@@_default_ ##1 _options_prop }
@@ -8152,13 +8152,13 @@ pdftex --shell-escape document.tex
 %  \begin{macrocode}
 \prop_new:N \g_@@_plain_tex_option_types_prop
 \prop_new:N \g_@@_default_plain_tex_options_prop
-\tl_const:Nn \c_@@_option_category_plain_tex_tl { plain_tex }
-\seq_put_right:NV \g_@@_option_categories_seq \c_@@_option_category_plain_tex_tl
+\tl_const:Nn \c_@@_option_layer_plain_tex_tl { plain_tex }
+\seq_put_right:NV \g_@@_option_layers_seq \c_@@_option_layer_plain_tex_tl
 \cs_new:Nn
   \@@_add_plain_tex_option:nnn
   {
     \@@_add_option:Vnnn
-      \c_@@_option_category_plain_tex_tl
+      \c_@@_option_layer_plain_tex_tl
       { #1 }
       { #2 }
       { #3 }
@@ -8369,7 +8369,7 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 \cs_new:Nn \@@_plain_tex_define_option_commands:
   {
     \seq_map_inline:Nn
-      \g_@@_option_categories_seq
+      \g_@@_option_layers_seq
       {
         \seq_map_inline:cn
           { g_@@_ ##1 _options_seq }
@@ -14617,13 +14617,13 @@ document:
 %  \begin{macrocode}
 \prop_new:N \g_@@_latex_option_types_prop
 \prop_new:N \g_@@_default_latex_options_prop
-\tl_const:Nn \c_@@_option_category_latex_tl { latex }
-\seq_put_right:NV \g_@@_option_categories_seq \c_@@_option_category_latex_tl
+\tl_const:Nn \c_@@_option_layer_latex_tl { latex }
+\seq_put_right:NV \g_@@_option_layers_seq \c_@@_option_layer_latex_tl
 \cs_new:Nn
   \@@_add_latex_option:nnn
   {
     \@@_add_option:Vnnn
-      \c_@@_option_category_latex_tl
+      \c_@@_option_layer_latex_tl
       { #1 }
       { #2 }
       { #3 }
