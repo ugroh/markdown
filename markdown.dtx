@@ -8382,36 +8382,67 @@ For more information, see the examples for the \Opt{finalizeCache} option.
   }
 \cs_new:Nn \@@_plain_tex_define_option_command:nn
   {
-    \@@_option_tl_to_csname:nN
+    \prop_get:cnN
+      { g_@@_default_ #1 _options_prop }
       { #2 }
       \l_tmpa_tl
-    \prop_get:cnN
-      { g_@@_ #1 _option_types_prop }
+    \@@_set_option_value:nV
       { #2 }
-      \l_tmpb_tl
-    \str_if_eq:VVTF
-      \l_tmpb_tl
+      \l_tmpa_tl
+  }
+\cs_new:Nn
+  \@@_set_option_value:nn
+  {
+    \@@_define_option:n
+      { #1 }
+    \@@_get_option_type:nN
+      { #1 }
+      \l_tmpa_tl
+    \str_if_eq:NNTF
       \c_@@_option_type_counter_tl
+      \l_tmpa_tl
       {
-        \prop_get:cnN
-          { g_@@_default_ #1 _options_prop }
-          { #2 }
-          \l_tmpb_tl
-        \int_new:c
-          { \l_tmpa_tl }
+        \@@_option_tl_to_csname:nN
+          { #1 }
+          \l_tmpa_tl
         \int_gset:cn
           { \l_tmpa_tl }
-          { \l_tmpb_tl }
+          { #2 }
       }
       {
-        \prop_get:cnN
-          { g_@@_default_ #1 _options_prop }
+        \@@_option_tl_to_csname:nN
+          { #1 }
+          \l_tmpa_tl
+        \cs_new:cpn
+          \l_tmpa_tl
           { #2 }
+      }
+  }
+\cs_generate_variant:Nn
+  \@@_set_option_value:nn
+  { nV }
+\cs_new:Nn
+  \@@_define_option:n
+  {
+    \@@_option_tl_to_csname:nN
+      { #1 }
+      \l_tmpa_tl
+    \cs_if_free:cT
+      { \l_tmpa_tl }
+      {
+        \@@_get_option_type:nN
+          { #1 }
           \l_tmpb_tl
-        \exp_args:NNo
-          \cs_new:cpn
-            \l_tmpa_tl
-            { \l_tmpb_tl }
+        \str_if_eq:NNT
+          \c_@@_option_type_counter_tl
+          \l_tmpb_tl
+          {
+            \@@_option_tl_to_csname:nN
+              { #1 }
+              \l_tmpa_tl
+            \int_new:c
+              { \l_tmpa_tl }
+          }
       }
   }
 \@@_plain_tex_define_option_commands:
