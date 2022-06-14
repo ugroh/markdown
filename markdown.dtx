@@ -8411,8 +8411,8 @@ For more information, see the examples for the \Opt{finalizeCache} option.
         \@@_option_tl_to_csname:nN
           { #1 }
           \l_tmpa_tl
-        \cs_new:cpn
-          \l_tmpa_tl
+        \cs_set:cpn
+          { \l_tmpa_tl }
           { #2 }
       }
   }
