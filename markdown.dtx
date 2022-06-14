@@ -8374,20 +8374,18 @@ For more information, see the examples for the \Opt{finalizeCache} option.
         \seq_map_inline:cn
           { g_@@_ ##1 _options_seq }
           {
-              \@@_plain_tex_define_option_command:nn
-                { ##1 }
+              \@@_plain_tex_define_option_command:n
                 { ####1 }
           }
       }
   }
-\cs_new:Nn \@@_plain_tex_define_option_command:nn
+\cs_new:Nn \@@_plain_tex_define_option_command:n
   {
-    \prop_get:cnN
-      { g_@@_default_ #1 _options_prop }
-      { #2 }
+    \@@_get_default_option:nN
+      { #1 }
       \l_tmpa_tl
     \@@_set_option_value:nV
-      { #2 }
+      { #1 }
       \l_tmpa_tl
   }
 \cs_new:Nn
