@@ -8350,10 +8350,10 @@ For more information, see the examples for the \Opt{finalizeCache} option.
   { path }
   { . }
 %    \end{macrocode}
-% \par
 % \begin{markdown}
 %
-% Here, we automatically define all the above macros for plain \TeX{} options.
+% Here, we automatically define plain \TeX{} macros for the above plain \TeX{}
+% options.
 %
 % Furthemore, we also define macros that map directly to the options recognized
 % by the Lua interface, such as \mdef{markdownOptionHybrid} for the
@@ -14674,7 +14674,8 @@ definitions from the plain \TeX{} implementation
 % (see Section <#sec:textokenrendererprototypes>)
 and prevent the soft \LaTeX{} prerequisites
 % in Section <#sec:latexprerequisites>
-from being loaded:
+from being loaded: The plain option must be set before or when loading the
+package. Setting the option after loading the package will have no effect.
 
 ``` tex
 \usepackage[plain]{markdown}
@@ -14691,13 +14692,6 @@ from being loaded:
   { boolean }
   { false }
 \ExplSyntaxOff
-\define@key{markdownOptions}{plain}[true]{%
-  \ifmarkdownLaTeXLoaded
-    \markdownWarning
-      {The plain option must be specified when loading the package}%
-  \else
-    \renewcommand\markdownOptionPlain{#1}%
-  \fi}
 %    \end{macrocode}
 % \iffalse
 %</latex>
@@ -15149,98 +15143,81 @@ The following ordered list will be preceded by roman numerals:
 
 ```````
 
-%#### Plain \TeX{} Interface Options
-% The following options map directly to the option macros exposed by the plain
-% \TeX{} interface (see Section <#sec:texoptions>).
-%
 % \markdownEnd
 % \iffalse
 %</manual-options>
 %<*latex>
 % \fi
+% \begin{markdown}
+%
+%#### Plain \TeX{} Interface Options
+% Here, we automatically define plain \TeX{} macros and the
+% \meta{key}`=`\meta{value} interface for the above \LaTeX{} options.
+%
+% \end{markdown}
 %  \begin{macrocode}
-\define@key{markdownOptions}{helperScriptFileName}{%
-  \def\markdownOptionHelperScriptFileName{#1}}%
-\define@key{markdownOptions}{inputTempFileName}{%
-  \def\markdownOptionInputTempFileName{#1}}%
-\define@key{markdownOptions}{outputTempFileName}{%
-  \def\markdownOptionOutputTempFileName{#1}}%
-\define@key{markdownOptions}{errorTempFileName}{%
-  \def\markdownOptionErrorTempFileName{#1}}%
-\define@key{markdownOptions}{cacheDir}{%
-  \def\markdownOptionCacheDir{#1}}%
-\define@key{markdownOptions}{outputDir}{%
-  \def\markdownOptionOutputDir{#1}}%
-\define@key{markdownOptions}{blankBeforeBlockquote}[true]{%
-  \def\markdownOptionBlankBeforeBlockquote{#1}}%
-\define@key{markdownOptions}{blankBeforeCodeFence}[true]{%
-  \def\markdownOptionBlankBeforeCodeFence{#1}}%
-\define@key{markdownOptions}{blankBeforeHeading}[true]{%
-  \def\markdownOptionBlankBeforeHeading{#1}}%
-\define@key{markdownOptions}{breakableBlockquotes}[true]{%
-  \def\markdownOptionBreakableBlockquotes{#1}}%
-\define@key{markdownOptions}{citations}[true]{%
-  \def\markdownOptionCitations{#1}}%
-\define@key{markdownOptions}{citationNbsps}[true]{%
-  \def\markdownOptionCitationNbsps{#1}}%
-\define@key{markdownOptions}{contentBlocks}[true]{%
-  \def\markdownOptionContentBlocks{#1}}%
-\define@key{markdownOptions}{codeSpans}[true]{%
-  \def\markdownOptionCodeSpans{#1}}%
-\define@key{markdownOptions}{contentBlocksLanguageMap}{%
-  \def\markdownOptionContentBlocksLanguageMap{#1}}%
-\define@key{markdownOptions}{definitionLists}[true]{%
-  \def\markdownOptionDefinitionLists{#1}}%
-\define@key{markdownOptions}{eagerCache}[true]{%
-  \def\markdownOptionEagerCache{#1}}%
-\define@key{markdownOptions}{expectJekyllData}[true]{%
-  \def\markdownOptionExpectJekyllData{#1}}%
-\define@key{markdownOptions}{footnotes}[true]{%
-  \def\markdownOptionFootnotes{#1}}%
-\define@key{markdownOptions}{fencedCode}[true]{%
-  \def\markdownOptionFencedCode{#1}}%
-\define@key{markdownOptions}{jekyllData}[true]{%
-  \def\markdownOptionJekyllData{#1}}%
-\define@key{markdownOptions}{hardLineBreaks}[true]{%
-  \def\markdownOptionHardLineBreaks{#1}}%
-\define@key{markdownOptions}{hashEnumerators}[true]{%
-  \def\markdownOptionHashEnumerators{#1}}%
-\define@key{markdownOptions}{headerAttributes}[true]{%
-  \def\markdownOptionHeaderAttributes{#1}}%
-\define@key{markdownOptions}{html}[true]{%
-  \def\markdownOptionHtml{#1}}%
-\define@key{markdownOptions}{hybrid}[true]{%
-  \def\markdownOptionHybrid{#1}}%
-\define@key{markdownOptions}{inlineFootnotes}[true]{%
-  \def\markdownOptionInlineFootnotes{#1}}%
-\define@key{markdownOptions}{pipeTables}[true]{%
-  \def\markdownOptionPipeTables{#1}}%
-\define@key{markdownOptions}{preserveTabs}[true]{%
-  \def\markdownOptionPreserveTabs{#1}}%
-\define@key{markdownOptions}{relativeReferences}[true]{%
-  \def\markdownOptionRelativeReferences{#1}}%
-\define@key{markdownOptions}{smartEllipses}[true]{%
-  \def\markdownOptionSmartEllipses{#1}}%
-\define@key{markdownOptions}{shiftHeadings}{%
-  \def\markdownOptionShiftHeadings{#1}}%
-\define@key{markdownOptions}{slice}{%
-  \def\markdownOptionSlice{#1}}%
-\define@key{markdownOptions}{startNumber}[true]{%
-  \def\markdownOptionStartNumber{#1}}%
-\define@key{markdownOptions}{stripIndent}[true]{%
-  \def\markdownOptionStripIndent{#1}}%
-\define@key{markdownOptions}{tableCaptions}[true]{%
-  \def\markdownOptionTableCaptions{#1}}%
-\define@key{markdownOptions}{taskLists}[true]{%
-  \def\markdownOptionTaskLists{#1}}%
-\define@key{markdownOptions}{texComments}[true]{%
-  \def\markdownOptionTexComments{#1}}%
-\define@key{markdownOptions}{tightLists}[true]{%
-  \def\markdownOptionTightLists{#1}}%
-\define@key{markdownOptions}{underscores}[true]{%
-  \def\markdownOptionUnderscores{#1}}%
-\define@key{markdownOptions}{stripPercentSigns}[true]{%
-  \def\markdownOptionStripPercentSigns{#1}}%
+\ExplSyntaxOn
+\cs_new:Nn \@@_latex_define_option_commands_and_keyvals:
+  {
+    \seq_map_inline:Nn
+      \g_@@_latex_options_seq
+      {
+          \@@_plain_tex_define_option_command:n
+            { ##1 }
+      }
+%    \end{macrocode}
+% \begin{markdown}
+%
+% Furthermore, we also define the \meta{key}`=`\meta{value} interface
+% for all option macros recognized by the Lua plain \TeX{} interfaces.
+%
+% \end{markdown}
+%  \begin{macrocode}
+    \seq_map_inline:Nn
+      \g_@@_option_layers_seq
+      {
+        \seq_map_inline:cn
+          { g_@@_ ##1 _options_seq }
+          {
+              \@@_latex_define_option_keyval:nn
+                { ##1 }
+                { ####1 }
+          }
+      }
+  }
+\cs_new:Nn \@@_latex_define_option_keyval:nn
+  {
+    \prop_get:cnN
+      { g_@@_ #1 _option_types_prop }
+      { #2 }
+      \l_tmpa_tl
+    \str_if_eq:VVTF
+      \l_tmpa_tl
+      \c_@@_option_type_boolean_tl
+      {
+        \define@key
+          { markdownOptions }
+          { #2 }
+          [ true ]
+          {
+            \@@_set_option_value:nn
+              { #2 }
+              { ##1 }
+          }
+      }
+      {
+        \define@key
+          { markdownOptions }
+          { #2 }
+          {
+            \@@_set_option_value:nn
+              { #2 }
+              { ##1 }
+          }
+      }
+  }
+\@@_latex_define_option_commands_and_keyvals:
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -15270,14 +15247,8 @@ The following ordered list will be preceded by roman numerals:
 %
 % \end{markdown}
 %  \begin{macrocode}
-\define@key{markdownOptions}{finalizeCache}[true]{%
-  \def\markdownOptionFinalizeCache{#1}}%
 \DeclareOption{finalizecache}{\markdownSetup{finalizeCache}}
-\define@key{markdownOptions}{frozenCache}[true]{%
-  \def\markdownOptionFrozenCache{#1}}%
 \DeclareOption{frozencache}{\markdownSetup{frozenCache}}
-\define@key{markdownOptions}{frozenCacheFileName}{%
-  \def\markdownOptionFrozenCacheFileName{#1}}%
 %    \end{macrocode}
 % \par
 % \begin{markdown}
