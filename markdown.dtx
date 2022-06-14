@@ -1985,7 +1985,7 @@ interfaces and all the way up to the \LaTeX{} and \Hologo{ConTeXt} interfaces.
     Option~#1~is~undefined.
   }
 \cs_new:Nn
-  \@@_get_default_option:nN
+  \@@_get_default_option_value:nN
   {
     \bool_set_false:N
       \l_tmpa_bool
@@ -2020,7 +2020,7 @@ interfaces and all the way up to the \LaTeX{} and \Hologo{ConTeXt} interfaces.
     \cs_if_free:cTF
       { \l_tmpa_tl }
       {
-        \@@_get_default_option:nN
+        \@@_get_default_option_value:nN
           { #1 }
           #2
       }
@@ -8381,7 +8381,7 @@ For more information, see the examples for the \Opt{finalizeCache} option.
   }
 \cs_new:Nn \@@_plain_tex_define_option_command:n
   {
-    \@@_get_default_option:nN
+    \@@_get_default_option_value:nN
       { #1 }
       \l_tmpa_tl
     \@@_set_option_value:nV
