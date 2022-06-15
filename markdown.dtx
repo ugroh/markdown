@@ -1840,15 +1840,238 @@ interfaces and all the way up to the \LaTeX{} and \Hologo{ConTeXt} interfaces.
 %  \begin{macrocode}
 \prop_new:N \g_@@_lua_option_types_prop
 \prop_new:N \g_@@_default_lua_options_prop
+\seq_new:N \g_@@_option_layers_seq
+\tl_const:Nn \c_@@_option_layer_lua_tl { lua }
+\seq_put_right:NV \g_@@_option_layers_seq \c_@@_option_layer_lua_tl
+\cs_new:Nn
+  \@@_add_lua_option:nnn
+  {
+    \@@_add_option:Vnnn
+      \c_@@_option_layer_lua_tl
+      { #1 }
+      { #2 }
+      { #3 }
+  }
+\cs_new:Nn
+  \@@_add_option:nnnn
+  {
+    \seq_put_right:cn
+      { g_@@_ #1 _options_seq }
+      { #2 }
+    \prop_put:cnn
+      { g_@@_ #1 _option_types_prop }
+      { #2 }
+      { #3 }
+    \prop_put:cnn
+      { g_@@_default_ #1 _options_prop }
+      { #2 }
+      { #4 }
+    \@@_typecheck_option:n
+      { #2 }
+  }
+\cs_generate_variant:Nn
+  \@@_add_option:nnnn
+  { Vnnn }
+\tl_const:Nn \c_@@_option_value_true_tl  { true  }
+\tl_const:Nn \c_@@_option_value_false_tl { false }
+\cs_new:Nn \@@_typecheck_option:n
+  {
+    \@@_get_option_type:nN
+      { #1 }
+      \l_tmpa_tl
+    \str_case_e:Vn
+      \l_tmpa_tl
+      {
+        { \c_@@_option_type_boolean_tl }
+          {
+            \@@_get_option_value:nN
+              { #1 }
+              \l_tmpa_tl
+            \bool_if:nF
+              {
+                \str_if_eq_p:VV
+                  \l_tmpa_tl
+                  \c_@@_option_value_true_tl ||
+                \str_if_eq_p:VV
+                  \l_tmpa_tl
+                  \c_@@_option_value_false_tl
+              }
+              {
+                \msg_error:nnnV
+                  { markdown }
+                  { failed-typecheck-for-boolean-option }
+                  { #1 }
+                  \l_tmpa_tl
+              }
+          }
+      }
+  }
+\msg_new:nnn
+  { markdown }
+  { failed-typecheck-for-boolean-option }
+  {
+    Option~#1~has~value~#2,~
+    but~a~boolean~(true~or~false)~was~expected.
+  }
+\cs_generate_variant:Nn
+  \str_case_e:nn
+  { Vn }
+\cs_generate_variant:Nn
+  \msg_error:nnnn
+  { nnnV }
+\seq_new:N \g_@@_option_types_seq
+\tl_const:Nn \c_@@_option_type_counter_tl { counter }
+\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_counter_tl
+\tl_const:Nn \c_@@_option_type_boolean_tl { boolean }
+\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_boolean_tl
+\tl_const:Nn \c_@@_option_type_number_tl  { number  }
+\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_number_tl
+\tl_const:Nn \c_@@_option_type_path_tl    { path    }
+\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_path_tl
+\tl_const:Nn \c_@@_option_type_slice_tl   { slice   }
+\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_slice_tl
+\tl_const:Nn \c_@@_option_type_string_tl  { string  }
+\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_string_tl
+\cs_new:Nn
+  \@@_get_option_type:nN
+  {
+    \bool_set_false:N
+      \l_tmpa_bool
+    \seq_map_inline:Nn
+      \g_@@_option_layers_seq
+      {
+        \prop_get:cnNT
+          { g_@@_ ##1 _option_types_prop }
+          { #1 }
+          \l_tmpa_tl
+          {
+            \bool_set_true:N
+              \l_tmpa_bool
+            \seq_map_break:
+          }
+      }
+    \bool_if:nF
+      \l_tmpa_bool
+      {
+        \msg_error:nnn
+          { markdown }
+          { undefined-option }
+          { #1 }
+      }
+    \seq_if_in:NVF
+      \g_@@_option_types_seq
+      \l_tmpa_tl
+      {
+        \msg_error:nnnV
+          { markdown }
+          { unknown-option-type }
+          { #1 }
+          \l_tmpa_tl
+      }
+    \tl_set_eq:NN
+      #2
+      \l_tmpa_tl
+  }
+\msg_new:nnn
+  { markdown }
+  { unknown-option-type }
+  {
+    Option~#1~has~unknown~type~#2.
+  }
+\msg_new:nnn
+  { markdown }
+  { undefined-option }
+  {
+    Option~#1~is~undefined.
+  }
+\cs_new:Nn
+  \@@_get_default_option_value:nN
+  {
+    \bool_set_false:N
+      \l_tmpa_bool
+    \seq_map_inline:Nn
+      \g_@@_option_layers_seq
+      {
+        \prop_get:cnNT
+          { g_@@_default_ ##1 _options_prop }
+          { #1 }
+          #2
+          {
+            \bool_set_true:N
+              \l_tmpa_bool
+            \seq_map_break:
+          }
+      }
+    \bool_if:nF
+      \l_tmpa_bool
+      {
+        \msg_error:nnn
+          { markdown }
+          { undefined-option }
+          { #1 }
+      }
+  }
+\cs_new:Nn
+  \@@_get_option_value:nN
+  {
+    \@@_option_tl_to_csname:nN
+      { #1 }
+      \l_tmpa_tl
+    \cs_if_free:cTF
+      { \l_tmpa_tl }
+      {
+        \@@_get_default_option_value:nN
+          { #1 }
+          #2
+      }
+      {
+        \@@_get_option_type:nN
+          { #1 }
+          \l_tmpa_tl
+        \str_if_eq:NNTF
+          \c_@@_option_type_counter_tl
+          \l_tmpa_tl
+          {
+            \@@_option_tl_to_csname:nN
+              { #1 }
+              \l_tmpa_tl
+            \tl_set:Nx
+              #2
+              { \the \cs:w \l_tmpa_tl \cs_end: }
+          }
+          {
+            \@@_option_tl_to_csname:nN
+              { #1 }
+              \l_tmpa_tl
+            \tl_set:Nv
+              #2
+              { \l_tmpa_tl }
+          }
+      }
+  }
+\cs_new:Nn \@@_option_tl_to_csname:nN
+  {
+    \tl_set:Nn
+      \l_tmpa_tl
+%     TODO: Replace with \str_uppercase:n in TeX Live 2020.
+      { \str_upper_case:n { #1 } }
+    \tl_set:Nx
+      #2
+      {
+        markdownOption
+        \tl_head:f { \l_tmpa_tl }
+        \tl_tail:n { #1 }
+      }
+  }
 %    \end{macrocode}
 % \iffalse
 %</tex>
 %<*manual-options>
 % \fi
 % \begin{markdown}
-% 
+%
 %### File and Directory Names
-% 
+%
 % \end{markdown}
 % \par
 % \iffalse
@@ -1996,17 +2219,10 @@ option.
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
+\@@_add_lua_option:nnn
   { cacheDir }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
-  { cacheDir }
-  { string }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { cacheDir }
-  { . }
+  { path }
+  { \markdownOptionOutputDir / _markdown_\jobname }
 %    \end{macrocode}
 % \iffalse
 %</tex>
@@ -2231,17 +2447,10 @@ the markdown document from “Hello *world*!” to “Hi *world*!” was not ref
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
+\@@_add_lua_option:nnn
   { frozenCacheFileName }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
-  { frozenCacheFileName }
-  { string }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { frozenCacheFileName }
-  { frozenCache.tex }
+  { path }
+  { \markdownOptionCacheDir / frozenCache.tex }
 %    \end{macrocode}
 % \iffalse
 %</tex>
@@ -2462,16 +2671,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { blankBeforeBlockquote }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { blankBeforeBlockquote }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { blankBeforeBlockquote }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -2718,16 +2920,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { blankBeforeCodeFence }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { blankBeforeCodeFence }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { blankBeforeCodeFence }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -2957,16 +3152,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { blankBeforeHeading }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { blankBeforeHeading }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { blankBeforeHeading }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -3188,16 +3376,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { breakableBlockquotes }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { breakableBlockquotes }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { breakableBlockquotes }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -3289,16 +3470,9 @@ following text, where the middot (`·`) denotes a non-breaking space:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { citationNbsps }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { citationNbsps }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { citationNbsps }
   { true }
 %    \end{macrocode}
 % \iffalse
@@ -3397,16 +3571,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { citations }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { citations }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { citations }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -3622,16 +3789,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { codeSpans }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { codeSpans }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { codeSpans }
   { true }
 %    \end{macrocode}
 % \iffalse
@@ -3803,16 +3963,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { contentBlocks }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { contentBlocks }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { contentBlocks }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -3970,16 +4123,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
+\@@_add_lua_option:nnn
   { contentBlocksLanguageMap }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
-  { contentBlocksLanguageMap }
-  { string }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { contentBlocksLanguageMap }
+  { path }
   { markdown-languages.json }
 %    \end{macrocode}
 % \iffalse
@@ -4116,16 +4262,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { definitionLists }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { definitionLists }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { definitionLists }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -4224,16 +4363,9 @@ Hello \markdownRendererEmphasis{world}!\relax
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { eagerCache }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { eagerCache }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { eagerCache }
   { true }
 %    \end{macrocode}
 % \iffalse
@@ -4359,16 +4491,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { expectJekyllData }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { expectJekyllData }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { expectJekyllData }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -4534,16 +4659,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { fencedCode }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { fencedCode }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { fencedCode }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -4705,16 +4823,9 @@ the markdown document from “Hello *world*!” to “Hi *world*!” was not ref
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { finalizeCache }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { finalizeCache }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { finalizeCache }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -4881,16 +4992,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { footnotes }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { footnotes }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { footnotes }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -4953,16 +5057,9 @@ requested using the `frozenCacheCounter` option.
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { frozenCacheCounter }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { frozenCacheCounter }
   { counter }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { frozenCacheCounter }
   { 0 }
 %    \end{macrocode}
 % \iffalse
@@ -5044,16 +5141,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { hardLineBreaks }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { hardLineBreaks }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { hardLineBreaks }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -5182,16 +5272,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { hashEnumerators }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { hashEnumerators }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { hashEnumerators }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -5244,16 +5327,9 @@ defaultOptions.hashEnumerators = false
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { headerAttributes }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { headerAttributes }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { headerAttributes }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -5513,16 +5589,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { html }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { html }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { html }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -5731,16 +5800,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { hybrid }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { hybrid }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { hybrid }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -5837,16 +5899,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { inlineFootnotes }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { inlineFootnotes }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { inlineFootnotes }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -6012,16 +6067,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { jekyllData }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { jekyllData }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { jekyllData }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -6128,16 +6176,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { pipeTables }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { pipeTables }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { pipeTables }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -6175,16 +6216,9 @@ defaultOptions.pipeTables = false
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { preserveTabs }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { preserveTabs }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { preserveTabs }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -6271,16 +6305,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { relativeReferences }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { relativeReferences }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { relativeReferences }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -6423,16 +6450,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { shiftHeadings }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { shiftHeadings }
   { number }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { shiftHeadings }
   { 0 }
 %    \end{macrocode}
 % \iffalse
@@ -6648,15 +6668,8 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
+\@@_add_lua_option:nnn
   { slice }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
-  { slice }
-  { string }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
   { slice }
   { ^~$ }
 %    \end{macrocode}
@@ -6862,16 +6875,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { smartEllipses }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { smartEllipses }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { smartEllipses }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -7005,16 +7011,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { startNumber }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { startNumber }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { startNumber }
   { true }
 %    \end{macrocode}
 % \iffalse
@@ -7125,16 +7124,9 @@ text “Hello *world*!”
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { stripIndent }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { stripIndent }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { stripIndent }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -7256,16 +7248,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { tableCaptions }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { tableCaptions }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { tableCaptions }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -7373,16 +7358,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { taskLists }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { taskLists }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { taskLists }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -7496,16 +7474,9 @@ text “Hello *world*!”
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { texComments }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { texComments }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { texComments }
   { false }
 %    \end{macrocode}
 % \iffalse
@@ -7625,16 +7596,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { tightLists }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { tightLists }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { tightLists }
   { true }
 %    \end{macrocode}
 % \iffalse
@@ -7774,16 +7738,9 @@ following text:
 %<*tex>
 % \fi
 %  \begin{macrocode}
-\seq_put_right:Nn
-  \g_@@_lua_options_seq
-  { underscores }
-\prop_put:Nnn
-  \g_@@_lua_option_types_prop
+\@@_add_lua_option:nnn
   { underscores }
   { boolean }
-\prop_put:Nnn
-  \g_@@_default_lua_options_prop
-  { underscores }
   { true }
 \ExplSyntaxOff
 %    \end{macrocode}
@@ -8177,7 +8134,36 @@ pdftex --shell-escape document.tex
 % Section <#sec:luaoptions>), while some of them are specific to the plain
 % \TeX{} interface.
 %
+% To enable the enumeration of plain \TeX{} options, we will maintain the
+% \mdef{g_\@\@_plain_tex_options_seq} sequence.
+%
 % \end{markdown}
+%  \begin{macrocode}
+\ExplSyntaxOn
+\seq_new:N \g_@@_plain_tex_options_seq
+%    \end{macrocode}
+% \begin{markdown}
+%
+% To enable the reflection of default plain \TeX{} options and their types, we
+% will maintain the \mdef{g_\@\@_default_plain_tex_options_prop} and
+% \mdef{g_\@\@_plain_tex_option_types_prop} property lists, respectively.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\prop_new:N \g_@@_plain_tex_option_types_prop
+\prop_new:N \g_@@_default_plain_tex_options_prop
+\tl_const:Nn \c_@@_option_layer_plain_tex_tl { plain_tex }
+\seq_put_right:NV \g_@@_option_layers_seq \c_@@_option_layer_plain_tex_tl
+\cs_new:Nn
+  \@@_add_plain_tex_option:nnn
+  {
+    \@@_add_option:Vnnn
+      \c_@@_option_layer_plain_tex_tl
+      { #1 }
+      { #2 }
+      { #3 }
+  }
+%    \end{macrocode}
 % \iffalse
 %</tex>
 %<*manual-options>
@@ -8212,11 +8198,6 @@ following code in your plain \TeX{} document:
 % between an enumeration of the markdown documents in the plain \TeX{} document
 % and their auxiliary files cached in the \Opt{cacheDir} directory.
 %
-% \end{markdown}
-%  \begin{macrocode}
-\let\markdownOptionFinalizeCache\undefined
-%    \end{macrocode}
-% \par
 % \iffalse
 %</tex>
 %<*manual-options>
@@ -8224,7 +8205,6 @@ following code in your plain \TeX{} document:
 #### Finalizing and Freezing the Cache
 
 % \fi
-% \begin{markdown}
 %
 The \mdef{markdownOptionFrozenCache} option uses the mapping previously
 % created by the \mref{markdownOptionFinalizeCache} option,
@@ -8236,6 +8216,23 @@ result, the plain \TeX{} document becomes more portable, but further changes
 in the order and the content of markdown documents will not be reflected. It
 defaults to `false`.
 
+% \end{markdown}
+% \iffalse
+%</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\@@_add_plain_tex_option:nnn
+  { frozenCache }
+  { boolean }
+  { false }
+%    \end{macrocode}
+% \iffalse
+%</tex>
+%<*manual-options>
+% \fi
+% \begin{markdown}
+%
 % The standard usage of the above two options is as follows:
 % \iffalse
 The standard usage of the \Opt{finalizeCache} and \Opt{frozenCache}
@@ -8278,7 +8275,10 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 %
 % \end{markdown}
 %  \begin{macrocode}
-\def\markdownOptionHelperScriptFileName{\jobname.markdown.lua}%
+\@@_add_plain_tex_option:nnn
+  { helperScriptFileName }
+  { path }
+  { \jobname.markdown.lua }
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -8291,7 +8291,10 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 %
 % \end{markdown}
 %  \begin{macrocode}
-\def\markdownOptionInputTempFileName{\jobname.markdown.in}%
+\@@_add_plain_tex_option:nnn
+  { inputTempFileName }
+  { path }
+  { \jobname.markdown.in }
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -8304,7 +8307,10 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 %
 % \end{markdown}
 %  \begin{macrocode}
-\def\markdownOptionOutputTempFileName{\jobname.markdown.out}%
+\@@_add_plain_tex_option:nnn
+  { outputTempFileName }
+  { path }
+  { \jobname.markdown.out }
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -8318,7 +8324,10 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 %
 % \end{markdown}
 %  \begin{macrocode}
-\def\markdownOptionErrorTempFileName{\jobname.markdown.err}%
+\@@_add_plain_tex_option:nnn
+  { errorTempFileName }
+  { path }
+  { \jobname.markdown.err }
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -8336,35 +8345,105 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 %
 % \end{markdown}
 %  \begin{macrocode}
-\def\markdownOptionOutputDir{.}%
+\@@_add_plain_tex_option:nnn
+  { outputDir }
+  { path }
+  { . }
 %    \end{macrocode}
-% \par
 % \begin{markdown}
 %
-% The \mdef{markdownOptionCacheDir} macro corresponds to the Lua interface
-% \Opt{cacheDir} option that sets the path to the directory that will contain
-% the produced cache files. The option defaults to `_markdown_`\mref{jobname},
-% which is a similar naming scheme to the one used by the \pkg{minted} \LaTeX{}
-% package. The same limitations apply here as in the case of the
+% Here, we automatically define plain \TeX{} macros for the above plain \TeX{}
+% options.
+%
+% Furthemore, we also define macros that map directly to the options recognized
+% by the Lua interface, such as \mdef{markdownOptionHybrid} for the
+% \Opt{hybrid} Lua option (see Section <#sec:luaoptions>), which are not
+% processed by the plain \TeX{} implementation, only passed along to Lua.
+%
+% For the macros that correspond to the non-boolean options recognized by the
+% Lua interface, the same limitations apply here in the case of the
 % \mref{markdownOptionHelperScriptFileName} macro.
 %
 % \end{markdown}
 %  \begin{macrocode}
-\def\markdownOptionCacheDir{\markdownOptionOutputDir/_markdown_\jobname}%
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
-% The \mdef{markdownOptionFrozenCacheFileName} macro corresponds to the Lua
-% interface \Opt{frozenCacheFileName} option that sets the path to an output
-% file (frozen cache) that will contain a mapping between an enumeration of the
-% markdown documents in the plain \TeX{} document and their auxiliary cache
-% files. The option defaults to `frozenCache.tex`. The same limitations apply
-% here as in the case of the \mref{markdownOptionHelperScriptFileName} macro.
-%
-% \end{markdown}
-%  \begin{macrocode}
-\def\markdownOptionFrozenCacheFileName{\markdownOptionCacheDir/frozenCache.tex}
+\cs_new:Nn \@@_plain_tex_define_option_commands:
+  {
+    \seq_map_inline:Nn
+      \g_@@_option_layers_seq
+      {
+        \seq_map_inline:cn
+          { g_@@_ ##1 _options_seq }
+          {
+              \@@_plain_tex_define_option_command:n
+                { ####1 }
+          }
+      }
+  }
+\cs_new:Nn \@@_plain_tex_define_option_command:n
+  {
+    \@@_get_default_option_value:nN
+      { #1 }
+      \l_tmpa_tl
+    \@@_set_option_value:nV
+      { #1 }
+      \l_tmpa_tl
+  }
+\cs_new:Nn
+  \@@_set_option_value:nn
+  {
+    \@@_define_option:n
+      { #1 }
+    \@@_get_option_type:nN
+      { #1 }
+      \l_tmpa_tl
+    \str_if_eq:NNTF
+      \c_@@_option_type_counter_tl
+      \l_tmpa_tl
+      {
+        \@@_option_tl_to_csname:nN
+          { #1 }
+          \l_tmpa_tl
+        \int_gset:cn
+          { \l_tmpa_tl }
+          { #2 }
+      }
+      {
+        \@@_option_tl_to_csname:nN
+          { #1 }
+          \l_tmpa_tl
+        \cs_set:cpn
+          { \l_tmpa_tl }
+          { #2 }
+      }
+  }
+\cs_generate_variant:Nn
+  \@@_set_option_value:nn
+  { nV }
+\cs_new:Nn
+  \@@_define_option:n
+  {
+    \@@_option_tl_to_csname:nN
+      { #1 }
+      \l_tmpa_tl
+    \cs_if_free:cT
+      { \l_tmpa_tl }
+      {
+        \@@_get_option_type:nN
+          { #1 }
+          \l_tmpb_tl
+        \str_if_eq:NNT
+          \c_@@_option_type_counter_tl
+          \l_tmpb_tl
+          {
+            \@@_option_tl_to_csname:nN
+              { #1 }
+              \l_tmpa_tl
+            \int_new:c
+              { \l_tmpa_tl }
+          }
+      }
+  }
+\@@_plain_tex_define_option_commands:
 %    \end{macrocode}
 %
 % \iffalse
@@ -8431,61 +8510,6 @@ No document named `error-output.txt` should be produced in the folder named
 while executing the Lua code. If this happens, please [file a
 bug](https://github.com/witiko/markdown/issues).
 
-%</manual-options>
-%<*tex>
-% \fi
-% \par
-% \begin{markdown}
-%
-%#### Lua Interface Options
-% The following macros map directly to the options recognized by the Lua
-% interface (see Section <#sec:luaoptions>) and are not processed by the
-% plain \TeX{} implementation, only passed along to Lua. They are undefined, which
-% makes them fall back to the default values provided by the Lua interface.
-%
-% For the macros that correspond to the non-boolean options recognized by the
-% Lua interface, the same limitations apply here in the case of the
-% \mref{markdownOptionHelperScriptFileName} macro.
-%
-% \end{markdown}
-%  \begin{macrocode}
-\let\markdownOptionBlankBeforeBlockquote\undefined
-\let\markdownOptionBlankBeforeCodeFence\undefined
-\let\markdownOptionBlankBeforeHeading\undefined
-\let\markdownOptionBreakableBlockquotes\undefined
-\let\markdownOptionCitations\undefined
-\let\markdownOptionCitationNbsps\undefined
-\let\markdownOptionContentBlocks\undefined
-\let\markdownOptionContentBlocksLanguageMap\undefined
-\let\markdownOptionDefinitionLists\undefined
-\let\markdownOptionEagerCache\undefined
-\let\markdownOptionFootnotes\undefined
-\let\markdownOptionFencedCode\undefined
-\let\markdownOptionHardLineBreaks\undefined
-\let\markdownOptionHashEnumerators\undefined
-\let\markdownOptionHeaderAttributes\undefined
-\let\markdownOptionHtml\undefined
-\let\markdownOptionHybrid\undefined
-\let\markdownOptionInlineFootnotes\undefined
-\let\markdownOptionJekyllData\undefined
-\let\markdownOptionPipeTables\undefined
-\let\markdownOptionPreserveTabs\undefined
-\let\markdownOptionRelativeReferences\undefined
-\let\markdownOptionShiftHeadings\undefined
-\let\markdownOptionSlice\undefined
-\let\markdownOptionSmartEllipses\undefined
-\let\markdownOptionStartNumber\undefined
-\let\markdownOptionStripIndent\undefined
-\let\markdownOptionTableCaptions\undefined
-\let\markdownOptionTaskLists\undefined
-\let\markdownOptionTexComments\undefined
-\let\markdownOptionTightLists\undefined
-%    \end{macrocode}
-% \par
-% \iffalse
-%</tex>
-%<*manual-options>
-
 #### Package Documentation
 
 The \mdef{markdownOptionStripPercentSigns} macro controls whether a percent
@@ -8538,7 +8562,18 @@ A PDF document named `document.pdf` should be produced and contain the text
 %
 % \end{markdown}
 %  \begin{macrocode}
-\def\markdownOptionStripPercentSigns{false}%
+\seq_put_right:Nn
+  \g_@@_plain_tex_options_seq
+  { stripPercentSigns }
+\prop_put:Nnn
+  \g_@@_plain_tex_option_types_prop
+  { stripPercentSigns }
+  { boolean }
+\prop_put:Nnx
+  \g_@@_default_plain_tex_options_prop
+  { stripPercentSigns }
+  { false }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \iffalse
 %</tex>
@@ -14178,84 +14213,58 @@ following text:
 %
 % \end{markdown}
 %  \begin{macrocode}
-\def\markdownRendererAttributeIdentifierPrototype#1{}%
-\def\markdownRendererAttributeClassNamePrototype#1{}%
-\def\markdownRendererAttributeKeyValuePrototype#1#2{}%
-\def\markdownRendererDocumentBeginPrototype{}%
-\def\markdownRendererDocumentEndPrototype{}%
-\def\markdownRendererInterblockSeparatorPrototype{}%
-\def\markdownRendererLineBreakPrototype{}%
-\def\markdownRendererEllipsisPrototype{}%
-\def\markdownRendererHeaderAttributeContextBeginPrototype{}%
-\def\markdownRendererHeaderAttributeContextEndPrototype{}%
-\def\markdownRendererNbspPrototype{}%
-\def\markdownRendererLeftBracePrototype{}%
-\def\markdownRendererRightBracePrototype{}%
-\def\markdownRendererDollarSignPrototype{}%
-\def\markdownRendererPercentSignPrototype{}%
-\def\markdownRendererAmpersandPrototype{}%
-\def\markdownRendererUnderscorePrototype{}%
-\def\markdownRendererHashPrototype{}%
-\def\markdownRendererCircumflexPrototype{}%
-\def\markdownRendererBackslashPrototype{}%
-\def\markdownRendererTildePrototype{}%
-\def\markdownRendererPipePrototype{}%
-\def\markdownRendererCodeSpanPrototype#1{}%
-\def\markdownRendererLinkPrototype#1#2#3#4{}%
-\def\markdownRendererImagePrototype#1#2#3#4{}%
-\def\markdownRendererContentBlockPrototype#1#2#3#4{}%
-\def\markdownRendererContentBlockOnlineImagePrototype#1#2#3#4{}%
-\def\markdownRendererContentBlockCodePrototype#1#2#3#4#5{}%
-\def\markdownRendererUlBeginPrototype{}%
-\def\markdownRendererUlBeginTightPrototype{}%
-\def\markdownRendererUlItemPrototype{}%
-\def\markdownRendererUlItemEndPrototype{}%
-\def\markdownRendererUlEndPrototype{}%
-\def\markdownRendererUlEndTightPrototype{}%
-\def\markdownRendererOlBeginPrototype{}%
-\def\markdownRendererOlBeginTightPrototype{}%
-\def\markdownRendererOlItemPrototype{}%
-\def\markdownRendererOlItemWithNumberPrototype#1{}%
-\def\markdownRendererOlItemEndPrototype{}%
-\def\markdownRendererOlEndPrototype{}%
-\def\markdownRendererOlEndTightPrototype{}%
-\def\markdownRendererDlBeginPrototype{}%
-\def\markdownRendererDlBeginTightPrototype{}%
-\def\markdownRendererDlItemPrototype#1{}%
-\def\markdownRendererDlItemEndPrototype{}%
-\def\markdownRendererDlDefinitionBeginPrototype{}%
-\def\markdownRendererDlDefinitionEndPrototype{}%
-\def\markdownRendererDlEndPrototype{}%
-\def\markdownRendererDlEndTightPrototype{}%
-\def\markdownRendererEmphasisPrototype#1{}%
-\def\markdownRendererStrongEmphasisPrototype#1{}%
-\def\markdownRendererBlockQuoteBeginPrototype{}%
-\def\markdownRendererBlockQuoteEndPrototype{}%
-\def\markdownRendererInputVerbatimPrototype#1{}%
-\def\markdownRendererInputFencedCodePrototype#1#2{}%
-\def\markdownRendererJekyllDataBeginPrototype{}%
-\def\markdownRendererJekyllDataEndPrototype{}%
-\def\markdownRendererHeadingOnePrototype#1{}%
-\def\markdownRendererHeadingTwoPrototype#1{}%
-\def\markdownRendererHeadingThreePrototype#1{}%
-\def\markdownRendererHeadingFourPrototype#1{}%
-\def\markdownRendererHeadingFivePrototype#1{}%
-\def\markdownRendererHeadingSixPrototype#1{}%
-\def\markdownRendererHorizontalRulePrototype{}%
-\def\markdownRendererFootnotePrototype#1{}%
-\def\markdownRendererCitePrototype#1{}%
-\def\markdownRendererTextCitePrototype#1{}%
-\def\markdownRendererTablePrototype#1#2#3{}%
-\def\markdownRendererInlineHtmlCommentPrototype#1{}%
-\let\markdownRendererBlockHtmlCommentBeginPrototype=\iffalse
-\let\markdownRendererBlockHtmlCommentBegin=\iffalse
-\let\markdownRendererBlockHtmlCommentEndPrototype=\fi
-\let\markdownRendererBlockHtmlCommentEnd=\fi
-\def\markdownRendererInlineHtmlTagPrototype#1{}%
-\def\markdownRendererInputBlockHtmlElementPrototype#1{}%
-\def\markdownRendererTickedBoxPrototype{}%
-\def\markdownRendererHalfTickedBoxPrototype{}%
-\def\markdownRendererUntickedBoxPrototype{}%
+\ExplSyntaxOn
+\cs_new:Nn \@@_plaintex_define_renderer_prototypes:
+  {
+    \seq_map_function:NN
+      \g_@@_renderers_seq
+      \@@_plaintex_define_renderer_prototype:n
+    \let\markdownRendererBlockHtmlCommentBeginPrototype=\iffalse
+    \let\markdownRendererBlockHtmlCommentBegin=\iffalse
+    \let\markdownRendererBlockHtmlCommentEndPrototype=\fi
+    \let\markdownRendererBlockHtmlCommentEnd=\fi
+  }
+\cs_new:Nn \@@_plaintex_define_renderer_prototype:n
+  {
+    \@@_renderer_prototype_tl_to_csname:nN
+      { #1 }
+      \l_tmpa_tl
+    \prop_get:NnN
+      \g_@@_renderer_arities_prop
+      { #1 }
+      \l_tmpb_tl
+    \@@_plaintex_define_renderer_prototype:cV
+      { \l_tmpa_tl }
+      \l_tmpb_tl
+  }
+\cs_new:Nn \@@_renderer_prototype_tl_to_csname:nN
+  {
+    \tl_set:Nn
+      \l_tmpa_tl
+%     TODO: Replace with \str_uppercase:n in TeX Live 2020.
+      { \str_upper_case:n { #1 } }
+    \tl_set:Nx
+      #2
+      {
+        markdownRenderer
+        \tl_head:f { \l_tmpa_tl }
+        \tl_tail:n { #1 }
+        Prototype
+      }
+  }
+\cs_new:Nn \@@_plaintex_define_renderer_prototype:Nn
+  {
+    \cs_generate_from_arg_count:NNnn
+      #1
+      \cs_set:Npn
+      { #2 }
+      { }
+  }
+\cs_generate_variant:Nn
+  \@@_plaintex_define_renderer_prototype:Nn
+  { cV }
+\@@_plaintex_define_renderer_prototypes:
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -14420,6 +14429,19 @@ pdflatex --shell-escape document.tex
 % markdown to plain \TeX{}, and facilities for changing the way markdown tokens
 % are rendered. The rest of the interface is inherited from the plain \TeX{}
 % interface (see Section <#sec:texinterface>).
+%
+% The \LaTeX{} implementation redefines the plain \TeX{} logging macros (see
+% Section <#sec:texinterfacelogging>) to use the \LaTeX{} \mref{PackageInfo},
+% \mref{PackageWarning}, and \mref{PackageError} macros.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\newcommand\markdownInfo[1]{\PackageInfo{markdown}{#1}}%
+\newcommand\markdownWarning[1]{\PackageWarning{markdown}{#1}}%
+\newcommand\markdownError[2]{\PackageError{markdown}{#1}{#2.}}%
+\input markdown/markdown
+%    \end{macrocode}
+% \begin{markdown}
 %
 % The \LaTeX{} interface is implemented by the `markdown.sty` file, which
 % can be loaded from the \LaTeX{} document preamble as follows:
@@ -14600,8 +14622,46 @@ document:
 }
 ```
 
+%</manual-options>
+%<*latex>
 % \fi
 % \par
+% \begin{markdown}
+%
+% To enable the enumeration of \LaTeX{} options, we will maintain the
+% \mdef{g_\@\@_latex_options_seq} sequence.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\ExplSyntaxOn
+\seq_new:N \g_@@_latex_options_seq
+%    \end{macrocode}
+% \begin{markdown}
+%
+% To enable the reflection of default \LaTeX{} options and their types, we
+% will maintain the \mdef{g_\@\@_default_latex_options_prop} and
+% \mdef{g_\@\@_latex_option_types_prop} property lists, respectively.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\prop_new:N \g_@@_latex_option_types_prop
+\prop_new:N \g_@@_default_latex_options_prop
+\tl_const:Nn \c_@@_option_layer_latex_tl { latex }
+\seq_put_right:NV \g_@@_option_layers_seq \c_@@_option_layer_latex_tl
+\cs_new:Nn
+  \@@_add_latex_option:nnn
+  {
+    \@@_add_option:Vnnn
+      \c_@@_option_layer_latex_tl
+      { #1 }
+      { #2 }
+      { #3 }
+  }
+%    \end{macrocode}
+% \iffalse
+%</latex>
+%<*manual-options>
+% \fi
 % \begin{markdown}
 
 #### No default token renderer prototypes {#latexplain}
@@ -14614,7 +14674,8 @@ definitions from the plain \TeX{} implementation
 % (see Section <#sec:textokenrendererprototypes>)
 and prevent the soft \LaTeX{} prerequisites
 % in Section <#sec:latexprerequisites>
-from being loaded:
+from being loaded: The plain option must be set before or when loading the
+package. Setting the option after loading the package will have no effect.
 
 ``` tex
 \usepackage[plain]{markdown}
@@ -14626,15 +14687,11 @@ from being loaded:
 %<*latex>
 % \fi
 %  \begin{macrocode}
-\newif\ifmarkdownLaTeXPlain
-  \markdownLaTeXPlainfalse
-\define@key{markdownOptions}{plain}[true]{%
-  \ifmarkdownLaTeXLoaded
-    \markdownWarning
-      {The plain option must be specified when loading the package}%
-  \else
-    \markdownLaTeXPlaintrue
-  \fi}
+\@@_add_latex_option:nnn
+  { plain }
+  { boolean }
+  { false }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \iffalse
 %</latex>
@@ -15086,98 +15143,81 @@ The following ordered list will be preceded by roman numerals:
 
 ```````
 
-%#### Plain \TeX{} Interface Options
-% The following options map directly to the option macros exposed by the plain
-% \TeX{} interface (see Section <#sec:texoptions>).
-%
 % \markdownEnd
 % \iffalse
 %</manual-options>
 %<*latex>
 % \fi
+% \begin{markdown}
+%
+%#### Plain \TeX{} Interface Options
+% Here, we automatically define plain \TeX{} macros and the
+% \meta{key}`=`\meta{value} interface for the above \LaTeX{} options.
+%
+% \end{markdown}
 %  \begin{macrocode}
-\define@key{markdownOptions}{helperScriptFileName}{%
-  \def\markdownOptionHelperScriptFileName{#1}}%
-\define@key{markdownOptions}{inputTempFileName}{%
-  \def\markdownOptionInputTempFileName{#1}}%
-\define@key{markdownOptions}{outputTempFileName}{%
-  \def\markdownOptionOutputTempFileName{#1}}%
-\define@key{markdownOptions}{errorTempFileName}{%
-  \def\markdownOptionErrorTempFileName{#1}}%
-\define@key{markdownOptions}{cacheDir}{%
-  \def\markdownOptionCacheDir{#1}}%
-\define@key{markdownOptions}{outputDir}{%
-  \def\markdownOptionOutputDir{#1}}%
-\define@key{markdownOptions}{blankBeforeBlockquote}[true]{%
-  \def\markdownOptionBlankBeforeBlockquote{#1}}%
-\define@key{markdownOptions}{blankBeforeCodeFence}[true]{%
-  \def\markdownOptionBlankBeforeCodeFence{#1}}%
-\define@key{markdownOptions}{blankBeforeHeading}[true]{%
-  \def\markdownOptionBlankBeforeHeading{#1}}%
-\define@key{markdownOptions}{breakableBlockquotes}[true]{%
-  \def\markdownOptionBreakableBlockquotes{#1}}%
-\define@key{markdownOptions}{citations}[true]{%
-  \def\markdownOptionCitations{#1}}%
-\define@key{markdownOptions}{citationNbsps}[true]{%
-  \def\markdownOptionCitationNbsps{#1}}%
-\define@key{markdownOptions}{contentBlocks}[true]{%
-  \def\markdownOptionContentBlocks{#1}}%
-\define@key{markdownOptions}{codeSpans}[true]{%
-  \def\markdownOptionCodeSpans{#1}}%
-\define@key{markdownOptions}{contentBlocksLanguageMap}{%
-  \def\markdownOptionContentBlocksLanguageMap{#1}}%
-\define@key{markdownOptions}{definitionLists}[true]{%
-  \def\markdownOptionDefinitionLists{#1}}%
-\define@key{markdownOptions}{eagerCache}[true]{%
-  \def\markdownOptionEagerCache{#1}}%
-\define@key{markdownOptions}{expectJekyllData}[true]{%
-  \def\markdownOptionExpectJekyllData{#1}}%
-\define@key{markdownOptions}{footnotes}[true]{%
-  \def\markdownOptionFootnotes{#1}}%
-\define@key{markdownOptions}{fencedCode}[true]{%
-  \def\markdownOptionFencedCode{#1}}%
-\define@key{markdownOptions}{jekyllData}[true]{%
-  \def\markdownOptionJekyllData{#1}}%
-\define@key{markdownOptions}{hardLineBreaks}[true]{%
-  \def\markdownOptionHardLineBreaks{#1}}%
-\define@key{markdownOptions}{hashEnumerators}[true]{%
-  \def\markdownOptionHashEnumerators{#1}}%
-\define@key{markdownOptions}{headerAttributes}[true]{%
-  \def\markdownOptionHeaderAttributes{#1}}%
-\define@key{markdownOptions}{html}[true]{%
-  \def\markdownOptionHtml{#1}}%
-\define@key{markdownOptions}{hybrid}[true]{%
-  \def\markdownOptionHybrid{#1}}%
-\define@key{markdownOptions}{inlineFootnotes}[true]{%
-  \def\markdownOptionInlineFootnotes{#1}}%
-\define@key{markdownOptions}{pipeTables}[true]{%
-  \def\markdownOptionPipeTables{#1}}%
-\define@key{markdownOptions}{preserveTabs}[true]{%
-  \def\markdownOptionPreserveTabs{#1}}%
-\define@key{markdownOptions}{relativeReferences}[true]{%
-  \def\markdownOptionRelativeReferences{#1}}%
-\define@key{markdownOptions}{smartEllipses}[true]{%
-  \def\markdownOptionSmartEllipses{#1}}%
-\define@key{markdownOptions}{shiftHeadings}{%
-  \def\markdownOptionShiftHeadings{#1}}%
-\define@key{markdownOptions}{slice}{%
-  \def\markdownOptionSlice{#1}}%
-\define@key{markdownOptions}{startNumber}[true]{%
-  \def\markdownOptionStartNumber{#1}}%
-\define@key{markdownOptions}{stripIndent}[true]{%
-  \def\markdownOptionStripIndent{#1}}%
-\define@key{markdownOptions}{tableCaptions}[true]{%
-  \def\markdownOptionTableCaptions{#1}}%
-\define@key{markdownOptions}{taskLists}[true]{%
-  \def\markdownOptionTaskLists{#1}}%
-\define@key{markdownOptions}{texComments}[true]{%
-  \def\markdownOptionTexComments{#1}}%
-\define@key{markdownOptions}{tightLists}[true]{%
-  \def\markdownOptionTightLists{#1}}%
-\define@key{markdownOptions}{underscores}[true]{%
-  \def\markdownOptionUnderscores{#1}}%
-\define@key{markdownOptions}{stripPercentSigns}[true]{%
-  \def\markdownOptionStripPercentSigns{#1}}%
+\ExplSyntaxOn
+\cs_new:Nn \@@_latex_define_option_commands_and_keyvals:
+  {
+    \seq_map_inline:Nn
+      \g_@@_latex_options_seq
+      {
+          \@@_plain_tex_define_option_command:n
+            { ##1 }
+      }
+%    \end{macrocode}
+% \begin{markdown}
+%
+% Furthermore, we also define the \meta{key}`=`\meta{value} interface
+% for all option macros recognized by the Lua plain \TeX{} interfaces.
+%
+% \end{markdown}
+%  \begin{macrocode}
+    \seq_map_inline:Nn
+      \g_@@_option_layers_seq
+      {
+        \seq_map_inline:cn
+          { g_@@_ ##1 _options_seq }
+          {
+              \@@_latex_define_option_keyval:nn
+                { ##1 }
+                { ####1 }
+          }
+      }
+  }
+\cs_new:Nn \@@_latex_define_option_keyval:nn
+  {
+    \prop_get:cnN
+      { g_@@_ #1 _option_types_prop }
+      { #2 }
+      \l_tmpa_tl
+    \str_if_eq:VVTF
+      \l_tmpa_tl
+      \c_@@_option_type_boolean_tl
+      {
+        \define@key
+          { markdownOptions }
+          { #2 }
+          [ true ]
+          {
+            \@@_set_option_value:nn
+              { #2 }
+              { ##1 }
+          }
+      }
+      {
+        \define@key
+          { markdownOptions }
+          { #2 }
+          {
+            \@@_set_option_value:nn
+              { #2 }
+              { ##1 }
+          }
+      }
+  }
+\@@_latex_define_option_commands_and_keyvals:
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -15207,14 +15247,8 @@ The following ordered list will be preceded by roman numerals:
 %
 % \end{markdown}
 %  \begin{macrocode}
-\define@key{markdownOptions}{finalizeCache}[true]{%
-  \def\markdownOptionFinalizeCache{#1}}%
 \DeclareOption{finalizecache}{\markdownSetup{finalizeCache}}
-\define@key{markdownOptions}{frozenCache}[true]{%
-  \def\markdownOptionFrozenCache{#1}}%
 \DeclareOption{frozencache}{\markdownSetup{frozenCache}}
-\define@key{markdownOptions}{frozenCacheFileName}{%
-  \def\markdownOptionFrozenCacheFileName{#1}}%
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -15248,17 +15282,9 @@ The following ordered list will be preceded by roman numerals:
   }
 \cs_new:Nn \@@_latex_define_renderer:n
   {
-    \tl_set:Nn
-      \l_tmpb_tl
-%     TODO: Replace with \str_uppercase:n in TeX Live 2020.
-      { \str_upper_case:n { #1 } }
-    \tl_set:Nx
+    \@@_renderer_tl_to_csname:nN
+      { #1 }
       \l_tmpa_tl
-      {
-        markdownRenderer
-        \tl_head:f { \l_tmpb_tl }
-        \tl_tail:n { #1 }
-      }
     \prop_get:NnN
       \g_@@_renderer_arities_prop
       { #1 }
@@ -15267,6 +15293,20 @@ The following ordered list will be preceded by roman numerals:
       { #1 }
       { \l_tmpa_tl }
       \l_tmpb_tl
+  }
+\cs_new:Nn \@@_renderer_tl_to_csname:nN
+  {
+    \tl_set:Nn
+      \l_tmpa_tl
+%     TODO: Replace with \str_uppercase:n in TeX Live 2020.
+      { \str_upper_case:n { #1 } }
+    \tl_set:Nx
+      #2
+      {
+        markdownRenderer
+        \tl_head:f { \l_tmpa_tl }
+        \tl_tail:n { #1 }
+      }
   }
 \cs_new:Nn \@@_latex_define_renderer:nNn
   {
@@ -15319,18 +15359,9 @@ The following ordered list will be preceded by roman numerals:
   }
 \cs_new:Nn \@@_latex_define_renderer_prototype:n
   {
-    \tl_set:Nn
-      \l_tmpb_tl
-%     TODO: Replace with \str_uppercase:n in TeX Live 2020.
-      { \str_upper_case:n { #1 } }
-    \tl_set:Nx
+    \@@_renderer_prototype_tl_to_csname:nN
+      { #1 }
       \l_tmpa_tl
-      {
-        markdownRenderer
-        \tl_head:f { \l_tmpb_tl }
-        \tl_tail:n { #1 }
-        Prototype
-      }
     \prop_get:NnN
       \g_@@_renderer_arities_prop
       { #1 }
@@ -21124,23 +21155,6 @@ end
 % \par
 % \begin{markdown}
 %
-%### Finalizing and Freezing the Cache
-%
-% When the \mref{markdownOptionFinalizeCache} option is enabled, then the
-% \mdef{markdownFrozenCacheCounter} counter is used to enumerate the markdown
-% documents using the Lua interface \Opt{frozenCacheCounter} option.
-%
-% When the \mref{markdownOptionFrozenCache} option is enabled, then the
-% \mref{markdownFrozenCacheCounter} counter is used to render markdown documents
-% from the frozen cache without invoking Lua.
-%
-% \end{markdown}
-%  \begin{macrocode}
-\newcount\markdownFrozenCacheCounter
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
 %### Token Renderer Prototypes {#textokenrendererprototypes}
 %
 % The following definitions should be considered placeholder.
@@ -21277,7 +21291,7 @@ end
 %
 % \end{markdown}
 %  \begin{macrocode}
-      \tl_if_eq:NNTF
+      \str_if_eq:NNTF
         \l_tmpa_tl
         \c_@@_jekyll_data_sequence_tl
         {
@@ -21464,10 +21478,6 @@ end
 %  \begin{macrocode}
 \ExplSyntaxOn
 \tl_new:N \g_@@_formatted_lua_options_tl
-\tl_const:Nn \c_@@_lua_option_type_boolean { boolean }
-\tl_const:Nn \c_@@_lua_option_type_counter { counter }
-\tl_const:Nn \c_@@_lua_option_type_number  { number  }
-\tl_const:Nn \c_@@_lua_option_type_string  { string  }
 \cs_new:Nn \@@_format_lua_options:
   {
     \tl_gclear:N
@@ -21478,111 +21488,38 @@ end
   }
 \cs_new:Nn \@@_format_lua_option:n
   {
-    \@@_typecheck_lua_option:n { #1 }
-    \tl_set:Nn
-      \l_tmpb_tl
-%     TODO: Replace with \str_uppercase:n in TeX Live 2020.
-      { \str_upper_case:n { #1 } }
-    \tl_set:Nx
-      \l_tmpa_tl
-      {
-        markdownOption
-        \tl_head:f { \l_tmpb_tl }
-        \tl_tail:n { #1 }
-      }
-    \prop_get:NnN
-      \g_@@_lua_option_types_prop
+    \@@_typecheck_option:n
       { #1 }
-      \l_tmpb_tl
-    \cs_if_free:cTF
-      { \l_tmpa_tl }
-      { }
-      {
-        \tl_case:NnF
-          \l_tmpb_tl
-          {
-            \c_@@_lua_option_type_string
-              {
-                \tl_gput_right:Nx
-                  \g_@@_formatted_lua_options_tl
-                  { #1~=~"     \cs:w \l_tmpa_tl \cs_end: ",~ }
-              }
-            \c_@@_lua_option_type_counter
-              {
-                \tl_gput_right:Nx
-                  \g_@@_formatted_lua_options_tl
-                  { #1~=~ \the \cs:w \l_tmpa_tl \cs_end: ,~ }
-              }
-          }
-          {
-            \tl_gput_right:Nx
-              \g_@@_formatted_lua_options_tl
-              {     #1~=~      \cs:w \l_tmpa_tl \cs_end: ,~ }
-          }
-      }
-  }
-\msg_new:nnn
-  { markdown }
-  { undefined-lua-option }
-  {
-    Lua~option~#1~is~undefined.
-  }
-\msg_new:nnn
-  { markdown }
-  { failed-typecheck-for-boolean-lua-option }
-  {
-    Lua~option~#1~has~value~#2,~
-    but~a~boolean~(true~or~false)~was~expected.
-  }
-\cs_new:Nn \@@_typecheck_lua_option:n
-  {
-    \tl_set:Nn
-      \l_tmpb_tl
-%     TODO: Replace with \str_uppercase:n in TeX Live 2020.
-      { \str_upper_case:n { #1 } }
-    \tl_set:Nx
-      \l_tmpa_tl
-      {
-        markdownOption
-        \tl_head:f { \l_tmpb_tl }
-        \tl_tail:n { #1 }
-      }
-    \prop_get:NnNTF
-      \g_@@_lua_option_types_prop
+    \@@_get_option_type:nN
       { #1 }
-      \l_tmpb_tl
+      \l_tmpa_tl
+    \bool_if:nTF
       {
-        \cs_if_free:cTF
-          { \l_tmpa_tl }
-          { }
-          {
-            \tl_case:Nn
-              \l_tmpb_tl
-              {
-                \c_@@_lua_option_type_boolean
-                  {
-                    \tl_case:cnF
-                      { \l_tmpa_tl }
-                      {
-                        \c_@@_lua_option_value_true  { }
-                        \c_@@_lua_option_value_false { }
-                      }
-                      {
-                        \msg_error:nnxx
-                          { markdown }
-                          { failed-typecheck-for-boolean-lua-option }
-                          { #1 }
-                          { \l_tmpa_tl }
-                      }
-                  }
-              }
-          }
+        \str_if_eq_p:VV
+          \l_tmpa_tl
+          \c_@@_option_type_boolean_tl ||
+        \str_if_eq_p:VV
+          \l_tmpa_tl
+          \c_@@_option_type_number_tl ||
+        \str_if_eq_p:VV
+          \l_tmpa_tl
+          \c_@@_option_type_counter_tl
       }
       {
-        \msg_error:nnn
-          { markdown }
-          { undefined-lua-option }
+        \@@_get_option_value:nN
           { #1 }
+          \l_tmpa_tl
+        \tl_gput_right:Nx
+          \g_@@_formatted_lua_options_tl
+          { #1~=~  \l_tmpa_tl   ,~ }
+      }
+      {
+        \@@_get_option_value:nN
+          { #1 }
+          \l_tmpa_tl
+        \tl_gput_right:Nx
+          \g_@@_formatted_lua_options_tl
+          { #1~=~ " \l_tmpa_tl " ,~ }
       }
   }
 \let\markdownPrepareLuaOptions=\@@_format_lua_options:
@@ -21634,39 +21571,37 @@ end
 % \end{markdown}
 %  \begin{macrocode}
 \ExplSyntaxOn
-\tl_const:Nn \c_@@_lua_option_value_true  { true  }
-\tl_const:Nn \c_@@_lua_option_value_false { false }
-\cs_new:Nn \@@_if_option:nTF
+\cs_new:Nn
+  \@@_if_option:nTF
   {
-    \tl_set:Nn
-      \l_tmpb_tl
-%     TODO: Replace with \str_uppercase:n in TeX Live 2020.
-      { \str_upper_case:n { #1 } }
-    \tl_set:Nx
+    \@@_get_option_type:nN
+      { #1 }
       \l_tmpa_tl
+    \str_if_eq:NNF
+      \l_tmpa_tl
+      \c_@@_option_type_boolean_tl
       {
-        markdownOption
-        \tl_head:f { \l_tmpb_tl }
-        \tl_tail:n { #1 }
-      }
-    \cs_if_free:cTF
-      { \l_tmpa_tl }
-      {
-        \prop_get:NnN
-          \g_@@_default_lua_options_prop
+        \msg_error:nnxx
+          { markdown }
+          { expected-boolean-option }
           { #1 }
-          \l_tmpb_tl
+          { \l_tmpa_tl }
       }
-      {
-        \tl_set:Nf
-          \l_tmpb_tl
-          { \cs:w \l_tmpa_tl \cs_end: }
-      }
-    \tl_if_eq:NNTF
-      \l_tmpb_tl
-      \c_@@_lua_option_value_true
+    \@@_get_option_value:nN
+      { #1 }
+      \l_tmpa_tl
+    \str_if_eq:NNTF
+      \l_tmpa_tl
+      \c_@@_option_value_true_tl
       { #2 }
       { #3 }
+  }
+\msg_new:nnn
+  { markdown }
+  { expected-boolean-option }
+  {
+    Option~#1~has~type~#2,~
+    but~a~boolean~was~expected.
   }
 \let\markdownIfOption=\@@_if_option:nTF
 \ExplSyntaxOff
@@ -22107,19 +22042,19 @@ end
 % \begin{markdown}
 % If we are reading from the frozen cache, input it, expand the corresponding
 % `\markdownFrozenCache`\meta{number} macro, and increment
-% \mref{markdownFrozenCacheCounter}.
+% \Opt{frozenCacheCounter}.
 % \end{markdown}
 %  \begin{macrocode}
     |markdownIfOption{frozenCache}{%
-      |ifnum|markdownFrozenCacheCounter=0|relax
+      |ifnum|markdownOptionFrozenCacheCounter=0|relax
         |markdownInfo{Reading frozen cache from
           "|markdownOptionFrozenCacheFileName"}%
         |input|markdownOptionFrozenCacheFileName|relax
       |fi
       |markdownInfo{Including markdown document number
-        "|the|markdownFrozenCacheCounter" from frozen cache}%
-      |csname markdownFrozenCache|the|markdownFrozenCacheCounter|endcsname
-      |global|advance|markdownFrozenCacheCounter by 1|relax
+        "|the|markdownOptionFrozenCacheCounter" from frozen cache}%
+      |csname markdownFrozenCache|the|markdownOptionFrozenCacheCounter|endcsname
+      |global|advance|markdownOptionFrozenCacheCounter by 1|relax
     }{%
       |markdownInfo{Including markdown document "#1"}%
 %    \end{macrocode}
@@ -22148,12 +22083,11 @@ end
         print(convert(input:gsub("\r\n?", "\n") .. "\n"))}%
 %    \end{macrocode}
 % \begin{markdown}
-% If we are finalizing the frozen cache, increment
-% \mref{markdownFrozenCacheCounter}.
+% If we are finalizing the frozen cache, increment \Opt{frozenCacheCounter}.
 % \end{markdown}
 %  \begin{macrocode}
       |markdownIfOption{finalizeCache}{%
-        |global|advance|markdownFrozenCacheCounter by 1|relax
+        |global|advance|markdownOptionFrozenCacheCounter by 1|relax
       }%
     }%
     |endgroup
@@ -22175,16 +22109,8 @@ end
 % format~[@latex17, Section 9]. As a consequence, we can directly reuse the
 % existing plain \TeX{} implementation.
 %
-% The \LaTeX{} implementation redefines the plain \TeX{} logging macros (see
-% Section <#sec:texinterfacelogging>) to use the \LaTeX{} \mref{PackageInfo},
-% \mref{PackageWarning}, and \mref{PackageError} macros.
-%
 % \end{markdown}
 %  \begin{macrocode}
-\newcommand\markdownInfo[1]{\PackageInfo{markdown}{#1}}%
-\newcommand\markdownWarning[1]{\PackageWarning{markdown}{#1}}%
-\newcommand\markdownError[2]{\PackageError{markdown}{#1}{#2.}}%
-\input markdown/markdown
 \def\markdownVersionSpace{ }%
 \ProvidesPackage{markdown}[\markdownLastModified\markdownVersionSpace v%
   \markdownVersion\markdownVersionSpace markdown renderer]%
@@ -22577,7 +22503,7 @@ end
 % it will take effect.
 % \end{markdown}
 %  \begin{macrocode}
-\ifmarkdownLaTeXPlain\else
+\markdownIfOption{plain}{\iffalse}{\iftrue}
 %    \end{macrocode}
 % \par
 % \begin{markdown}%
