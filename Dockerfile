@@ -40,8 +40,9 @@ ARG DEPENDENCIES
 ARG BUILD_DIR
 ARG INSTALL_DIR
 
-ENV DEBIAN_FRONTEND=noninteractive \
-    TERM=xterm
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TERM=xterm
+ENV TEXMFLOCAL=${INSTALL_DIR}
 
 COPY . ${BUILD_DIR}/
 
@@ -101,8 +102,9 @@ ARG INSTALL_DIR
 
 LABEL authors="Vít Novotný <witiko@mail.muni.cz>"
 
-ENV DEBIAN_FRONTEND=noninteractive \
-    TERM=xterm
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TERM=xterm
+ENV TEXMFLOCAL=${INSTALL_DIR}
 
 # Install the Markdown package
 COPY --from=build ${BUILD_DIR}/dist ${INSTALL_DIR}/
