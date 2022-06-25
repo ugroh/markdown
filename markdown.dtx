@@ -1103,7 +1103,7 @@ local md5 = require("md5")
 %
 % The plain \TeX{} part of the package requires that the plain \TeX{}
 % format (or its superset) is loaded, all the Lua prerequisites (see
-% Section <#sec:luaprerequisites>), and the following package:
+% Section <#sec:luaprerequisites>), and the following packages:
 %
 % \pkg{expl3}
 %
@@ -1120,6 +1120,12 @@ local md5 = require("md5")
 \fi
 %    \end{macrocode}
 % \begin{markdown}
+%
+% \pkg{lt3luabridge}
+%
+%:    A package that allows us to execute Lua code with LuaTeX as well as
+%     with other TeX engines that provide the *shell escape* capability,
+%     which allows them to execute code with the system's shell.
 %
 % The plain \TeX{} part of the package also requires the following Lua module:
 %
@@ -8285,11 +8291,26 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 % \par
 % \begin{markdown}
 %
+% The \mref{markdownOptionHelperScriptFileName} macro has been deprecated and
+% will be removed in Markdown 3.0.0. To control the filename of the helper Lua
+% script file, use the \mref{g__luabridge_helper_script_filename_str} macro
+% from the \pkg{lt3luabridge} package.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\str_new:N
+  \g__luabridge_helper_script_filename_str
+\tl_gset:Nn
+  \g__luabridge_helper_script_filename_str
+  { \markdownOptionHelperScriptFileName }
+%    \end{macrocode}
+% \begin{markdown}
+%
 % The \mdef{markdownOptionInputTempFileName} macro sets the filename of the
-% temporary input file that is created during the conversion from markdown to
-% plain \TeX{} in \mref{markdownMode} other than `2`. It defaults to
-% \mref{jobname}`.markdown.in`. The same limitations as in the case of the
-% \mref{markdownOptionHelperScriptFileName} macro apply here.
+% temporary input file that is created during the buffering of markdown text
+% from a \TeX{} source. It defaults to \mref{jobname}`.markdown.in`. The same
+% limitations as in the case of the \mref{markdownOptionHelperScriptFileName}
+% macro apply here.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -8303,7 +8324,7 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 %
 % The \mdef{markdownOptionOutputTempFileName} macro sets the filename of the
 % temporary output file that is created during the conversion from markdown to
-% plain \TeX{} in \mref{markdownMode} other than `2`. It defaults to
+% plain \TeX{} in \mref{markdownMode} other than `2` It defaults to
 % \mref{jobname}`.markdown.out`. The same limitations apply here as in the case
 % of the \mref{markdownOptionHelperScriptFileName} macro.
 %
@@ -8315,6 +8336,21 @@ For more information, see the examples for the \Opt{finalizeCache} option.
   { \jobname.markdown.out }
 %    \end{macrocode}
 % \par
+% \begin{markdown}
+%
+% The \mref{markdownOptionOutputTempFileName} macro has been deprecated and
+% will be removed in Markdown 3.0.0. To control the filename of the temporary
+% file for Lua output, use the \mref{g__luabridge_error_output_filename_str}
+% macro from the \pkg{lt3luabridge} package.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\str_new:N
+  \g__luabridge_standard_output_filename_str
+\tl_gset:Nn
+  \g__luabridge_standard_output_filename_str
+  { \markdownOptionOutputTempFileName }
+%    \end{macrocode}
 % \begin{markdown}
 %
 % The \mdef{markdownOptionErrorTempFileName} macro sets the filename of the
@@ -8334,6 +8370,21 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 % \par
 % \begin{markdown}
 %
+% The \mref{markdownOptionErrorTempFileName} macro has been deprecated and
+% will be removed in Markdown 3.0.0. To control the filename of the temporary
+% file for Lua errors, use the \mref{g__luabridge_error_output_filename_str}
+% macro from the \pkg{lt3luabridge} package.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\str_new:N
+  \g__luabridge_error_output_filename_str
+\tl_gset:Nn
+  \g__luabridge_error_output_filename_str
+  { \markdownOptionErrorTempFileName }
+%    \end{macrocode}
+% \begin{markdown}
+%
 % The \mdef{markdownOptionOutputDir} macro sets the path to the directory that
 % will contain the auxiliary cache files produced by the Lua implementation and
 % also the auxiliary files produced by the plain \TeX{} implementation. The
@@ -8351,6 +8402,20 @@ For more information, see the examples for the \Opt{finalizeCache} option.
   { outputDir }
   { path }
   { . }
+%    \end{macrocode}
+% \begin{markdown}
+%
+% The \mref{markdownOptionOutputDir} macro is also used to set the
+% \mref{g__luabridge_output_dirname_str} macro from the \pkg{lt3luabridge}
+% package.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\str_new:N
+  \g__luabridge_output_dirname_str
+\tl_gset:Nn
+  \g__luabridge_output_dirname_str
+  { \markdownOptionOutputDir }
 %    \end{macrocode}
 % \begin{markdown}
 %
@@ -14334,6 +14399,7 @@ following text:
 % - `0` – Shell escape via the 18 output file stream
 % - `1` – Shell escape via the Lua \luamref{os.execute} method
 % - `2` – Direct Lua access
+% - `3` – The \pkg{lt3luabridge} Lua package
 %
 % By defining the macro, the user can coerce the package to use a specific mode.
 % If the user does not define the macro prior to loading the plain \TeX{}
@@ -14341,21 +14407,60 @@ following text:
 % of changing the value of \mref{markdownMode} after the implementation has been
 % loaded is undefined.
 %
+% The \mref{markdownMode} macro has been deprecated and will be removed in
+% Markdown 3.0.0. The code that corresponds to \mref{markdownMode} value of `3`
+% will be the only implementation.
+%
 % \end{markdown}
 %  \begin{macrocode}
-\ifx\markdownMode\undefined
-  \ifx\directlua\undefined
-    \def\markdownMode{0}%
-  \else
-    \def\markdownMode{2}%
-  \fi
-\fi
+\ExplSyntaxOn
+\cs_if_exist:NF
+  \markdownMode
+  {
+    \file_if_exist:nTF
+      { lt3luabridge.tex }
+      {
+        \cs_new:Npn
+          \markdownMode
+          { 3 }
+      }
+      {
+        \cs_if_exist:NTF
+          \directlua
+          {
+            \cs_new:Npn
+              \markdownMode
+              { 2 }
+          }
+          {
+            \cs_new:Npn
+              \markdownMode
+              { 0 }
+          }
+      }
+  }
+%    \end{macrocode}
+% \begin{markdown}
+%
+% \end{markdown}
+%  \begin{macrocode}
+\int_compare:nF
+  { \markdownMode = 3 }
+  {
+    \int_new:N
+      \g__luabridge_method_int
+    \int_gset:Nn
+      \g__luabridge_method_int
+      { \markdownMode }
+  }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 % \begin{markdown}
 %
-% The following macros are no longer a part of the plain \TeX{} interface and
-% are only defined for backwards compatibility:
+% The \mdef{markdownLuaRegisterIBCallback} and
+% \mdef{markdownLuaUnregisterIBCallback} macros have been deprecated and will
+% be removed in Markdown 3.0.0:
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -21792,6 +21897,26 @@ end
 % \par
 % \begin{markdown}
 %
+% The following two sections of the implementation have been deprecated and
+% will be removed in Markdown 3.0.0. The code that corresponds to
+% \mref{markdownMode} value of `3` will be the only implementation.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\ExplSyntaxOn
+\int_compare:nT
+  { \markdownMode = 3 }
+  {
+    \markdownInfo{Using~mode~3:~The~lt3luabridge~package}
+    \file_input:n { lt3luabridge.tex }
+    \cs_new:Npn
+      \markdownLuaExecute
+      { \luabridgeExecute }
+  }
+\ExplSyntaxOff
+%    \end{macrocode}
+% \begin{markdown}
+%
 %### Lua Shell Escape Bridge {#luabridge}
 %
 % The following \TeX{} code is intended for \TeX{} engines that do not provide
@@ -21810,9 +21935,11 @@ end
 %  \begin{macrocode}
 \ifnum\markdownMode<2\relax
 \ifnum\markdownMode=0\relax
-  \markdownInfo{Using mode 0: Shell escape via write18}%
+  \markdownWarning{Using mode 0: Shell escape via write18
+                   (deprecated, to be removed in Markdown 3.0.0)}%
 \else
-  \markdownInfo{Using mode 1: Shell escape via os.execute}%
+  \markdownWarning{Using mode 1: Shell escape via os.execute
+                   (deprecated, to be removed in Markdown 3.0.0)}%
 \fi
 %    \end{macrocode}
 % \par
@@ -21972,8 +22099,10 @@ end
 %
 % \end{markdown}
 %  \begin{macrocode}
-\else
-\markdownInfo{Using mode 2: Direct Lua access}%
+\fi
+\ifnum\markdownMode=2\relax
+  \markdownWarning{Using mode 2: Direct Lua access
+                   (deprecated, to be removed in Markdown 3.0.0)}%
 %    \end{macrocode}
 % \par
 % \begin{markdown}
