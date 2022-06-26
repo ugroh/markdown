@@ -8293,15 +8293,15 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 %
 % The \mref{markdownOptionHelperScriptFileName} macro has been deprecated and
 % will be removed in Markdown 3.0.0. To control the filename of the helper Lua
-% script file, use the \mref{g__luabridge_helper_script_filename_str} macro
+% script file, use the \mref{g_luabridge_helper_script_filename_str} macro
 % from the \pkg{lt3luabridge} package.
 %
 % \end{markdown}
 %  \begin{macrocode}
 \str_new:N
-  \g__luabridge_helper_script_filename_str
+  \g_luabridge_helper_script_filename_str
 \tl_gset:Nn
-  \g__luabridge_helper_script_filename_str
+  \g_luabridge_helper_script_filename_str
   { \markdownOptionHelperScriptFileName }
 %    \end{macrocode}
 % \begin{markdown}
@@ -8340,15 +8340,15 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 %
 % The \mref{markdownOptionOutputTempFileName} macro has been deprecated and
 % will be removed in Markdown 3.0.0. To control the filename of the temporary
-% file for Lua output, use the \mref{g__luabridge_error_output_filename_str}
+% file for Lua output, use the \mref{g_luabridge_error_output_filename_str}
 % macro from the \pkg{lt3luabridge} package.
 %
 % \end{markdown}
 %  \begin{macrocode}
 \str_new:N
-  \g__luabridge_standard_output_filename_str
+  \g_luabridge_standard_output_filename_str
 \tl_gset:Nn
-  \g__luabridge_standard_output_filename_str
+  \g_luabridge_standard_output_filename_str
   { \markdownOptionOutputTempFileName }
 %    \end{macrocode}
 % \begin{markdown}
@@ -8372,15 +8372,15 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 %
 % The \mref{markdownOptionErrorTempFileName} macro has been deprecated and
 % will be removed in Markdown 3.0.0. To control the filename of the temporary
-% file for Lua errors, use the \mref{g__luabridge_error_output_filename_str}
+% file for Lua errors, use the \mref{g_luabridge_error_output_filename_str}
 % macro from the \pkg{lt3luabridge} package.
 %
 % \end{markdown}
 %  \begin{macrocode}
 \str_new:N
-  \g__luabridge_error_output_filename_str
+  \g_luabridge_error_output_filename_str
 \tl_gset:Nn
-  \g__luabridge_error_output_filename_str
+  \g_luabridge_error_output_filename_str
   { \markdownOptionErrorTempFileName }
 %    \end{macrocode}
 % \begin{markdown}
@@ -8406,15 +8406,15 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 % \begin{markdown}
 %
 % The \mref{markdownOptionOutputDir} macro is also used to set the
-% \mref{g__luabridge_output_dirname_str} macro from the \pkg{lt3luabridge}
+% \mref{g_luabridge_output_dirname_str} macro from the \pkg{lt3luabridge}
 % package.
 %
 % \end{markdown}
 %  \begin{macrocode}
 \str_new:N
-  \g__luabridge_output_dirname_str
+  \g_luabridge_output_dirname_str
 \tl_gset:Nn
-  \g__luabridge_output_dirname_str
+  \g_luabridge_output_dirname_str
   { \markdownOptionOutputDir }
 %    \end{macrocode}
 % \begin{markdown}
@@ -14448,9 +14448,9 @@ following text:
   { \markdownMode = 3 }
   {
     \int_new:N
-      \g__luabridge_method_int
+      \g_luabridge_method_int
     \int_gset:Nn
-      \g__luabridge_method_int
+      \g_luabridge_method_int
       { \markdownMode }
   }
 \ExplSyntaxOff
