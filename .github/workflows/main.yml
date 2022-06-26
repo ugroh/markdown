@@ -41,7 +41,6 @@ jobs:
           - TL2020-historic
           - TL2021-historic
           - latest
-          - latest-with-cache
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
