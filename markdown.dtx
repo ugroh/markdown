@@ -20008,7 +20008,34 @@ end
 M.reader = {}
 function M.reader.new(writer, options)
   local self = {}
-  options = options or {}
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Create a \luamdef{reader->parsers} hash table that stores \acro{peg} patterns
+% that depend on the received `options`. Make \luamdef{reader->parsers} inherit
+% from the global \luamref{parsers} table.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  self.parsers = {}
+  (function(parsers)
+    setmetatable(self.parsers, {
+      __index = function (_, key)
+        return parsers[key]
+      end
+    })
+  end)(parsers)
+%    \end{macrocode}
+% \begin{markdown}
+%
+% Make \luamref{reader->parsers} available as a local `parsers` variable that
+% will shadow the global \luamref{parsers} table and will make
+% \luamref{reader->parsers} easier to type in the rest of the reader code.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  local parsers = self.parsers
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -20017,6 +20044,7 @@ function M.reader.new(writer, options)
 %
 % \end{markdown}
 %  \begin{macrocode}
+  options = options or {}
   setmetatable(options, { __index = function (_, key)
     return defaultOptions[key] end })
 %    \end{macrocode}
@@ -20070,17 +20098,6 @@ function M.reader.new(writer, options)
                    end
                  end
   end
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
-% The \luamdef{larsers} (as in ``local \luamref{parsers}'') hash table stores
-% \acro{peg} patterns that depend on the received `options`, which impedes
-% their reuse between different \luamref{reader} objects.
-%
-% \end{markdown}
-%  \begin{macrocode}
-  local larsers    = {}
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -20146,43 +20163,43 @@ function M.reader.new(writer, options)
   local parse_blocks
     = create_parser("parse_blocks",
                     function()
-                      return larsers.blocks
+                      return parsers.blocks
                     end, true)
 
   local parse_blocks_nested
     = create_parser("parse_blocks_nested",
                     function()
-                      return larsers.blocks_nested
+                      return parsers.blocks_nested
                     end, false)
 
   local parse_inlines
     = create_parser("parse_inlines",
                     function()
-                      return larsers.inlines
+                      return parsers.inlines
                     end, false)
 
   local parse_inlines_no_link
     = create_parser("parse_inlines_no_link",
                     function()
-                      return larsers.inlines_no_link
+                      return parsers.inlines_no_link
                     end, false)
 
   local parse_inlines_no_inline_note
     = create_parser("parse_inlines_no_inline_note",
                     function()
-                      return larsers.inlines_no_inline_note
+                      return parsers.inlines_no_inline_note
                     end, false)
 
   local parse_inlines_no_html
     = create_parser("parse_inlines_no_html",
                     function()
-                      return larsers.inlines_no_html
+                      return parsers.inlines_no_html
                     end, false)
 
   local parse_inlines_nbsp
     = create_parser("parse_inlines_nbsp",
                     function()
-                      return larsers.inlines_nbsp
+                      return parsers.inlines_nbsp
                     end, false)
 %    \end{macrocode}
 % \par
@@ -20193,22 +20210,22 @@ function M.reader.new(writer, options)
 % \end{markdown}
 %  \begin{macrocode}
   if options.hashEnumerators then
-    larsers.dig = parsers.digit + parsers.hash
+    parsers.dig = parsers.digit + parsers.hash
   else
-    larsers.dig = parsers.digit
+    parsers.dig = parsers.digit
   end
 
-  larsers.enumerator = C(larsers.dig^3 * parsers.period) * #parsers.spacing
-                     + C(larsers.dig^2 * parsers.period) * #parsers.spacing
+  parsers.enumerator = C(parsers.dig^3 * parsers.period) * #parsers.spacing
+                     + C(parsers.dig^2 * parsers.period) * #parsers.spacing
                                        * (parsers.tab + parsers.space^1)
-                     + C(larsers.dig * parsers.period) * #parsers.spacing
+                     + C(parsers.dig * parsers.period) * #parsers.spacing
                                      * (parsers.tab + parsers.space^-2)
-                     + parsers.space * C(larsers.dig^2 * parsers.period)
+                     + parsers.space * C(parsers.dig^2 * parsers.period)
                                      * #parsers.spacing
-                     + parsers.space * C(larsers.dig * parsers.period)
+                     + parsers.space * C(parsers.dig * parsers.period)
                                      * #parsers.spacing
                                      * (parsers.tab + parsers.space^-1)
-                     + parsers.space * parsers.space * C(larsers.dig^1
+                     + parsers.space * parsers.space * C(parsers.dig^1
                                      * parsers.period) * #parsers.spacing
 %    \end{macrocode}
 % \par
@@ -20219,14 +20236,14 @@ function M.reader.new(writer, options)
 % \end{markdown}
 %  \begin{macrocode}
   -- strip off leading > and indents, and run through blocks
-  larsers.blockquote_body = ((parsers.leader * parsers.more * parsers.space^-1)/""
+  parsers.blockquote_body = ((parsers.leader * parsers.more * parsers.space^-1)/""
                              * parsers.linechar^0 * parsers.newline)^1
                             * (-(parsers.leader * parsers.more
                                 + parsers.blankline) * parsers.linechar^1
                               * parsers.newline)^0
                             
   if not options.breakableBlockquotes then
-    larsers.blockquote_body = larsers.blockquote_body
+    parsers.blockquote_body = parsers.blockquote_body
                             * (parsers.blankline^0 / "")
   end
 %    \end{macrocode}
@@ -20237,7 +20254,7 @@ function M.reader.new(writer, options)
 %
 % \end{markdown}
 %  \begin{macrocode}
-  larsers.citations = function(text_cites, raw_cites)
+  parsers.citations = function(text_cites, raw_cites)
       local function normalize(str)
           if str == "" then
               str = nil
@@ -20286,14 +20303,14 @@ function M.reader.new(writer, options)
     return ""
   end
 
-  larsers.NoteRef    = parsers.RawNoteRef / lookup_note
+  parsers.NoteRef    = parsers.RawNoteRef / lookup_note
 
 
-  larsers.NoteBlock  = parsers.leader * parsers.RawNoteRef * parsers.colon
+  parsers.NoteBlock  = parsers.leader * parsers.RawNoteRef * parsers.colon
                      * parsers.spnl * parsers.indented_blocks(parsers.chunk)
                      / register_note
 
-  larsers.InlineNote = parsers.circumflex
+  parsers.InlineNote = parsers.circumflex
                      * (parsers.tag / parse_inlines_no_inline_note) -- no notes inside notes
                      / writer.note
 %    \end{macrocode}
@@ -20304,7 +20321,7 @@ function M.reader.new(writer, options)
 %
 % \end{markdown}
 %  \begin{macrocode}
-larsers.table_row = pipe_table_row(true
+parsers.table_row = pipe_table_row(true
                                   , (C((parsers.linechar - parsers.pipe)^1)
                                     / parse_inlines)
                                   , parsers.pipe
@@ -20312,19 +20329,19 @@ larsers.table_row = pipe_table_row(true
                                     / parse_inlines))
 
 if options.tableCaptions then
-  larsers.table_caption = #parsers.table_caption_beginning
+  parsers.table_caption = #parsers.table_caption_beginning
                         * parsers.table_caption_beginning
                         * Ct(parsers.IndentedInline^1)
                         * parsers.newline
 else
-  larsers.table_caption = parsers.fail
+  parsers.table_caption = parsers.fail
 end
 
-larsers.PipeTable = Ct(larsers.table_row * parsers.newline
+parsers.PipeTable = Ct(parsers.table_row * parsers.newline
                     * parsers.table_hline
-                    * (parsers.newline * larsers.table_row)^0)
+                    * (parsers.newline * parsers.table_row)^0)
                   / make_pipe_table_rectangular
-                  * larsers.table_caption^-1
+                  * parsers.table_caption^-1
                   / writer.table
 %    \end{macrocode}
 % \par
@@ -20400,56 +20417,56 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
 %
 % \end{markdown}
 %  \begin{macrocode}
-  larsers.Str      = (parsers.normalchar * (parsers.normalchar + parsers.at)^0)
+  parsers.Str      = (parsers.normalchar * (parsers.normalchar + parsers.at)^0)
                    / writer.string
 
-  larsers.Symbol   = (parsers.specialchar - parsers.tightblocksep)
+  parsers.Symbol   = (parsers.specialchar - parsers.tightblocksep)
                    / writer.string
 
-  larsers.Ellipsis = P("...") / writer.ellipsis
+  parsers.Ellipsis = P("...") / writer.ellipsis
 
-  larsers.Smart    = larsers.Ellipsis
+  parsers.Smart    = parsers.Ellipsis
 
-  larsers.Code     = parsers.inticks / writer.code
+  parsers.Code     = parsers.inticks / writer.code
 
   if options.blankBeforeBlockquote then
-    larsers.bqstart = parsers.fail
+    parsers.bqstart = parsers.fail
   else
-    larsers.bqstart = parsers.more
+    parsers.bqstart = parsers.more
   end
 
   if options.blankBeforeHeading then
-    larsers.headerstart = parsers.fail
+    parsers.headerstart = parsers.fail
   else
-    larsers.headerstart = parsers.hash
+    parsers.headerstart = parsers.hash
                         + (parsers.line * (parsers.equal^1 + parsers.dash^1)
                         * parsers.optionalspace * parsers.newline)
   end
 
   if not options.fencedCode or options.blankBeforeCodeFence then
-    larsers.fencestart = parsers.fail
+    parsers.fencestart = parsers.fail
   else
-    larsers.fencestart = parsers.fencehead(parsers.backtick)
+    parsers.fencestart = parsers.fencehead(parsers.backtick)
                        + parsers.fencehead(parsers.tilde)
   end
 
-  larsers.Endline   = parsers.newline * -( -- newline, but not before...
+  parsers.Endline   = parsers.newline * -( -- newline, but not before...
                         parsers.blankline -- paragraph break
                       + parsers.tightblocksep  -- nested list
                       + parsers.eof       -- end of document
-                      + larsers.bqstart
-                      + larsers.headerstart
-                      + larsers.fencestart
+                      + parsers.bqstart
+                      + parsers.headerstart
+                      + parsers.fencestart
                     ) * parsers.spacechar^0
                     / (options.hardLineBreaks and writer.linebreak
                                                or writer.space)
 
-  larsers.OptionalIndent
+  parsers.OptionalIndent
                      = parsers.spacechar^1 / writer.space
 
-  larsers.Space      = parsers.spacechar^2 * larsers.Endline / writer.linebreak
-                     + parsers.spacechar^1 * larsers.Endline^-1 * parsers.eof / ""
-                     + parsers.spacechar^1 * larsers.Endline
+  parsers.Space      = parsers.spacechar^2 * parsers.Endline / writer.linebreak
+                     + parsers.spacechar^1 * parsers.Endline^-1 * parsers.eof / ""
+                     + parsers.spacechar^1 * parsers.Endline
                                            * parsers.optionalspace
                                            / (options.hardLineBreaks
                                               and writer.linebreak
@@ -20457,22 +20474,22 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                      + parsers.spacechar^1 * parsers.optionalspace
                                            / writer.space
 
-  larsers.NonbreakingEndline
+  parsers.NonbreakingEndline
                     = parsers.newline * -( -- newline, but not before...
                         parsers.blankline -- paragraph break
                       + parsers.tightblocksep  -- nested list
                       + parsers.eof       -- end of document
-                      + larsers.bqstart
-                      + larsers.headerstart
-                      + larsers.fencestart
+                      + parsers.bqstart
+                      + parsers.headerstart
+                      + parsers.fencestart
                     ) * parsers.spacechar^0
                     / (options.hardLineBreaks and writer.linebreak
                                                or writer.nbsp)
 
-  larsers.NonbreakingSpace
-                  = parsers.spacechar^2 * larsers.Endline / writer.linebreak
-                  + parsers.spacechar^1 * larsers.Endline^-1 * parsers.eof / ""
-                  + parsers.spacechar^1 * larsers.Endline
+  parsers.NonbreakingSpace
+                  = parsers.spacechar^2 * parsers.Endline / writer.linebreak
+                  + parsers.spacechar^1 * parsers.Endline^-1 * parsers.eof / ""
+                  + parsers.spacechar^1 * parsers.Endline
                                         * parsers.optionalspace
                                         / (options.hardLineBreaks
                                            and writer.linebreak
@@ -20481,35 +20498,35 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                                         / writer.nbsp
 
   if options.underscores then
-    larsers.Strong = ( parsers.between(parsers.Inline, parsers.doubleasterisks,
+    parsers.Strong = ( parsers.between(parsers.Inline, parsers.doubleasterisks,
                                        parsers.doubleasterisks)
                      + parsers.between(parsers.Inline, parsers.doubleunderscores,
                                        parsers.doubleunderscores)
                      ) / writer.strong
 
-    larsers.Emph   = ( parsers.between(parsers.Inline, parsers.asterisk,
+    parsers.Emph   = ( parsers.between(parsers.Inline, parsers.asterisk,
                                        parsers.asterisk)
                      + parsers.between(parsers.Inline, parsers.underscore,
                                        parsers.underscore)
                      ) / writer.emphasis
   else
-    larsers.Strong = ( parsers.between(parsers.Inline, parsers.doubleasterisks,
+    parsers.Strong = ( parsers.between(parsers.Inline, parsers.doubleasterisks,
                                        parsers.doubleasterisks)
                      ) / writer.strong
 
-    larsers.Emph   = ( parsers.between(parsers.Inline, parsers.asterisk,
+    parsers.Emph   = ( parsers.between(parsers.Inline, parsers.asterisk,
                                        parsers.asterisk)
                      ) / writer.emphasis
   end
 
-  larsers.AutoLinkUrl    = parsers.less
+  parsers.AutoLinkUrl    = parsers.less
                          * C(parsers.alphanumeric^1 * P("://") * parsers.urlchar^1)
                          * parsers.more
                          / function(url)
                              return writer.link(writer.escape(url), url)
                            end
 
-  larsers.AutoLinkEmail = parsers.less
+  parsers.AutoLinkEmail = parsers.less
                         * C((parsers.alphanumeric + S("-._+"))^1
                         * P("@") * parsers.urlchar^1)
                         * parsers.more
@@ -20518,7 +20535,7 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                                                "mailto:"..email)
                           end
 
-  larsers.AutoLinkRelativeReference
+  parsers.AutoLinkRelativeReference
                          = parsers.less
                          * C(parsers.urlchar^1)
                          * parsers.more
@@ -20526,7 +20543,7 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                              return writer.link(writer.escape(url), url)
                            end
 
-  larsers.DirectLink    = (parsers.tag / parse_inlines_no_link)  -- no links inside links
+  parsers.DirectLink    = (parsers.tag / parse_inlines_no_link)  -- no links inside links
                         * parsers.spnl
                         * parsers.lparent
                         * (parsers.url + Cc(""))  -- link can be empty [foo]()
@@ -20534,13 +20551,13 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                         * parsers.rparent
                         / writer.link
 
-  larsers.IndirectLink  = parsers.tag * (C(parsers.spnl) * parsers.tag)^-1
+  parsers.IndirectLink  = parsers.tag * (C(parsers.spnl) * parsers.tag)^-1
                         / indirect_link
 
   -- parse a link or image (direct or indirect)
-  larsers.Link          = larsers.DirectLink + larsers.IndirectLink
+  parsers.Link          = parsers.DirectLink + parsers.IndirectLink
 
-  larsers.DirectImage   = parsers.exclamation
+  parsers.DirectImage   = parsers.exclamation
                         * (parsers.tag / parse_inlines)
                         * parsers.spnl
                         * parsers.lparent
@@ -20549,12 +20566,12 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                         * parsers.rparent
                         / writer.image
 
-  larsers.IndirectImage = parsers.exclamation * parsers.tag
+  parsers.IndirectImage = parsers.exclamation * parsers.tag
                         * (C(parsers.spnl) * parsers.tag)^-1 / indirect_image
 
-  larsers.Image         = larsers.DirectImage + larsers.IndirectImage
+  parsers.Image         = parsers.DirectImage + parsers.IndirectImage
 
-  larsers.TextCitations = Ct((parsers.spnl
+  parsers.TextCitations = Ct((parsers.spnl
                         * Cc("")
                         * parsers.citation_name
                         * ((parsers.spnl
@@ -20562,34 +20579,34 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                             * parsers.citation_headless_body
                             * parsers.rbracket) + Cc("")))^1)
                         / function(raw_cites)
-                            return larsers.citations(true, raw_cites)
+                            return parsers.citations(true, raw_cites)
                           end
   
-  larsers.ParenthesizedCitations
+  parsers.ParenthesizedCitations
                         = Ct((parsers.spnl
                         * parsers.lbracket
                         * parsers.citation_body
                         * parsers.rbracket)^1)
                         / function(raw_cites)
-                            return larsers.citations(false, raw_cites)
+                            return parsers.citations(false, raw_cites)
                           end
 
-  larsers.Citations     = larsers.TextCitations + larsers.ParenthesizedCitations
+  parsers.Citations     = parsers.TextCitations + parsers.ParenthesizedCitations
 
   -- avoid parsing long strings of * or _ as emph/strong
-  larsers.UlOrStarLine  = parsers.asterisk^4 + parsers.underscore^4
+  parsers.UlOrStarLine  = parsers.asterisk^4 + parsers.underscore^4
                         / writer.string
 
-  larsers.EscapedChar   = parsers.backslash * C(parsers.escapable) / writer.string
+  parsers.EscapedChar   = parsers.backslash * C(parsers.escapable) / writer.string
   
-  larsers.InlineHtml    = parsers.emptyelt_any / writer.inline_html_tag
+  parsers.InlineHtml    = parsers.emptyelt_any / writer.inline_html_tag
                         + (parsers.htmlcomment / parse_inlines_no_html)
                         / writer.inline_html_comment
                         + parsers.htmlinstruction
                         + parsers.openelt_any / writer.inline_html_tag
                         + parsers.closeelt_any / writer.inline_html_tag
   
-  larsers.HtmlEntity    = parsers.hexentity / entities.hex_entity  / writer.string
+  parsers.HtmlEntity    = parsers.hexentity / entities.hex_entity  / writer.string
                         + parsers.decentity / entities.dec_entity  / writer.string
                         + parsers.tagentity / entities.char_entity / writer.string
 %    \end{macrocode}
@@ -20600,30 +20617,30 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
 %
 % \end{markdown}
 %  \begin{macrocode}
-  larsers.ContentBlock = parsers.leader
+  parsers.ContentBlock = parsers.leader
                        * (parsers.localfilepath + parsers.onlineimageurl)
                        * parsers.contentblock_tail
                        / writer.contentblock
 
-  larsers.DisplayHtml  = (parsers.htmlcomment / parse_blocks_nested)
+  parsers.DisplayHtml  = (parsers.htmlcomment / parse_blocks_nested)
                        / writer.block_html_comment
                        + parsers.emptyelt_block / writer.block_html_element
                        + parsers.openelt_exact("hr") / writer.block_html_element
                        + parsers.in_matched_block_tags / writer.block_html_element
                        + parsers.htmlinstruction
 
-  larsers.Verbatim     = Cs( (parsers.blanklines
+  parsers.Verbatim     = Cs( (parsers.blanklines
                            * ((parsers.indentedline - parsers.blankline))^1)^1
                            ) / expandtabs / writer.verbatim
 
-  larsers.FencedCode   = (parsers.TildeFencedCode
+  parsers.FencedCode   = (parsers.TildeFencedCode
                          + parsers.BacktickFencedCode)
                        / function(infostring, code)
                            return writer.fencedCode(writer.string(infostring),
                                                     expandtabs(code))
                          end
 
-  larsers.JekyllData   = Cmt( C((parsers.line - P("---") - P("..."))^0)
+  parsers.JekyllData   = Cmt( C((parsers.line - P("---") - P("..."))^0)
                             , function(s, i, text)
                                 local data
                                 local ran_ok, error = pcall(function()
@@ -20640,32 +20657,32 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                               end
                             )
 
-  larsers.UnexpectedJekyllData
+  parsers.UnexpectedJekyllData
                        = P("---")
                        * parsers.blankline / 0
                        * #(-parsers.blankline)  -- if followed by blank, it's an hrule
-                       * larsers.JekyllData
+                       * parsers.JekyllData
                        * (P("---") + P("..."))
 
-  larsers.ExpectedJekyllData
+  parsers.ExpectedJekyllData
                        = ( P("---")
                          * parsers.blankline / 0
                          * #(-parsers.blankline)  -- if followed by blank, it's an hrule
                          )^-1
-                       * larsers.JekyllData
+                       * parsers.JekyllData
                        * (P("---") + P("..."))^-1
 
-  larsers.Blockquote   = Cs(larsers.blockquote_body^1)
+  parsers.Blockquote   = Cs(parsers.blockquote_body^1)
                        / parse_blocks_nested / writer.blockquote
 
-  larsers.HorizontalRule = ( parsers.lineof(parsers.asterisk)
+  parsers.HorizontalRule = ( parsers.lineof(parsers.asterisk)
                            + parsers.lineof(parsers.dash)
                            + parsers.lineof(parsers.underscore)
                            ) / writer.hrule
 
-  larsers.Reference    = parsers.define_reference_parser / register_link
+  parsers.Reference    = parsers.define_reference_parser / register_link
 
-  larsers.Paragraph    = parsers.nonindentspace * Ct(parsers.Inline^1)
+  parsers.Paragraph    = parsers.nonindentspace * Ct(parsers.Inline^1)
                        * ( parsers.newline
                        * ( parsers.blankline^1
                          + #parsers.hash
@@ -20675,7 +20692,7 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                        + parsers.eof )
                        / writer.paragraph
 
-  larsers.Plain        = parsers.nonindentspace * Ct(parsers.Inline^1)
+  parsers.Plain        = parsers.nonindentspace * Ct(parsers.Inline^1)
                        / writer.plain
 %    \end{macrocode}
 % \par
@@ -20685,50 +20702,50 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
 %
 % \end{markdown}
 %  \begin{macrocode}
-  larsers.starter = parsers.bullet + larsers.enumerator
+  parsers.starter = parsers.bullet + parsers.enumerator
 
   if options.taskLists then
-    larsers.tickbox = ( parsers.ticked_box
+    parsers.tickbox = ( parsers.ticked_box
                       + parsers.halfticked_box
                       + parsers.unticked_box
                       ) / writer.tickbox
   else
-     larsers.tickbox = parsers.fail
+     parsers.tickbox = parsers.fail
   end
 
   -- we use \001 as a separator between a tight list item and a
   -- nested list under it.
-  larsers.NestedList            = Cs((parsers.optionallyindentedline
-                                     - larsers.starter)^1)
+  parsers.NestedList            = Cs((parsers.optionallyindentedline
+                                     - parsers.starter)^1)
                                 / function(a) return "\001"..a end
 
-  larsers.ListBlockLine         = parsers.optionallyindentedline
+  parsers.ListBlockLine         = parsers.optionallyindentedline
                                 - parsers.blankline - (parsers.indent^-1
-                                                      * larsers.starter)
+                                                      * parsers.starter)
 
-  larsers.ListBlock             = parsers.line * larsers.ListBlockLine^0
+  parsers.ListBlock             = parsers.line * parsers.ListBlockLine^0
 
-  larsers.ListContinuationBlock = parsers.blanklines * (parsers.indent / "")
-                                * larsers.ListBlock
+  parsers.ListContinuationBlock = parsers.blanklines * (parsers.indent / "")
+                                * parsers.ListBlock
 
-  larsers.TightListItem = function(starter)
-      return -larsers.HorizontalRule
-             * (Cs(starter / "" * larsers.tickbox^-1 * larsers.ListBlock * larsers.NestedList^-1)
+  parsers.TightListItem = function(starter)
+      return -parsers.HorizontalRule
+             * (Cs(starter / "" * parsers.tickbox^-1 * parsers.ListBlock * parsers.NestedList^-1)
                / parse_blocks_nested)
              * -(parsers.blanklines * parsers.indent)
   end
 
-  larsers.LooseListItem = function(starter)
-      return -larsers.HorizontalRule
-             * Cs( starter / "" * larsers.tickbox^-1 * larsers.ListBlock * Cc("\n")
-               * (larsers.NestedList + larsers.ListContinuationBlock^0)
+  parsers.LooseListItem = function(starter)
+      return -parsers.HorizontalRule
+             * Cs( starter / "" * parsers.tickbox^-1 * parsers.ListBlock * Cc("\n")
+               * (parsers.NestedList + parsers.ListContinuationBlock^0)
                * (parsers.blanklines / "\n\n")
                ) / parse_blocks_nested
   end
 
-  larsers.BulletList = ( Ct(larsers.TightListItem(parsers.bullet)^1) * Cc(true)
+  parsers.BulletList = ( Ct(parsers.TightListItem(parsers.bullet)^1) * Cc(true)
                        * parsers.skipblanklines * -parsers.bullet
-                       + Ct(larsers.LooseListItem(parsers.bullet)^1) * Cc(false)
+                       + Ct(parsers.LooseListItem(parsers.bullet)^1) * Cc(false)
                        * parsers.skipblanklines )
                      / writer.bulletlist
 
@@ -20744,12 +20761,12 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
     return writer.orderedlist(items,tight,startNumber)
   end
 
-  larsers.OrderedList = Cg(larsers.enumerator, "listtype") *
-                      ( Ct(larsers.TightListItem(Cb("listtype"))
-                          * larsers.TightListItem(larsers.enumerator)^0)
-                      * Cc(true) * parsers.skipblanklines * -larsers.enumerator
-                      + Ct(larsers.LooseListItem(Cb("listtype"))
-                          * larsers.LooseListItem(larsers.enumerator)^0)
+  parsers.OrderedList = Cg(parsers.enumerator, "listtype") *
+                      ( Ct(parsers.TightListItem(Cb("listtype"))
+                          * parsers.TightListItem(parsers.enumerator)^0)
+                      * Cc(true) * parsers.skipblanklines * -parsers.enumerator
+                      + Ct(parsers.LooseListItem(Cb("listtype"))
+                          * parsers.LooseListItem(parsers.enumerator)^0)
                       * Cc(false) * parsers.skipblanklines
                       ) * Cb("listtype") / ordered_list
 
@@ -20757,21 +20774,21 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
     return { term = parse_inlines(term), definitions = defs }
   end
 
-  larsers.DefinitionListItemLoose = C(parsers.line) * parsers.skipblanklines
+  parsers.DefinitionListItemLoose = C(parsers.line) * parsers.skipblanklines
                                   * Ct((parsers.defstart
                                        * parsers.indented_blocks(parsers.dlchunk)
                                        / parse_blocks_nested)^1)
                                   * Cc(false) / definition_list_item
 
-  larsers.DefinitionListItemTight = C(parsers.line)
+  parsers.DefinitionListItemTight = C(parsers.line)
                                   * Ct((parsers.defstart * parsers.dlchunk
                                        / parse_blocks_nested)^1)
                                   * Cc(true) / definition_list_item
 
-  larsers.DefinitionList = ( Ct(larsers.DefinitionListItemLoose^1) * Cc(false)
-                           + Ct(larsers.DefinitionListItemTight^1)
+  parsers.DefinitionList = ( Ct(parsers.DefinitionListItemLoose^1) * Cc(false)
+                           + Ct(parsers.DefinitionListItemTight^1)
                            * (parsers.skipblanklines
-                             * -larsers.DefinitionListItemLoose * Cc(true))
+                             * -parsers.DefinitionListItemLoose * Cc(true))
                            ) / writer.definitionlist
 %    \end{macrocode}
 % \par
@@ -20781,9 +20798,9 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
 %
 % \end{markdown}
 %  \begin{macrocode}
-  larsers.Blank        = parsers.blankline / ""
-                       + larsers.NoteBlock
-                       + larsers.Reference
+  parsers.Blank        = parsers.blankline / ""
+                       + parsers.NoteBlock
+                       + parsers.Reference
                        + (parsers.tightblocksep / "\n")
 %    \end{macrocode}
 % \par
@@ -20795,7 +20812,7 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
 %  \begin{macrocode}
   -- parse atx header
   if options.headerAttributes then
-    larsers.AtxHeading = Cg(parsers.HeadingStart,"level")
+    parsers.AtxHeading = Cg(parsers.HeadingStart,"level")
                        * parsers.optionalspace
                        * (C(((parsers.linechar
                              - ((parsers.hash^1
@@ -20819,7 +20836,7 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                        * Cb("attributes")
                        / writer.heading
 
-    larsers.SetextHeading = #(parsers.line * S("=-"))
+    parsers.SetextHeading = #(parsers.line * S("=-"))
                           * (C(((parsers.linechar
                                 - (parsers.HeadingAttributes
                                   * parsers.optionalspace
@@ -20837,13 +20854,13 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                           * parsers.newline
                           / writer.heading
   else
-    larsers.AtxHeading = Cg(parsers.HeadingStart,"level")
+    parsers.AtxHeading = Cg(parsers.HeadingStart,"level")
                        * parsers.optionalspace
                        * (C(parsers.line) / strip_atx_end / parse_inlines)
                        * Cb("level")
                        / writer.heading
 
-    larsers.SetextHeading = #(parsers.line * S("=-"))
+    parsers.SetextHeading = #(parsers.line * S("=-"))
                           * Ct(parsers.linechar^1 / parse_inlines)
                           * parsers.newline
                           * parsers.HeadingLevel
@@ -20852,7 +20869,7 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                           / writer.heading
   end
 
-  larsers.Heading = larsers.AtxHeading + larsers.SetextHeading
+  parsers.Heading = parsers.AtxHeading + parsers.SetextHeading
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -20873,10 +20890,10 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                               * V("Block"))^0
                             * V("Blank")^0 * parsers.eof,
 
-      Blank                 = larsers.Blank,
+      Blank                 = parsers.Blank,
 
-      UnexpectedJekyllData  = larsers.UnexpectedJekyllData,
-      ExpectedJekyllData    = larsers.ExpectedJekyllData,
+      UnexpectedJekyllData  = parsers.UnexpectedJekyllData,
+      ExpectedJekyllData    = parsers.ExpectedJekyllData,
 
       Block                 = V("ContentBlock")
                             + V("UnexpectedJekyllData")
@@ -20893,19 +20910,19 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                             + V("Paragraph")
                             + V("Plain"),
 
-      ContentBlock          = larsers.ContentBlock,
-      Blockquote            = larsers.Blockquote,
-      Verbatim              = larsers.Verbatim,
-      FencedCode            = larsers.FencedCode,
-      HorizontalRule        = larsers.HorizontalRule,
-      BulletList            = larsers.BulletList,
-      OrderedList           = larsers.OrderedList,
-      Heading               = larsers.Heading,
-      DefinitionList        = larsers.DefinitionList,
-      DisplayHtml           = larsers.DisplayHtml,
-      Paragraph             = larsers.Paragraph,
-      PipeTable             = larsers.PipeTable,
-      Plain                 = larsers.Plain,
+      ContentBlock          = parsers.ContentBlock,
+      Blockquote            = parsers.Blockquote,
+      Verbatim              = parsers.Verbatim,
+      FencedCode            = parsers.FencedCode,
+      HorizontalRule        = parsers.HorizontalRule,
+      BulletList            = parsers.BulletList,
+      OrderedList           = parsers.OrderedList,
+      Heading               = parsers.Heading,
+      DefinitionList        = parsers.DefinitionList,
+      DisplayHtml           = parsers.DisplayHtml,
+      Paragraph             = parsers.Paragraph,
+      PipeTable             = parsers.PipeTable,
+      Plain                 = parsers.Plain,
 
       Inline                = V("Str")
                             + V("Space")
@@ -20949,28 +20966,28 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
                             + V("Smart")
                             + V("Symbol"),
 
-      Str                   = larsers.Str,
-      Space                 = larsers.Space,
-      OptionalIndent        = larsers.OptionalIndent,
-      Endline               = larsers.Endline,
-      UlOrStarLine          = larsers.UlOrStarLine,
-      Strong                = larsers.Strong,
-      Emph                  = larsers.Emph,
-      InlineNote            = larsers.InlineNote,
-      NoteRef               = larsers.NoteRef,
-      Citations             = larsers.Citations,
-      Link                  = larsers.Link,
-      Image                 = larsers.Image,
-      Code                  = larsers.Code,
-      AutoLinkUrl           = larsers.AutoLinkUrl,
-      AutoLinkEmail         = larsers.AutoLinkEmail,
+      Str                   = parsers.Str,
+      Space                 = parsers.Space,
+      OptionalIndent        = parsers.OptionalIndent,
+      Endline               = parsers.Endline,
+      UlOrStarLine          = parsers.UlOrStarLine,
+      Strong                = parsers.Strong,
+      Emph                  = parsers.Emph,
+      InlineNote            = parsers.InlineNote,
+      NoteRef               = parsers.NoteRef,
+      Citations             = parsers.Citations,
+      Link                  = parsers.Link,
+      Image                 = parsers.Image,
+      Code                  = parsers.Code,
+      AutoLinkUrl           = parsers.AutoLinkUrl,
+      AutoLinkEmail         = parsers.AutoLinkEmail,
       AutoLinkRelativeReference
-                            = larsers.AutoLinkRelativeReference,
-      InlineHtml            = larsers.InlineHtml,
-      HtmlEntity            = larsers.HtmlEntity,
-      EscapedChar           = larsers.EscapedChar,
-      Smart                 = larsers.Smart,
-      Symbol                = larsers.Symbol,
+                            = parsers.AutoLinkRelativeReference,
+      InlineHtml            = parsers.InlineHtml,
+      HtmlEntity            = parsers.HtmlEntity,
+      EscapedChar           = parsers.EscapedChar,
+      Smart                 = parsers.Smart,
+      Symbol                = parsers.Symbol,
     }
 
   if not options.citations then
@@ -21033,33 +21050,33 @@ larsers.PipeTable = Ct(larsers.table_row * parsers.newline
 
   local blocks_nested_t = util.table_copy(syntax)
   blocks_nested_t.ExpectedJekyllData = parsers.fail
-  larsers.blocks_nested = Ct(blocks_nested_t)
+  parsers.blocks_nested = Ct(blocks_nested_t)
 
-  larsers.blocks = Ct(syntax)
+  parsers.blocks = Ct(syntax)
 
   local inlines_t = util.table_copy(syntax)
   inlines_t[1] = "Inlines"
   inlines_t.Inlines = parsers.Inline^0 * (parsers.spacing^0 * parsers.eof / "")
-  larsers.inlines = Ct(inlines_t)
+  parsers.inlines = Ct(inlines_t)
 
   local inlines_no_link_t = util.table_copy(inlines_t)
   inlines_no_link_t.Link = parsers.fail
-  larsers.inlines_no_link = Ct(inlines_no_link_t)
+  parsers.inlines_no_link = Ct(inlines_no_link_t)
 
   local inlines_no_inline_note_t = util.table_copy(inlines_t)
   inlines_no_inline_note_t.InlineNote = parsers.fail
-  larsers.inlines_no_inline_note = Ct(inlines_no_inline_note_t)
+  parsers.inlines_no_inline_note = Ct(inlines_no_inline_note_t)
 
   local inlines_no_html_t = util.table_copy(inlines_t)
   inlines_no_html_t.DisplayHtml = parsers.fail
   inlines_no_html_t.InlineHtml = parsers.fail
   inlines_no_html_t.HtmlEntity = parsers.fail
-  larsers.inlines_no_html = Ct(inlines_no_html_t)
+  parsers.inlines_no_html = Ct(inlines_no_html_t)
 
   local inlines_nbsp_t = util.table_copy(inlines_t)
-  inlines_nbsp_t.Endline = larsers.NonbreakingEndline
-  inlines_nbsp_t.Space = larsers.NonbreakingSpace
-  larsers.inlines_nbsp = Ct(inlines_nbsp_t)
+  inlines_nbsp_t.Endline = parsers.NonbreakingEndline
+  inlines_nbsp_t.Space = parsers.NonbreakingSpace
+  parsers.inlines_nbsp = Ct(inlines_nbsp_t)
 %    \end{macrocode}
 % \par
 % \begin{markdown}
