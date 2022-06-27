@@ -18109,6 +18109,16 @@ function M.writer.new(options)
 % \par
 % \begin{markdown}
 %
+% Make the `cache` parameter available as \luamdef{writer->cacheDir}, so that
+% it is accessible from extensions.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  self.cacheDir = options.cacheDir
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
 % Parse the \Opt{slice} option and define \luamdef{writer->slice\_begin},
 % \luamdef{writer->slice\_end}, and \luamdef{writer->is\_writing}. The
 % \luamref{writer->is\_writing} member variable is mutable.
@@ -18605,7 +18615,7 @@ function M.writer.new(options)
 %  \begin{macrocode}
   function self.block_html_element(s)
     if not self.is_writing then return "" end
-    local name = util.cache(options.cacheDir, s, nil, nil, ".verbatim")
+    local name = util.cache(self.cacheDir, s, nil, nil, ".verbatim")
     return {"\\markdownRendererInputBlockHtmlElement{",name,"}"}
   end
 %    \end{macrocode}
@@ -18712,24 +18722,8 @@ function M.writer.new(options)
   function self.verbatim(s)
     if not self.is_writing then return "" end
     s = string.gsub(s, '[\r\n%s]*$', '')
-    local name = util.cache(options.cacheDir, s, nil, nil, ".verbatim")
+    local name = util.cache(self.cacheDir, s, nil, nil, ".verbatim")
     return {"\\markdownRendererInputVerbatim{",name,"}"}
-  end
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
-% Define \luamdef{writer->codeFence} as a function that will transform an
-% input fenced code block `s` with the infostring `i` to the output
-% format.
-%
-% \end{markdown}
-%  \begin{macrocode}
-  function self.fencedCode(i, s)
-    if not self.is_writing then return "" end
-    s = string.gsub(s, '[\r\n%s]*$', '')
-    local name = util.cache(options.cacheDir, s, nil, nil, ".verbatim")
-    return {"\\markdownRendererInputFencedCode{",name,"}{",i,"}"}
   end
 %    \end{macrocode}
 % \par
@@ -19790,16 +19784,6 @@ parsers.LocalFilePath
                      * parsers.localfilepath
                      * parsers.optionaltitle
 
-parsers.TildeFencedCode
-                     = parsers.fencehead(parsers.tilde)
-                     * Cs(parsers.fencedline(parsers.tilde)^0)
-                     * parsers.fencetail(parsers.tilde)
-
-parsers.BacktickFencedCode
-                     = parsers.fencehead(parsers.backtick)
-                     * Cs(parsers.fencedline(parsers.backtick)^0)
-                     * parsers.fencetail(parsers.backtick)
-
 parsers.JekyllFencedCode
                      = parsers.fencehead(parsers.dash)
                      * Cs(parsers.fencedline(parsers.dash)^0)
@@ -19981,17 +19965,16 @@ function M.reader.new(writer, options, extensions)
 %
 % \end{markdown}
 %  \begin{macrocode}
-  local expandtabs
   if options.preserveTabs then
-    expandtabs = function(s) return s end
+    self.expandtabs = function(s) return s end
   else
-    expandtabs = function(s)
-                   if s:find("\t") then
-                     return iterlines(s, util.expand_tabs_in_line)
-                   else
-                     return s
-                   end
-                 end
+    self.expandtabs = function(s)
+                        if s:find("\t") then
+                          return iterlines(s, util.expand_tabs_in_line)
+                        else
+                          return s
+                        end
+                      end
   end
 %    \end{macrocode}
 % \par
@@ -20318,21 +20301,16 @@ function M.reader.new(writer, options, extensions)
                         * parsers.optionalspace * parsers.newline)
   end
 
-  if not options.fencedCode or options.blankBeforeCodeFence then
-    parsers.fencestart = parsers.fail
-  else
-    parsers.fencestart = parsers.fencehead(parsers.backtick)
-                       + parsers.fencehead(parsers.tilde)
-  end
+  parsers.EndlineExceptions
+                     = parsers.blankline -- paragraph break
+                     + parsers.tightblocksep  -- nested list
+                     + parsers.eof       -- end of document
+                     + parsers.bqstart
+                     + parsers.headerstart
 
-  parsers.Endline   = parsers.newline * -( -- newline, but not before...
-                        parsers.blankline -- paragraph break
-                      + parsers.tightblocksep  -- nested list
-                      + parsers.eof       -- end of document
-                      + parsers.bqstart
-                      + parsers.headerstart
-                      + parsers.fencestart
-                    ) * parsers.spacechar^0
+  parsers.Endline   = parsers.newline
+                    * -V("EndlineExceptions")
+                    * parsers.spacechar^0
                     / (options.hardLineBreaks and writer.linebreak
                                                or writer.space)
 
@@ -20350,14 +20328,9 @@ function M.reader.new(writer, options, extensions)
                                            / writer.space
 
   parsers.NonbreakingEndline
-                    = parsers.newline * -( -- newline, but not before...
-                        parsers.blankline -- paragraph break
-                      + parsers.tightblocksep  -- nested list
-                      + parsers.eof       -- end of document
-                      + parsers.bqstart
-                      + parsers.headerstart
-                      + parsers.fencestart
-                    ) * parsers.spacechar^0
+                    = parsers.newline
+                    * -V("EndlineExceptions")
+                    * parsers.spacechar^0
                     / (options.hardLineBreaks and writer.linebreak
                                                or writer.nbsp)
 
@@ -20506,14 +20479,7 @@ function M.reader.new(writer, options, extensions)
 
   parsers.Verbatim     = Cs( (parsers.blanklines
                            * ((parsers.indentedline - parsers.blankline))^1)^1
-                           ) / expandtabs / writer.verbatim
-
-  parsers.FencedCode   = (parsers.TildeFencedCode
-                         + parsers.BacktickFencedCode)
-                       / function(infostring, code)
-                           return writer.fencedCode(writer.string(infostring),
-                                                    expandtabs(code))
-                         end
+                           ) / self.expandtabs / writer.verbatim
 
   parsers.JekyllData   = Cmt( C((parsers.line - P("---") - P("..."))^0)
                             , function(s, i, text)
@@ -20796,7 +20762,7 @@ function M.reader.new(writer, options, extensions)
       ContentBlock          = parsers.ContentBlock,
       Blockquote            = parsers.Blockquote,
       Verbatim              = parsers.Verbatim,
-      FencedCode            = parsers.FencedCode,
+      FencedCode            = parsers.fail,
       HorizontalRule        = parsers.HorizontalRule,
       BulletList            = parsers.BulletList,
       OrderedList           = parsers.OrderedList,
@@ -20806,6 +20772,7 @@ function M.reader.new(writer, options, extensions)
       Paragraph             = parsers.Paragraph,
       PipeTable             = parsers.fail,
       Plain                 = parsers.Plain,
+      EndlineExceptions     = parsers.EndlineExceptions,
 
       Inline                = V("Str")
                             + V("Space")
@@ -20900,10 +20867,6 @@ function M.reader.new(writer, options, extensions)
 
   if not options.definitionLists then
     self.syntax.DefinitionList = parsers.fail
-  end
-
-  if not options.fencedCode then
-    self.syntax.FencedCode = parsers.fail
   end
 
   if not options.footnotes then
@@ -21062,6 +21025,116 @@ end
 % \end{markdown}
 %  \begin{macrocode}
 M.extensions = {}
+%    \end{macrocode}
+% \begin{markdown}
+%
+%#### Fenced Code
+%
+% The \luamdef{extensions.fenced_code} function implements the commonmark
+% fenced code block extension. When the `blank_before_code_fence` parameter is
+% `true`, the syntax extension requires between a paragraph and the following
+% fenced code block.
+%
+% \end{markdown}
+%  \begin{macrocode}
+M.extensions.fenced_code = function(blank_before_code_fence)
+  return {
+    extend_writer = function(self)
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Define \luamdef{writer->codeFence} as a function that will transform an
+% input fenced code block `s` with the infostring `i` to the output
+% format.
+%
+% \end{markdown}
+%  \begin{macrocode}
+      function self.fencedCode(i, s)
+        if not self.is_writing then return "" end
+        s = string.gsub(s, '[\r\n%s]*$', '')
+        local name = util.cache(self.cacheDir, s, nil, nil, ".verbatim")
+        return {"\\markdownRendererInputFencedCode{",name,"}{",i,"}"}
+      end
+    end, extend_reader = function(self)
+      local parsers = self.parsers
+      local syntax = self.syntax
+      local writer = self.writer
+
+      local function captures_geq_length(s,i,a,b)
+        return #a >= #b and i
+      end
+
+      local infostring   = (parsers.linechar - (parsers.backtick
+                         + parsers.space^1 * (parsers.newline + parsers.eof)))^0
+
+      local fenceindent
+      local fencehead    = function(char)
+        return             C(parsers.nonindentspace) / function(s) fenceindent = #s end
+                         * Cg(char^3, "fencelength")
+                         * parsers.optionalspace * C(infostring)
+                         * parsers.optionalspace * (parsers.newline + parsers.eof)
+      end
+
+      local fencetail    = function(char)
+        return             parsers.nonindentspace
+                         * Cmt(C(char^3) * Cb("fencelength"), captures_geq_length)
+                         * parsers.optionalspace * (parsers.newline + parsers.eof)
+                         + parsers.eof
+      end
+
+      local fencedline   = function(char)
+        return             C(parsers.line - fencetail(char))
+                         / function(s)
+                             i = 1
+                             remaining = fenceindent
+                             while true do
+                               c = s:sub(i, i)
+                               if c == " " and remaining > 0 then
+                                 remaining = remaining - 1
+                                 i = i + 1
+                               elseif c == "\t" and remaining > 3 then
+                                 remaining = remaining - 4
+                                 i = i + 1
+                               else
+                                 break
+                               end
+                             end
+                             return s:sub(i)
+                           end
+      end
+
+      local TildeFencedCode
+             = fencehead(parsers.tilde)
+             * Cs(fencedline(parsers.tilde)^0)
+             * fencetail(parsers.tilde)
+
+      local BacktickFencedCode
+             = fencehead(parsers.backtick)
+             * Cs(fencedline(parsers.backtick)^0)
+             * fencetail(parsers.backtick)
+
+      local FencedCode = (TildeFencedCode
+                           + BacktickFencedCode)
+                         / function(infostring, code)
+                             return writer.fencedCode(writer.string(infostring),
+                                                      self.expandtabs(code))
+                           end
+
+      syntax.FencedCode = FencedCode
+
+      if blank_before_code_fence then
+        fencestart = parsers.fail
+      else
+        fencestart = fencehead(parsers.backtick)
+                   + fencehead(parsers.tilde)
+      end
+
+      parsers.EndlineExceptions = parsers.EndlineExceptions + fencestart
+      syntax.EndlineExceptions = parsers.EndlineExceptions
+    end
+  }
+end
 %    \end{macrocode}
 % \begin{markdown}
 %
@@ -21245,6 +21318,12 @@ function M.new(options)
 % \end{markdown}
 %  \begin{macrocode}
   extensions = {}
+
+  if options.fencedCode then
+    fenced_code_extension = M.extensions.fenced_code(options.blankBeforeCodeFence)
+    table.insert(extensions, fenced_code_extension)
+  end
+
   if options.pipeTables then
     pipe_tables_extension = M.extensions.pipe_tables(options.tableCaptions)
     table.insert(extensions, pipe_tables_extension)
