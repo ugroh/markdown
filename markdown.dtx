@@ -18613,101 +18613,6 @@ function M.writer.new(options)
 % \par
 % \begin{markdown}
 %
-% Define \luamdef{writer->jekyllData} as a function that will transform an
-% input \acro{yaml} table `d` to the output format. The table is the value for
-% the key `p` in the parent table; if `p` is nil, then the table has no parent.
-% All scalar keys and values encountered in the table will be cast to a string
-% following \acro{yaml} serialization rules. String values will also be
-% transformed using the function `t`.
-%
-% \end{markdown}
-%  \begin{macrocode}
-  function self.jekyllData(d, t, p)
-    if not self.is_writing then return "" end
-
-    local buf = {}
-
-    local keys = {}
-    for k, _ in pairs(d) do
-      table.insert(keys, k)
-    end
-    table.sort(keys)
-
-    if not p then
-      table.insert(buf, "\\markdownRendererJekyllDataBegin")
-    end
-
-    if #d > 0 then
-        table.insert(buf, "\\markdownRendererJekyllDataSequenceBegin{")
-        table.insert(buf, self.uri(p or "null"))
-        table.insert(buf, "}{")
-        table.insert(buf, #keys)
-        table.insert(buf, "}")
-    else
-        table.insert(buf, "\\markdownRendererJekyllDataMappingBegin{")
-        table.insert(buf, self.uri(p or "null"))
-        table.insert(buf, "}{")
-        table.insert(buf, #keys)
-        table.insert(buf, "}")
-    end
-
-    for _, k in ipairs(keys) do
-      local v = d[k]
-      local typ = type(v)
-      k = tostring(k or "null")
-      if typ == "table" and next(v) ~= nil then
-        table.insert(
-          buf,
-          self.jekyllData(v, t, k)
-        )
-      else
-        k = self.uri(k)
-        v = tostring(v)
-        if typ == "boolean" then
-          table.insert(buf, "\\markdownRendererJekyllDataBoolean{")
-          table.insert(buf, k)
-          table.insert(buf, "}{")
-          table.insert(buf, v)
-          table.insert(buf, "}")
-        elseif typ == "number" then
-          table.insert(buf, "\\markdownRendererJekyllDataNumber{")
-          table.insert(buf, k)
-          table.insert(buf, "}{")
-          table.insert(buf, v)
-          table.insert(buf, "}")
-        elseif typ == "string" then
-          table.insert(buf, "\\markdownRendererJekyllDataString{")
-          table.insert(buf, k)
-          table.insert(buf, "}{")
-          table.insert(buf, t(v))
-          table.insert(buf, "}")
-        elseif typ == "table" then
-          table.insert(buf, "\\markdownRendererJekyllDataEmpty{")
-          table.insert(buf, k)
-          table.insert(buf, "}")
-        else
-          error(format("Unexpected type %s for value of " ..
-                       "YAML key %s", typ, k))
-        end
-      end
-    end
-
-    if #d > 0 then
-      table.insert(buf, "\\markdownRendererJekyllDataSequenceEnd")
-    else
-      table.insert(buf, "\\markdownRendererJekyllDataMappingEnd")
-    end
-
-    if not p then
-      table.insert(buf, "\\markdownRendererJekyllDataEnd")
-    end
-
-    return buf
-  end
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
 % Define \luamdef{writer->active\_attributes} as a stack of attributes
 % of the headings that are currently active. The
 % \luamref{writer->active\_headings} member variable is mutable.
@@ -19476,11 +19381,6 @@ parsers.urlchar      = parsers.anyescaped - parsers.newline - parsers.more
 %
 % \end{markdown}
 %  \begin{macrocode}
-parsers.JekyllFencedCode
-                     = parsers.fencehead(parsers.dash)
-                     * Cs(parsers.fencedline(parsers.dash)^0)
-                     * parsers.fencetail(parsers.dash)
-
 parsers.lineof = function(c)
     return (parsers.leader * (P(c) * parsers.optionalspace)^3
            * (parsers.newline * parsers.blankline^1
@@ -20091,38 +19991,6 @@ function M.reader.new(writer, options, extensions)
                            * ((parsers.indentedline - parsers.blankline))^1)^1
                            ) / self.expandtabs / writer.verbatim
 
-  parsers.JekyllData   = Cmt( C((parsers.line - P("---") - P("..."))^0)
-                            , function(s, i, text)
-                                local data
-                                local ran_ok, error = pcall(function()
-                                  local tinyyaml = require("markdown-tinyyaml")
-                                  data = tinyyaml.parse(text, {timestamps=false})
-                                end)
-                                if ran_ok and data ~= nil then
-                                  return true, writer.jekyllData(data, function(s)
-                                    return self.parser_functions.parse_blocks_nested(s)
-                                  end, nil)
-                                else
-                                  return false
-                                end
-                              end
-                            )
-
-  parsers.UnexpectedJekyllData
-                       = P("---")
-                       * parsers.blankline / 0
-                       * #(-parsers.blankline)  -- if followed by blank, it's an hrule
-                       * parsers.JekyllData
-                       * (P("---") + P("..."))
-
-  parsers.ExpectedJekyllData
-                       = ( P("---")
-                         * parsers.blankline / 0
-                         * #(-parsers.blankline)  -- if followed by blank, it's an hrule
-                         )^-1
-                       * parsers.JekyllData
-                       * (P("---") + P("..."))^-1
-
   parsers.Blockquote   = Cs(parsers.blockquote_body^1)
                        / self.parser_functions.parse_blocks_nested
                        / writer.blockquote
@@ -20329,8 +20197,8 @@ function M.reader.new(writer, options, extensions)
 
       Blank                 = parsers.Blank,
 
-      UnexpectedJekyllData  = parsers.UnexpectedJekyllData,
-      ExpectedJekyllData    = parsers.ExpectedJekyllData,
+      UnexpectedJekyllData  = parsers.fail,
+      ExpectedJekyllData    = parsers.fail,
 
       Block                 = V("ContentBlock")
                             + V("UnexpectedJekyllData")
@@ -20457,14 +20325,6 @@ function M.reader.new(writer, options, extensions)
 
   if not options.inlineFootnotes then
     self.syntax.InlineNote = parsers.fail
-  end
-
-  if not options.jekyllData then
-    self.syntax.UnexpectedJekyllData = parsers.fail
-  end
-
-  if not options.jekyllData or not options.expectJekyllData then
-    self.syntax.ExpectedJekyllData = parsers.fail
   end
 
   if options.preserveTabs then
@@ -21194,6 +21054,162 @@ end
 %    \end{macrocode}
 % \begin{markdown}
 %
+%#### YAML Metadata
+%
+% The \luamdef{extensions.jekyll_data} function implements the Pandoc
+% `yaml_metadata_block` syntax extension for entering metadata in \acro{yaml}.
+% When the `expect_jekyll_data` is `true`, then a markdown document may
+% begin directly with \acro{yaml} metadata and may contain nothing but
+% \acro{yaml} metadata
+%
+% \end{markdown}
+%  \begin{macrocode}
+M.extensions.jekyll_data = function(expect_jekyll_data)
+  return {
+    extend_writer = function(self)
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Define \luamdef{writer->jekyllData} as a function that will transform an
+% input \acro{yaml} table `d` to the output format. The table is the value for
+% the key `p` in the parent table; if `p` is nil, then the table has no parent.
+% All scalar keys and values encountered in the table will be cast to a string
+% following \acro{yaml} serialization rules. String values will also be
+% transformed using the function `t`.
+%
+% \end{markdown}
+%  \begin{macrocode}
+      function self.jekyllData(d, t, p)
+        if not self.is_writing then return "" end
+
+        local buf = {}
+
+        local keys = {}
+        for k, _ in pairs(d) do
+          table.insert(keys, k)
+        end
+        table.sort(keys)
+
+        if not p then
+          table.insert(buf, "\\markdownRendererJekyllDataBegin")
+        end
+
+        if #d > 0 then
+            table.insert(buf, "\\markdownRendererJekyllDataSequenceBegin{")
+            table.insert(buf, self.uri(p or "null"))
+            table.insert(buf, "}{")
+            table.insert(buf, #keys)
+            table.insert(buf, "}")
+        else
+            table.insert(buf, "\\markdownRendererJekyllDataMappingBegin{")
+            table.insert(buf, self.uri(p or "null"))
+            table.insert(buf, "}{")
+            table.insert(buf, #keys)
+            table.insert(buf, "}")
+        end
+
+        for _, k in ipairs(keys) do
+          local v = d[k]
+          local typ = type(v)
+          k = tostring(k or "null")
+          if typ == "table" and next(v) ~= nil then
+            table.insert(
+              buf,
+              self.jekyllData(v, t, k)
+            )
+          else
+            k = self.uri(k)
+            v = tostring(v)
+            if typ == "boolean" then
+              table.insert(buf, "\\markdownRendererJekyllDataBoolean{")
+              table.insert(buf, k)
+              table.insert(buf, "}{")
+              table.insert(buf, v)
+              table.insert(buf, "}")
+            elseif typ == "number" then
+              table.insert(buf, "\\markdownRendererJekyllDataNumber{")
+              table.insert(buf, k)
+              table.insert(buf, "}{")
+              table.insert(buf, v)
+              table.insert(buf, "}")
+            elseif typ == "string" then
+              table.insert(buf, "\\markdownRendererJekyllDataString{")
+              table.insert(buf, k)
+              table.insert(buf, "}{")
+              table.insert(buf, t(v))
+              table.insert(buf, "}")
+            elseif typ == "table" then
+              table.insert(buf, "\\markdownRendererJekyllDataEmpty{")
+              table.insert(buf, k)
+              table.insert(buf, "}")
+            else
+              error(format("Unexpected type %s for value of " ..
+                           "YAML key %s", typ, k))
+            end
+          end
+        end
+
+        if #d > 0 then
+          table.insert(buf, "\\markdownRendererJekyllDataSequenceEnd")
+        else
+          table.insert(buf, "\\markdownRendererJekyllDataMappingEnd")
+        end
+
+        if not p then
+          table.insert(buf, "\\markdownRendererJekyllDataEnd")
+        end
+
+        return buf
+      end
+    end, extend_reader = function(self)
+      local parsers = self.parsers
+      local syntax = self.syntax
+      local writer = self.writer
+
+      local JekyllData
+                    = Cmt( C((parsers.line - P("---") - P("..."))^0)
+                         , function(s, i, text)
+                             local data
+                             local ran_ok, error = pcall(function()
+                               local tinyyaml = require("markdown-tinyyaml")
+                               data = tinyyaml.parse(text, {timestamps=false})
+                             end)
+                             if ran_ok and data ~= nil then
+                               return true, writer.jekyllData(data, function(s)
+                                 return self.parser_functions.parse_blocks_nested(s)
+                               end, nil)
+                             else
+                               return false
+                             end
+                           end
+                         )
+
+      local UnexpectedJekyllData
+                    = P("---")
+                    * parsers.blankline / 0
+                    * #(-parsers.blankline)  -- if followed by blank, it's an hrule
+                    * JekyllData
+                    * (P("---") + P("..."))
+
+      local ExpectedJekyllData
+                    = ( P("---")
+                      * parsers.blankline / 0
+                      * #(-parsers.blankline)  -- if followed by blank, it's an hrule
+                      )^-1
+                    * JekyllData
+                    * (P("---") + P("..."))^-1
+
+      syntax.UnexpectedJekyllData = UnexpectedJekyllData
+      if expect_jekyll_data then
+        syntax.ExpectedJekyllData = ExpectedJekyllData
+      end
+    end
+  }
+end
+%    \end{macrocode}
+% \begin{markdown}
+%
 %#### Pipe Tables
 %
 % The \luamdef{extensions.pipe_table} function implements the \acro{PHP}
@@ -21407,6 +21423,12 @@ function M.new(options)
     fenced_code_extension = M.extensions.fenced_code(
       options.blankBeforeCodeFence)
     table.insert(extensions, fenced_code_extension)
+  end
+
+  if options.jekyllData then
+    jekyll_data_extension = M.extensions.jekyll_data(
+      options.expectJekyllData)
+    table.insert(extensions, jekyll_data_extension)
   end
 
   if options.pipeTables then
