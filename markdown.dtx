@@ -7511,7 +7511,7 @@ defaultOptions.texComments = false
 %
 :    true
 
-     :   Unordered and ordered Lists whose items do not consist of multiple
+     :   Unordered and ordered lists whose items do not consist of multiple
          paragraphs will be considered *tight*. Tight lists will produce tight
          renderers that may produce different output than lists that are not
          tight:
@@ -18514,42 +18514,6 @@ function M.writer.new(options)
 % \par
 % \begin{markdown}
 %
-% Define \luamdef{writer->definitionlist} as a function that will transform an
-% input definition list to the output format, where `items` is an array of
-% tables, each of the form `{ term = t, definitions = defs }`, where `t`
-% is a term and `defs` is an array of definitions. `tight` specifies,
-% whether the list is tight or not.
-%
-% \end{markdown}
-%  \begin{macrocode}
-  local function dlitem(term, defs)
-    local retVal = {"\\markdownRendererDlItem{",term,"}"}
-    for _, def in ipairs(defs) do
-      retVal[#retVal+1] = {"\\markdownRendererDlDefinitionBegin ",def,
-                           "\\markdownRendererDlDefinitionEnd "}
-    end
-    retVal[#retVal+1] = "\\markdownRendererDlItemEnd "
-    return retVal
-  end
-
-  function self.definitionlist(items,tight)
-    if not self.is_writing then return "" end
-    local buffer = {}
-    for _,item in ipairs(items) do
-      buffer[#buffer + 1] = dlitem(item.term, item.definitions)
-    end
-    if tight and options.tightLists then
-      return {"\\markdownRendererDlBeginTight\n", buffer,
-        "\n\\markdownRendererDlEndTight"}
-    else
-      return {"\\markdownRendererDlBegin\n", buffer,
-        "\n\\markdownRendererDlEnd"}
-    end
-  end
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
 % Define \luamdef{writer->emphasis} as a function that will transform an
 % emphasized span `s` of input text to the output format.
 %
@@ -19530,19 +19494,6 @@ end
 %
 % \end{markdown}
 %  \begin{macrocode}
-parsers.defstartchar = S("~:")
-parsers.defstart     = ( parsers.defstartchar * #parsers.spacing
-                                              * (parsers.tab + parsers.space^-3)
-                     + parsers.space * parsers.defstartchar * #parsers.spacing
-                                     * (parsers.tab + parsers.space^-2)
-                     + parsers.space * parsers.space * parsers.defstartchar
-                                     * #parsers.spacing
-                                     * (parsers.tab + parsers.space^-1)
-                     + parsers.space * parsers.space * parsers.space
-                                     * parsers.defstartchar * #parsers.spacing
-                     )
-
-parsers.dlchunk = Cs(parsers.line * (parsers.indentedline - parsers.blankline)^0)
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -20270,28 +20221,6 @@ function M.reader.new(writer, options, extensions)
                           * parsers.LooseListItem(parsers.enumerator)^0)
                       * Cc(false) * parsers.skipblanklines
                       ) * Cb("listtype") / ordered_list
-
-  local function definition_list_item(term, defs, tight)
-    return { term = self.parser_functions.parse_inlines(term),
-             definitions = defs }
-  end
-
-  parsers.DefinitionListItemLoose = C(parsers.line) * parsers.skipblanklines
-                                  * Ct((parsers.defstart
-                                       * parsers.indented_blocks(parsers.dlchunk)
-                                       / self.parser_functions.parse_blocks_nested)^1)
-                                  * Cc(false) / definition_list_item
-
-  parsers.DefinitionListItemTight = C(parsers.line)
-                                  * Ct((parsers.defstart * parsers.dlchunk
-                                       / self.parser_functions.parse_blocks_nested)^1)
-                                  * Cc(true) / definition_list_item
-
-  parsers.DefinitionList = ( Ct(parsers.DefinitionListItemLoose^1) * Cc(false)
-                           + Ct(parsers.DefinitionListItemTight^1)
-                           * (parsers.skipblanklines
-                             * -parsers.DefinitionListItemLoose * Cc(true))
-                           ) / writer.definitionlist
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -20426,7 +20355,7 @@ function M.reader.new(writer, options, extensions)
       BulletList            = parsers.BulletList,
       OrderedList           = parsers.OrderedList,
       Heading               = parsers.Heading,
-      DefinitionList        = parsers.DefinitionList,
+      DefinitionList        = parsers.fail,
       DisplayHtml           = parsers.DisplayHtml,
       Paragraph             = parsers.Paragraph,
       PipeTable             = parsers.fail,
@@ -20514,10 +20443,6 @@ function M.reader.new(writer, options, extensions)
 
   if not options.codeSpans then
     self.syntax.Code = parsers.fail
-  end
-
-  if not options.definitionLists then
-    self.syntax.DefinitionList = parsers.fail
   end
 
   if not options.footnotes then
@@ -20881,7 +20806,7 @@ end
 %    \end{macrocode}
 % \begin{markdown}
 %
-%#### iA\,Writer Content Blocks
+%#### Content Blocks
 %
 % The \luamdef{extensions.content_blocks} function implements the iA\,Writer
 % content blocks syntax extension. The `language_map` parameter specifies
@@ -21054,6 +20979,105 @@ M.extensions.content_blocks = function(language_map)
                     / writer.contentblock
 
       syntax.ContentBlock = ContentBlock
+    end
+  }
+end
+%    \end{macrocode}
+% \begin{markdown}
+%
+%#### Definition Lists
+%
+% The \luamdef{extensions.definition_lists} function implements the definition
+% list syntax extension. If the `tight_lists` parameter is `true`, tight lists
+% will produce special right item renderers.
+%
+% \end{markdown}
+%  \begin{macrocode}
+M.extensions.definition_lists = function(tight_lists)
+  return {
+    extend_writer = function(self)
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Define \luamdef{writer->definitionlist} as a function that will transform an
+% input definition list to the output format, where `items` is an array of
+% tables, each of the form `{ term = t, definitions = defs }`, where `t`
+% is a term and `defs` is an array of definitions. `tight` specifies,
+% whether the list is tight or not.
+%
+% \end{markdown}
+%  \begin{macrocode}
+      local function dlitem(term, defs)
+        local retVal = {"\\markdownRendererDlItem{",term,"}"}
+        for _, def in ipairs(defs) do
+          retVal[#retVal+1] = {"\\markdownRendererDlDefinitionBegin ",def,
+                               "\\markdownRendererDlDefinitionEnd "}
+        end
+        retVal[#retVal+1] = "\\markdownRendererDlItemEnd "
+        return retVal
+      end
+
+      function self.definitionlist(items,tight)
+        if not self.is_writing then return "" end
+        local buffer = {}
+        for _,item in ipairs(items) do
+          buffer[#buffer + 1] = dlitem(item.term, item.definitions)
+        end
+        if tight and tight_lists then
+          return {"\\markdownRendererDlBeginTight\n", buffer,
+            "\n\\markdownRendererDlEndTight"}
+        else
+          return {"\\markdownRendererDlBegin\n", buffer,
+            "\n\\markdownRendererDlEnd"}
+        end
+      end
+    end, extend_reader = function(self)
+      local parsers = self.parsers
+      local syntax = self.syntax
+      local writer = self.writer
+
+      local defstartchar = S("~:")
+
+      local defstart = ( defstartchar * #parsers.spacing
+                                      * (parsers.tab + parsers.space^-3)
+                       + parsers.space * defstartchar * #parsers.spacing
+                                       * (parsers.tab + parsers.space^-2)
+                       + parsers.space * parsers.space * defstartchar
+                                       * #parsers.spacing
+                                       * (parsers.tab + parsers.space^-1)
+                       + parsers.space * parsers.space * parsers.space
+                                       * defstartchar * #parsers.spacing
+                       )
+
+      local dlchunk = Cs(parsers.line * (parsers.indentedline - parsers.blankline)^0)
+
+      local function definition_list_item(term, defs, tight)
+        return { term = self.parser_functions.parse_inlines(term),
+                 definitions = defs }
+      end
+
+      local DefinitionListItemLoose
+                    = C(parsers.line) * parsers.skipblanklines
+                    * Ct((defstart
+                         * parsers.indented_blocks(dlchunk)
+                         / self.parser_functions.parse_blocks_nested)^1)
+                    * Cc(false) / definition_list_item
+
+      local DefinitionListItemTight
+                    = C(parsers.line)
+                    * Ct((defstart * dlchunk
+                         / self.parser_functions.parse_blocks_nested)^1)
+                    * Cc(true) / definition_list_item
+
+      local DefinitionList
+                    = ( Ct(DefinitionListItemLoose^1) * Cc(false)
+                      + Ct(DefinitionListItemTight^1)
+                      * (parsers.skipblanklines
+                        * -DefinitionListItemLoose * Cc(true))
+                      ) / writer.definitionlist
+
+      syntax.DefinitionList = DefinitionList
     end
   }
 end
@@ -21373,6 +21397,12 @@ function M.new(options)
     table.insert(extensions, content_blocks_extension)
   end
 
+  if options.definitionLists then
+    definition_lists_extension = M.extensions.definition_lists(
+      options.tightLists)
+    table.insert(extensions, definition_lists_extension)
+  end
+
   if options.fencedCode then
     fenced_code_extension = M.extensions.fenced_code(
       options.blankBeforeCodeFence)
@@ -21380,7 +21410,8 @@ function M.new(options)
   end
 
   if options.pipeTables then
-    pipe_tables_extension = M.extensions.pipe_tables(options.tableCaptions)
+    pipe_tables_extension = M.extensions.pipe_tables(
+      options.tableCaptions)
     table.insert(extensions, pipe_tables_extension)
   end
 
