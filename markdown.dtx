@@ -3997,7 +3997,7 @@ defaultOptions.contentBlocks = false
 %
 % \Valitem[markdown-languages.json]{contentBlocksLanguageMap}{filename}
 %
-:    The filename of the JSON file that maps filename extensions to
+:    The filename of the \acro{JSON} file that maps filename extensions to
      programming language names in the iA\,Writer content blocks.
 %    See Section <#sec:texcontentblockrenderers> for more information.
 
@@ -18094,17 +18094,6 @@ M.writer = {}
 %  \begin{macrocode}
 function M.writer.new(options)
   local self = {}
-  options = options or {}
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
-% Make the `options` table inherit from the \luamref{defaultOptions} table.
-%
-% \end{markdown}
-%  \begin{macrocode}
-  setmetatable(options, { __index = function (_, key)
-    return defaultOptions[key] end })
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -18392,90 +18381,6 @@ function M.writer.new(options)
                            "{",self.string(src),"}",
                            "{",self.uri(src),"}",
                            "{",self.string(tit or ""),"}"}
-  end
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
-% The \luamdef{languages_json} table maps programming language filename
-% extensions to fence infostrings. All `options.`\luamref{contentBlocksLanguageMap}
-% files located by the KPathSea library are loaded into a chain of tables.
-% \luamref{languages_json} corresponds to the first table and is chained with
-% the rest via Lua metatables.
-%
-% \end{markdown}
-%  \begin{macrocode}
-  local languages_json = (function()
-    local ran_ok, kpse = pcall(require, "kpse")
-    if ran_ok then
-      kpse.set_program_name("luatex")
-%    \end{macrocode}
-% \begin{markdown}
-%
-% If the KPathSea library is unavailable, perhaps because we are using
-% LuaMeta\TeX, we will only locate the `options.`\luamref{contentBlocksLanguageMap}
-% in the current working directory:
-%
-% \end{markdown}
-%  \begin{macrocode}
-    else
-      kpse = {lookup=function(filename, options) return filename end}
-    end
-    local base, prev, curr
-    for _, filename in ipairs{kpse.lookup(options.contentBlocksLanguageMap,
-                                          { all=true })} do
-      local file = io.open(filename, "r")
-      if not file then goto continue end
-      json = file:read("*all"):gsub('("[^\n]-"):','[%1]=')
-      curr = (function()
-        local _ENV={ json=json, load=load } -- run in sandbox
-        return load("return "..json)()
-      end)()
-      if type(curr) == "table" then
-        if base == nil then
-          base = curr
-        else
-          setmetatable(prev, { __index = curr })
-        end
-        prev = curr
-      end
-      ::continue::
-    end
-    return base or {}
-  end)()
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
-% Define \luamdef{writer->contentblock} as a function that will transform an
-% input iA\,Writer content block to the output format, where `src`
-% corresponds to the \acro{uri} prefix, `suf` to the \acro{uri} extension,
-% `type` to the type of the content block (`localfile` or `onlineimage`),
-% and `tit` to the title of the content block.
-%
-% \end{markdown}
-%  \begin{macrocode}
-  function self.contentblock(src,suf,type,tit)
-    if not self.is_writing then return "" end
-    src = src.."."..suf
-    suf = suf:lower()
-    if type == "onlineimage" then
-      return {"\\markdownRendererContentBlockOnlineImage{",suf,"}",
-                             "{",self.string(src),"}",
-                             "{",self.uri(src),"}",
-                             "{",self.string(tit or ""),"}"}
-    elseif languages_json[suf] then
-      return {"\\markdownRendererContentBlockCode{",suf,"}",
-                             "{",self.string(languages_json[suf]),"}",
-                             "{",self.string(src),"}",
-                             "{",self.uri(src),"}",
-                             "{",self.string(tit or ""),"}"}
-    else
-      return {"\\markdownRendererContentBlock{",suf,"}",
-                             "{",self.string(src),"}",
-                             "{",self.uri(src),"}",
-                             "{",self.string(tit or ""),"}"}
-    end
   end
 %    \end{macrocode}
 % \par
@@ -19435,70 +19340,6 @@ parsers.optionaltitle
 %
 % \end{markdown}
 %  \begin{macrocode}
-parsers.contentblock_tail
-                    = parsers.optionaltitle
-                    * (parsers.newline + parsers.eof)
-
--- case insensitive online image suffix:
-parsers.onlineimagesuffix
-                    = (function(...)
-                        local parser = nil
-                        for _,suffix in ipairs({...}) do
-                          local pattern=nil
-                          for i=1,#suffix do
-                            local char=suffix:sub(i,i)
-                            char = S(char:lower()..char:upper())
-                            if pattern == nil then
-                              pattern = char
-                            else
-                              pattern = pattern * char
-                            end
-                          end
-                          if parser == nil then
-                            parser = pattern
-                          else
-                            parser = parser + pattern
-                          end
-                        end
-                        return parser
-                      end)("png", "jpg", "jpeg", "gif", "tif", "tiff")
-
--- online image url for iA Writer content blocks with mandatory suffix,
--- allowing nested brackets:
-parsers.onlineimageurl
-                    = (parsers.less
-                      * Cs((parsers.anyescaped
-                           - parsers.more
-                           - #(parsers.period
-                              * parsers.onlineimagesuffix
-                              * parsers.more
-                              * parsers.contentblock_tail))^0)
-                      * parsers.period
-                      * Cs(parsers.onlineimagesuffix)
-                      * parsers.more
-                      + (Cs((parsers.inparens
-                            + (parsers.anyescaped
-                              - parsers.spacing
-                              - parsers.rparent
-                              - #(parsers.period
-                                 * parsers.onlineimagesuffix
-                                 * parsers.contentblock_tail)))^0)
-                        * parsers.period
-                        * Cs(parsers.onlineimagesuffix))
-                      ) * Cc("onlineimage")
-
--- filename for iA Writer content blocks with mandatory suffix:
-parsers.localfilepath
-                    = parsers.slash
-                    * Cs((parsers.anyescaped
-                         - parsers.tab
-                         - parsers.newline
-                         - #(parsers.period
-                            * parsers.alphanumeric^1
-                            * parsers.contentblock_tail))^1)
-                    * parsers.period
-                    * Cs(parsers.alphanumeric^1)
-                    * Cc("localfile")
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -19671,16 +19512,6 @@ parsers.urlchar      = parsers.anyescaped - parsers.newline - parsers.more
 %
 % \end{markdown}
 %  \begin{macrocode}
-parsers.OnlineImageURL
-                     = parsers.leader
-                     * parsers.onlineimageurl
-                     * parsers.optionaltitle
-
-parsers.LocalFilePath
-                     = parsers.leader
-                     * parsers.localfilepath
-                     * parsers.optionaltitle
-
 parsers.JekyllFencedCode
                      = parsers.fencehead(parsers.dash)
                      * Cs(parsers.fencedline(parsers.dash)^0)
@@ -19812,17 +19643,6 @@ function M.reader.new(writer, options, extensions)
 % \end{markdown}
 %  \begin{macrocode}
   local parsers = self.parsers
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
-% Make the `options` table inherit from the \luamref{defaultOptions} table.
-%
-% \end{markdown}
-%  \begin{macrocode}
-  options = options or {}
-  setmetatable(options, { __index = function (_, key)
-    return defaultOptions[key] end })
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -20309,11 +20129,6 @@ function M.reader.new(writer, options, extensions)
 %
 % \end{markdown}
 %  \begin{macrocode}
-  parsers.ContentBlock = parsers.leader
-                       * (parsers.localfilepath + parsers.onlineimageurl)
-                       * parsers.contentblock_tail
-                       / writer.contentblock
-
   parsers.DisplayHtml  = (parsers.htmlcomment / self.parser_functions.parse_blocks_nested)
                        / writer.block_html_comment
                        + parsers.emptyelt_block / writer.block_html_element
@@ -20603,7 +20418,7 @@ function M.reader.new(writer, options, extensions)
                             + V("Paragraph")
                             + V("Plain"),
 
-      ContentBlock          = parsers.ContentBlock,
+      ContentBlock          = parsers.fail,
       Blockquote            = parsers.Blockquote,
       Verbatim              = parsers.Verbatim,
       FencedCode            = parsers.fail,
@@ -20695,10 +20510,6 @@ function M.reader.new(writer, options, extensions)
   for _, extension in ipairs(extensions) do
     extension.extend_writer(writer)
     extension.extend_reader(self)
-  end
-
-  if not options.contentBlocks then
-    self.syntax.ContentBlock = parsers.fail
   end
 
   if not options.codeSpans then
@@ -21070,6 +20881,185 @@ end
 %    \end{macrocode}
 % \begin{markdown}
 %
+%#### iA\,Writer Content Blocks
+%
+% The \luamdef{extensions.content_blocks} function implements the iA\,Writer
+% content blocks syntax extension. The `language_map` parameter specifies
+% the filename of the \acro{JSON} file that maps filename extensions to
+% programming language names.
+%
+% \end{markdown}
+%  \begin{macrocode}
+M.extensions.content_blocks = function(language_map)
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% The \luamdef{languages_json} table maps programming language filename
+% extensions to fence infostrings. All `language_map` files located by the
+% KPathSea library are loaded into a chain of tables. \luamref{languages_json}
+% corresponds to the first table and is chained with the rest via Lua
+% metatables.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  local languages_json = (function()
+    local ran_ok, kpse = pcall(require, "kpse")
+    if ran_ok then
+      kpse.set_program_name("luatex")
+%    \end{macrocode}
+% \begin{markdown}
+%
+% If the KPathSea library is unavailable, perhaps because we are using
+% LuaMeta\TeX, we will only locate the `options.`\luamref{contentBlocksLanguageMap}
+% in the current working directory:
+%
+% \end{markdown}
+%  \begin{macrocode}
+    else
+      kpse = {lookup=function(filename, options) return filename end}
+    end
+    local base, prev, curr
+    for _, filename in ipairs{kpse.lookup(language_map, { all=true })} do
+      local file = io.open(filename, "r")
+      if not file then goto continue end
+      json = file:read("*all"):gsub('("[^\n]-"):','[%1]=')
+      curr = (function()
+        local _ENV={ json=json, load=load } -- run in sandbox
+        return load("return "..json)()
+      end)()
+      if type(curr) == "table" then
+        if base == nil then
+          base = curr
+        else
+          setmetatable(prev, { __index = curr })
+        end
+        prev = curr
+      end
+      ::continue::
+    end
+    return base or {}
+  end)()
+
+  return {
+    extend_writer = function(self)
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Define \luamdef{writer->contentblock} as a function that will transform an
+% input iA\,Writer content block to the output format, where `src`
+% corresponds to the \acro{uri} prefix, `suf` to the \acro{uri} extension,
+% `type` to the type of the content block (`localfile` or `onlineimage`),
+% and `tit` to the title of the content block.
+%
+% \end{markdown}
+%  \begin{macrocode}
+      function self.contentblock(src,suf,type,tit)
+        if not self.is_writing then return "" end
+        src = src.."."..suf
+        suf = suf:lower()
+        if type == "onlineimage" then
+          return {"\\markdownRendererContentBlockOnlineImage{",suf,"}",
+                                 "{",self.string(src),"}",
+                                 "{",self.uri(src),"}",
+                                 "{",self.string(tit or ""),"}"}
+        elseif languages_json[suf] then
+          return {"\\markdownRendererContentBlockCode{",suf,"}",
+                                 "{",self.string(languages_json[suf]),"}",
+                                 "{",self.string(src),"}",
+                                 "{",self.uri(src),"}",
+                                 "{",self.string(tit or ""),"}"}
+        else
+          return {"\\markdownRendererContentBlock{",suf,"}",
+                                 "{",self.string(src),"}",
+                                 "{",self.uri(src),"}",
+                                 "{",self.string(tit or ""),"}"}
+        end
+      end
+    end, extend_reader = function(self)
+      local parsers = self.parsers
+      local syntax = self.syntax
+      local writer = self.writer
+
+      local contentblock_tail
+                    = parsers.optionaltitle
+                    * (parsers.newline + parsers.eof)
+
+      -- case insensitive online image suffix:
+      local onlineimagesuffix
+                    = (function(...)
+                        local parser = nil
+                        for _, suffix in ipairs({...}) do
+                          local pattern=nil
+                          for i=1,#suffix do
+                            local char=suffix:sub(i,i)
+                            char = S(char:lower()..char:upper())
+                            if pattern == nil then
+                              pattern = char
+                            else
+                              pattern = pattern * char
+                            end
+                          end
+                          if parser == nil then
+                            parser = pattern
+                          else
+                            parser = parser + pattern
+                          end
+                        end
+                        return parser
+                      end)("png", "jpg", "jpeg", "gif", "tif", "tiff")
+
+      -- online image url for iA Writer content blocks with mandatory suffix,
+      -- allowing nested brackets:
+      local onlineimageurl
+                    = (parsers.less
+                      * Cs((parsers.anyescaped
+                           - parsers.more
+                           - #(parsers.period
+                              * onlineimagesuffix
+                              * parsers.more
+                              * contentblock_tail))^0)
+                      * parsers.period
+                      * Cs(onlineimagesuffix)
+                      * parsers.more
+                      + (Cs((parsers.inparens
+                            + (parsers.anyescaped
+                              - parsers.spacing
+                              - parsers.rparent
+                              - #(parsers.period
+                                 * onlineimagesuffix
+                                 * contentblock_tail)))^0)
+                        * parsers.period
+                        * Cs(onlineimagesuffix))
+                      ) * Cc("onlineimage")
+
+      -- filename for iA Writer content blocks with mandatory suffix:
+      local localfilepath
+                    = parsers.slash
+                    * Cs((parsers.anyescaped
+                         - parsers.tab
+                         - parsers.newline
+                         - #(parsers.period
+                            * parsers.alphanumeric^1
+                            * contentblock_tail))^1)
+                    * parsers.period
+                    * Cs(parsers.alphanumeric^1)
+                    * Cc("localfile")
+
+      local ContentBlock
+                    = parsers.leader
+                    * (localfilepath + onlineimageurl)
+                    * contentblock_tail
+                    / writer.contentblock
+
+      syntax.ContentBlock = ContentBlock
+    end
+  }
+end
+%    \end{macrocode}
+% \begin{markdown}
+%
 %#### Fenced Code
 %
 % The \luamdef{extensions.fenced_code} function implements the commonmark
@@ -21352,6 +21342,17 @@ end
 % \end{markdown}
 %  \begin{macrocode}
 function M.new(options)
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Make the `options` table inherit from the \luamref{defaultOptions} table.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  options = options or {}
+  setmetatable(options, { __index = function (_, key)
+    return defaultOptions[key] end })
 % \par
 % \begin{markdown}
 %
@@ -21366,8 +21367,15 @@ function M.new(options)
     table.insert(extensions, citations_extension)
   end
 
+  if options.contentBlocks then
+    content_blocks_extension = M.extensions.content_blocks(
+      options.contentBlocksLanguageMap)
+    table.insert(extensions, content_blocks_extension)
+  end
+
   if options.fencedCode then
-    fenced_code_extension = M.extensions.fenced_code(options.blankBeforeCodeFence)
+    fenced_code_extension = M.extensions.fenced_code(
+      options.blankBeforeCodeFence)
     table.insert(extensions, fenced_code_extension)
   end
 
