@@ -20876,9 +20876,12 @@ parsers.PipeTable = Ct(parsers.table_row * parsers.newline
 %
 %#### Syntax Specification
 %
+% Create a \luamdef{reader->syntax} hash table that stores the \acro{peg}
+% grammar.
+%
 % \end{markdown}
 %  \begin{macrocode}
-  local syntax =
+  self.syntax =
     { "Blocks",
 
       Blocks                = ( V("ExpectedJekyllData")
@@ -20991,45 +20994,45 @@ parsers.PipeTable = Ct(parsers.table_row * parsers.newline
     }
 
   if not options.citations then
-    syntax.Citations = parsers.fail
+    self.syntax.Citations = parsers.fail
   end
 
   if not options.contentBlocks then
-    syntax.ContentBlock = parsers.fail
+    self.syntax.ContentBlock = parsers.fail
   end
 
   if not options.codeSpans then
-    syntax.Code = parsers.fail
+    self.syntax.Code = parsers.fail
   end
 
   if not options.definitionLists then
-    syntax.DefinitionList = parsers.fail
+    self.syntax.DefinitionList = parsers.fail
   end
 
   if not options.fencedCode then
-    syntax.FencedCode = parsers.fail
+    self.syntax.FencedCode = parsers.fail
   end
 
   if not options.footnotes then
-    syntax.NoteRef = parsers.fail
+    self.syntax.NoteRef = parsers.fail
   end
 
   if not options.html then
-    syntax.DisplayHtml = parsers.fail
-    syntax.InlineHtml = parsers.fail
-    syntax.HtmlEntity  = parsers.fail
+    self.syntax.DisplayHtml = parsers.fail
+    self.syntax.InlineHtml = parsers.fail
+    self.syntax.HtmlEntity  = parsers.fail
   end
 
   if not options.inlineFootnotes then
-    syntax.InlineNote = parsers.fail
+    self.syntax.InlineNote = parsers.fail
   end
 
   if not options.jekyllData then
-    syntax.UnexpectedJekyllData = parsers.fail
+    self.syntax.UnexpectedJekyllData = parsers.fail
   end
 
   if not options.jekyllData or not options.expectJekyllData then
-    syntax.ExpectedJekyllData = parsers.fail
+    self.syntax.ExpectedJekyllData = parsers.fail
   end
 
   if options.preserveTabs then
@@ -21037,24 +21040,24 @@ parsers.PipeTable = Ct(parsers.table_row * parsers.newline
   end
 
   if not options.pipeTables then
-    syntax.PipeTable = parsers.fail
+    self.syntax.PipeTable = parsers.fail
   end
 
   if not options.smartEllipses then
-    syntax.Smart = parsers.fail
+    self.syntax.Smart = parsers.fail
   end
 
   if not options.relativeReferences then
-    syntax.AutoLinkRelativeReference = parsers.fail
+    self.syntax.AutoLinkRelativeReference = parsers.fail
   end
 
-  local blocks_nested_t = util.table_copy(syntax)
+  local blocks_nested_t = util.table_copy(self.syntax)
   blocks_nested_t.ExpectedJekyllData = parsers.fail
   parsers.blocks_nested = Ct(blocks_nested_t)
 
-  parsers.blocks = Ct(syntax)
+  parsers.blocks = Ct(self.syntax)
 
-  local inlines_t = util.table_copy(syntax)
+  local inlines_t = util.table_copy(self.syntax)
   inlines_t[1] = "Inlines"
   inlines_t.Inlines = parsers.Inline^0 * (parsers.spacing^0 * parsers.eof / "")
   parsers.inlines = Ct(inlines_t)
