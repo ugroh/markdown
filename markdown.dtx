@@ -15648,7 +15648,9 @@ texexec --passon=--shell-escape document.tex
 %--------------------
 %
 % The Lua implementation implements \luamdef{writer} and \luamdef{reader}
-% objects that provide the conversion from markdown to plain \TeX{}.
+% objects, which provide the conversion from markdown to plain \TeX, and
+% \luamdef{extension} objects, which provide syntax extensions for the
+% \luamref{writer} and \luamref{reader} objects.
 %
 % The Lunamark Lua module implements writers for the conversion to various
 % other formats, such as DocBook, Groff, or \acro{HTML}. These were stripped
@@ -18107,7 +18109,7 @@ function M.writer.new(options)
 % \par
 % \begin{markdown}
 %
-% Parse the \Opt{slice} option and define \luamdef{writer->slice\_begin}
+% Parse the \Opt{slice} option and define \luamdef{writer->slice\_begin},
 % \luamdef{writer->slice\_end}, and \luamdef{writer->is\_writing}. The
 % \luamref{writer->is\_writing} member variable is mutable.
 %
@@ -21184,10 +21186,24 @@ parsers.PipeTable = Ct(parsers.table_row * parsers.newline
   return self
 end
 %    \end{macrocode}
-% \par
+% \begin{markdown}
+%
+%### Syntax Extensions for Markdown
+%
+% Create \luamdef{extensions} hash table that contains syntax extensions.
+% Syntax extensions are objects with two methods: `extend_writer` and
+% `extend_reader`. The `extend_writer` object takes a \luamref{writer} object
+% as the only parameter and mutates it. Similarly, `extend_reader` takes a
+% \luamref{reader} object as the only parameter and mutates it.
+%
+% \end{markdown}
+%  \begin{macrocode}
+M.extensions = {}
+%    \end{macrocode}
 % \begin{markdown}
 %
 %### Conversion from Markdown to Plain \TeX{}
+%
 % The \luamref{new} method returns the \luamref{reader->convert} function of a reader
 % object associated with the Lua interface options (see Section
 % <#sec:luaoptions>) `options` and with a writer object associated with
