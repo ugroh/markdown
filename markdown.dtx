@@ -6103,7 +6103,7 @@ defaultOptions.jekyllData = false
 %
 :    true
 
-     :  Enable the \acro{PHP} Markdown table syntax extension:
+     :  Enable the \acro{PHP} Markdown pipe table syntax extension:
 
         ``` md
         | Right | Left | Default | Center |
@@ -6115,7 +6115,7 @@ defaultOptions.jekyllData = false
 
 :    false
 
-     :  Disable the \acro{PHP} Markdown table syntax extension.
+     :  Disable the \acro{PHP} Markdown pipe table syntax extension.
 
 % \end{markdown}
 % \iffalse
@@ -18384,38 +18384,6 @@ function M.writer.new(options)
 % \par
 % \begin{markdown}
 %
-% Define \luamdef{writer->table} as a function that will transform an input
-% table to the output format, where `rows` is a sequence of columns and a
-% column is a sequence of cell texts.
-%
-% \end{markdown}
-%  \begin{macrocode}
-  function self.table(rows, caption)
-    if not self.is_writing then return "" end
-    local buffer = {"\\markdownRendererTable{",
-      caption or "", "}{", #rows - 1, "}{", #rows[1], "}"}
-    local temp = rows[2] -- put alignments on the first row
-    rows[2] = rows[1]
-    rows[1] = temp
-    for i, row in ipairs(rows) do
-      table.insert(buffer, "{")
-      for _, column in ipairs(row) do
-        if i > 1 then -- do not use braces for alignments
-          table.insert(buffer, "{")
-        end
-        table.insert(buffer, column)
-        if i > 1 then
-          table.insert(buffer, "}")
-        end
-      end
-      table.insert(buffer, "}")
-    end
-    return buffer
-  end
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
 % Define \luamdef{writer->image} as a function that will transform an input
 % image to the output format, where `lab` corresponds to the label, `src`
 % to the \acro{url}, and `tit` to the title of the image.
@@ -19658,91 +19626,6 @@ parsers.RawNoteRef = #(parsers.lbracket * parsers.circumflex)
 % \par
 % \begin{markdown}
 %
-%#### Parsers Used for Tables
-%
-% \end{markdown}
-%  \begin{macrocode}
-local function make_pipe_table_rectangular(rows)
-  local num_columns = #rows[2]
-  local rectangular_rows = {}
-  for i = 1, #rows do
-    local row = rows[i]
-    local rectangular_row = {}
-    for j = 1, num_columns do
-      rectangular_row[j] = row[j] or ""
-    end
-    table.insert(rectangular_rows, rectangular_row)
-  end
-  return rectangular_rows
-end
-
-local function pipe_table_row(allow_empty_first_column
-                             , nonempty_column
-                             , column_separator
-                             , column)
-  local row_beginning
-  if allow_empty_first_column then
-    row_beginning = -- empty first column
-                    #(parsers.spacechar^4
-                     * column_separator)
-                  * parsers.optionalspace
-                  * column
-                  * parsers.optionalspace
-                  -- non-empty first column
-                  + parsers.nonindentspace
-                  * nonempty_column^-1
-                  * parsers.optionalspace
-  else
-    row_beginning = parsers.nonindentspace
-                  * nonempty_column^-1
-                  * parsers.optionalspace
-  end
-
-  return Ct(row_beginning
-           * (-- single column with no leading pipes
-              #(column_separator
-               * parsers.optionalspace
-               * parsers.newline)
-             * column_separator
-             * parsers.optionalspace
-             -- single column with leading pipes or
-             -- more than a single column
-             + (column_separator
-               * parsers.optionalspace
-               * column
-               * parsers.optionalspace)^1
-             * (column_separator
-               * parsers.optionalspace)^-1))
-end
-
-parsers.table_hline_separator = parsers.pipe + parsers.plus
-parsers.table_hline_column = (parsers.dash
-                             - #(parsers.dash
-                                * (parsers.spacechar
-                                  + parsers.table_hline_separator
-                                  + parsers.newline)))^1
-                           * (parsers.colon * Cc("r")
-                             + parsers.dash * Cc("d"))
-                           + parsers.colon
-                           * (parsers.dash
-                             - #(parsers.dash
-                                * (parsers.spacechar
-                                  + parsers.table_hline_separator
-                                  + parsers.newline)))^1
-                           * (parsers.colon * Cc("c")
-                             + parsers.dash * Cc("l"))
-parsers.table_hline = pipe_table_row(false
-                                    , parsers.table_hline_column
-                                    , parsers.table_hline_separator
-                                    , parsers.table_hline_column)
-parsers.table_caption_beginning = parsers.skipblanklines
-                                * parsers.nonindentspace
-                                * (P("Table")^-1 * parsers.colon)
-                                * parsers.optionalspace
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
 %#### Parsers Used for HTML
 %
 % \end{markdown}
@@ -20008,7 +19891,7 @@ end
 % \end{markdown}
 %  \begin{macrocode}
 M.reader = {}
-function M.reader.new(writer, options)
+function M.reader.new(writer, options, extensions)
   local self = {}
 %    \end{macrocode}
 % \par
@@ -20329,36 +20212,6 @@ function M.reader.new(writer, options)
   parsers.InlineNote = parsers.circumflex
                      * (parsers.tag / self.parser_functions.parse_inlines_no_inline_note)
                      / writer.note
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
-%#### Parsers Used for Tables (local)
-%
-% \end{markdown}
-%  \begin{macrocode}
-parsers.table_row = pipe_table_row(true
-                                  , (C((parsers.linechar - parsers.pipe)^1)
-                                    / self.parser_functions.parse_inlines)
-                                  , parsers.pipe
-                                  , (C((parsers.linechar - parsers.pipe)^0)
-                                    / self.parser_functions.parse_inlines))
-
-if options.tableCaptions then
-  parsers.table_caption = #parsers.table_caption_beginning
-                        * parsers.table_caption_beginning
-                        * Ct(parsers.IndentedInline^1)
-                        * parsers.newline
-else
-  parsers.table_caption = parsers.fail
-end
-
-parsers.PipeTable = Ct(parsers.table_row * parsers.newline
-                    * parsers.table_hline
-                    * (parsers.newline * parsers.table_row)^0)
-                  / make_pipe_table_rectangular
-                  * parsers.table_caption^-1
-                  / writer.table
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -20951,7 +20804,7 @@ parsers.PipeTable = Ct(parsers.table_row * parsers.newline
       DefinitionList        = parsers.DefinitionList,
       DisplayHtml           = parsers.DisplayHtml,
       Paragraph             = parsers.Paragraph,
-      PipeTable             = parsers.PipeTable,
+      PipeTable             = parsers.fail,
       Plain                 = parsers.Plain,
 
       Inline                = V("Str")
@@ -21020,6 +20873,19 @@ parsers.PipeTable = Ct(parsers.table_row * parsers.newline
       Symbol                = parsers.Symbol,
     }
 
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Apply syntax extensions.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  for _, extension in ipairs(extensions) do
+    extension.extend_writer(writer)
+    extension.extend_reader(self)
+  end
+
   if not options.citations then
     self.syntax.Citations = parsers.fail
   end
@@ -21064,10 +20930,6 @@ parsers.PipeTable = Ct(parsers.table_row * parsers.newline
 
   if options.preserveTabs then
     options.stripIndent = false
-  end
-
-  if not options.pipeTables then
-    self.syntax.PipeTable = parsers.fail
   end
 
   if not options.smartEllipses then
@@ -21191,14 +21053,177 @@ end
 %### Syntax Extensions for Markdown
 %
 % Create \luamdef{extensions} hash table that contains syntax extensions.
-% Syntax extensions are objects with two methods: `extend_writer` and
-% `extend_reader`. The `extend_writer` object takes a \luamref{writer} object
-% as the only parameter and mutates it. Similarly, `extend_reader` takes a
-% \luamref{reader} object as the only parameter and mutates it.
+% Syntax extensions are functions that produce objects with two methods:
+% `extend_writer` and `extend_reader`. The `extend_writer` object takes a
+% \luamref{writer} object as the only parameter and mutates it. Similarly,
+% `extend_reader` takes a \luamref{reader} object as the only parameter and
+% mutates it.
 %
 % \end{markdown}
 %  \begin{macrocode}
 M.extensions = {}
+%    \end{macrocode}
+% \begin{markdown}
+%
+%#### Pipe Tables
+%
+% The \luamdef{extensions.pipe_table} function implements the \acro{PHP}
+% Markdown table syntax extension (affectionately known as pipe tables). When
+% the parameter `table_captions` is `true`, the function also implements the
+% Pandoc `table_captions` syntax extension for table captions.
+%
+% \end{markdown}
+%  \begin{macrocode}
+M.extensions.pipe_tables = function(table_captions)
+
+  local function make_pipe_table_rectangular(rows)
+    local num_columns = #rows[2]
+    local rectangular_rows = {}
+    for i = 1, #rows do
+      local row = rows[i]
+      local rectangular_row = {}
+      for j = 1, num_columns do
+        rectangular_row[j] = row[j] or ""
+      end
+      table.insert(rectangular_rows, rectangular_row)
+    end
+    return rectangular_rows
+  end
+
+  local function pipe_table_row(allow_empty_first_column
+                               , nonempty_column
+                               , column_separator
+                               , column)
+    local row_beginning
+    if allow_empty_first_column then
+      row_beginning = -- empty first column
+                      #(parsers.spacechar^4
+                       * column_separator)
+                    * parsers.optionalspace
+                    * column
+                    * parsers.optionalspace
+                    -- non-empty first column
+                    + parsers.nonindentspace
+                    * nonempty_column^-1
+                    * parsers.optionalspace
+    else
+      row_beginning = parsers.nonindentspace
+                    * nonempty_column^-1
+                    * parsers.optionalspace
+    end
+
+    return Ct(row_beginning
+             * (-- single column with no leading pipes
+                #(column_separator
+                 * parsers.optionalspace
+                 * parsers.newline)
+               * column_separator
+               * parsers.optionalspace
+               -- single column with leading pipes or
+               -- more than a single column
+               + (column_separator
+                 * parsers.optionalspace
+                 * column
+                 * parsers.optionalspace)^1
+               * (column_separator
+                 * parsers.optionalspace)^-1))
+  end
+
+  return {
+    extend_writer = function(self)
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Define \luamdef{writer->table} as a function that will transform an input
+% table to the output format, where `rows` is a sequence of columns and a
+% column is a sequence of cell texts.
+%
+% \end{markdown}
+%  \begin{macrocode}
+      function self.table(rows, caption)
+        if not self.is_writing then return "" end
+        local buffer = {"\\markdownRendererTable{",
+          caption or "", "}{", #rows - 1, "}{", #rows[1], "}"}
+        local temp = rows[2] -- put alignments on the first row
+        rows[2] = rows[1]
+        rows[1] = temp
+        for i, row in ipairs(rows) do
+          table.insert(buffer, "{")
+          for _, column in ipairs(row) do
+            if i > 1 then -- do not use braces for alignments
+              table.insert(buffer, "{")
+            end
+            table.insert(buffer, column)
+            if i > 1 then
+              table.insert(buffer, "}")
+            end
+          end
+          table.insert(buffer, "}")
+        end
+        return buffer
+      end
+    end, extend_reader = function(self)
+      local parsers = self.parsers
+      local syntax = self.syntax
+      local writer = self.writer
+
+      local table_hline_separator = parsers.pipe + parsers.plus
+
+      local table_hline_column = (parsers.dash
+                                 - #(parsers.dash
+                                    * (parsers.spacechar
+                                      + table_hline_separator
+                                      + parsers.newline)))^1
+                               * (parsers.colon * Cc("r")
+                                 + parsers.dash * Cc("d"))
+                               + parsers.colon
+                               * (parsers.dash
+                                 - #(parsers.dash
+                                    * (parsers.spacechar
+                                      + table_hline_separator
+                                      + parsers.newline)))^1
+                               * (parsers.colon * Cc("c")
+                                 + parsers.dash * Cc("l"))
+
+      local table_hline = pipe_table_row(false
+                                        , table_hline_column
+                                        , table_hline_separator
+                                        , table_hline_column)
+
+      local table_caption_beginning = parsers.skipblanklines
+                                    * parsers.nonindentspace
+                                    * (P("Table")^-1 * parsers.colon)
+                                    * parsers.optionalspace
+
+      local table_row = pipe_table_row(true
+                                      , (C((parsers.linechar - parsers.pipe)^1)
+                                        / self.parser_functions.parse_inlines)
+                                      , parsers.pipe
+                                      , (C((parsers.linechar - parsers.pipe)^0)
+                                        / self.parser_functions.parse_inlines))
+
+      local table_caption
+      if table_captions then
+        table_caption = #table_caption_beginning
+                      * table_caption_beginning
+                      * Ct(parsers.IndentedInline^1)
+                      * parsers.newline
+      else
+        table_caption = parsers.fail
+      end
+
+      local PipeTable = Ct(table_row * parsers.newline
+                        * table_hline
+                        * (parsers.newline * table_row)^0)
+                      / make_pipe_table_rectangular
+                      * table_caption^-1
+                      / writer.table
+
+      syntax.PipeTable = PipeTable
+    end
+  }
+end
 %    \end{macrocode}
 % \begin{markdown}
 %
@@ -21212,8 +21237,22 @@ M.extensions = {}
 % \end{markdown}
 %  \begin{macrocode}
 function M.new(options)
+% \par
+% \begin{markdown}
+%
+% Apply syntax extensions based on `options`.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  extensions = {}
+  if options.pipeTables then
+    pipe_tables_extension = M.extensions.pipe_tables(options.tableCaptions)
+    table.insert(extensions, pipe_tables_extension)
+  end
+
   local writer = M.writer.new(options)
-  local reader = M.reader.new(writer, options)
+  local reader = M.reader.new(writer, options, extensions)
+
   return reader.convert
 end
 
