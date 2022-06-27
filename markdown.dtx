@@ -20044,66 +20044,22 @@ function M.reader.new(writer, options, extensions)
 % \end{markdown}
 %  \begin{macrocode}
   -- parse atx header
-  if options.headerAttributes then
-    parsers.AtxHeading = Cg(parsers.HeadingStart,"level")
-                       * parsers.optionalspace
-                       * (C(((parsers.linechar
-                             - ((parsers.hash^1
-                                * parsers.optionalspace
-                                * parsers.HeadingAttributes^-1
-                                + parsers.HeadingAttributes)
-                               * parsers.optionalspace
-                               * parsers.newline))
-                            * (parsers.linechar
-                              - parsers.hash
-                              - parsers.lbrace)^0)^1)
-                           / self.parser_functions.parse_inlines)
-                       * Cg(Ct(parsers.newline
-                              + (parsers.hash^1
-                                * parsers.optionalspace
-                                * parsers.HeadingAttributes^-1
-                                + parsers.HeadingAttributes)
-                              * parsers.optionalspace
-                              * parsers.newline), "attributes")
-                       * Cb("level")
-                       * Cb("attributes")
-                       / writer.heading
+  parsers.AtxHeading = Cg(parsers.HeadingStart,"level")
+                     * parsers.optionalspace
+                     * (C(parsers.line)
+                       / strip_atx_end
+                       / self.parser_functions.parse_inlines)
+                     * Cb("level")
+                     / writer.heading
 
-    parsers.SetextHeading = #(parsers.line * S("=-"))
-                          * (C(((parsers.linechar
-                                - (parsers.HeadingAttributes
-                                  * parsers.optionalspace
-                                  * parsers.newline))
-                               * (parsers.linechar
-                                 - parsers.lbrace)^0)^1)
-                              / self.parser_functions.parse_inlines)
-                          * Cg(Ct(parsers.newline
-                                 + (parsers.HeadingAttributes
-                                   * parsers.optionalspace
-                                   * parsers.newline)), "attributes")
-                          * parsers.HeadingLevel
-                          * Cb("attributes")
-                          * parsers.optionalspace
-                          * parsers.newline
-                          / writer.heading
-  else
-    parsers.AtxHeading = Cg(parsers.HeadingStart,"level")
-                       * parsers.optionalspace
-                       * (C(parsers.line)
-                         / strip_atx_end
-                         / self.parser_functions.parse_inlines)
-                       * Cb("level")
-                       / writer.heading
-
-    parsers.SetextHeading = #(parsers.line * S("=-"))
-                          * Ct(parsers.linechar^1
-                              / self.parser_functions.parse_inlines)
-                          * parsers.newline
-                          * parsers.HeadingLevel
-                          * parsers.optionalspace
-                          * parsers.newline
-                          / writer.heading
-  end
+  parsers.SetextHeading = #(parsers.line * S("=-"))
+                        * Ct(parsers.linechar^1
+                            / self.parser_functions.parse_inlines)
+                        * parsers.newline
+                        * parsers.HeadingLevel
+                        * parsers.optionalspace
+                        * parsers.newline
+                        / writer.heading
 
   parsers.Heading = parsers.AtxHeading + parsers.SetextHeading
 %    \end{macrocode}
@@ -21066,6 +21022,71 @@ end
 %    \end{macrocode}
 % \begin{markdown}
 %
+%#### Header Attributes
+%
+% The \luamdef{extensions.header_attributes} function implements a syntax
+% extension that enables the assignment of HTML attributes to headings.
+%
+% \end{markdown}
+%  \begin{macrocode}
+M.extensions.header_attributes = function()
+  return {
+    extend_writer = function(self)
+    end, extend_reader = function(self)
+      local parsers = self.parsers
+      local syntax = self.syntax
+      local writer = self.writer
+
+      parsers.AtxHeading = Cg(parsers.HeadingStart,"level")
+                         * parsers.optionalspace
+                         * (C(((parsers.linechar
+                               - ((parsers.hash^1
+                                  * parsers.optionalspace
+                                  * parsers.HeadingAttributes^-1
+                                  + parsers.HeadingAttributes)
+                                 * parsers.optionalspace
+                                 * parsers.newline))
+                              * (parsers.linechar
+                                - parsers.hash
+                                - parsers.lbrace)^0)^1)
+                             / self.parser_functions.parse_inlines)
+                         * Cg(Ct(parsers.newline
+                                + (parsers.hash^1
+                                  * parsers.optionalspace
+                                  * parsers.HeadingAttributes^-1
+                                  + parsers.HeadingAttributes)
+                                * parsers.optionalspace
+                                * parsers.newline), "attributes")
+                         * Cb("level")
+                         * Cb("attributes")
+                         / writer.heading
+
+      parsers.SetextHeading = #(parsers.line * S("=-"))
+                            * (C(((parsers.linechar
+                                  - (parsers.HeadingAttributes
+                                    * parsers.optionalspace
+                                    * parsers.newline))
+                                 * (parsers.linechar
+                                   - parsers.lbrace)^0)^1)
+                                / self.parser_functions.parse_inlines)
+                            * Cg(Ct(parsers.newline
+                                   + (parsers.HeadingAttributes
+                                     * parsers.optionalspace
+                                     * parsers.newline)), "attributes")
+                            * parsers.HeadingLevel
+                            * Cb("attributes")
+                            * parsers.optionalspace
+                            * parsers.newline
+                            / writer.heading
+
+      parsers.Heading = parsers.AtxHeading + parsers.SetextHeading
+      syntax.Heading = parsers.Heading
+    end
+  }
+end
+%    \end{macrocode}
+% \begin{markdown}
+%
 %#### YAML Metadata
 %
 % The \luamdef{extensions.jekyll_data} function implements the Pandoc
@@ -21441,6 +21462,11 @@ function M.new(options)
     footnotes_extension = M.extensions.footnotes(
       options.footnotes, options.inlineFootnotes)
     table.insert(extensions, footnotes_extension)
+  end
+
+  if options.headerAttributes then
+    header_attributes_extension = M.extensions.header_attributes()
+    table.insert(extensions, header_attributes_extension)
   end
 
   if options.jekyllData then
