@@ -20112,20 +20112,28 @@ function M.reader.new(writer, options)
 % \par
 % \begin{markdown}
 %
-%#### Top-Level Parser Functions
+%#### High-Level Parser Functions
+%
+% Create a \luamdef{reader->parser_functions} hash table that stores high-level
+% parser functions. Define \luamdef{reader->create_parser} as a function that
+% will create a high-level parser function \luamdef{reader->parser_functions.name},
+% that matches input using grammar `grammar`. If `toplevel` is true, the input
+% is expected to come straight from the user, not from a recursive call, and
+% will be preprocessed.
 %
 % \end{markdown}
 %  \begin{macrocode}
-  local function create_parser(name, grammar, toplevel)
-    return function(str)
+  self.parser_functions = {}
+  self.create_parser = function(name, grammar, toplevel)
+    self.parser_functions[name] = function(str)
 %    \end{macrocode}
 % \par
 % \begin{markdown}
 %
-% If the parser is top-level and the \Opt{stripIndent} Lua option is enabled,
-% we will first expand tabs in the input string `str` into spaces and then we
-% will count the minimum indent across all lines, skipping blank lines. Next,
-% we will remove the minimum indent from all lines.
+% If the parser function is top-level and the \Opt{stripIndent} Lua option is
+% enabled, we will first expand tabs in the input string `str` into spaces
+% and then we will count the minimum indent across all lines, skipping
+% blank lines. Next, we will remove the minimum indent from all lines.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -20170,47 +20178,40 @@ function M.reader.new(writer, options)
     end
   end
 
-  local parse_blocks
-    = create_parser("parse_blocks",
-                    function()
-                      return parsers.blocks
-                    end, true)
+  self.create_parser("parse_blocks",
+                     function()
+                       return parsers.blocks
+                     end, true)
 
-  local parse_blocks_nested
-    = create_parser("parse_blocks_nested",
-                    function()
-                      return parsers.blocks_nested
-                    end, false)
+  self.create_parser("parse_blocks_nested",
+                     function()
+                       return parsers.blocks_nested
+                     end, false)
 
-  local parse_inlines
-    = create_parser("parse_inlines",
-                    function()
-                      return parsers.inlines
-                    end, false)
+  self.create_parser("parse_inlines",
+                     function()
+                       return parsers.inlines
+                     end, false)
 
-  local parse_inlines_no_link
-    = create_parser("parse_inlines_no_link",
-                    function()
-                      return parsers.inlines_no_link
-                    end, false)
+  self.create_parser("parse_inlines_no_link",
+                     function()
+                       return parsers.inlines_no_link
+                     end, false)
 
-  local parse_inlines_no_inline_note
-    = create_parser("parse_inlines_no_inline_note",
-                    function()
-                      return parsers.inlines_no_inline_note
-                    end, false)
+  self.create_parser("parse_inlines_no_inline_note",
+                     function()
+                       return parsers.inlines_no_inline_note
+                     end, false)
 
-  local parse_inlines_no_html
-    = create_parser("parse_inlines_no_html",
-                    function()
-                      return parsers.inlines_no_html
-                    end, false)
+  self.create_parser("parse_inlines_no_html",
+                     function()
+                       return parsers.inlines_no_html
+                     end, false)
 
-  local parse_inlines_nbsp
-    = create_parser("parse_inlines_nbsp",
-                    function()
-                      return parsers.inlines_nbsp
-                    end, false)
+  self.create_parser("parse_inlines_nbsp",
+                     function()
+                       return parsers.inlines_nbsp
+                     end, false)
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -20269,8 +20270,9 @@ function M.reader.new(writer, options)
           if str == "" then
               str = nil
           else
-              str = (options.citationNbsps and parse_inlines_nbsp or
-                parse_inlines)(str)
+              str = (options.citationNbsps and
+                self.parser_functions.parse_inlines_nbsp or
+                self.parser_functions.parse_inlines)(str)
           end
           return str
       end
@@ -20301,9 +20303,11 @@ function M.reader.new(writer, options)
     return writer.defer_call(function()
       local found = rawnotes[normalize_tag(ref)]
       if found then
-        return writer.note(parse_blocks_nested(found))
+        return writer.note(
+          self.parser_functions.parse_blocks_nested(found))
       else
-        return {"[", parse_inlines("^" .. ref), "]"}
+        return {"[",
+          self.parser_functions.parse_inlines("^" .. ref), "]"}
       end
     end)
   end
@@ -20321,7 +20325,7 @@ function M.reader.new(writer, options)
                      / register_note
 
   parsers.InlineNote = parsers.circumflex
-                     * (parsers.tag / parse_inlines_no_inline_note) -- no notes inside notes
+                     * (parsers.tag / self.parser_functions.parse_inlines_no_inline_note)
                      / writer.note
 %    \end{macrocode}
 % \par
@@ -20333,10 +20337,10 @@ function M.reader.new(writer, options)
 %  \begin{macrocode}
 parsers.table_row = pipe_table_row(true
                                   , (C((parsers.linechar - parsers.pipe)^1)
-                                    / parse_inlines)
+                                    / self.parser_functions.parse_inlines)
                                   , parsers.pipe
                                   , (C((parsers.linechar - parsers.pipe)^0)
-                                    / parse_inlines))
+                                    / self.parser_functions.parse_inlines))
 
 if options.tableCaptions then
   parsers.table_caption = #parsers.table_caption_beginning
@@ -20381,7 +20385,9 @@ parsers.PipeTable = Ct(parsers.table_row * parsers.newline
           tag = label
           tagpart = "[]"
       else
-          tagpart = {"[", parse_inlines(tag), "]"}
+          tagpart = {"[",
+            self.parser_functions.parse_inlines(tag),
+            "]"}
       end
       if sps then
         tagpart = {sps, tagpart}
@@ -20390,7 +20396,9 @@ parsers.PipeTable = Ct(parsers.table_row * parsers.newline
       if r then
         return r
       else
-        return nil, {"[", parse_inlines(label), "]", tagpart}
+        return nil, {"[",
+          self.parser_functions.parse_inlines(label),
+          "]", tagpart}
       end
   end
 
@@ -20400,7 +20408,9 @@ parsers.PipeTable = Ct(parsers.table_row * parsers.newline
     return writer.defer_call(function()
       local r,fallback = lookup_reference(label,sps,tag)
       if r then
-        return writer.link(parse_inlines_no_link(label), r.url, r.title)
+        return writer.link(
+          self.parser_functions.parse_inlines_no_link(label),
+          r.url, r.title)
       else
         return fallback
       end
@@ -20553,7 +20563,7 @@ parsers.PipeTable = Ct(parsers.table_row * parsers.newline
                              return writer.link(writer.escape(url), url)
                            end
 
-  parsers.DirectLink    = (parsers.tag / parse_inlines_no_link)  -- no links inside links
+  parsers.DirectLink    = (parsers.tag / self.parser_functions.parse_inlines_no_link)
                         * parsers.spnl
                         * parsers.lparent
                         * (parsers.url + Cc(""))  -- link can be empty [foo]()
@@ -20568,7 +20578,7 @@ parsers.PipeTable = Ct(parsers.table_row * parsers.newline
   parsers.Link          = parsers.DirectLink + parsers.IndirectLink
 
   parsers.DirectImage   = parsers.exclamation
-                        * (parsers.tag / parse_inlines)
+                        * (parsers.tag / self.parser_functions.parse_inlines)
                         * parsers.spnl
                         * parsers.lparent
                         * (parsers.url + Cc(""))  -- link can be empty [foo]()
@@ -20610,7 +20620,7 @@ parsers.PipeTable = Ct(parsers.table_row * parsers.newline
   parsers.EscapedChar   = parsers.backslash * C(parsers.escapable) / writer.string
   
   parsers.InlineHtml    = parsers.emptyelt_any / writer.inline_html_tag
-                        + (parsers.htmlcomment / parse_inlines_no_html)
+                        + (parsers.htmlcomment / self.parser_functions.parse_inlines_no_html)
                         / writer.inline_html_comment
                         + parsers.htmlinstruction
                         + parsers.openelt_any / writer.inline_html_tag
@@ -20632,7 +20642,7 @@ parsers.PipeTable = Ct(parsers.table_row * parsers.newline
                        * parsers.contentblock_tail
                        / writer.contentblock
 
-  parsers.DisplayHtml  = (parsers.htmlcomment / parse_blocks_nested)
+  parsers.DisplayHtml  = (parsers.htmlcomment / self.parser_functions.parse_blocks_nested)
                        / writer.block_html_comment
                        + parsers.emptyelt_block / writer.block_html_element
                        + parsers.openelt_exact("hr") / writer.block_html_element
@@ -20659,7 +20669,7 @@ parsers.PipeTable = Ct(parsers.table_row * parsers.newline
                                 end)
                                 if ran_ok and data ~= nil then
                                   return true, writer.jekyllData(data, function(s)
-                                    return parse_blocks_nested(s)
+                                    return self.parser_functions.parse_blocks_nested(s)
                                   end, nil)
                                 else
                                   return false
@@ -20683,7 +20693,8 @@ parsers.PipeTable = Ct(parsers.table_row * parsers.newline
                        * (P("---") + P("..."))^-1
 
   parsers.Blockquote   = Cs(parsers.blockquote_body^1)
-                       / parse_blocks_nested / writer.blockquote
+                       / self.parser_functions.parse_blocks_nested
+                       / writer.blockquote
 
   parsers.HorizontalRule = ( parsers.lineof(parsers.asterisk)
                            + parsers.lineof(parsers.dash)
@@ -20741,7 +20752,7 @@ parsers.PipeTable = Ct(parsers.table_row * parsers.newline
   parsers.TightListItem = function(starter)
       return -parsers.HorizontalRule
              * (Cs(starter / "" * parsers.tickbox^-1 * parsers.ListBlock * parsers.NestedList^-1)
-               / parse_blocks_nested)
+               / self.parser_functions.parse_blocks_nested)
              * -(parsers.blanklines * parsers.indent)
   end
 
@@ -20750,7 +20761,7 @@ parsers.PipeTable = Ct(parsers.table_row * parsers.newline
              * Cs( starter / "" * parsers.tickbox^-1 * parsers.ListBlock * Cc("\n")
                * (parsers.NestedList + parsers.ListContinuationBlock^0)
                * (parsers.blanklines / "\n\n")
-               ) / parse_blocks_nested
+               ) / self.parser_functions.parse_blocks_nested
   end
 
   parsers.BulletList = ( Ct(parsers.TightListItem(parsers.bullet)^1) * Cc(true)
@@ -20781,18 +20792,19 @@ parsers.PipeTable = Ct(parsers.table_row * parsers.newline
                       ) * Cb("listtype") / ordered_list
 
   local function definition_list_item(term, defs, tight)
-    return { term = parse_inlines(term), definitions = defs }
+    return { term = self.parser_functions.parse_inlines(term),
+             definitions = defs }
   end
 
   parsers.DefinitionListItemLoose = C(parsers.line) * parsers.skipblanklines
                                   * Ct((parsers.defstart
                                        * parsers.indented_blocks(parsers.dlchunk)
-                                       / parse_blocks_nested)^1)
+                                       / self.parser_functions.parse_blocks_nested)^1)
                                   * Cc(false) / definition_list_item
 
   parsers.DefinitionListItemTight = C(parsers.line)
                                   * Ct((parsers.defstart * parsers.dlchunk
-                                       / parse_blocks_nested)^1)
+                                       / self.parser_functions.parse_blocks_nested)^1)
                                   * Cc(true) / definition_list_item
 
   parsers.DefinitionList = ( Ct(parsers.DefinitionListItemLoose^1) * Cc(false)
@@ -20834,7 +20846,7 @@ parsers.PipeTable = Ct(parsers.table_row * parsers.newline
                             * (parsers.linechar
                               - parsers.hash
                               - parsers.lbrace)^0)^1)
-                           / parse_inlines)
+                           / self.parser_functions.parse_inlines)
                        * Cg(Ct(parsers.newline
                               + (parsers.hash^1
                                 * parsers.optionalspace
@@ -20853,7 +20865,7 @@ parsers.PipeTable = Ct(parsers.table_row * parsers.newline
                                   * parsers.newline))
                                * (parsers.linechar
                                  - parsers.lbrace)^0)^1)
-                              / parse_inlines)
+                              / self.parser_functions.parse_inlines)
                           * Cg(Ct(parsers.newline
                                  + (parsers.HeadingAttributes
                                    * parsers.optionalspace
@@ -20866,12 +20878,15 @@ parsers.PipeTable = Ct(parsers.table_row * parsers.newline
   else
     parsers.AtxHeading = Cg(parsers.HeadingStart,"level")
                        * parsers.optionalspace
-                       * (C(parsers.line) / strip_atx_end / parse_inlines)
+                       * (C(parsers.line)
+                         / strip_atx_end
+                         / self.parser_functions.parse_inlines)
                        * Cb("level")
                        / writer.heading
 
     parsers.SetextHeading = #(parsers.line * S("=-"))
-                          * Ct(parsers.linechar^1 / parse_inlines)
+                          * Ct(parsers.linechar^1
+                              / self.parser_functions.parse_inlines)
                           * parsers.newline
                           * parsers.HeadingLevel
                           * parsers.optionalspace
@@ -21128,7 +21143,7 @@ parsers.PipeTable = Ct(parsers.table_row * parsers.newline
 % \end{markdown}
 %  \begin{macrocode}
     local function convert(input)
-      local document = parse_blocks(input)
+      local document = self.parser_functions.parse_blocks(input)
       return util.rope_to_string(writer.document(document))
     end
     if options.eagerCache or options.finalizeCache then
