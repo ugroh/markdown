@@ -20012,6 +20012,16 @@ function M.reader.new(writer, options)
 % \par
 % \begin{markdown}
 %
+% Make the `writer` parameter available as \luamdef{reader->writer}, so that it
+% is accessible from extensions.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  self.writer = writer
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
 % Create a \luamdef{reader->parsers} hash table that stores \acro{peg} patterns
 % that depend on the received `options`. Make \luamdef{reader->parsers} inherit
 % from the global \luamref{parsers} table.
