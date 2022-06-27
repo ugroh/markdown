@@ -3506,7 +3506,7 @@ defaultOptions.citationNbsps = true
 %
 :    true
 
-     :  Enable the pandoc citation syntax extension:
+     :  Enable the Pandoc citation syntax extension:
 
         ``` md
         Here is a simple parenthetical citation [@doe99] and here
@@ -3526,7 +3526,7 @@ defaultOptions.citationNbsps = true
 
 :    false
 
-     :  Disable the pandoc citation syntax extension.
+     :  Disable the Pandoc citation syntax extension.
 
 % \end{markdown}
 % \iffalse
@@ -18109,12 +18109,22 @@ function M.writer.new(options)
 % \par
 % \begin{markdown}
 %
-% Make the `cache` parameter available as \luamdef{writer->cacheDir}, so that
-% it is accessible from extensions.
+% Make `options.cacheDir` available as \luamdef{writer->cacheDir}, so that it
+% is accessible from extensions.
 %
 % \end{markdown}
 %  \begin{macrocode}
   self.cacheDir = options.cacheDir
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Make `options.hybrid` available as \luamdef{writer->hybrid}, so that it is
+% accessible from extensions.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  self.hybrid = options.hybrid
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -18263,26 +18273,20 @@ function M.writer.new(options)
 % \par
 % \begin{markdown}
 %
-% Define tables \luamdef{escaped_uri_chars}, \luamdef{escaped_citation_chars},
-% and \luamdef{escaped_minimal_strings} containing the mapping from special
-% plain characters and character strings that always need to be escaped.
+% Define tables \luamdef{writer->escaped_uri_chars} and
+% \luamdef{writer->escaped_minimal_strings} containing the mapping from
+% special plain characters and character strings that always need to be
+% escaped.
 %
 % \end{markdown}
 %  \begin{macrocode}
-   local escaped_uri_chars = {
+   self.escaped_uri_chars = {
      ["{"] = "\\markdownRendererLeftBrace{}",
      ["}"] = "\\markdownRendererRightBrace{}",
      ["%"] = "\\markdownRendererPercentSign{}",
      ["\\"] = "\\markdownRendererBackslash{}",
    }
-   local escaped_citation_chars = {
-     ["{"] = "\\markdownRendererLeftBrace{}",
-     ["}"] = "\\markdownRendererRightBrace{}",
-     ["%"] = "\\markdownRendererPercentSign{}",
-     ["\\"] = "\\markdownRendererBackslash{}",
-     ["#"] = "\\markdownRendererHash{}",
-   }
-   local escaped_minimal_strings = {
+   self.escaped_minimal_strings = {
      ["^^"] = "\\markdownRendererCircumflex\\markdownRendererCircumflex ",
      ["☒"] = "\\markdownRendererTickedBox{}",
      ["⌛"] = "\\markdownRendererHalfTickedBox{}",
@@ -18292,13 +18296,13 @@ function M.writer.new(options)
 % \par
 % \begin{markdown}
 %
-% Define a table \luamdef{escaped_chars} containing the mapping from special
-% plain \TeX{} characters (including the active pipe character (`|`) of
-% \Hologo{ConTeXt}) that need to be escaped for typeset content.
+% Define a table \luamdef{writer->escaped_chars} containing the mapping from
+% special plain \TeX{} characters (including the active pipe character (`|`)
+% of \Hologo{ConTeXt}) that need to be escaped for typeset content.
 %
 % \end{markdown}
 %  \begin{macrocode}
-  local escaped_chars = {
+  self.escaped_chars = {
      ["{"] = "\\markdownRendererLeftBrace{}",
      ["}"] = "\\markdownRendererRightBrace{}",
      ["%"] = "\\markdownRendererPercentSign{}",
@@ -18315,53 +18319,36 @@ function M.writer.new(options)
 % \par
 % \begin{markdown}
 %
-% Use the \luamref{escaped_chars}, \luamref{escaped_uri_chars},
-% \luamref{escaped_citation_chars}, and \luamref{escaped_minimal_strings} tables
-% to create the \luamdef{escape}, \luamdef{escape_citation},
-% \luamdef{escape_uri}, and \luamdef{escape_minimal} escaper functions.
+% Use the \luamref{writer->escaped_chars}, \luamref{writer->escaped_uri_chars},
+% and \luamref{writer->escaped_minimal_strings} tables to create the
+% \luamdef{writer->escape}, \luamdef{writer->escape_uri}, and
+% \luamdef{writer->escape_minimal} escaper functions.
 %
 % \end{markdown}
 %  \begin{macrocode}
-  local escape = util.escaper(escaped_chars, escaped_minimal_strings)
-  local escape_citation = util.escaper(escaped_citation_chars,
-    escaped_minimal_strings)
-  local escape_uri = util.escaper(escaped_uri_chars, escaped_minimal_strings)
-  local escape_minimal = util.escaper({}, escaped_minimal_strings)
+  self.escape = util.escaper(self.escaped_chars, self.escaped_minimal_strings)
+  self.escape_uri = util.escaper(self.escaped_uri_chars, self.escaped_minimal_strings)
+  self.escape_minimal = util.escaper({}, self.escaped_minimal_strings)
 %    \end{macrocode}
 % \par
 % \begin{markdown}
 %
 % Define \luamdef{writer->string} as a function that will transform an input
-% plain text span `s` to the output format, \luamdef{writer->citation} as a
-% function that will transform an input citation name `c` to the output format,
-% and \luamdef{writer->uri} as a function that will transform an input
-% \acro{uri} `u` to the output format. If the \Opt{hybrid} option is enabled,
-% use the \luamref{escape_minimal}. Otherwise, use the \luamref{escape},
-% \luamref{escape_citation}, and \luamref{escape_uri} functions.
+% plain text span `s` to the output format and \luamdef{writer->uri} as a
+% function that will transform an input \acro{uri} `u` to the output format.
+% If the \Opt{hybrid} option is enabled, use the
+% \luamref{writer->escape_minimal}.  Otherwise, use the
+% \luamref{writer->escape}, and \luamref{writer->escape_uri} functions.
 %
 % \end{markdown}
 %  \begin{macrocode}
   if options.hybrid then
-    self.string = escape_minimal
-    self.citation = escape_minimal
-    self.uri = escape_minimal
+    self.string = self.escape_minimal
+    self.uri = self.escape_minimal
   else
-    self.string = escape
-    self.citation = escape_citation
-    self.uri = escape_uri
+    self.string = self.escape
+    self.uri = self.escape_uri
   end
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
-% Define \luamdef{writer->escape} as a function that will transform an input
-% plain text span to the output format. Unlike the \luamref{writer->string}
-% function, \luamref{writer->escape} always uses the \luamref{escape} function,
-% even when the \Opt{hybrid} option is enabled.
-%
-% \end{markdown}
-%  \begin{macrocode}
-  self.escape = escape
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -19002,35 +18989,6 @@ function M.writer.new(options)
 % \par
 % \begin{markdown}
 %
-% Define \luamdef{writer->citations} as a function that will transform an
-% input array of citations `cites` to the output format. If `text_cites`
-% is enabled, the citations should be rendered in-text, when applicable.
-% The `cites` array contains tables with the following keys and values:
-% \begin{itemize}
-%   \item`suppress_author` -- If the value of the key is true, then the
-%     author of the work should be omitted in the citation, when applicable.
-%   \item`prenote` -- The value of the key is either `nil` or a rope
-%     that should be inserted before the citation.
-%   \item`postnote` -- The value of the key is either `nil` or a rope
-%     that should be inserted after the citation.
-%   \item`name` -- The value of this key is the citation name.
-% \end{itemize}
-%
-% \end{markdown}
-%  \begin{macrocode}
-  function self.citations(text_cites, cites)
-    local buffer = {"\\markdownRenderer", text_cites and "TextCite" or "Cite",
-      "{", #cites, "}"}
-    for _,cite in ipairs(cites) do
-      buffer[#buffer+1] = {cite.suppress_author and "-" or "+", "{",
-        cite.prenote or "", "}{", cite.postnote or "", "}{", cite.name, "}"}
-    end
-    return buffer
-  end
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
 % Define \luamdef{writer->get_state} as a function that returns the current
 % state of the writer, where the state of a writer are its mutable member
 % variables.
@@ -19141,8 +19099,6 @@ parsers.letter                 = R("AZ","az")
 parsers.alphanumeric           = R("AZ","az","09")
 parsers.keyword                = parsers.letter
                                * parsers.alphanumeric^0
-parsers.citation_chars         = parsers.alphanumeric
-                               + S("#$%&-+<>~/_")
 parsers.internal_punctuation   = S(":;,.?")
 
 parsers.doubleasterisks        = P("**")
@@ -19543,65 +19499,6 @@ parsers.localfilepath
                     * parsers.period
                     * Cs(parsers.alphanumeric^1)
                     * Cc("localfile")
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
-%#### Parsers Used for Citations
-%
-% \end{markdown}
-%  \begin{macrocode}
-parsers.citation_name = Cs(parsers.dash^-1) * parsers.at
-                      * Cs(parsers.citation_chars
-                          * (((parsers.citation_chars + parsers.internal_punctuation
-                              - parsers.comma - parsers.semicolon)
-                             * -#((parsers.internal_punctuation - parsers.comma
-                                  - parsers.semicolon)^0
-                                 * -(parsers.citation_chars + parsers.internal_punctuation
-                                    - parsers.comma - parsers.semicolon)))^0
-                            * parsers.citation_chars)^-1)
-
-parsers.citation_body_prenote
-                    = Cs((parsers.alphanumeric^1
-                         + parsers.bracketed
-                         + parsers.inticks
-                         + (parsers.anyescaped
-                           - (parsers.rbracket + parsers.blankline^2))
-                         - (parsers.spnl * parsers.dash^-1 * parsers.at))^0)
-
-parsers.citation_body_postnote
-                    = Cs((parsers.alphanumeric^1
-                         + parsers.bracketed
-                         + parsers.inticks
-                         + (parsers.anyescaped
-                           - (parsers.rbracket + parsers.semicolon 
-                             + parsers.blankline^2))
-                         - (parsers.spnl * parsers.rbracket))^0)
-
-parsers.citation_body_chunk
-                    = parsers.citation_body_prenote
-                    * parsers.spnl * parsers.citation_name
-                    * (parsers.internal_punctuation - parsers.semicolon)^-1
-                    * parsers.spnl * parsers.citation_body_postnote
-
-parsers.citation_body
-                    = parsers.citation_body_chunk
-                    * (parsers.semicolon * parsers.spnl
-                      * parsers.citation_body_chunk)^0
-
-parsers.citation_headless_body_postnote
-                    = Cs((parsers.alphanumeric^1
-                         + parsers.bracketed
-                         + parsers.inticks
-                         + (parsers.anyescaped
-                           - (parsers.rbracket + parsers.at
-                             + parsers.semicolon + parsers.blankline^2))
-                         - (parsers.spnl * parsers.rbracket))^0)
-
-parsers.citation_headless_body
-                    = parsers.citation_headless_body_postnote
-                    * (parsers.sp * parsers.semicolon * parsers.spnl
-                      * parsers.citation_body_chunk)^0
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -20129,37 +20026,6 @@ function M.reader.new(writer, options, extensions)
 % \par
 % \begin{markdown}
 %
-%#### Parsers Used for Citations (local)
-%
-% \end{markdown}
-%  \begin{macrocode}
-  parsers.citations = function(text_cites, raw_cites)
-      local function normalize(str)
-          if str == "" then
-              str = nil
-          else
-              str = (options.citationNbsps and
-                self.parser_functions.parse_inlines_nbsp or
-                self.parser_functions.parse_inlines)(str)
-          end
-          return str
-      end
-
-      local cites = {}
-      for i = 1,#raw_cites,4 do
-          cites[#cites+1] = {
-              prenote = normalize(raw_cites[i]),
-              suppress_author = raw_cites[i+1] == "-",
-              name = writer.citation(raw_cites[i+2]),
-              postnote = normalize(raw_cites[i+3]),
-          }
-      end
-      return writer.citations(text_cites, cites)
-  end
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
 %#### Parsers Used for Footnotes (local)
 %
 % \end{markdown}
@@ -20418,28 +20284,6 @@ function M.reader.new(writer, options, extensions)
                         * (C(parsers.spnl) * parsers.tag)^-1 / indirect_image
 
   parsers.Image         = parsers.DirectImage + parsers.IndirectImage
-
-  parsers.TextCitations = Ct((parsers.spnl
-                        * Cc("")
-                        * parsers.citation_name
-                        * ((parsers.spnl
-                            * parsers.lbracket
-                            * parsers.citation_headless_body
-                            * parsers.rbracket) + Cc("")))^1)
-                        / function(raw_cites)
-                            return parsers.citations(true, raw_cites)
-                          end
-  
-  parsers.ParenthesizedCitations
-                        = Ct((parsers.spnl
-                        * parsers.lbracket
-                        * parsers.citation_body
-                        * parsers.rbracket)^1)
-                        / function(raw_cites)
-                            return parsers.citations(false, raw_cites)
-                          end
-
-  parsers.Citations     = parsers.TextCitations + parsers.ParenthesizedCitations
 
   -- avoid parsing long strings of * or _ as emph/strong
   parsers.UlOrStarLine  = parsers.asterisk^4 + parsers.underscore^4
@@ -20825,7 +20669,7 @@ function M.reader.new(writer, options, extensions)
       Emph                  = parsers.Emph,
       InlineNote            = parsers.InlineNote,
       NoteRef               = parsers.NoteRef,
-      Citations             = parsers.Citations,
+      Citations             = parsers.fail,
       Link                  = parsers.Link,
       Image                 = parsers.Image,
       Code                  = parsers.Code,
@@ -20851,10 +20695,6 @@ function M.reader.new(writer, options, extensions)
   for _, extension in ipairs(extensions) do
     extension.extend_writer(writer)
     extension.extend_reader(self)
-  end
-
-  if not options.citations then
-    self.syntax.Citations = parsers.fail
   end
 
   if not options.contentBlocks then
@@ -21028,12 +20868,214 @@ M.extensions = {}
 %    \end{macrocode}
 % \begin{markdown}
 %
+%#### Citations
+%
+% The \luamdef{extensions.citations} function implements the Pandoc citation
+% syntax extension. When the `citation_nbsps` parameter is `true`, the syntax
+% extension will replace regular spaces with non-breaking spaces inside the
+% prenotes and postnotes of citations.
+%
+% \end{markdown}
+%  \begin{macrocode}
+M.extensions.citations = function(citation_nbsps)
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Define table \luamdef{escaped_citation_chars} containing the characters to
+% escape in citations.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  local escaped_citation_chars = {
+    ["{"] = "\\markdownRendererLeftBrace{}",
+    ["}"] = "\\markdownRendererRightBrace{}",
+    ["%"] = "\\markdownRendererPercentSign{}",
+    ["\\"] = "\\markdownRendererBackslash{}",
+    ["#"] = "\\markdownRendererHash{}",
+  }
+  return {
+    extend_writer = function(self)
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Use the \luamref{escaped_citation_chars} to create the
+% \luamdef{escape_citation} escaper functions.
+%
+% \end{markdown}
+%  \begin{macrocode}
+      local escape_citation = util.escaper(
+        escaped_citation_chars,
+        self.escaped_minimal_strings)
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Define \luamdef{writer->citation} as a function that will transform an input
+% citation name `c` to the output format. If \luamref{writer->hybrid} is `true`,
+% use the \luamref{writer->escape_minimal} function. Otherwise, use the
+% \luamref{escape_citation} function.
+%
+% \end{markdown}
+%  \begin{macrocode}
+      if self.hybrid then
+        self.citation = self.escape_minimal
+      else
+        self.citation = escape_citation
+      end
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Define \luamdef{writer->citations} as a function that will transform an
+% input array of citations `cites` to the output format. If `text_cites`
+% is enabled, the citations should be rendered in-text, when applicable.
+% The `cites` array contains tables with the following keys and values:
+% \begin{itemize}
+%   \item`suppress_author` -- If the value of the key is true, then the
+%     author of the work should be omitted in the citation, when applicable.
+%   \item`prenote` -- The value of the key is either `nil` or a rope
+%     that should be inserted before the citation.
+%   \item`postnote` -- The value of the key is either `nil` or a rope
+%     that should be inserted after the citation.
+%   \item`name` -- The value of this key is the citation name.
+% \end{itemize}
+%
+% \end{markdown}
+%  \begin{macrocode}
+      function self.citations(text_cites, cites)
+        local buffer = {"\\markdownRenderer", text_cites and "TextCite" or "Cite",
+          "{", #cites, "}"}
+        for _,cite in ipairs(cites) do
+          buffer[#buffer+1] = {cite.suppress_author and "-" or "+", "{",
+            cite.prenote or "", "}{", cite.postnote or "", "}{", cite.name, "}"}
+        end
+        return buffer
+      end
+    end, extend_reader = function(self)
+      local parsers = self.parsers
+      local syntax = self.syntax
+      local writer = self.writer
+
+      local citation_chars
+                    = parsers.alphanumeric
+                    + S("#$%&-+<>~/_")
+
+      local citation_name
+                    = Cs(parsers.dash^-1) * parsers.at
+                    * Cs(citation_chars
+                        * (((citation_chars + parsers.internal_punctuation
+                            - parsers.comma - parsers.semicolon)
+                           * -#((parsers.internal_punctuation - parsers.comma
+                                - parsers.semicolon)^0
+                               * -(citation_chars + parsers.internal_punctuation
+                                  - parsers.comma - parsers.semicolon)))^0
+                          * citation_chars)^-1)
+
+      local citation_body_prenote
+                    = Cs((parsers.alphanumeric^1
+                         + parsers.bracketed
+                         + parsers.inticks
+                         + (parsers.anyescaped
+                           - (parsers.rbracket + parsers.blankline^2))
+                         - (parsers.spnl * parsers.dash^-1 * parsers.at))^0)
+
+      local citation_body_postnote
+                    = Cs((parsers.alphanumeric^1
+                         + parsers.bracketed
+                         + parsers.inticks
+                         + (parsers.anyescaped
+                           - (parsers.rbracket + parsers.semicolon
+                             + parsers.blankline^2))
+                         - (parsers.spnl * parsers.rbracket))^0)
+
+      local citation_body_chunk
+                    = citation_body_prenote
+                    * parsers.spnl * citation_name
+                    * (parsers.internal_punctuation - parsers.semicolon)^-1
+                    * parsers.spnl * citation_body_postnote
+
+      local citation_body
+                    = citation_body_chunk
+                    * (parsers.semicolon * parsers.spnl
+                      * citation_body_chunk)^0
+
+      local citation_headless_body_postnote
+                    = Cs((parsers.alphanumeric^1
+                         + parsers.bracketed
+                         + parsers.inticks
+                         + (parsers.anyescaped
+                           - (parsers.rbracket + parsers.at
+                             + parsers.semicolon + parsers.blankline^2))
+                         - (parsers.spnl * parsers.rbracket))^0)
+
+      local citation_headless_body
+                    = citation_headless_body_postnote
+                    * (parsers.sp * parsers.semicolon * parsers.spnl
+                      * citation_body_chunk)^0
+
+      local citations
+                    = function(text_cites, raw_cites)
+          local function normalize(str)
+              if str == "" then
+                  str = nil
+              else
+                  str = (citation_nbsps and
+                    self.parser_functions.parse_inlines_nbsp or
+                    self.parser_functions.parse_inlines)(str)
+              end
+              return str
+          end
+
+          local cites = {}
+          for i = 1,#raw_cites,4 do
+              cites[#cites+1] = {
+                  prenote = normalize(raw_cites[i]),
+                  suppress_author = raw_cites[i+1] == "-",
+                  name = writer.citation(raw_cites[i+2]),
+                  postnote = normalize(raw_cites[i+3]),
+              }
+          end
+          return writer.citations(text_cites, cites)
+      end
+
+      local TextCitations
+                    = Ct((parsers.spnl
+                    * Cc("")
+                    * citation_name
+                    * ((parsers.spnl
+                        * parsers.lbracket
+                        * citation_headless_body
+                        * parsers.rbracket) + Cc("")))^1)
+                    / function(raw_cites)
+                        return citations(true, raw_cites)
+                      end
+
+      local ParenthesizedCitations
+                    = Ct((parsers.spnl
+                    * parsers.lbracket
+                    * citation_body
+                    * parsers.rbracket)^1)
+                    / function(raw_cites)
+                        return citations(false, raw_cites)
+                      end
+
+      local Citations = TextCitations + ParenthesizedCitations
+
+      syntax.Citations = Citations
+    end
+  }
+end
+%    \end{macrocode}
+% \begin{markdown}
+%
 %#### Fenced Code
 %
 % The \luamdef{extensions.fenced_code} function implements the commonmark
-% fenced code block extension. When the `blank_before_code_fence` parameter is
-% `true`, the syntax extension requires between a paragraph and the following
-% fenced code block.
+% fenced code block syntax extension. When the `blank_before_code_fence`
+% parameter is `true`, the syntax extension requires between a paragraph and
+% the following fenced code block.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -21318,6 +21360,11 @@ function M.new(options)
 % \end{markdown}
 %  \begin{macrocode}
   extensions = {}
+
+  if options.citations then
+    citations_extension = M.extensions.citations(options.citationNbsps)
+    table.insert(extensions, citations_extension)
+  end
 
   if options.fencedCode then
     fenced_code_extension = M.extensions.fenced_code(options.blankBeforeCodeFence)
