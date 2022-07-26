@@ -22545,12 +22545,10 @@ end
         print(convert(input:gsub("\r\n?", "\n") .. "\n"))}%
 %    \end{macrocode}
 % \begin{markdown}
-% If we are finalizing the frozen cache, increment \Opt{frozenCacheCounter}.
+% In case we were finalizing the frozen cache, increment \Opt{frozenCacheCounter}.
 % \end{markdown}
 %  \begin{macrocode}
-      |markdownIfOption{finalizeCache}{%
-        |global|advance|markdownOptionFrozenCacheCounter by 1|relax
-      }%
+      |global|advance|markdownOptionFrozenCacheCounter by 1|relax
     }%
     |endgroup
   }%
