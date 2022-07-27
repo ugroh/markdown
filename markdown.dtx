@@ -20194,7 +20194,7 @@ function M.reader.new(writer, options, extensions)
 %
 % \end{markdown}
 %  \begin{macrocode}
-  local special_characters = {"*", "_", "`", "&", "[", "]", "<", "!", "\\", ".", "@", "-", "^"}
+  local special_characters = {"*", "`", "&", "[", "]", "<", "!", "\\", ".", "@", "-", "^"}
   self.add_special_character = function(c)
     table.insert(special_characters, c)
     self.syntax.SpecialChar = S(table.concat(special_characters, ""))
@@ -20211,6 +20211,10 @@ function M.reader.new(writer, options, extensions)
   for _, extension in ipairs(extensions) do
     extension.extend_writer(writer)
     extension.extend_reader(self)
+  end
+
+  if options.underscores then
+    self.add_special_character("_")
   end
 
   if not options.codeSpans then
