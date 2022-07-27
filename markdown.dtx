@@ -20194,7 +20194,7 @@ function M.reader.new(writer, options, extensions)
 %
 % \end{markdown}
 %  \begin{macrocode}
-  local special_characters = {"*", "`", "&", "[", "]", "<", "!", "\\", ".", "@", "-", "^"}
+  local special_characters = {"*", "`", "&", "[", "]", "<", "!", "\\", ".", "^"}
   self.add_special_character = function(c)
     table.insert(special_characters, c)
     self.syntax.SpecialChar = S(table.concat(special_characters, ""))
@@ -20560,6 +20560,9 @@ M.extensions.citations = function(citation_nbsps)
       local Citations = TextCitations + ParenthesizedCitations
 
       syntax.Citations = Citations
+
+      self.add_special_character("@")
+      self.add_special_character("-")
     end
   }
 end
