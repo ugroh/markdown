@@ -18879,9 +18879,7 @@ parsers.spacing                = S(" \n\r\t")
 parsers.nonspacechar           = parsers.any - parsers.spacing
 parsers.optionalspace          = parsers.spacechar^0
 
-parsers.specialchar            = S("*_`&[]<!\\.@-^")
-
-parsers.normalchar             = parsers.any - (parsers.specialchar
+parsers.normalchar             = parsers.any - (V("SpecialChar")
                                                 + parsers.spacing
                                                 + parsers.tightblocksep)
 parsers.eof                    = -parsers.any
@@ -19750,7 +19748,7 @@ function M.reader.new(writer, options, extensions)
   parsers.Str      = (parsers.normalchar * (parsers.normalchar + parsers.at)^0)
                    / writer.string
 
-  parsers.Symbol   = (parsers.specialchar - parsers.tightblocksep)
+  parsers.Symbol   = (V("SpecialChar") - parsers.tightblocksep)
                    / writer.string
 
   parsers.Ellipsis = P("...") / writer.ellipsis
@@ -20184,8 +20182,24 @@ function M.reader.new(writer, options, extensions)
       EscapedChar           = parsers.EscapedChar,
       Smart                 = parsers.Smart,
       Symbol                = parsers.Symbol,
+      SpecialChar           = parsers.fail,
     }
-
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Define a hash table of all characters with a special meaning that can be
+% escaped and add method `reader->add_special_character` that extends the
+% hash table and updates the \acro{peg} grammar.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  local special_characters = {"*", "`", "[", "]", "<", "!", "\\"}
+  self.add_special_character = function(c)
+    table.insert(special_characters, c)
+    self.syntax.SpecialChar = S(table.concat(special_characters, ""))
+  end
+  self.syntax.SpecialChar = S(table.concat(special_characters, ""))
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -20199,6 +20213,10 @@ function M.reader.new(writer, options, extensions)
     extension.extend_reader(self)
   end
 
+  if options.underscores then
+    self.add_special_character("_")
+  end
+
   if not options.codeSpans then
     self.syntax.Code = parsers.fail
   end
@@ -20207,6 +20225,8 @@ function M.reader.new(writer, options, extensions)
     self.syntax.DisplayHtml = parsers.fail
     self.syntax.InlineHtml = parsers.fail
     self.syntax.HtmlEntity  = parsers.fail
+  else
+    self.add_special_character("&")
   end
 
   if options.preserveTabs then
@@ -20215,6 +20235,8 @@ function M.reader.new(writer, options, extensions)
 
   if not options.smartEllipses then
     self.syntax.Smart = parsers.fail
+  else
+    self.add_special_character(".")
   end
 
   if not options.relativeReferences then
@@ -20542,6 +20564,9 @@ M.extensions.citations = function(citation_nbsps)
       local Citations = TextCitations + ParenthesizedCitations
 
       syntax.Citations = Citations
+
+      self.add_special_character("@")
+      self.add_special_character("-")
     end
   }
 end
@@ -21016,6 +21041,8 @@ M.extensions.footnotes = function(footnotes, inline_footnotes)
                     / writer.note
         syntax.InlineNote = InlineNote
       end
+
+      self.add_special_character("^")
     end
   }
 end
