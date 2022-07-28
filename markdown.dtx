@@ -1051,7 +1051,10 @@ local lpeg = require("lpeg")
 %
 % \end{markdown}
 %  \begin{macrocode}
-local ran_ok, unicode = pcall(require, "unicode")
+local unicode
+(function()
+  local ran_ok
+  ran_ok, unicode = pcall(require, "unicode")
 %    \end{macrocode}
 % \begin{markdown}
 %
@@ -1060,9 +1063,10 @@ local ran_ok, unicode = pcall(require, "unicode")
 %
 % \end{markdown}
 %  \begin{macrocode}
-if not ran_ok then
-  unicode = {["utf8"]={char=utf8.char}}
-end
+  if not ran_ok then
+    unicode = {["utf8"]={char=utf8.char}}
+  end
+end)()
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -7815,7 +7819,7 @@ defaultOptions.underscores = true
 % \end{figure}
 %  \begin{macrocode}
 
-HELP_STRING = [[
+local HELP_STRING = [[
 Usage: texlua ]] .. arg[0] .. [[ [OPTIONS] -- [INPUT_FILE] [OUTPUT_FILE]
 where OPTIONS are documented in the Lua interface section of the
 technical Markdown package documentation.
@@ -7827,7 +7831,7 @@ result of the conversion will be read from the standard input.
 Report bugs to: witiko@mail.muni.cz
 Markdown package home page: <https://github.com/witiko/markdown>]]
 
-VERSION_STRING = [[
+local VERSION_STRING = [[
 markdown-cli.lua (Markdown) ]] .. metadata.version .. [[
 
 Copyright (C) ]] .. table.concat(metadata.copyright,
@@ -7868,14 +7872,14 @@ for i = 1, #arg do
 % \end{markdown}
 %  \begin{macrocode}
     elseif arg[i]:match("=") then
-      key, value = arg[i]:match("(.-)=(.*)")
+      local key, value = arg[i]:match("(.-)=(.*)")
 %    \end{macrocode}
 % \begin{markdown}
 % The \luamref{defaultOptions} table is consulted to identify whether \meta{value}
 % should be parsed as a string or as a boolean.
 % \end{markdown}
 %  \begin{macrocode}
-      default_type = type(defaultOptions[key])
+      local default_type = type(defaultOptions[key])
       if default_type == "boolean" then
         options[key] = (value == "true")
       elseif default_type == "number" then
@@ -15662,7 +15666,6 @@ texexec --passon=--shell-escape document.tex
 %  \begin{macrocode}
 local upper, gsub, format, length =
   string.upper, string.gsub, string.format, string.len
-local concat = table.concat
 local P, R, S, V, C, Cg, Cb, Cmt, Cc, Ct, B, Cs, any =
   lpeg.P, lpeg.R, lpeg.S, lpeg.V, lpeg.C, lpeg.Cg, lpeg.Cb,
   lpeg.Cmt, lpeg.Cc, lpeg.Ct, lpeg.B, lpeg.Cs, lpeg.P(1)
@@ -15709,7 +15712,7 @@ function util.cache(dir, string, salt, transform, suffix)
   local name = util.pathname(dir, digest .. suffix)
   local file = io.open(name, "r")
   if file == nil then -- If no cache entry exists, then create a new one.
-    local file = assert(io.open(name, "w"),
+    file = assert(io.open(name, "w"),
       [[could not open file "]] .. name .. [[" for writing]])
     local result = string
     if transform ~= nil then
@@ -19050,7 +19053,7 @@ parsers.unticked_box = tickbox(parsers.spacechar^1) * Cc(0.0)
 %  \begin{macrocode}
 parsers.openticks   = Cg(parsers.backtick^1, "ticks")
 
-local function captures_equal_length(s,i,a,b)
+local function captures_equal_length(_,i,a,b)
   return #a == #b and i
 end
 
@@ -19073,7 +19076,7 @@ parsers.inticks     = parsers.openticks * parsers.space^-1
 %
 % \end{markdown}
 %  \begin{macrocode}
-local function captures_geq_length(s,i,a,b)
+local function captures_geq_length(_,i,a,b)
   return #a >= #b and i
 end
 
@@ -19098,10 +19101,10 @@ end
 parsers.fencedline   = function(char)
   return               C(parsers.line - parsers.fencetail(char))
                      / function(s)
-                         i = 1
-                         remaining = fenceindent
+                         local i = 1
+                         local remaining = fenceindent
                          while true do
-                           c = s:sub(i, i)
+                           local c = s:sub(i, i)
                            if c == " " and remaining > 0 then
                              remaining = remaining - 1
                              i = i + 1
@@ -19484,7 +19487,7 @@ function M.reader.new(writer, options, extensions)
 % \end{markdown}
 %  \begin{macrocode}
   local function iterlines(s, f)
-    rope = lpeg.match(Ct((parsers.line / f)^1), s)
+    local rope = lpeg.match(Ct((parsers.line / f)^1), s)
     return util.rope_to_string(rope)
   end
 %    \end{macrocode}
@@ -19544,7 +19547,7 @@ function M.reader.new(writer, options, extensions)
                   return line
               end
               line = util.expand_tabs_in_line(line)
-              prefix = lpeg.match(C(parsers.optionalspace), line)
+              local prefix = lpeg.match(C(parsers.optionalspace), line)
               local prefix_length = #prefix
               local is_shorter = min_prefix_length == nil
               is_shorter = is_shorter or prefix_length < min_prefix_length
@@ -20609,15 +20612,15 @@ M.extensions.content_blocks = function(language_map)
 % \end{markdown}
 %  \begin{macrocode}
     else
-      kpse = {lookup=function(filename, options) return filename end}
+      kpse = {lookup=function(filename, _) return filename end}
     end
     local base, prev, curr
     for _, filename in ipairs{kpse.lookup(language_map, { all=true })} do
       local file = io.open(filename, "r")
       if not file then goto continue end
-      json = file:read("*all"):gsub('("[^\n]-"):','[%1]=')
+      local json = file:read("*all"):gsub('("[^\n]-"):','[%1]=')
       curr = (function()
-        local _ENV={ json=json, load=load } -- run in sandbox
+        local _ENV={ json=json, load=load } -- luacheck: ignore _ENV
         return load("return "..json)()
       end)()
       if type(curr) == "table" then
@@ -20819,7 +20822,7 @@ M.extensions.definition_lists = function(tight_lists)
 
       local dlchunk = Cs(parsers.line * (parsers.indentedline - parsers.blankline)^0)
 
-      local function definition_list_item(term, defs, tight)
+      local function definition_list_item(term, defs, _)
         return { term = self.parser_functions.parse_inlines(term),
                  definitions = defs }
       end
@@ -20884,7 +20887,7 @@ M.extensions.fenced_code = function(blank_before_code_fence)
       local syntax = self.syntax
       local writer = self.writer
 
-      local function captures_geq_length(s,i,a,b)
+      local function captures_geq_length(_,i,a,b)
         return #a >= #b and i
       end
 
@@ -20909,10 +20912,10 @@ M.extensions.fenced_code = function(blank_before_code_fence)
       local fencedline   = function(char)
         return             C(parsers.line - fencetail(char))
                          / function(s)
-                             i = 1
-                             remaining = fenceindent
+                             local i = 1
+                             local remaining = fenceindent
                              while true do
-                               c = s:sub(i, i)
+                               local c = s:sub(i, i)
                                if c == " " and remaining > 0 then
                                  remaining = remaining - 1
                                  i = i + 1
@@ -20946,6 +20949,7 @@ M.extensions.fenced_code = function(blank_before_code_fence)
 
       syntax.FencedCode = FencedCode
 
+      local fencestart
       if blank_before_code_fence then
         fencestart = parsers.fail
       else
@@ -21058,7 +21062,7 @@ end
 %  \begin{macrocode}
 M.extensions.header_attributes = function()
   return {
-    extend_writer = function(self)
+    extend_writer = function()
     end, extend_reader = function(self)
       local parsers = self.parsers
       local syntax = self.syntax
@@ -21229,9 +21233,9 @@ M.extensions.jekyll_data = function(expect_jekyll_data)
 
       local JekyllData
                     = Cmt( C((parsers.line - P("---") - P("..."))^0)
-                         , function(s, i, text)
+                         , function(s, i, text) -- luacheck: ignore s i
                              local data
-                             local ran_ok, error = pcall(function()
+                             local ran_ok, _ = pcall(function()
                                local tinyyaml = require("markdown-tinyyaml")
                                data = tinyyaml.parse(text, {timestamps=false})
                              end)
@@ -21460,50 +21464,50 @@ function M.new(options)
 %
 % \end{markdown}
 %  \begin{macrocode}
-  extensions = {}
+  local extensions = {}
 
   if options.citations then
-    citations_extension = M.extensions.citations(options.citationNbsps)
+    local citations_extension = M.extensions.citations(options.citationNbsps)
     table.insert(extensions, citations_extension)
   end
 
   if options.contentBlocks then
-    content_blocks_extension = M.extensions.content_blocks(
+    local content_blocks_extension = M.extensions.content_blocks(
       options.contentBlocksLanguageMap)
     table.insert(extensions, content_blocks_extension)
   end
 
   if options.definitionLists then
-    definition_lists_extension = M.extensions.definition_lists(
+    local definition_lists_extension = M.extensions.definition_lists(
       options.tightLists)
     table.insert(extensions, definition_lists_extension)
   end
 
   if options.fencedCode then
-    fenced_code_extension = M.extensions.fenced_code(
+    local fenced_code_extension = M.extensions.fenced_code(
       options.blankBeforeCodeFence)
     table.insert(extensions, fenced_code_extension)
   end
 
   if options.footnotes or options.inlineFootnotes then
-    footnotes_extension = M.extensions.footnotes(
+    local footnotes_extension = M.extensions.footnotes(
       options.footnotes, options.inlineFootnotes)
     table.insert(extensions, footnotes_extension)
   end
 
   if options.headerAttributes then
-    header_attributes_extension = M.extensions.header_attributes()
+    local header_attributes_extension = M.extensions.header_attributes()
     table.insert(extensions, header_attributes_extension)
   end
 
   if options.jekyllData then
-    jekyll_data_extension = M.extensions.jekyll_data(
+    local jekyll_data_extension = M.extensions.jekyll_data(
       options.expectJekyllData)
     table.insert(extensions, jekyll_data_extension)
   end
 
   if options.pipeTables then
-    pipe_tables_extension = M.extensions.pipe_tables(
+    local pipe_tables_extension = M.extensions.pipe_tables(
       options.tableCaptions)
     table.insert(extensions, pipe_tables_extension)
   end
