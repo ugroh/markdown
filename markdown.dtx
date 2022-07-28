@@ -7815,7 +7815,7 @@ defaultOptions.underscores = true
 % \end{figure}
 %  \begin{macrocode}
 
-HELP_STRING = [[
+local HELP_STRING = [[
 Usage: texlua ]] .. arg[0] .. [[ [OPTIONS] -- [INPUT_FILE] [OUTPUT_FILE]
 where OPTIONS are documented in the Lua interface section of the
 technical Markdown package documentation.
@@ -7827,7 +7827,7 @@ result of the conversion will be read from the standard input.
 Report bugs to: witiko@mail.muni.cz
 Markdown package home page: <https://github.com/witiko/markdown>]]
 
-VERSION_STRING = [[
+local VERSION_STRING = [[
 markdown-cli.lua (Markdown) ]] .. metadata.version .. [[
 
 Copyright (C) ]] .. table.concat(metadata.copyright,
@@ -7868,14 +7868,14 @@ for i = 1, #arg do
 % \end{markdown}
 %  \begin{macrocode}
     elseif arg[i]:match("=") then
-      key, value = arg[i]:match("(.-)=(.*)")
+      local key, value = arg[i]:match("(.-)=(.*)")
 %    \end{macrocode}
 % \begin{markdown}
 % The \luamref{defaultOptions} table is consulted to identify whether \meta{value}
 % should be parsed as a string or as a boolean.
 % \end{markdown}
 %  \begin{macrocode}
-      default_type = type(defaultOptions[key])
+      local default_type = type(defaultOptions[key])
       if default_type == "boolean" then
         options[key] = (value == "true")
       elseif default_type == "number" then
