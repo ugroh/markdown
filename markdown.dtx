@@ -1182,23 +1182,8 @@ local md5 = require("md5")
 %</latex-themes-witiko-dot,latex-themes-witiko-graphicx-http,latex-themes-witiko-tilde>
 % \fi
 % \begin{markdown}
-% a \TeX{} engine that extends \Hologo{eTeX}, all the plain \TeX{}
-% prerequisites (see Section <#sec:texprerequisites>), and the following
-% \Hologo{LaTeX2e} packages:
-%
-% \pkg{keyval}
-%
-%:    A package that enables the creation of parameter sets. This package is
-%     used to provide the \mref{markdownSetup} macro, the package options
-%     processing, as well as the parameters of the \envmref{markdown*} \LaTeX{}
-%     environment.
-%
-% \end{markdown}
-%  \begin{macrocode}
-\RequirePackage{keyval}
-%    \end{macrocode}
-% \par
-% \begin{markdown}
+% a \TeX{} engine that extends \Hologo{eTeX}, and all the plain \TeX{}
+% prerequisites (see Section <#sec:texprerequisites>):
 %
 % The following packages are soft prerequisites. They are only used to provide
 % default token renderer prototypes (see sections
@@ -14644,8 +14629,16 @@ pdflatex --shell-escape document.tex
 %
 % \markdownEnd
 %  \begin{macrocode}
-\newcommand\markdownSetup[1]{%
-  \setkeys{markdownOptions}{#1}}%
+\ExplSyntaxOn
+\cs_new:Nn
+  \@@_setup:n
+  {
+    \keys_set:nn
+      { markdown/latex-options }
+      { #1 }
+  }
+\let\markdownSetup=\@@_setup:n
+\ExplSyntaxOff
 %    \end{macrocode}
 % \begin{markdown}
 %
@@ -14868,24 +14861,32 @@ would use the following code in the preamble of your document:
 \AtEndOfPackage{\markdownLaTeXLoadedtrue}
 \ExplSyntaxOn
 \tl_new:N \markdownLaTeXThemePackageName
-\define@key{markdownOptions}{theme}{%
-  \str_if_in:NnF
-    { #1 }
-    { / }
-    {
-      \markdownError
-      { Won't load theme with unqualified name #1 }
-      { Theme names must contain at least one forward slash }
-    }
-  \tl_set:Nn \markdownLaTeXThemePackageName { #1 }
-  \str_replace_all:Nnn
-    \markdownLaTeXThemePackageName
-    { / }
-    { _ }
-  \edef\markdownLaTeXThemePackageName{%
-    markdowntheme\markdownLaTeXThemePackageName}%
-  \expandafter\markdownLaTeXThemeLoad\expandafter{%
-    \markdownLaTeXThemePackageName}{#1/}}%
+\cs_new:Nn
+  \@@_set_latex_theme:n
+  {
+    \str_if_in:NnF
+      { #1 }
+      { / }
+      {
+        \markdownError
+        { Won't load theme with unqualified name #1 }
+        { Theme names must contain at least one forward slash }
+      }
+    \tl_set:Nn \markdownLaTeXThemePackageName { #1 }
+    \str_replace_all:Nnn
+      \markdownLaTeXThemePackageName
+      { / }
+      { _ }
+    \edef\markdownLaTeXThemePackageName{
+      markdowntheme\markdownLaTeXThemePackageName}
+    \expandafter\markdownLaTeXThemeLoad\expandafter{
+      \markdownLaTeXThemePackageName}{#1/}
+  }
+\keys_define:nn
+  { markdown/latex-options }
+  {
+    theme .code:n = { \@@_set_latex_theme:n { #1 } },
+  }
 \ExplSyntaxOff
 %    \end{macrocode}
 % \begin{markdown}
@@ -14914,7 +14915,10 @@ beginning of a \LaTeX{} document.
 %<*latex>
 % \fi
 %  \begin{macrocode}
-\@onlypreamble\KV@markdownOptions@theme
+\ExplSyntaxOn
+\@onlypreamble
+  \@@_set_latex_theme:n
+\ExplSyntaxOff
 %    \end{macrocode}
 % \iffalse
 %</latex>
@@ -15205,18 +15209,24 @@ various options locally.
 %<*latex>
 % \fi
 %  \begin{macrocode}
-\define@key{markdownOptions}{snippet}{%
-  \markdownIfSnippetExists{#1}%
-    {%
-      \expandafter\markdownSetup\expandafter{%
-        \the\csname markdownLaTeXSetupSnippet%
-        \markdownLaTeXThemeName#1\endcsname}%
-    }{%
-      \markdownError
-        {Can't invoke setup snippet #1}%
-        {The setup snippet is undefined}%
-    }%
-  }%
+\ExplSyntaxOn
+\keys_define:nn
+  { markdown/latex-options }
+  {
+    snippet .code:n = {
+      \markdownIfSnippetExists{#1}
+        {
+          \expandafter\markdownSetup\expandafter{
+            \the\csname markdownLaTeXSetupSnippet
+            \markdownLaTeXThemeName#1\endcsname}
+        }{
+          \markdownError
+            {Can't~invoke~setup~snippet~#1}
+            {The~setup~snippet~is~undefined}
+        }
+    }
+  }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \iffalse
 %</latex>
@@ -15302,28 +15312,23 @@ The following ordered list will be preceded by roman numerals:
       { g_@@_ #1 _option_types_prop }
       { #2 }
       \l_tmpa_tl
-    \str_if_eq:VVTF
+    \keys_define:nn
+      { markdown/latex-options }
+      {
+        #2 .code:n = {
+          \@@_set_option_value:nn
+            { #2 }
+            { ##1 }
+        },
+      }
+    \str_if_eq:VVT
       \l_tmpa_tl
       \c_@@_option_type_boolean_tl
       {
-        \define@key
-          { markdownOptions }
-          { #2 }
-          [ true ]
+        \keys_define:nn
+          { markdown/latex-options }
           {
-            \@@_set_option_value:nn
-              { #2 }
-              { ##1 }
-          }
-      }
-      {
-        \define@key
-          { markdownOptions }
-          { #2 }
-          {
-            \@@_set_option_value:nn
-              { #2 }
-              { ##1 }
+            #2 .default:n = { true },
           }
       }
   }
@@ -15421,15 +15426,16 @@ The following ordered list will be preceded by roman numerals:
   }
 \cs_new:Nn \@@_latex_define_renderer:nNn
   {
-    \define@key
-      { markdownRenderers }
-      { #1 }
+    \keys_define:nn
+      { markdown/latex-options/renderers }
       {
-        \cs_generate_from_arg_count:NNnn
-          #2
-          \cs_set:Npn
-          { #3 }
-          { ##1 }
+        #1 .code:n = {
+          \cs_generate_from_arg_count:NNnn
+            #2
+            \cs_set:Npn
+            { #3 }
+            { ##1 }
+        },
       }
   }
 \cs_generate_variant:Nn
@@ -15484,15 +15490,16 @@ The following ordered list will be preceded by roman numerals:
   }
 \cs_new:Nn \@@_latex_define_renderer_prototype:nNn
   {
-    \define@key
-      { markdownRendererPrototypes }
-      { #1 }
+    \keys_define:nn
+      { markdown/latex-options/renderer-prototypes }
       {
-        \cs_generate_from_arg_count:NNnn
-          #2
-          \cs_set:Npn
-          { #3 }
-          { ##1 }
+        #1 .code:n = {
+          \cs_generate_from_arg_count:NNnn
+            #2
+            \cs_set:Npn
+            { #3 }
+            { ##1 }
+        },
       }
   }
 \cs_generate_variant:Nn
@@ -22976,13 +22983,23 @@ end
 %
 % \end{markdown}
 %  \begin{macrocode}
-\define@key{markdownOptions}{renderers}{%
-  \setkeys{markdownRenderers}{#1}%
-  \def\KV@prefix{KV@markdownOptions@}}%
-\define@key{markdownOptions}{rendererPrototypes}{%
-  \setkeys{markdownRendererPrototypes}{#1}%
-  \def\KV@prefix{KV@markdownOptions@}}%
-\define@key{markdownOptions}{code}{#1}%
+\ExplSyntaxOn
+\keys_define:nn
+  { markdown/latex-options }
+  {
+    renderers .code:n = {
+      \keys_set:nn
+        { markdown/latex-options/renderers }
+        { #1 }
+    },
+    rendererPrototypes .code:n = {
+      \keys_set:nn
+        { markdown/latex-options/renderer-prototypes }
+        { #1 }
+    },
+    code .code:n = { #1 },
+  }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \par
 % \begin{markdown}
