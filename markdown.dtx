@@ -14873,16 +14873,27 @@ would use the following code in the preamble of your document:
 \newif\ifmarkdownLaTeXLoaded
   \markdownLaTeXLoadedfalse
 \AtEndOfPackage{\markdownLaTeXLoadedtrue}
+\ExplSyntaxOn
+\tl_new:N \markdownLaTeXThemePackageName
 \define@key{markdownOptions}{theme}{%
-  \IfSubStr{#1}{/}{}{%
-    \markdownError
-      {Won't load theme with unqualified name #1}%
-      {Theme names must contain at least one forward slash}}%
-  \StrSubstitute{#1}{/}{_}[\markdownLaTeXThemePackageName]%
+  \str_if_in:NnF
+    { #1 }
+    { / }
+    {
+      \markdownError
+      { Won't load theme with unqualified name #1 }
+      { Theme names must contain at least one forward slash }
+    }
+  \tl_set:Nn \markdownLaTeXThemePackageName { #1 }
+  \str_replace_all:Nnn
+    \markdownLaTeXThemePackageName
+    { / }
+    { _ }
   \edef\markdownLaTeXThemePackageName{%
     markdowntheme\markdownLaTeXThemePackageName}%
   \expandafter\markdownLaTeXThemeLoad\expandafter{%
     \markdownLaTeXThemePackageName}{#1/}}%
+\ExplSyntaxOff
 %    \end{macrocode}
 % \begin{markdown}
 %
@@ -23176,8 +23187,15 @@ end
 %
 % \end{markdown}
 %  \begin{macrocode}
+\ExplSyntaxOn
 \def\markdownLATEXStrongEmphasis#1{%
-  \IfSubStr\f@series{b}{\textnormal{#1}}{\textbf{#1}}}
+  \str_if_in:NnTF
+    \f@series
+    { b }
+    { \textnormal{#1} }
+    { \textbf{#1} }
+}
+\ExplSyntaxOff
 \markdownSetup{rendererPrototypes={strongEmphasis={%
   \protect\markdownLATEXStrongEmphasis{#1}}}}
 %    \end{macrocode}
