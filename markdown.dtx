@@ -8316,9 +8316,7 @@ For more information, see the examples for the \Opt{finalizeCache} option.
 % \begin{markdown}
 %
 % The \mref{markdownOptionOutputTempFileName} macro has been deprecated and
-% will be removed in Markdown 3.0.0. To control the filename of the temporary
-% file for Lua output, use the \mref{g_luabridge_error_output_filename_str}
-% macro from the \pkg{lt3luabridge} package.
+% will be removed in Markdown 3.0.0.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -8379,20 +8377,6 @@ For more information, see the examples for the \Opt{finalizeCache} option.
   { outputDir }
   { path }
   { . }
-%    \end{macrocode}
-% \begin{markdown}
-%
-% The \mref{markdownOptionOutputDir} macro is also used to set the
-% \mref{g_luabridge_output_dirname_str} macro from the \pkg{lt3luabridge}
-% package.
-%
-% \end{markdown}
-%  \begin{macrocode}
-\str_new:N
-  \g_luabridge_output_dirname_str
-\tl_gset:Nn
-  \g_luabridge_output_dirname_str
-  { \markdownOptionOutputDir }
 %    \end{macrocode}
 % \begin{markdown}
 %
