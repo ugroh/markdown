@@ -1258,6 +1258,11 @@ local md5 = require("md5")
 %     <#sec:latexyamlmetadata>, and also in the default renderer prototype
 %     for attribute identifiers.
 %
+% \pkg{soulutf8}
+%
+%:    A package that is used in the default renderer prototype for
+%     strike-throughs.
+%
 % \end{markdown}
 %  \begin{macrocode}
 \RequirePackage{expl3}
@@ -6999,6 +7004,129 @@ following text:
 % \fi
 %  \begin{macrocode}
 defaultOptions.startNumber = true
+%    \end{macrocode}
+% \par
+% \iffalse
+%</lua,lua-cli>
+%<*manual-options>
+
+#### Option `strikeThrough`
+
+`strikeThrough` (default value: `false`)
+
+% \fi
+% \begin{markdown}
+%
+% \Optitem[false]{strikeThrough}{\opt{true}, \opt{false}}
+%
+:    true
+
+     :   Enable the Pandoc strike-through syntax extension:
+
+         ``` md
+         This ~~is deleted text.~~
+         ``````
+
+:    false
+
+     :   Disable the Pandoc strike-through syntax extension:
+
+% \end{markdown}
+% \iffalse
+
+##### Plain \TeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\input markdown
+\def\markdownOptionStrikeThrough{true}
+\input soulutf8.sty
+\def\markdownRendererStrikeThrough#1{\st{#1}}
+\markdownBegin
+This is ~~a lunar roving vehicle~~ strike-through text.
+\markdownEnd
+\bye
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+luatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> This is ~~a lunar roving vehicle~~ strike-through text.
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\documentclass{article}
+\usepackage[strikeThrough]{markdown}
+\usepackage{soulutf8}
+\markdownSetup{
+  renderers = {
+    strikeThrough = {\st{#1}},
+  },
+}
+\begin{document}
+\begin{markdown}
+This is ~~a lunar roving vehicle~~ strike-through text.
+\end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> This is ~~a lunar roving vehicle~~ strike-through text.
+
+##### \Hologo{ConTeXt} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\input soul.sty
+\def\markdownRendererStrikeThrough#1{\st{#1}}
+\markdownBegin
+
+\usemodule[t][markdown]
+\def\markdownOptionStrikeThrough{true}
+\def\markdownRendererStrikeThrough#1{\overstrikes{#1}}
+\starttext
+\startmarkdown
+This is ~~a lunar roving vehicle~~ strike-through text.
+\stopmarkdown
+\stoptext
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+context document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> This is ~~a lunar roving vehicle~~ strike-through text.
+
+%</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\@@_add_lua_option:nnn
+  { strikeThrough }
+  { boolean }
+  { false }
+%    \end{macrocode}
+% \iffalse
+%</tex>
+%<*lua,lua-cli>
+% \fi
+%  \begin{macrocode}
+defaultOptions.strikeThrough = false
 %    \end{macrocode}
 % \par
 % \iffalse
@@ -13977,6 +14105,120 @@ following text:
 %
 % \begin{markdown}
 
+#### Strike-Through Renderer
+The \mdef{markdownRendererStrikeThrough} macro represents a strike-through span of
+text. The macro receives a single argument that corresponds to the striked-out
+span of text. This macro will only be produced, when the \Opt{strikeThrough}
+option is enabled.
+
+% \end{markdown}
+%
+% \iffalse
+
+##### Plain \TeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\input markdown
+\def\markdownOptionStrikeThrough{true}
+\input soulutf8.sty
+\def\markdownRendererStrikeThrough#1{\st{#1}}
+\markdownBegin
+This is ~~a lunar roving vehicle~~ strike-through text.
+\markdownEnd
+\bye
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+luatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> This is ~~a lunar roving vehicle~~ strike-through text.
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\documentclass{article}
+\usepackage[strikeThrough]{markdown}
+\usepackage{soulutf8}
+\markdownSetup{
+  renderers = {
+    strikeThrough = {\st{#1}},
+  },
+}
+\begin{document}
+\begin{markdown}
+This is ~~a lunar roving vehicle~~ strike-through text.
+\end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> This is ~~a lunar roving vehicle~~ strike-through text.
+
+##### \Hologo{ConTeXt} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\input soul.sty
+\def\markdownRendererStrikeThrough#1{\st{#1}}
+\markdownBegin
+
+\usemodule[t][markdown]
+\def\markdownOptionStrikeThrough{true}
+\def\markdownRendererStrikeThrough#1{\overstrikes{#1}}
+\starttext
+\startmarkdown
+This is ~~a lunar roving vehicle~~ strike-through text.
+\stopmarkdown
+\stoptext
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+context document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> This is ~~a lunar roving vehicle~~ strike-through text.
+
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererStrikeThrough{%
+  \markdownRendererStrikeThroughPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { strikeThrough }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { strikeThrough }
+  { 1 }
+\ExplSyntaxOff
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
 ### Token Renderer Prototypes {#texrendererprototypes}
 
 % \end{markdown}
@@ -18848,6 +19090,7 @@ parsers.internal_punctuation   = S(":;,.?")
 
 parsers.doubleasterisks        = P("**")
 parsers.doubleunderscores      = P("__")
+parsers.doubletildes           = P("~~")
 parsers.fourspaces             = P("    ")
 
 parsers.any                    = P(1)
@@ -20107,6 +20350,7 @@ function M.reader.new(writer, options, extensions)
                             + V("UlOrStarLine")
                             + V("Strong")
                             + V("Emph")
+                            + V("StrikeThrough")
                             + V("InlineNote")
                             + V("NoteRef")
                             + V("Citations")
@@ -20150,6 +20394,7 @@ function M.reader.new(writer, options, extensions)
       UlOrStarLine          = parsers.UlOrStarLine,
       Strong                = parsers.Strong,
       Emph                  = parsers.Emph,
+      StrikeThrough         = parsers.fail,
       InlineNote            = parsers.fail,
       NoteRef               = parsers.fail,
       Citations             = parsers.fail,
@@ -21416,6 +21661,48 @@ end
 %    \end{macrocode}
 % \begin{markdown}
 %
+%#### Strike-Through
+%
+% The \luamdef{extensions.strike_through} function implements the Pandoc
+% strike-through syntax extension.
+%
+% \end{markdown}
+%  \begin{macrocode}
+M.extensions.strike_through = function()
+  return {
+    extend_writer = function(self)
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Define \luamdef{writer->strike_through} as a function that will transform
+% a strike-through span `s` of input text to the output format.
+%
+% \end{markdown}
+%  \begin{macrocode}
+      function self.strike_through(s)
+        return {"\\markdownRendererStrikeThrough{",s,"}"}
+      end
+    end, extend_reader = function(self)
+      local parsers = self.parsers
+      local syntax = self.syntax
+      local writer = self.writer
+
+      local StrikeThrough = (
+        parsers.between(parsers.Inline, parsers.doubletildes,
+                        parsers.doubletildes)
+      ) / writer.strike_through
+
+      syntax.StrikeThrough = StrikeThrough
+
+      self.add_special_character("~")
+    end
+  }
+end
+%    \end{macrocode}
+% \begin{markdown}
+%
+%
 %### Conversion from Markdown to Plain \TeX{}
 %
 % The \luamref{new} method returns the \luamref{reader->convert} function of a reader
@@ -21490,6 +21777,11 @@ function M.new(options)
     local pipe_tables_extension = M.extensions.pipe_tables(
       options.tableCaptions)
     table.insert(extensions, pipe_tables_extension)
+  end
+
+  if options.strikeThrough then
+    local strike_through_extension = M.extensions.strike_through()
+    table.insert(extensions, strike_through_extension)
   end
 
   local writer = M.writer.new(options)
@@ -21676,6 +21968,7 @@ end
 \def\markdownRendererTickedBoxPrototype{[X]}%
 \def\markdownRendererHalfTickedBoxPrototype{[/]}%
 \def\markdownRendererUntickedBoxPrototype{[ ]}%
+\def\markdownRendererStrikeThroughPrototype#1{#1}%
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -23777,6 +24070,26 @@ end
 % \par
 % \begin{markdown}
 %
+%#### Strike-Through
+% If the \Opt{strikeThrough} option is enabled, we will load the
+% \pkg{soulutf8} package and use it to implement strike-throughs.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\markdownIfOption{strikeThrough}{%
+  \RequirePackage{soulutf8}%
+  \markdownSetup{
+    rendererPrototypes = {
+      strikeThrough = {%
+        \st{#1}%
+      },
+    }
+  }
+}{}
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
 %### Miscellanea
 % When buffering user input, we should disable the bytes with the high bit set,
 % since these are made active by the \pkg{inputenc} package. We will do this by
@@ -24025,6 +24338,7 @@ end
 \def\markdownRendererTickedBoxPrototype{$\boxtimes$}
 \def\markdownRendererHalfTickedBoxPrototype{$\boxdot$}
 \def\markdownRendererUntickedBoxPrototype{$\square$}
+\def\markdownRendererStrikeThroughPrototype#1{\overstrikes{#1}}
 %    \end{macrocode}
 % \par
 % \begin{markdown}

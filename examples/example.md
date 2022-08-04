@@ -102,7 +102,7 @@ This is a definition list:
 
 Term 1
 
-:   Definition 1
+:   Definition 1 with some ~~removed text~~
 
 Term 2
 
