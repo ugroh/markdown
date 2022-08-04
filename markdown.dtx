@@ -13977,6 +13977,120 @@ following text:
 %
 % \begin{markdown}
 
+#### Strike-Through Renderer
+The \mdef{markdownRendererStrikeThrough} macro represents a strike-through span of
+text. The macro receives a single argument that corresponds to the striked-out
+span of text. This macro will only be produced, when the \Opt{strikeThrough}
+option is enabled.
+
+% \end{markdown}
+%
+% \iffalse
+
+##### Plain \TeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\input markdown
+\def\markdownOptionStrikeThrough{true}
+\input soulutf8.sty
+\def\markdownRendererStrikeThrough#1{\st{#1}}
+\markdownBegin
+This is ~~a lunar roving vehicle~~ strike-through text.
+\markdownEnd
+\bye
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+luatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> This is ~~a lunar roving vehicle~~ strike-through text.
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\documentclass{article}
+\usepackage[strikeThrough]{markdown}
+\usepackage{soulutf8}
+\markdownSetup{
+  renderers = {
+    strikeThrough = {\st{#1}},
+  },
+}
+\begin{document}
+\begin{markdown}
+This is ~~a lunar roving vehicle~~ strike-through text.
+\end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> This is ~~a lunar roving vehicle~~ strike-through text.
+
+##### \Hologo{ConTeXt} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\input soul.sty
+\def\markdownRendererStrikeThrough#1{\st{#1}}
+\markdownBegin
+
+\usemodule[t][markdown]
+\def\markdownOptionStrikeThrough{true}
+\def\markdownRendererStrikeThrough#1{\overstrikes{#1}}
+\starttext
+\startmarkdown
+This is ~~a lunar roving vehicle~~ strike-through text.
+\stopmarkdown
+\stoptext
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+context document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> This is ~~a lunar roving vehicle~~ strike-through text.
+
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererStrikeThrough{%
+  \markdownRendererStrikeThroughPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { strikeThrough }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { strikeThrough }
+  { 1 }
+\ExplSyntaxOff
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
 ### Token Renderer Prototypes {#texrendererprototypes}
 
 % \end{markdown}
