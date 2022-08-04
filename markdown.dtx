@@ -7005,6 +7005,129 @@ defaultOptions.startNumber = true
 %</lua,lua-cli>
 %<*manual-options>
 
+#### Option `strikeThrough`
+
+`strikeThrough` (default value: `false`)
+
+% \fi
+% \begin{markdown}
+%
+% \Optitem[false]{strikeThrough}{\opt{true}, \opt{false}}
+%
+:    true
+
+     :   Enable the Pandoc strike-through syntax extension:
+
+         ``` md
+         This ~~is deleted text.~~
+         ``````
+
+:    false
+
+     :   Disable the Pandoc strike-through syntax extension:
+
+% \end{markdown}
+% \iffalse
+
+##### Plain \TeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\input markdown
+\def\markdownOptionStrikeThrough{true}
+\input soulutf8.sty
+\def\markdownRendererStrikeThrough#1{\st{#1}}
+\markdownBegin
+This is ~~a lunar roving vehicle~~ strike-through text.
+\markdownEnd
+\bye
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+luatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> This is ~~a lunar roving vehicle~~ strike-through text.
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\documentclass{article}
+\usepackage[strikeThrough]{markdown}
+\usepackage{soulutf8}
+\markdownSetup{
+  renderers = {
+    strikeThrough = {\st{#1}},
+  },
+}
+\begin{document}
+\begin{markdown}
+This is ~~a lunar roving vehicle~~ strike-through text.
+\end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> This is ~~a lunar roving vehicle~~ strike-through text.
+
+##### \Hologo{ConTeXt} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\input soul.sty
+\def\markdownRendererStrikeThrough#1{\st{#1}}
+\markdownBegin
+
+\usemodule[t][markdown]
+\def\markdownOptionStrikeThrough{true}
+\def\markdownRendererStrikeThrough#1{\overstrikes{#1}}
+\starttext
+\startmarkdown
+This is ~~a lunar roving vehicle~~ strike-through text.
+\stopmarkdown
+\stoptext
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+context document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> This is ~~a lunar roving vehicle~~ strike-through text.
+
+%</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\@@_add_lua_option:nnn
+  { strikeThrough }
+  { boolean }
+  { false }
+%    \end{macrocode}
+% \iffalse
+%</tex>
+%<*lua,lua-cli>
+% \fi
+%  \begin{macrocode}
+defaultOptions.strikeThrough = false
+%    \end{macrocode}
+% \par
+% \iffalse
+%</lua,lua-cli>
+%<*manual-options>
+
 #### Option `stripIndent`
 
 `stripIndent` (default value: `false`)
@@ -21649,6 +21772,11 @@ function M.new(options)
     local pipe_tables_extension = M.extensions.pipe_tables(
       options.tableCaptions)
     table.insert(extensions, pipe_tables_extension)
+  end
+
+  if options.strikeThrough then
+    local strike_through_extension = M.extensions.strike_through()
+    table.insert(extensions, strike_through_extension)
   end
 
   local writer = M.writer.new(options)
