@@ -18848,6 +18848,7 @@ parsers.internal_punctuation   = S(":;,.?")
 
 parsers.doubleasterisks        = P("**")
 parsers.doubleunderscores      = P("__")
+parsers.doubletildes           = P("~~")
 parsers.fourspaces             = P("    ")
 
 parsers.any                    = P(1)
@@ -20107,6 +20108,7 @@ function M.reader.new(writer, options, extensions)
                             + V("UlOrStarLine")
                             + V("Strong")
                             + V("Emph")
+                            + V("StrikeThrough")
                             + V("InlineNote")
                             + V("NoteRef")
                             + V("Citations")
@@ -20150,6 +20152,7 @@ function M.reader.new(writer, options, extensions)
       UlOrStarLine          = parsers.UlOrStarLine,
       Strong                = parsers.Strong,
       Emph                  = parsers.Emph,
+      StrikeThrough         = parsers.fail,
       InlineNote            = parsers.fail,
       NoteRef               = parsers.fail,
       Citations             = parsers.fail,
@@ -21415,6 +21418,48 @@ M.extensions.pipe_tables = function(table_captions)
 end
 %    \end{macrocode}
 % \begin{markdown}
+%
+%#### Strike-Through
+%
+% The \luamdef{extensions.strike_through} function implements the Pandoc
+% strike-through syntax extension.
+%
+% \end{markdown}
+%  \begin{macrocode}
+M.extensions.strike_through = function()
+  return {
+    extend_writer = function(self)
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Define \luamdef{writer->strike_through} as a function that will transform
+% a strike-through span `s` of input text to the output format.
+%
+% \end{markdown}
+%  \begin{macrocode}
+      function self.strike_through(s)
+        return {"\\markdownRendererStrikeThrough{",s,"}"}
+      end
+    end, extend_reader = function(self)
+      local parsers = self.parsers
+      local syntax = self.syntax
+      local writer = self.writer
+
+      local StrikeThrough = (
+        parsers.between(parsers.Inline, parsers.doubletildes,
+                        parsers.doubletildes)
+      ) / writer.strike_through
+
+      syntax.StrikeThrough = StrikeThrough
+
+      self.add_special_character("~")
+    end
+  }
+end
+%    \end{macrocode}
+% \begin{markdown}
+%
 %
 %### Conversion from Markdown to Plain \TeX{}
 %
