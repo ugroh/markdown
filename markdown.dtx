@@ -24022,11 +24022,15 @@ end
 \def\markdownRendererHorizontalRulePrototype{%
   \blackrule[height=1pt, width=\hsize]}%
 \def\markdownRendererFootnotePrototype#1{\footnote{#1}}%
+\def\markdownRendererTickedBox{$\boxtimes$}
+\def\markdownRendererHalfTickedBox{$\boxdot$}
+\def\markdownRendererUntickedBox{$\square$}
 \stopmodule\protect
 %    \end{macrocode}
 % \par
 % \begin{markdown}
 %
+%#### Tables
 % There is a basic implementation of tables.
 %
 % \end{markdown}
@@ -24096,9 +24100,6 @@ end
   \ifnum\markdownConTeXtColumnCounter<\markdownConTeXtColumnTotal\relax\else
     \expandafter\gobbleoneargument
   \fi\markdownConTeXtRenderTableCell}
-\def\markdownRendererTickedBox{$\boxtimes$}
-\def\markdownRendererHalfTickedBox{$\boxdot$}
-\def\markdownRendererUntickedBox{$\square$}
 %    \end{macrocode}
 % \iffalse
 %</context>
