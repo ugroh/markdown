@@ -1258,6 +1258,11 @@ local md5 = require("md5")
 %     <#sec:latexyamlmetadata>, and also in the default renderer prototype
 %     for attribute identifiers.
 %
+% \pkg{soulutf8}
+%
+%:    A package that is used in the default renderer prototype for
+%     strike-throughs.
+%
 % \end{markdown}
 %  \begin{macrocode}
 \RequirePackage{expl3}
@@ -24061,6 +24066,26 @@ end
   },
 }
 \ExplSyntaxOff
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+%#### Strike-Through
+% If the \Opt{strikeThrough} option is enabled, we will load the
+% \pkg{soulutf8} package and use it to implement strike-throughs.
+%
+% \end{markdown}
+%  \begin{macrocode}
+\markdownIfOption{strikeThrough}{%
+  \RequirePackage{soulutf8}%
+  \markdownSetup{
+    rendererPrototypes = {
+      strikeThrough = {%
+        \st{#1}%
+      },
+    }
+  }
+}{}
 %    \end{macrocode}
 % \par
 % \begin{markdown}
