@@ -19482,7 +19482,7 @@ parsers.fourspaces             = P("    ")
 parsers.any                    = P(1)
 parsers.fail                   = parsers.any - 1
 
-parsers.escapable              = S("\\`*_{}[]()+_.!<>#-~:^@;")
+parsers.escapable              = S("!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~")
 parsers.anyescaped             = parsers.backslash / "" * parsers.escapable
                                + parsers.any
 
