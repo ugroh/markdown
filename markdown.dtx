@@ -14211,6 +14211,222 @@ following text:
 %
 % \begin{markdown}
 
+#### Superscript Renderer
+The \mdef{markdownRendererSuperscript} macro represents a superscript span of
+text. The macro receives a single argument that corresponds to the superscript
+span of text. This macro will only be produced, when the \Opt{superscripts}
+option is enabled.
+
+% \end{markdown}
+%
+% \iffalse
+
+##### Plain \TeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\input markdown
+\def\markdownOptionSuperscripts{true}
+\def\markdownRendererSuperscript#1{ taken to the power of #1}
+\markdownBegin
+2^10^ is 1024.
+\markdownEnd
+\bye
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+luatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> 2 taken to the power of 10 is 1024.
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\documentclass{article}
+\usepackage[superscripts]{markdown}
+\markdownSetup{
+  renderers = {
+    superscript = { taken to the power of #1},
+  },
+}
+\begin{document}
+\begin{markdown}
+2^10^ is 1024.
+\end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> 2 taken to the power of 10 is 1024.
+
+##### \Hologo{ConTeXt} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\usemodule[t][markdown]
+\def\markdownOptionSuperscripts{true}
+\def\markdownRendererSuperscript#1{ taken to the power of #1}
+\starttext
+\startmarkdown
+2^10^ is 1024.
+\stopmarkdown
+\stoptext
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+context document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> 2 taken to the power of 10 is 1024.
+
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererSuperscript{%
+  \markdownRendererSuperscriptPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { superscript }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { superscript }
+  { 1 }
+\ExplSyntaxOff
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
+#### Subscript Renderer
+The \mdef{markdownRendererSubscript} macro represents a subscript span of
+text. The macro receives a single argument that corresponds to the subscript
+span of text. This macro will only be produced, when the \Opt{subscripts}
+option is enabled.
+
+% \end{markdown}
+%
+% \iffalse
+
+##### Plain \TeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\input markdown
+\def\markdownOptionSubscripts{true}
+\def\markdownRendererSubscript#1{ (#1 moles) and }
+\markdownBegin
+H~2~O is a liquid.
+\markdownEnd
+\bye
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+luatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> H (2 moles) and O is liquid.
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\documentclass{article}
+\usepackage[subscripts]{markdown}
+\markdownSetup{
+  renderers = {
+    subscript = { (#1 moles) and },
+  },
+}
+\begin{document}
+\begin{markdown}
+H~2~O is a liquid.
+\end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> H (2 moles) and O is liquid.
+
+##### \Hologo{ConTeXt} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\usemodule[t][markdown]
+\def\markdownOptionSubscripts{true}
+\def\markdownRendererSubscript#1{ (#1 moles) and }
+\starttext
+\startmarkdown
+H~2~O is a liquid.
+\stopmarkdown
+\stoptext
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+context document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> H (2 moles) and O is liquid.
+
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererSubscript{%
+  \markdownRendererSubscriptPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { subscript }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { subscript }
+  { 1 }
+\ExplSyntaxOff
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
 ### Token Renderer Prototypes {#texrendererprototypes}
 
 % \end{markdown}
