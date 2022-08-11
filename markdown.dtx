@@ -20343,6 +20343,8 @@ function M.reader.new(writer, options, extensions)
                             + V("Strong")
                             + V("Emph")
                             + V("StrikeThrough")
+                            + V("Superscript")
+                            + V("Subscript")
                             + V("InlineNote")
                             + V("NoteRef")
                             + V("Citations")
@@ -20387,6 +20389,8 @@ function M.reader.new(writer, options, extensions)
       Strong                = parsers.Strong,
       Emph                  = parsers.Emph,
       StrikeThrough         = parsers.fail,
+      Superscript           = parsers.fail,
+      Subscript             = parsers.fail,
       InlineNote            = parsers.fail,
       NoteRef               = parsers.fail,
       Citations             = parsers.fail,
@@ -21696,6 +21700,85 @@ end
 %    \end{macrocode}
 % \begin{markdown}
 %
+%#### Superscripts
+%
+% The \luamdef{extensions.superscripts} function implements the Pandoc
+% superscript syntax extension.
+%
+% \end{markdown}
+%  \begin{macrocode}
+M.extensions.superscripts = function()
+  return {
+    extend_writer = function(self)
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Define \luamdef{writer->superscript} as a function that will transform
+% a superscript span `s` of input text to the output format.
+%
+% \end{markdown}
+%  \begin{macrocode}
+      function self.superscript(s)
+        return {"\\markdownRendererSuperscript{",s,"}"}
+      end
+    end, extend_reader = function(self)
+      local parsers = self.parsers
+      local syntax = self.syntax
+      local writer = self.writer
+
+      local Superscript = (
+        parsers.between(parsers.Str, parsers.circumflex, parsers.circumflex)
+      ) / writer.superscript
+
+      syntax.Superscript = Superscript
+
+      self.add_special_character("^")
+    end
+  }
+end
+%    \end{macrocode}
+% \begin{markdown}
+%
+%#### Subscripts
+%
+% The \luamdef{extensions.subscripts} function implements the Pandoc
+% subscript syntax extension.
+%
+% \end{markdown}
+%  \begin{macrocode}
+M.extensions.subscripts = function()
+  return {
+    extend_writer = function(self)
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Define \luamdef{writer->subscript} as a function that will transform
+% a subscript span `s` of input text to the output format.
+%
+% \end{markdown}
+%  \begin{macrocode}
+      function self.subscript(s)
+        return {"\\markdownRendererSubscript{",s,"}"}
+      end
+    end, extend_reader = function(self)
+      local parsers = self.parsers
+      local syntax = self.syntax
+      local writer = self.writer
+
+      local Subscript = (
+        parsers.between(parsers.Str, parsers.tilde, parsers.tilde)
+      ) / writer.subscript
+
+      syntax.Subscript = Subscript
+
+      self.add_special_character("~")
+    end
+  }
+end
+%    \end{macrocode}
+% \begin{markdown}
 %
 %### Conversion from Markdown to Plain \TeX{}
 %
