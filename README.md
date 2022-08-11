@@ -187,9 +187,10 @@ For further information, consult one of the following:
     - [Markdown 2.8.1: Boldly Unto the Throne of Lightweight Markup in TeX][10.5300/2020-1-2/48],
     - [Markdown 2.10.0: LaTeX Themes & Snippets][10.5300/2021-1-4/76], and
     - [Direct Typesetting of Various Document Formats in TeX Using the Pandoc Utility][10.5300/2021-1-4/83].
-6. My talks:
+6. Talks by me and my students:
     - [Five Years of Markdown in LaTeX: What, Why, How, and Whereto][pv212-fall2020] (in Czech), and
     - [Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX][tb131-video] ([slides][tb131-slides]).
+    - [A Gentle Introduction to Markdown for Writers][tb134-video] ([slides][tb134-slides], [example][tb134-example]).
 
  [overleaf-1]: https://www.overleaf.com/learn/latex/Articles/How_to_write_in_Markdown_on_Overleaf       "How to write in Markdown on Overleaf"
  [overleaf-2]: https://www.overleaf.com/learn/latex/Articles/Markdown_into_LaTeX_with_Style             "Markdown into LaTeX with Style"
@@ -204,8 +205,11 @@ For further information, consult one of the following:
  [tb131]: https://www.tug.org/TUGboat/tb42-2/tb131novotny-markdown.pdf      "Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX"
  [tb133]: https://www.overleaf.com/read/pshkckczmmjn                        "Markdown 2.15.0: What's New?"
 
- [tb131-slides]:   https://tug.org/tug2021/assets/pdf/tug2021-novotny-slides.pdf   "Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX"
- [tb131-video]:    https://youtu.be/THmPkAncMnc                                    "Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX"
+ [tb131-slides]:  https://tug.org/tug2021/assets/pdf/tug2021-novotny-slides.pdf           "Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX"
+ [tb131-video]:   https://youtu.be/THmPkAncMnc                                            "Markdown 2.10.0: LaTeX Themes & Snippets, Two Flavors of Comments, and LuaMetaTeX"
+ [tb134-slides]:  https://tug.org/tug2022/assets/pdf/Tereza_Vrabcová-TUG2022-slides.pdf   "A Gentle Introduction to Markdown for Writers"
+ [tb134-example]: https://tug.org/tug2022/assets/pdf/Tereza_Vrabcová-TUG2022-example.pdf  "A Gentle Introduction to Markdown for Writers"
+ [tb134-video]:   https://youtu.be/cqbKgjAlNjo?t=2h10m35s                                 "A Gentle Introduction to Markdown for Writers"
 
  [10.5300/2016-1-4/78]: https://bulletin.cstug.cz/pdf/2016-1-4.pdf#page=80 "Rendering Markdown inside TeX Documents"
  [10.5300/2020-1-2/48]: https://bulletin.cstug.cz/pdf/2020-1-2.pdf#page=50 "Markdown 2.8.1: Boldly Unto the Throne of Lightweight Markup in TeX"
