@@ -7242,6 +7242,184 @@ defaultOptions.stripIndent = false
 %</lua,lua-cli>
 %<*manual-options>
 
+#### Option `subscripts`
+
+`subscripts` (default value: `false`)
+
+% \fi
+% \begin{markdown}
+%
+% \Optitem[false]{subscripts}{\opt{true}, \opt{false}}
+%
+:    true
+
+     :   Enable the Pandoc subscript syntax extension:
+
+         ``` md
+         H~2~O is a liquid.
+         ``````
+
+:    false
+
+     :   Disable the Pandoc subscript syntax extension.
+
+% \end{markdown}
+% \iffalse
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\documentclass{article}
+\usepackage[subscripts]{markdown}
+\begin{document}
+\begin{markdown}
+H~2~O is a liquid.
+\end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> H~2~O is a liquid.
+
+##### \Hologo{ConTeXt} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\usemodule[t][markdown]
+\def\markdownOptionSubscripts{true}
+\starttext
+\startmarkdown
+H~2~O is a liquid.
+\stopmarkdown
+\stoptext
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+context document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> H~2~O is a liquid.
+
+%</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\@@_add_lua_option:nnn
+  { subscripts }
+  { boolean }
+  { false }
+%    \end{macrocode}
+% \iffalse
+%</tex>
+%<*lua,lua-cli>
+% \fi
+%  \begin{macrocode}
+defaultOptions.subscripts = false
+%    \end{macrocode}
+% \par
+% \iffalse
+%</lua,lua-cli>
+%<*manual-options>
+
+#### Option `superscripts`
+
+`superscripts` (default value: `false`)
+
+% \fi
+% \begin{markdown}
+%
+% \Optitem[false]{superscripts}{\opt{true}, \opt{false}}
+%
+:    true
+
+     :   Enable the Pandoc superscript syntax extension:
+
+         ``` md
+         2^10^ is 1024.
+         ``````
+
+:    false
+
+     :   Disable the Pandoc superscript syntax extension.
+
+% \end{markdown}
+% \iffalse
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\documentclass{article}
+\usepackage[superscripts]{markdown}
+\begin{document}
+\begin{markdown}
+2^10^ is 1024.
+\end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> 2^10^ is 1024.
+
+##### \Hologo{ConTeXt} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\usemodule[t][markdown]
+\def\markdownOptionSuperscripts{true}
+\starttext
+\startmarkdown
+2^10^ is 1024.
+\stopmarkdown
+\stoptext
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+context document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> 2^10^ is 1024.
+
+%</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\@@_add_lua_option:nnn
+  { superscripts }
+  { boolean }
+  { false }
+%    \end{macrocode}
+% \iffalse
+%</tex>
+%<*lua,lua-cli>
+% \fi
+%  \begin{macrocode}
+defaultOptions.superscripts = false
+%    \end{macrocode}
+% \par
+% \iffalse
+%</lua,lua-cli>
+%<*manual-options>
+
 #### Option `tableCaptions`
 
 `tableCaptions` (default value: `false`)
@@ -22075,6 +22253,16 @@ function M.new(options)
   if options.strikeThrough then
     local strike_through_extension = M.extensions.strike_through()
     table.insert(extensions, strike_through_extension)
+  end
+
+  if options.subscripts then
+    local subscript_extension = M.extensions.subscripts()
+    table.insert(extensions, subscript_extension)
+  end
+
+  if options.superscripts then
+    local superscript_extension = M.extensions.superscripts()
+    table.insert(extensions, superscript_extension)
   end
 
   local writer = M.writer.new(options)
