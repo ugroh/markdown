@@ -130,3 +130,18 @@ jobs:
       - name: Publish Docker image
         if: github.ref == 'refs/heads/main'
         run: docker push witiko/markdown --all-tags
+  automerge:
+    name: Automatically merge pull request
+    needs:
+      - test-and-publish
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Automatically merge pull request
+        uses: plm9606/automerge_actions@1.2.3
+        with:
+          label-name: automerge
+          reviewers-number: 0
+          merge-method: merge
+          auto-delete: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
