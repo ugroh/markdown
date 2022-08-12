@@ -1,0 +1,13 @@
+<<<
+This test ensures that the Lua `subscripts` option is disabled by default.
+
+H~2~O is a liquid and some \~regular~ text with tildes.
+>>>
+documentBegin
+codeSpan: subscripts
+interblockSeparator
+tilde
+tilde
+tilde
+tilde
+documentEnd

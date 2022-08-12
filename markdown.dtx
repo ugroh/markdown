@@ -7242,6 +7242,184 @@ defaultOptions.stripIndent = false
 %</lua,lua-cli>
 %<*manual-options>
 
+#### Option `subscripts`
+
+`subscripts` (default value: `false`)
+
+% \fi
+% \begin{markdown}
+%
+% \Optitem[false]{subscripts}{\opt{true}, \opt{false}}
+%
+:    true
+
+     :   Enable the Pandoc subscript syntax extension:
+
+         ``` md
+         H~2~O is a liquid.
+         ``````
+
+:    false
+
+     :   Disable the Pandoc subscript syntax extension.
+
+% \end{markdown}
+% \iffalse
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\documentclass{article}
+\usepackage[subscripts]{markdown}
+\begin{document}
+\begin{markdown}
+H~2~O is a liquid.
+\end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> H~2~O is a liquid.
+
+##### \Hologo{ConTeXt} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\usemodule[t][markdown]
+\def\markdownOptionSubscripts{true}
+\starttext
+\startmarkdown
+H~2~O is a liquid.
+\stopmarkdown
+\stoptext
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+context document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> H~2~O is a liquid.
+
+%</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\@@_add_lua_option:nnn
+  { subscripts }
+  { boolean }
+  { false }
+%    \end{macrocode}
+% \iffalse
+%</tex>
+%<*lua,lua-cli>
+% \fi
+%  \begin{macrocode}
+defaultOptions.subscripts = false
+%    \end{macrocode}
+% \par
+% \iffalse
+%</lua,lua-cli>
+%<*manual-options>
+
+#### Option `superscripts`
+
+`superscripts` (default value: `false`)
+
+% \fi
+% \begin{markdown}
+%
+% \Optitem[false]{superscripts}{\opt{true}, \opt{false}}
+%
+:    true
+
+     :   Enable the Pandoc superscript syntax extension:
+
+         ``` md
+         2^10^ is 1024.
+         ``````
+
+:    false
+
+     :   Disable the Pandoc superscript syntax extension.
+
+% \end{markdown}
+% \iffalse
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\documentclass{article}
+\usepackage[superscripts]{markdown}
+\begin{document}
+\begin{markdown}
+2^10^ is 1024.
+\end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> 2^10^ is 1024.
+
+##### \Hologo{ConTeXt} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\usemodule[t][markdown]
+\def\markdownOptionSuperscripts{true}
+\starttext
+\startmarkdown
+2^10^ is 1024.
+\stopmarkdown
+\stoptext
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+context document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> 2^10^ is 1024.
+
+%</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\@@_add_lua_option:nnn
+  { superscripts }
+  { boolean }
+  { false }
+%    \end{macrocode}
+% \iffalse
+%</tex>
+%<*lua,lua-cli>
+% \fi
+%  \begin{macrocode}
+defaultOptions.superscripts = false
+%    \end{macrocode}
+% \par
+% \iffalse
+%</lua,lua-cli>
+%<*manual-options>
+
 #### Option `tableCaptions`
 
 `tableCaptions` (default value: `false`)
@@ -14211,6 +14389,222 @@ following text:
 %
 % \begin{markdown}
 
+#### Superscript Renderer
+The \mdef{markdownRendererSuperscript} macro represents a superscript span of
+text. The macro receives a single argument that corresponds to the superscript
+span of text. This macro will only be produced, when the \Opt{superscripts}
+option is enabled.
+
+% \end{markdown}
+%
+% \iffalse
+
+##### Plain \TeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\input markdown
+\def\markdownOptionSuperscripts{true}
+\def\markdownRendererSuperscript#1{ taken to the power of #1}
+\markdownBegin
+2^10^ is 1024.
+\markdownEnd
+\bye
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+luatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> 2 taken to the power of 10 is 1024.
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\documentclass{article}
+\usepackage[superscripts]{markdown}
+\markdownSetup{
+  renderers = {
+    superscript = { taken to the power of #1},
+  },
+}
+\begin{document}
+\begin{markdown}
+2^10^ is 1024.
+\end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> 2 taken to the power of 10 is 1024.
+
+##### \Hologo{ConTeXt} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\usemodule[t][markdown]
+\def\markdownOptionSuperscripts{true}
+\def\markdownRendererSuperscript#1{ taken to the power of #1}
+\starttext
+\startmarkdown
+2^10^ is 1024.
+\stopmarkdown
+\stoptext
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+context document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> 2 taken to the power of 10 is 1024.
+
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererSuperscript{%
+  \markdownRendererSuperscriptPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { superscript }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { superscript }
+  { 1 }
+\ExplSyntaxOff
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
+#### Subscript Renderer
+The \mdef{markdownRendererSubscript} macro represents a subscript span of
+text. The macro receives a single argument that corresponds to the subscript
+span of text. This macro will only be produced, when the \Opt{subscripts}
+option is enabled.
+
+% \end{markdown}
+%
+% \iffalse
+
+##### Plain \TeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\input markdown
+\def\markdownOptionSubscripts{true}
+\def\markdownRendererSubscript#1{ (#1 moles) and }
+\markdownBegin
+H~2~O is a liquid.
+\markdownEnd
+\bye
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+luatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> H (2 moles) and O is liquid.
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\documentclass{article}
+\usepackage[subscripts]{markdown}
+\markdownSetup{
+  renderers = {
+    subscript = { (#1 moles) and },
+  },
+}
+\begin{document}
+\begin{markdown}
+H~2~O is a liquid.
+\end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> H (2 moles) and O is liquid.
+
+##### \Hologo{ConTeXt} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+``` tex
+\usemodule[t][markdown]
+\def\markdownOptionSubscripts{true}
+\def\markdownRendererSubscript#1{ (#1 moles) and }
+\starttext
+\startmarkdown
+H~2~O is a liquid.
+\stopmarkdown
+\stoptext
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+context document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> H (2 moles) and O is liquid.
+
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererSubscript{%
+  \markdownRendererSubscriptPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { subscript }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { subscript }
+  { 1 }
+\ExplSyntaxOff
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
 ### Token Renderer Prototypes {#texrendererprototypes}
 
 % \end{markdown}
@@ -20343,6 +20737,8 @@ function M.reader.new(writer, options, extensions)
                             + V("Strong")
                             + V("Emph")
                             + V("StrikeThrough")
+                            + V("Superscript")
+                            + V("Subscript")
                             + V("InlineNote")
                             + V("NoteRef")
                             + V("Citations")
@@ -20387,6 +20783,8 @@ function M.reader.new(writer, options, extensions)
       Strong                = parsers.Strong,
       Emph                  = parsers.Emph,
       StrikeThrough         = parsers.fail,
+      Superscript           = parsers.fail,
+      Subscript             = parsers.fail,
       InlineNote            = parsers.fail,
       NoteRef               = parsers.fail,
       Citations             = parsers.fail,
@@ -21696,6 +22094,85 @@ end
 %    \end{macrocode}
 % \begin{markdown}
 %
+%#### Superscripts
+%
+% The \luamdef{extensions.superscripts} function implements the Pandoc
+% superscript syntax extension.
+%
+% \end{markdown}
+%  \begin{macrocode}
+M.extensions.superscripts = function()
+  return {
+    extend_writer = function(self)
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Define \luamdef{writer->superscript} as a function that will transform
+% a superscript span `s` of input text to the output format.
+%
+% \end{markdown}
+%  \begin{macrocode}
+      function self.superscript(s)
+        return {"\\markdownRendererSuperscript{",s,"}"}
+      end
+    end, extend_reader = function(self)
+      local parsers = self.parsers
+      local syntax = self.syntax
+      local writer = self.writer
+
+      local Superscript = (
+        parsers.between(parsers.Str, parsers.circumflex, parsers.circumflex)
+      ) / writer.superscript
+
+      syntax.Superscript = Superscript
+
+      self.add_special_character("^")
+    end
+  }
+end
+%    \end{macrocode}
+% \begin{markdown}
+%
+%#### Subscripts
+%
+% The \luamdef{extensions.subscripts} function implements the Pandoc
+% subscript syntax extension.
+%
+% \end{markdown}
+%  \begin{macrocode}
+M.extensions.subscripts = function()
+  return {
+    extend_writer = function(self)
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Define \luamdef{writer->subscript} as a function that will transform
+% a subscript span `s` of input text to the output format.
+%
+% \end{markdown}
+%  \begin{macrocode}
+      function self.subscript(s)
+        return {"\\markdownRendererSubscript{",s,"}"}
+      end
+    end, extend_reader = function(self)
+      local parsers = self.parsers
+      local syntax = self.syntax
+      local writer = self.writer
+
+      local Subscript = (
+        parsers.between(parsers.Str, parsers.tilde, parsers.tilde)
+      ) / writer.subscript
+
+      syntax.Subscript = Subscript
+
+      self.add_special_character("~")
+    end
+  }
+end
+%    \end{macrocode}
+% \begin{markdown}
 %
 %### Conversion from Markdown to Plain \TeX{}
 %
@@ -21776,6 +22253,16 @@ function M.new(options)
   if options.strikeThrough then
     local strike_through_extension = M.extensions.strike_through()
     table.insert(extensions, strike_through_extension)
+  end
+
+  if options.subscripts then
+    local subscript_extension = M.extensions.subscripts()
+    table.insert(extensions, subscript_extension)
+  end
+
+  if options.superscripts then
+    local superscript_extension = M.extensions.superscripts()
+    table.insert(extensions, superscript_extension)
   end
 
   local writer = M.writer.new(options)
@@ -21963,6 +22450,8 @@ end
 \def\markdownRendererHalfTickedBoxPrototype{[/]}%
 \def\markdownRendererUntickedBoxPrototype{[ ]}%
 \def\markdownRendererStrikeThroughPrototype#1{#1}%
+\def\markdownRendererSuperscriptPrototype#1{#1}%
+\def\markdownRendererSubscriptPrototype#1{#1}%
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -23440,6 +23929,8 @@ end
       },
     }%
   },
+  superscript = {\textsuperscript{#1}},
+  subscript = {\textsubscript{#1}},
   blockQuoteBegin = {\begin{quotation}},
   blockQuoteEnd = {\end{quotation}},
   inputVerbatim = {\VerbatimInput{#1}},
@@ -24333,6 +24824,8 @@ end
 \def\markdownRendererHalfTickedBoxPrototype{$\boxdot$}
 \def\markdownRendererUntickedBoxPrototype{$\square$}
 \def\markdownRendererStrikeThroughPrototype#1{\overstrikes{#1}}
+\def\markdownRendererSuperscriptPrototype#1{\high{#1}}
+\def\markdownRendererSubscriptPrototype#1{\low{#1}}
 %    \end{macrocode}
 % \par
 % \begin{markdown}

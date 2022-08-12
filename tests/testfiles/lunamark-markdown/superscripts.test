@@ -1,0 +1,14 @@
+\def\markdownOptionSuperscripts{true}
+<<<
+This test ensures that the Lua `superscripts` option correctly propagates
+through the plain TeX interface.
+
+2^10^ is 1024 and some \^regular^ text with circumflexes.
+>>>
+documentBegin
+codeSpan: superscripts
+interblockSeparator
+superscript: 10
+circumflex
+circumflex
+documentEnd
