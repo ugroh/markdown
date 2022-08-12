@@ -19739,9 +19739,10 @@ parsers.leader      = parsers.space^-3
 
 -- content in balanced brackets, parentheses, or quotes:
 parsers.bracketed   = P{ parsers.lbracket
-                       * ((parsers.anyescaped - (parsers.lbracket
-                                                + parsers.rbracket
-                                                + parsers.blankline^2)
+                       * (( parsers.backslash / "" * parsers.rbracket
+                          + parsers.any - (parsers.lbracket
+                                          + parsers.rbracket
+                                          + parsers.blankline^2)
                           ) + V(1))^0
                        * parsers.rbracket }
 
@@ -19769,7 +19770,8 @@ parsers.tag         = parsers.lbracket
                     * Cs((parsers.alphanumeric^1
                          + parsers.bracketed
                          + parsers.inticks
-                         + (parsers.anyescaped
+                         + ( parsers.backslash / "" * parsers.rbracket
+                           + parsers.any
                            - (parsers.rbracket + parsers.blankline^2)))^0)
                     * parsers.rbracket
 
