@@ -29,11 +29,11 @@ codeSpan: /e
 codeSpan: (underscore)UnslashQuotes
 interblockSeparator
 interblockSeparator
-headingOne: Header "quoted(backslash)" again (backslash)""
+headingOne: Header "quoted" again (backslash)""
 interblockSeparator
-headingTwo: Header "quoted(backslash)" again (backslash)""
+headingTwo: Header "quoted" again (backslash)""
 interblockSeparator
-headingThree: Header "quoted(backslash)" again (backslash)""
+headingThree: Header "quoted" again (backslash)""
 interblockSeparator
 codeSpan: (underscore)Detab
 interblockSeparator
