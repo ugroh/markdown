@@ -122,6 +122,8 @@ Term 2
 :   Definition 2
 :   Definition 3
 
+This is a ^superscript^ and a ~subscript~.
+
 This is a block quote:
 
 > This is the first level of quoting.
