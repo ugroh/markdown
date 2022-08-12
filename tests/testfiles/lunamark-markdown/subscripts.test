@@ -1,0 +1,14 @@
+\def\markdownOptionSubscripts{true}
+<<<
+This test ensures that the Lua `subscripts` option correctly propagates
+through the plain TeX interface.
+
+H~2~O is a liquid and some \~regular~ text with tildes.
+>>>
+documentBegin
+codeSpan: subscripts
+interblockSeparator
+subscript: 2
+tilde
+tilde
+documentEnd
