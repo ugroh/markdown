@@ -14997,14 +14997,14 @@ following text:
 \cs_if_exist:NF
   \markdownMode
   {
-    \file_if_exist:nTF
-      { lt3luabridge.tex }
-      {
-        \cs_new:Npn
-          \markdownMode
-          { 3 }
-      }
-      {
+%   \file_if_exist:nTF
+%     { lt3luabridge.tex }
+%     {
+%       \cs_new:Npn
+%         \markdownMode
+%         { 3 }
+%     }
+%     {
         \cs_if_exist:NTF
           \directlua
           {
@@ -15017,7 +15017,7 @@ following text:
               \markdownMode
               { 0 }
           }
-      }
+%     }
   }
 %    \end{macrocode}
 % \begin{markdown}
