@@ -120,8 +120,10 @@ examples/example.tex: force
 	    -e 's#😉#<i class="em em-wink"></i>#g' \
 	    -e 's#\\envm{\([^}]*\)}#`\1`#g' \
 	    -e 's#\\envmdef{\([^}]*\)}#`\1`#g' \
+	    -e 's#\\envmref{\([^}]*\)}#`\1`#g' \
 	    -e 's#\\m{\([^}]*\)}#`\\\1`#g' \
 	    -e 's#\\mdef{\([^}]*\)}#`\\\1`#g' \
+	    -e 's#\\mref{\([^}]*\)}#`\\\1`#g' \
 	| \
 	pandoc -f markdown -t html -N -s --toc --toc-depth=3 --css=$(word 2, $^) >$@
 
