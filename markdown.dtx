@@ -4490,6 +4490,106 @@ defaultOptions.expectJekyllData = false
 %</lua,lua-cli>
 %<*manual-options>
 
+#### Option `fancyLists`
+
+`fancyLists` (default value: `false`)
+
+% \fi
+% \begin{markdown}
+%
+% \Optitem[false]{fancyLists}{\opt{true}, \opt{false}}
+%
+:    true
+
+     :  Enable the Pandoc fancy list extension:
+
+        ``` md
+        a) first item
+        b) second item
+        c) third item
+        ``````
+
+:    false
+
+     :  Disable the Pandoc fancy list extension.
+
+% \end{markdown}
+% \iffalse
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+```` tex
+\documentclass{article}
+\usepackage{minted}
+\usepackage[fancyLists]{markdown}
+\begin{document}
+\begin{markdown}
+a) first item
+b) second item
+c) third item
+\end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex --shell-escape document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> a) first item
+> b) second item
+> c) third item
+
+##### \Hologo{ConTeXt} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+```` tex
+\usemodule[t][markdown]
+\def\markdownOptionFancyLists{true}
+\starttext
+\startmarkdown
+a) first item
+b) second item
+c) third item
+\stopmarkdown
+\stoptext
+````````
+Next, invoke LuaTeX from the terminal:
+``` sh
+context document.tex
+`````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> a) first item
+> b) second item
+> c) third item
+
+%</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\@@_add_lua_option:nnn
+  { fancyLists }
+  { boolean }
+  { false }
+%    \end{macrocode}
+% \iffalse
+%</tex>
+%<*lua,lua-cli>
+% \fi
+%  \begin{macrocode}
+defaultOptions.fancyLists = false
+%    \end{macrocode}
+% \par
+% \iffalse
+%</lua,lua-cli>
+%<*manual-options>
+
 #### Option `fencedCode`
 
 `fencedCode` (default value: `false`)
@@ -22707,6 +22807,11 @@ function M.new(options)
   if options.superscripts then
     local superscript_extension = M.extensions.superscripts()
     table.insert(extensions, superscript_extension)
+  end
+
+  if options.fancyLists then
+    local fancy_lists_extension = M.extensions.fancy_lists()
+    table.insert(extensions, fancy_lists_extension)
   end
 
   local writer = M.writer.new(options)
