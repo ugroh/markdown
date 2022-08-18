@@ -10602,7 +10602,7 @@ list is not tight). The macro receives no arguments.
 The \mdef{markdownRendererUlBeginTight} macro represents the beginning of a
 bulleted list that contains no item with several paragraphs of text (the list
 is tight). This macro will only be produced, when the \Opt{tightLists} option
-is `false`. The macro receives no arguments.
+is disabled. The macro receives no arguments.
 
 % \end{markdown}
 %
@@ -10733,7 +10733,7 @@ tight). The macro receives no arguments.
 The \mdef{markdownRendererUlEndTight} macro represents the end of a bulleted
 list that contains no item with several paragraphs of text (the list is
 tight). This macro will only be produced, when the \Opt{tightLists} option is
-`false`. The macro receives no arguments.
+disabled. The macro receives no arguments.
 
 % \end{markdown}
 %
@@ -10969,7 +10969,8 @@ following text:
 #### Ordered List Renderers
 The \mdef{markdownRendererOlBegin} macro represents the beginning of an
 ordered list that contains an item with several paragraphs of text (the
-list is not tight). The macro receives no arguments.
+list is not tight). This macro will only be produced, when the \Opt{fancyLists}
+option is disabled. The macro receives no arguments.
 
 % \end{markdown}
 %
@@ -11003,7 +11004,8 @@ list is not tight). The macro receives no arguments.
 The \mdef{markdownRendererOlBeginTight} macro represents the beginning of an
 ordered list that contains no item with several paragraphs of text (the
 list is tight). This macro will only be produced, when the \Opt{tightLists}
-option is `true`. The macro receives no arguments.
+option is enabled and the \Opt{fancyLists} option is disabled. The macro
+receives no arguments.
 
 % \end{markdown}
 %
@@ -11034,9 +11036,84 @@ option is `true`. The macro receives no arguments.
 %
 % \begin{markdown}
 
+The \mdef{markdownRendererFancyOlBegin} macro represents the beginning of a
+fancy ordered list that contains an item with several paragraphs of text (the
+list is not tight). This macro will only be produced, when the \Opt{fancyLists}
+option is enabled. The macro receives two arguments: the style of the list item
+labels (`Decimal`, `LowerRoman`, `UpperRoman`, `LowerAlpha`, and `UpperAlpha`),
+and the style of delimiters between list item labels and texts (`Default`,
+`OneParen`, and `Period`).
+
+% \end{markdown}
+%
+% \iffalse
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererFancyOlBegin{%
+  \markdownRendererFancyOlBeginPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { fancyOlBegin }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { fancyOlBegin }
+  { 2 }
+\ExplSyntaxOff
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
+The \mdef{markdownRendererFancyOlBeginTight} macro represents the beginning of
+a fancy ordered list that contains no item with several paragraphs of text (the
+list is tight). This macro will only be produced, when the \Opt{fancyLists}
+and \Opt{tightLists} options are enabled. The macro receives two arguments: the
+style of the list item labels, and the style of delimiters between list
+item labels and texts. See the \mref{markdownRendererFancyOlBegin} macro for
+the valid style values.
+
+% \end{markdown}
+%
+% \iffalse
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererFancyOlBeginTight{%
+  \markdownRendererFancyOlBeginTightPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { fancyOlBeginTight }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { fancyOlBeginTight }
+  { 2 }
+\ExplSyntaxOff
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
 The \mdef{markdownRendererOlItem} macro represents an item in an ordered list.
 This macro will only be produced, when the \Opt{startNumber} option is
-`false`.  The macro receives no arguments.
+disabled and the \Opt{fancyLists} option is disabled. The macro receives no
+arguments.
 
 % \end{markdown}
 %
@@ -11068,7 +11145,8 @@ This macro will only be produced, when the \Opt{startNumber} option is
 % \begin{markdown}
 
 The \mdef{markdownRendererOlItemEnd} macro represents the end of an item in
-an ordered list. The macro receives no arguments.
+an ordered list. This macro will only be produced, when the \Opt{fancyLists}
+option is disabled. The macro receives no arguments.
 
 % \end{markdown}
 %
@@ -11101,8 +11179,8 @@ an ordered list. The macro receives no arguments.
 
 The \mdef{markdownRendererOlItemWithNumber} macro represents an item in an
 ordered list.  This macro will only be produced, when the \Opt{startNumber}
-option is enabled.  The macro receives a single numeric argument that
-corresponds to the item number.
+option is enabled and the \Opt{fancyLists} option is disabled.  The macro
+receives a single numeric argument that corresponds to the item number.
 
 % \end{markdown}
 %
@@ -11133,9 +11211,115 @@ corresponds to the item number.
 %
 % \begin{markdown}
 
+The \mdef{markdownRendererFancyOlItem} macro represents an item in a fancy
+ordered list. This macro will only be produced, when the \Opt{startNumber}
+option is disabled and the \Opt{fancyLists} option is enabled. The macro receives
+two arguments: the style of the list item labels, and the style of delimiters
+between list item labels and texts. See the
+\mref{markdownRendererFancyOlBegin} macro for the valid style values.
+
+% \end{markdown}
+%
+% \iffalse
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererFancyOlItem{%
+  \markdownRendererFancyOlItemPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { fancyOlItem }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { fancyOlItem }
+  { 2 }
+\ExplSyntaxOff
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
+The \mdef{markdownRendererFancyOlItemEnd} macro represents the end of an item in
+a fancy ordered list. This macro will only be produced, when the \Opt{fancyLists}
+option is enabled. The macro receives no arguments.
+
+% \end{markdown}
+%
+% \iffalse
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererFancyOlItemEnd{%
+  \markdownRendererFancyOlItemEndPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { fancyOlItemEnd }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { fancyOlItemEnd }
+  { 0 }
+\ExplSyntaxOff
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
+The \mdef{markdownRendererFancyOlItemWithNumber} macro represents an item in a
+fancy ordered list. This macro will only be produced, when the \Opt{startNumber}
+and \Opt{tightLists} options are enabled. The macro receives three arguments:
+the style of the list item labels, the style of delimiters between list item
+labels and texts, and the item number. See the
+\mref{markdownRendererFancyOlBegin} macro for the valid style values.
+
+% \end{markdown}
+%
+% \iffalse
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererFancyOlItemWithNumber{%
+  \markdownRendererFancyOlItemWithNumberPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { fancyOlItemWithNumber }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { fancyOlItemWithNumber }
+  { 3 }
+\ExplSyntaxOff
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
 The \mdef{markdownRendererOlEnd} macro represents the end of an ordered list
 that contains an item with several paragraphs of text (the list is not
-tight). The macro receives no arguments.
+tight). This macro will only be produced, when the \Opt{fancyLists} option is
+disabled. The macro receives no arguments.
 
 % \end{markdown}
 %
@@ -11169,7 +11353,76 @@ tight). The macro receives no arguments.
 The \mdef{markdownRendererOlEndTight} macro represents the end of an ordered
 list that contains no item with several paragraphs of text (the list is
 tight). This macro will only be produced, when the \Opt{tightLists} option is
-`true`. The macro receives no arguments.
+enabled and the \Opt{fancyLists} option is disabled. The macro receives no
+arguments.
+
+% \end{markdown}
+%
+% \iffalse
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererOlEndTight{%
+  \markdownRendererOlEndTightPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { olEndTight }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { olEndTight }
+  { 0 }
+\ExplSyntaxOff
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
+The \mdef{markdownRendererFancyOlEnd} macro represents the end of a fancy
+ordered list that contains an item with several paragraphs of text (the list
+is not tight). This macro will only be produced, when the \Opt{fancyLists}
+option is enabled. The macro receives no arguments.
+
+% \end{markdown}
+%
+% \iffalse
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererFancyOlEnd{%
+  \markdownRendererFancyOlEndPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { fancyOlEnd }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { fancyOlEnd }
+  { 0 }
+\ExplSyntaxOff
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
+The \mdef{markdownRendererFancyOlEndTight} macro represents the end of a
+fancy ordered list that contains no item with several paragraphs of text (the
+list is tight). This macro will only be produced, when the \Opt{fancyLists}
+and \Opt{tightLists} options are enabled. The macro receives no arguments.
 
 % \end{markdown}
 %
@@ -11433,15 +11686,15 @@ following text:
 % \fi
 %
 %  \begin{macrocode}
-\def\markdownRendererOlEndTight{%
-  \markdownRendererOlEndTightPrototype}%
+\def\markdownRendererFancyOlEndTight{%
+  \markdownRendererFancyOlEndTightPrototype}%
 \ExplSyntaxOn
 \seq_put_right:Nn
   \g_@@_renderers_seq
-  { olEndTight }
+  { fancyOlEndTight }
 \prop_put:Nnn
   \g_@@_renderer_arities_prop
-  { olEndTight }
+  { fancyOlEndTight }
   { 0 }
 \ExplSyntaxOff
 %    \end{macrocode}
@@ -11494,7 +11747,7 @@ list is not tight). The macro receives no arguments.
 The \mdef{markdownRendererDlBeginTight} macro represents the beginning of a
 definition list that contains an item with several paragraphs of text (the
 list is not tight). This macro will only be produced, when the
-\Opt{tightLists} option is `false`. The macro receives no arguments.
+\Opt{tightLists} option is disabled. The macro receives no arguments.
 
 % \end{markdown}
 %
@@ -11692,7 +11945,7 @@ tight). The macro receives no arguments.
 The \mdef{markdownRendererDlEndTight} macro represents the end of a
 definition list that contains no item with several paragraphs of text (the
 list is tight). This macro will only be produced, when the \Opt{tightLists}
-option is `false`. The macro receives no arguments.
+option is disabled. The macro receives no arguments.
 
 % \end{markdown}
 %
@@ -15738,7 +15991,7 @@ following image:
 \pkg{witiko/tilde}
 
 :    A theme that makes tilde (`~`) always typeset the non-breaking space even
-     when the \Opt{hybrid} Lua option is `false`.
+     when the \Opt{hybrid} Lua option is disabled.
 %    ``` tex
 %    \documentclass{article}
 %    \usepackage[theme=witiko/tilde]{markdown}
@@ -21000,7 +21253,7 @@ M.extensions = {}
 %#### Citations
 %
 % The \luamdef{extensions.citations} function implements the Pandoc citation
-% syntax extension. When the `citation_nbsps` parameter is `true`, the syntax
+% syntax extension. When the `citation_nbsps` parameter is enabled, the syntax
 % extension will replace regular spaces with non-breaking spaces inside the
 % prenotes and postnotes of citations.
 %
@@ -21754,8 +22007,8 @@ end
 %
 % The \luamdef{extensions.jekyll_data} function implements the Pandoc
 % `yaml_metadata_block` syntax extension for entering metadata in \acro{yaml}.
-% When the `expect_jekyll_data` is `true`, then a markdown document may
-% begin directly with \acro{yaml} metadata and may contain nothing but
+% When the `expect_jekyll_data` parameter is `true`, then a markdown document
+% may begin directly with \acro{yaml} metadata and may contain nothing but
 % \acro{yaml} metadata
 %
 % \end{markdown}
@@ -21910,7 +22163,7 @@ end
 %
 % The \luamdef{extensions.pipe_table} function implements the \acro{PHP}
 % Markdown table syntax extension (affectionately known as pipe tables). When
-% the parameter `table_captions` is `true`, the function also implements the
+% the `table_captions` parameter is `true`, the function also implements the
 % Pandoc `table_captions` syntax extension for table captions.
 %
 % \end{markdown}
