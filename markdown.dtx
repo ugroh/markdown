@@ -24339,22 +24339,89 @@ end
 %
 % \end{markdown}
 %  \begin{macrocode}
+\ExplSyntaxOn
 \@ifpackageloaded{paralist}{
+  \cs_new:Nn
+    \@@_latex_translate_list_item_label_number:nn
+    {
+      \str_case:nn
+        { #1 }
+        {
+          { Decimal } { #2 }
+          { LowerRoman } { \int_to_roman:n { #2 } }
+          { UpperRoman } { \int_to_Roman:n { #2 } }
+          { LowerAlpha } { \int_to_alph:n { #2 } }
+          { UpperAlpha } { \int_to_alph:n { #2 } }
+        }
+    }
+  \cs_new:Nn
+    \@@_latex_translate_list_item_label_delimiter:n
+    {
+      \str_case:nn
+        { #1 }
+        {
+          { Default } { . }
+          { OneParen } { ) }
+          { Period } { - }
+        }
+    }
+  \cs_new:Nn
+    \@@_latex_translate_list_item_label:nnn
+    {
+      \@@_latex_translate_list_item_label_delimiter:n
+        { #2 }
+      \@@_latex_translate_list_item_label_number:nn
+        { #1 }
+        { #3 }
+    }
+  \cs_new:Nn
+    \@@_latex_paralist_style:nn
+    {
+      \str_case:nn
+        { #1 }
+        {
+          { Decimal } { 1 }
+          { LowerRoman } { i }
+          { UpperRoman } { I }
+          { LowerAlpha } { a }
+          { UpperAlpha } { A }
+        }
+      \@@_latex_translate_list_item_label_delimiter:n
+        { #2 }
+    }
   \markdownSetup{rendererPrototypes={
     ulBeginTight = {\begin{compactitem}},
     ulEndTight = {\end{compactitem}},
+    fancyOlBegin = {
+      \begin{enumerate}[ \@@_latex_paralist_style:nn { #1 } { #2 } ]
+    },
+    fancyOlEnd = {\end{enumerate}},
     olBeginTight = {\begin{compactenum}},
     olEndTight = {\end{compactenum}},
+    fancyOlBeginTight = {
+      \begin{compactenum}[ \@@_latex_paralist_style:nn { #1 } { #2 } ]
+    },
+    fancyOlEndTight = {\end{compactenum}},
+    fancyOlItemWithNumber = {
+      \markdownRendererOlItemWithNumber
+        { \@@_latex_translate_list_item_label:nnn { #1 } { #2 } { #3 } }
+    },
     dlBeginTight = {\begin{compactdesc}},
     dlEndTight = {\end{compactdesc}}}}
 }{
   \markdownSetup{rendererPrototypes={
     ulBeginTight = {\markdownRendererUlBegin},
     ulEndTight = {\markdownRendererUlEnd},
+    fancyOlBegin = {\markdownRendererOlBegin},
+    fancyOlEnd = {\markdownRendererOlEnd},
     olBeginTight = {\markdownRendererOlBegin},
     olEndTight = {\markdownRendererOlEnd},
+    fancyOlBeginTight = {\markdownRendererOlBegin},
+    fancyOlEndTight = {\markdownRendererOlEnd},
     dlBeginTight = {\markdownRendererDlBegin},
-    dlEndTight = {\markdownRendererDlEnd}}}}
+    dlEndTight = {\markdownRendererDlEnd}}}
+}
+\ExplSyntaxOff
 \RequirePackage{amsmath,ifthen}
 %    \end{macrocode}
 % \par
