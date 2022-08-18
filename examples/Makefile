@@ -9,7 +9,7 @@ LUACLI_OPTIONS=cacheDir=_markdown_example hashEnumerators=true \
   definitionLists=true footnotes=true inlineFootnotes=true \
   smartEllipses=true fencedCode=true contentBlocks=true pipeTables=true \
   tableCaptions=true taskLists=true strikeThrough=true superscripts=true \
-  subscripts=true
+  subscripts=true fancyLists=true
 OUTPUT=context-mkii.pdf context-mkiv.pdf latex-pdftex.pdf \
   latex-luatex.pdf latex-xetex.pdf latex-tex4ht.html latex-tex4ht.css
 
