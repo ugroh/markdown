@@ -65,6 +65,16 @@ This is an ordered list:
 
 7. the third item of an ordered list.
 
+This is a fancy ordered list:
+
+e) The first item of an ordered list
+
+   that spans several paragraphs,
+
+f) the second item of an ordered list,
+
+g) the third item of an ordered list.
+
 This is an ordered list using hash enumerators:
 
 #. The first item of an ordered list
@@ -86,6 +96,12 @@ This is a compact ordered list using hash enumerators:
 #. The first item of an ordered list,
 #. the second item of an ordered list,
 #. the third item of an ordered list.
+
+This is a compact fancy ordered list using hash enumerators:
+
+#) The first item of an ordered list,
+#) the second item of an ordered list,
+#) the third item of an ordered list.
 
 This is a task list:
 

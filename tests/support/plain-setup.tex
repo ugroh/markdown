@@ -96,16 +96,43 @@
   \TYPE{olBegin}}%
 \def\markdownRendererOlBeginTight{%
   \TYPE{olBeginTight}}%
+\def\markdownRendererFancyOlBegin#1#2{%
+  \TYPE{BEGIN fancyOlBegin}%
+  \TYPE{- numstyle:            #1}%
+  \TYPE{- numdelim:            #2}%
+  \TYPE{END fancyOlBegin}}%
+\def\markdownRendererFancyOlBeginTight#1#2{%
+  \TYPE{BEGIN fancyOlBeginTight}%
+  \TYPE{- numstyle:            #1}%
+  \TYPE{- numdelim:            #2}%
+  \TYPE{END fancyOlBeginTight}}%
 \def\markdownRendererOlItem{%
   \TYPE{olItem}}%
 \def\markdownRendererOlItemEnd{%
   \TYPE{olItemEnd}}%
 \def\markdownRendererOlItemWithNumber#1{%
   \TYPE{olItemWithNumber:      #1}}%
+\def\markdownRendererFancyOlItem#1#2{%
+  \TYPE{BEGIN fancyOlItem}%
+  \TYPE{- numstyle:            #1}%
+  \TYPE{- numdelim:            #2}%
+  \TYPE{END fancyOlItem}}%
+\def\markdownRendererFancyOlItemEnd{%
+  \TYPE{fancyOlItemEnd}}%
+\def\markdownRendererFancyOlItemWithNumber#1#2#3{%
+  \TYPE{BEGIN fancyOlItemWithNumber}%
+  \TYPE{- numstyle:            #1}%
+  \TYPE{- numdelim:            #2}%
+  \TYPE{- number:              #3}%
+  \TYPE{END fancyOlItemWithNumber}}%
 \def\markdownRendererOlEnd{%
   \TYPE{olEnd}}%
 \def\markdownRendererOlEndTight{%
   \TYPE{olEndTight}}%
+\def\markdownRendererFancyOlEnd{%
+  \TYPE{fancyOlEnd}}%
+\def\markdownRendererFancyOlEndTight{%
+  \TYPE{fancyOlEndTight}}%
 \def\markdownRendererDlBegin{%
   \TYPE{dlBegin}}%
 \def\markdownRendererDlBeginTight{%

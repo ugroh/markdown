@@ -1,0 +1,127 @@
+\def\markdownOptionFancyLists{true}
+<<<
+This test ensures that the Lua `fancyLists` option correctly propagates
+through the plain TeX interface and that the `startNumber` and `tightLists`
+options are enabled by default.
+
+Fancy list (*roman, lower*)
+
+ iv. item
+
+ v. item
+
+Fancy list (*roman, upper, tight*)
+
+ IV. item
+ V. item
+
+Fancy list (*alpha, lower*)
+
+ d. item
+
+ e. item
+
+Fancy list (*alpha, upper, tight*)
+
+ D. item
+ E. item
+
+Fancy list (*paren*)
+
+ 4) item
+
+ 5) item
+>>>
+documentBegin
+codeSpan: fancyLists
+codeSpan: startNumber
+codeSpan: tightLists
+interblockSeparator
+emphasis: roman, lower
+interblockSeparator
+BEGIN fancyOlBegin
+- numstyle: LowerRoman
+- numdelim: Period
+END fancyOlBegin
+BEGIN fancyOlItemWithNumber
+- numstyle: LowerRoman
+- numdelim: Period
+- number: 4
+END fancyOlItemWithNumber
+fancyOlItemEnd
+BEGIN fancyOlItemWithNumber
+- numstyle: LowerRoman
+- numdelim: Period
+- number: 5
+END fancyOlItemWithNumber
+fancyOlItemEnd
+fancyOlEnd
+interblockSeparator
+emphasis: roman, upper, tight
+interblockSeparator
+BEGIN fancyOlBeginTight
+- numstyle: UpperRoman
+- numdelim: Period
+END fancyOlBeginTight
+BEGIN fancyOlItemWithNumber
+- numstyle: UpperRoman
+- numdelim: Period
+- number: 4
+END fancyOlItemWithNumber
+fancyOlItemEnd
+fancyOlEndTight
+interblockSeparator
+emphasis: alpha, lower
+interblockSeparator
+BEGIN fancyOlBegin
+- numstyle: LowerAlpha
+- numdelim: Period
+END fancyOlBegin
+BEGIN fancyOlItemWithNumber
+- numstyle: LowerAlpha
+- numdelim: Period
+- number: 4
+END fancyOlItemWithNumber
+fancyOlItemEnd
+BEGIN fancyOlItemWithNumber
+- numstyle: LowerAlpha
+- numdelim: Period
+- number: 5
+END fancyOlItemWithNumber
+fancyOlItemEnd
+fancyOlEnd
+interblockSeparator
+emphasis: alpha, upper, tight
+interblockSeparator
+BEGIN fancyOlBeginTight
+- numstyle: UpperAlpha
+- numdelim: Period
+END fancyOlBeginTight
+BEGIN fancyOlItemWithNumber
+- numstyle: UpperAlpha
+- numdelim: Period
+- number: 4
+END fancyOlItemWithNumber
+fancyOlItemEnd
+fancyOlEndTight
+interblockSeparator
+emphasis: paren
+interblockSeparator
+BEGIN fancyOlBegin
+- numstyle: Decimal
+- numdelim: OneParen
+END fancyOlBegin
+BEGIN fancyOlItemWithNumber
+- numstyle: Decimal
+- numdelim: OneParen
+- number: 4
+END fancyOlItemWithNumber
+fancyOlItemEnd
+BEGIN fancyOlItemWithNumber
+- numstyle: Decimal
+- numdelim: OneParen
+- number: 5
+END fancyOlItemWithNumber
+fancyOlItemEnd
+fancyOlEnd
+documentEnd

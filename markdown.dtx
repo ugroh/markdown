@@ -4490,6 +4490,106 @@ defaultOptions.expectJekyllData = false
 %</lua,lua-cli>
 %<*manual-options>
 
+#### Option `fancyLists`
+
+`fancyLists` (default value: `false`)
+
+% \fi
+% \begin{markdown}
+%
+% \Optitem[false]{fancyLists}{\opt{true}, \opt{false}}
+%
+:    true
+
+     :  Enable the Pandoc fancy list extension:
+
+        ``` md
+        a) first item
+        b) second item
+        c) third item
+        ``````
+
+:    false
+
+     :  Disable the Pandoc fancy list extension.
+
+% \end{markdown}
+% \iffalse
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+```` tex
+\documentclass{article}
+\usepackage{minted}
+\usepackage[fancyLists]{markdown}
+\begin{document}
+\begin{markdown}
+a) first item
+b) second item
+c) third item
+\end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex --shell-escape document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> a) first item
+> b) second item
+> c) third item
+
+##### \Hologo{ConTeXt} Example {.unnumbered}
+
+Using a text editor, create a text document named `document.tex` with the
+following content:
+```` tex
+\usemodule[t][markdown]
+\def\markdownOptionFancyLists{true}
+\starttext
+\startmarkdown
+a) first item
+b) second item
+c) third item
+\stopmarkdown
+\stoptext
+````````
+Next, invoke LuaTeX from the terminal:
+``` sh
+context document.tex
+`````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> a) first item
+> b) second item
+> c) third item
+
+%</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\@@_add_lua_option:nnn
+  { fancyLists }
+  { boolean }
+  { false }
+%    \end{macrocode}
+% \iffalse
+%</tex>
+%<*lua,lua-cli>
+% \fi
+%  \begin{macrocode}
+defaultOptions.fancyLists = false
+%    \end{macrocode}
+% \par
+% \iffalse
+%</lua,lua-cli>
+%<*manual-options>
+
 #### Option `fencedCode`
 
 `fencedCode` (default value: `false`)
@@ -10602,7 +10702,7 @@ list is not tight). The macro receives no arguments.
 The \mdef{markdownRendererUlBeginTight} macro represents the beginning of a
 bulleted list that contains no item with several paragraphs of text (the list
 is tight). This macro will only be produced, when the \Opt{tightLists} option
-is `false`. The macro receives no arguments.
+is disabled. The macro receives no arguments.
 
 % \end{markdown}
 %
@@ -10733,7 +10833,7 @@ tight). The macro receives no arguments.
 The \mdef{markdownRendererUlEndTight} macro represents the end of a bulleted
 list that contains no item with several paragraphs of text (the list is
 tight). This macro will only be produced, when the \Opt{tightLists} option is
-`false`. The macro receives no arguments.
+disabled. The macro receives no arguments.
 
 % \end{markdown}
 %
@@ -10969,7 +11069,8 @@ following text:
 #### Ordered List Renderers
 The \mdef{markdownRendererOlBegin} macro represents the beginning of an
 ordered list that contains an item with several paragraphs of text (the
-list is not tight). The macro receives no arguments.
+list is not tight). This macro will only be produced, when the \Opt{fancyLists}
+option is disabled. The macro receives no arguments.
 
 % \end{markdown}
 %
@@ -11003,7 +11104,8 @@ list is not tight). The macro receives no arguments.
 The \mdef{markdownRendererOlBeginTight} macro represents the beginning of an
 ordered list that contains no item with several paragraphs of text (the
 list is tight). This macro will only be produced, when the \Opt{tightLists}
-option is `true`. The macro receives no arguments.
+option is enabled and the \Opt{fancyLists} option is disabled. The macro
+receives no arguments.
 
 % \end{markdown}
 %
@@ -11034,9 +11136,84 @@ option is `true`. The macro receives no arguments.
 %
 % \begin{markdown}
 
+The \mdef{markdownRendererFancyOlBegin} macro represents the beginning of a
+fancy ordered list that contains an item with several paragraphs of text (the
+list is not tight). This macro will only be produced, when the \Opt{fancyLists}
+option is enabled. The macro receives two arguments: the style of the list item
+labels (`Decimal`, `LowerRoman`, `UpperRoman`, `LowerAlpha`, and `UpperAlpha`),
+and the style of delimiters between list item labels and texts (`Default`,
+`OneParen`, and `Period`).
+
+% \end{markdown}
+%
+% \iffalse
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererFancyOlBegin{%
+  \markdownRendererFancyOlBeginPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { fancyOlBegin }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { fancyOlBegin }
+  { 2 }
+\ExplSyntaxOff
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
+The \mdef{markdownRendererFancyOlBeginTight} macro represents the beginning of
+a fancy ordered list that contains no item with several paragraphs of text (the
+list is tight). This macro will only be produced, when the \Opt{fancyLists}
+and \Opt{tightLists} options are enabled. The macro receives two arguments: the
+style of the list item labels, and the style of delimiters between list
+item labels and texts. See the \mref{markdownRendererFancyOlBegin} macro for
+the valid style values.
+
+% \end{markdown}
+%
+% \iffalse
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererFancyOlBeginTight{%
+  \markdownRendererFancyOlBeginTightPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { fancyOlBeginTight }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { fancyOlBeginTight }
+  { 2 }
+\ExplSyntaxOff
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
 The \mdef{markdownRendererOlItem} macro represents an item in an ordered list.
 This macro will only be produced, when the \Opt{startNumber} option is
-`false`.  The macro receives no arguments.
+disabled and the \Opt{fancyLists} option is disabled. The macro receives no
+arguments.
 
 % \end{markdown}
 %
@@ -11068,7 +11245,8 @@ This macro will only be produced, when the \Opt{startNumber} option is
 % \begin{markdown}
 
 The \mdef{markdownRendererOlItemEnd} macro represents the end of an item in
-an ordered list. The macro receives no arguments.
+an ordered list. This macro will only be produced, when the \Opt{fancyLists}
+option is disabled. The macro receives no arguments.
 
 % \end{markdown}
 %
@@ -11101,8 +11279,8 @@ an ordered list. The macro receives no arguments.
 
 The \mdef{markdownRendererOlItemWithNumber} macro represents an item in an
 ordered list.  This macro will only be produced, when the \Opt{startNumber}
-option is enabled.  The macro receives a single numeric argument that
-corresponds to the item number.
+option is enabled and the \Opt{fancyLists} option is disabled.  The macro
+receives a single numeric argument that corresponds to the item number.
 
 % \end{markdown}
 %
@@ -11133,9 +11311,115 @@ corresponds to the item number.
 %
 % \begin{markdown}
 
+The \mdef{markdownRendererFancyOlItem} macro represents an item in a fancy
+ordered list. This macro will only be produced, when the \Opt{startNumber}
+option is disabled and the \Opt{fancyLists} option is enabled. The macro receives
+two arguments: the style of the list item labels, and the style of delimiters
+between list item labels and texts. See the
+\mref{markdownRendererFancyOlBegin} macro for the valid style values.
+
+% \end{markdown}
+%
+% \iffalse
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererFancyOlItem{%
+  \markdownRendererFancyOlItemPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { fancyOlItem }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { fancyOlItem }
+  { 2 }
+\ExplSyntaxOff
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
+The \mdef{markdownRendererFancyOlItemEnd} macro represents the end of an item in
+a fancy ordered list. This macro will only be produced, when the \Opt{fancyLists}
+option is enabled. The macro receives no arguments.
+
+% \end{markdown}
+%
+% \iffalse
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererFancyOlItemEnd{%
+  \markdownRendererFancyOlItemEndPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { fancyOlItemEnd }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { fancyOlItemEnd }
+  { 0 }
+\ExplSyntaxOff
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
+The \mdef{markdownRendererFancyOlItemWithNumber} macro represents an item in a
+fancy ordered list. This macro will only be produced, when the \Opt{startNumber}
+and \Opt{tightLists} options are enabled. The macro receives three arguments:
+the style of the list item labels, the style of delimiters between list item
+labels and texts, and the item number. See the
+\mref{markdownRendererFancyOlBegin} macro for the valid style values.
+
+% \end{markdown}
+%
+% \iffalse
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererFancyOlItemWithNumber{%
+  \markdownRendererFancyOlItemWithNumberPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { fancyOlItemWithNumber }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { fancyOlItemWithNumber }
+  { 3 }
+\ExplSyntaxOff
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
 The \mdef{markdownRendererOlEnd} macro represents the end of an ordered list
 that contains an item with several paragraphs of text (the list is not
-tight). The macro receives no arguments.
+tight). This macro will only be produced, when the \Opt{fancyLists} option is
+disabled. The macro receives no arguments.
 
 % \end{markdown}
 %
@@ -11169,7 +11453,76 @@ tight). The macro receives no arguments.
 The \mdef{markdownRendererOlEndTight} macro represents the end of an ordered
 list that contains no item with several paragraphs of text (the list is
 tight). This macro will only be produced, when the \Opt{tightLists} option is
-`true`. The macro receives no arguments.
+enabled and the \Opt{fancyLists} option is disabled. The macro receives no
+arguments.
+
+% \end{markdown}
+%
+% \iffalse
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererOlEndTight{%
+  \markdownRendererOlEndTightPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { olEndTight }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { olEndTight }
+  { 0 }
+\ExplSyntaxOff
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
+The \mdef{markdownRendererFancyOlEnd} macro represents the end of a fancy
+ordered list that contains an item with several paragraphs of text (the list
+is not tight). This macro will only be produced, when the \Opt{fancyLists}
+option is enabled. The macro receives no arguments.
+
+% \end{markdown}
+%
+% \iffalse
+%</manual-tokens>
+%<*tex>
+% \fi
+%
+%  \begin{macrocode}
+\def\markdownRendererFancyOlEnd{%
+  \markdownRendererFancyOlEndPrototype}%
+\ExplSyntaxOn
+\seq_put_right:Nn
+  \g_@@_renderers_seq
+  { fancyOlEnd }
+\prop_put:Nnn
+  \g_@@_renderer_arities_prop
+  { fancyOlEnd }
+  { 0 }
+\ExplSyntaxOff
+%    \end{macrocode}
+% \par
+%
+% \iffalse
+%</tex>
+%<*manual-tokens>
+% \fi
+%
+% \begin{markdown}
+
+The \mdef{markdownRendererFancyOlEndTight} macro represents the end of a
+fancy ordered list that contains no item with several paragraphs of text (the
+list is tight). This macro will only be produced, when the \Opt{fancyLists}
+and \Opt{tightLists} options are enabled. The macro receives no arguments.
 
 % \end{markdown}
 %
@@ -11433,15 +11786,15 @@ following text:
 % \fi
 %
 %  \begin{macrocode}
-\def\markdownRendererOlEndTight{%
-  \markdownRendererOlEndTightPrototype}%
+\def\markdownRendererFancyOlEndTight{%
+  \markdownRendererFancyOlEndTightPrototype}%
 \ExplSyntaxOn
 \seq_put_right:Nn
   \g_@@_renderers_seq
-  { olEndTight }
+  { fancyOlEndTight }
 \prop_put:Nnn
   \g_@@_renderer_arities_prop
-  { olEndTight }
+  { fancyOlEndTight }
   { 0 }
 \ExplSyntaxOff
 %    \end{macrocode}
@@ -11494,7 +11847,7 @@ list is not tight). The macro receives no arguments.
 The \mdef{markdownRendererDlBeginTight} macro represents the beginning of a
 definition list that contains an item with several paragraphs of text (the
 list is not tight). This macro will only be produced, when the
-\Opt{tightLists} option is `false`. The macro receives no arguments.
+\Opt{tightLists} option is disabled. The macro receives no arguments.
 
 % \end{markdown}
 %
@@ -11692,7 +12045,7 @@ tight). The macro receives no arguments.
 The \mdef{markdownRendererDlEndTight} macro represents the end of a
 definition list that contains no item with several paragraphs of text (the
 list is tight). This macro will only be produced, when the \Opt{tightLists}
-option is `false`. The macro receives no arguments.
+option is disabled. The macro receives no arguments.
 
 % \end{markdown}
 %
@@ -15738,7 +16091,7 @@ following image:
 \pkg{witiko/tilde}
 
 :    A theme that makes tilde (`~`) always typeset the non-breaking space even
-     when the \Opt{hybrid} Lua option is `false`.
+     when the \Opt{hybrid} Lua option is disabled.
 %    ``` tex
 %    \documentclass{article}
 %    \usepackage[theme=witiko/tilde]{markdown}
@@ -18709,22 +19062,12 @@ function M.writer.new(options)
 % \par
 % \begin{markdown}
 %
-% Make `options.cacheDir` available as \luamdef{writer->cacheDir}, so that it
-% is accessible from extensions.
-%
-% \end{markdown}
-%  \begin{macrocode}
-  self.cacheDir = options.cacheDir
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
-% Make `options.hybrid` available as \luamdef{writer->hybrid}, so that it is
+% Make `options` available as \luamdef{writer->options}, so that it is
 % accessible from extensions.
 %
 % \end{markdown}
 %  \begin{macrocode}
-  self.hybrid = options.hybrid
+  self.options = options
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -19003,16 +19346,11 @@ function M.writer.new(options)
 %
 % \end{markdown}
 %  \begin{macrocode}
-  local function ulitem(s)
-    return {"\\markdownRendererUlItem ",s,
-            "\\markdownRendererUlItemEnd "}
-  end
-
   function self.bulletlist(items,tight)
     if not self.is_writing then return "" end
     local buffer = {}
     for _,item in ipairs(items) do
-      buffer[#buffer + 1] = ulitem(item)
+      buffer[#buffer + 1] = self.bulletitem(item)
     end
     local contents = util.intersperse(buffer,"\n")
     if tight and options.tightLists then
@@ -19024,33 +19362,36 @@ function M.writer.new(options)
     end
   end
 %    \end{macrocode}
-% \par
 % \begin{markdown}
 %
-% Define \luamdef{writer->ollist} as a function that will transform an input
-% ordered list to the output format, where `items` is an array of the list
-% items and `tight` specifies, whether the list is tight or not. If the
-% optional parameter `startnum` is present, it should be used as the number
-% of the first list item.
+% Define \luamdef{writer->bulletitem} as a function that will transform an
+% input bulleted list item to the output format, where `s` is the text of
+% the list item.
 %
 % \end{markdown}
 %  \begin{macrocode}
-  local function olitem(s,num)
-    if num ~= nil then
-      return {"\\markdownRendererOlItemWithNumber{",num,"}",s,
-              "\\markdownRendererOlItemEnd "}
-    else
-      return {"\\markdownRendererOlItem ",s,
-              "\\markdownRendererOlItemEnd "}
-    end
+  function self.bulletitem(s)
+    return {"\\markdownRendererUlItem ",s,
+            "\\markdownRendererUlItemEnd "}
   end
-
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Define \luamdef{writer->orderedlist} as a function that will transform an
+% input ordered list to the output format, where `items` is an array of the
+% list items and `tight` specifies, whether the list is tight or not. If the
+% optional parameter `startnum` is present, it is the number of the first list
+% item.
+%
+% \end{markdown}
+%  \begin{macrocode}
   function self.orderedlist(items,tight,startnum)
     if not self.is_writing then return "" end
     local buffer = {}
     local num = startnum
     for _,item in ipairs(items) do
-      buffer[#buffer + 1] = olitem(item,num)
+      buffer[#buffer + 1] = self.ordereditem(item,num)
       if num ~= nil then
         num = num + 1
       end
@@ -19062,6 +19403,25 @@ function M.writer.new(options)
     else
       return {"\\markdownRendererOlBegin\n",contents,
               "\n\\markdownRendererOlEnd "}
+    end
+  end
+%    \end{macrocode}
+% \begin{markdown}
+%
+% Define \luamdef{writer->ordereditem} as a function that will transform an
+% input ordered list item to the output format, where `s` is the text of
+% the list item. If the optional parameter `num` is present, it is the number
+% of the list item.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  function self.ordereditem(s,num)
+    if num ~= nil then
+      return {"\\markdownRendererOlItemWithNumber{",num,"}",s,
+              "\\markdownRendererOlItemEnd "}
+    else
+      return {"\\markdownRendererOlItem ",s,
+              "\\markdownRendererOlItemEnd "}
     end
   end
 %    \end{macrocode}
@@ -19118,7 +19478,7 @@ function M.writer.new(options)
 %  \begin{macrocode}
   function self.block_html_element(s)
     if not self.is_writing then return "" end
-    local name = util.cache(self.cacheDir, s, nil, nil, ".verbatim")
+    local name = util.cache(options.cacheDir, s, nil, nil, ".verbatim")
     return {"\\markdownRendererInputBlockHtmlElement{",name,"}"}
   end
 %    \end{macrocode}
@@ -19189,7 +19549,7 @@ function M.writer.new(options)
   function self.verbatim(s)
     if not self.is_writing then return "" end
     s = string.gsub(s, '[\r\n%s]*$', '')
-    local name = util.cache(self.cacheDir, s, nil, nil, ".verbatim")
+    local name = util.cache(options.cacheDir, s, nil, nil, ".verbatim")
     return {"\\markdownRendererInputVerbatim{",name,"}"}
   end
 %    \end{macrocode}
@@ -20038,12 +20398,14 @@ function M.reader.new(writer, options, extensions)
 % \par
 % \begin{markdown}
 %
-% Make the `writer` parameter available as \luamdef{reader->writer}, so that it
-% is accessible from extensions.
+% Make the `writer` and `options` parameters available as
+% \luamdef{reader->writer} and \luamdef{reader->options}, respectively, so
+% that they are accessible from extensions.
 %
 % \end{markdown}
 %  \begin{macrocode}
   self.writer = writer
+  self.options = options
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -20616,16 +20978,16 @@ function M.reader.new(writer, options, extensions)
                        * parsers.skipblanklines )
                      / writer.bulletlist
 
-  local function ordered_list(items,tight,startNumber)
+  local function ordered_list(items,tight,startnum)
     if options.startNumber then
-      startNumber = tonumber(startNumber) or 1  -- fallback for '#'
-      if startNumber ~= nil then
-        startNumber = math.floor(startNumber)
+      startnum = tonumber(startnum) or 1  -- fallback for '#'
+      if startnum ~= nil then
+        startnum = math.floor(startnum)
       end
     else
-      startNumber = nil
+      startnum = nil
     end
-    return writer.orderedlist(items,tight,startNumber)
+    return writer.orderedlist(items,tight,startnum)
   end
 
   parsers.OrderedList = Cg(parsers.enumerator, "listtype") *
@@ -20991,7 +21353,7 @@ M.extensions = {}
 %#### Citations
 %
 % The \luamdef{extensions.citations} function implements the Pandoc citation
-% syntax extension. When the `citation_nbsps` parameter is `true`, the syntax
+% syntax extension. When the `citation_nbsps` parameter is enabled, the syntax
 % extension will replace regular spaces with non-breaking spaces inside the
 % prenotes and postnotes of citations.
 %
@@ -21016,6 +21378,8 @@ M.extensions.citations = function(citation_nbsps)
   }
   return {
     extend_writer = function(self)
+      local options = self.options
+
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -21039,7 +21403,7 @@ M.extensions.citations = function(citation_nbsps)
 %
 % \end{markdown}
 %  \begin{macrocode}
-      if self.hybrid then
+      if options.hybrid then
         self.citation = self.escape_minimal
       else
         self.citation = escape_citation
@@ -21483,6 +21847,8 @@ end
 M.extensions.fenced_code = function(blank_before_code_fence)
   return {
     extend_writer = function(self)
+      local options = self.options
+
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -21496,7 +21862,7 @@ M.extensions.fenced_code = function(blank_before_code_fence)
       function self.fencedCode(i, s)
         if not self.is_writing then return "" end
         s = string.gsub(s, '[\r\n%s]*$', '')
-        local name = util.cache(self.cacheDir, s, nil, nil, ".verbatim")
+        local name = util.cache(options.cacheDir, s, nil, nil, ".verbatim")
         return {"\\markdownRendererInputFencedCode{",name,"}{",i,"}"}
       end
     end, extend_reader = function(self)
@@ -21741,8 +22107,8 @@ end
 %
 % The \luamdef{extensions.jekyll_data} function implements the Pandoc
 % `yaml_metadata_block` syntax extension for entering metadata in \acro{yaml}.
-% When the `expect_jekyll_data` is `true`, then a markdown document may
-% begin directly with \acro{yaml} metadata and may contain nothing but
+% When the `expect_jekyll_data` parameter is `true`, then a markdown document
+% may begin directly with \acro{yaml} metadata and may contain nothing but
 % \acro{yaml} metadata
 %
 % \end{markdown}
@@ -21897,7 +22263,7 @@ end
 %
 % The \luamdef{extensions.pipe_table} function implements the \acro{PHP}
 % Markdown table syntax extension (affectionately known as pipe tables). When
-% the parameter `table_captions` is `true`, the function also implements the
+% the `table_captions` parameter is `true`, the function also implements the
 % Pandoc `table_captions` syntax extension for table captions.
 %
 % \end{markdown}
@@ -22176,6 +22542,182 @@ end
 %    \end{macrocode}
 % \begin{markdown}
 %
+%#### Fancy Lists
+%
+% The \luamdef{extensions.fancy_lists} function implements the Pandoc fancy
+% list extension.
+%
+% \end{markdown}
+%  \begin{macrocode}
+M.extensions.fancy_lists = function()
+  return {
+    extend_writer = function(self)
+      local options = self.options
+
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Define \luamdef{writer->fancylist} as a function that will transform an
+% input ordered list to the output format, where:
+%
+%- `items` is an array of the list items,
+%- `tight` specifies, whether the list is tight or not,
+%- `startnum` is the number of the first list item,
+%- `numstyle` is the style of the list item labels from among the following:
+%    - `Decimal` -- decimal arabic numbers,
+%    - `LowerRoman` -- lower roman numbers,
+%    - `UpperRoman` -- upper roman numbers,
+%    - `LowerAlpha` -- lower ASCII alphabetic characters, and
+%    - `UpperAlpha` -- upper ASCII alphabetic characters, and
+%- `numdelim` is the style of delimiters between list item labels and
+%  texts from among the following:
+%    - `Default` -- default style,
+%    - `OneParen` -- parentheses, and
+%    - `Period` -- periods.
+%
+% \end{markdown}
+%  \begin{macrocode}
+      function self.fancylist(items,tight,startnum,numstyle,numdelim)
+        if not self.is_writing then return "" end
+        local buffer = {}
+        local num = startnum
+        for _,item in ipairs(items) do
+          buffer[#buffer + 1] = self.fancyitem(item,numstyle,numdelim,num)
+          if num ~= nil then
+            num = num + 1
+          end
+        end
+        local contents = util.intersperse(buffer,"\n")
+        if tight and options.tightLists then
+          return {"\\markdownRendererFancyOlBeginTight{",
+                  numstyle,"}{",numdelim,"}",contents,
+                  "\n\\markdownRendererFancyOlEndTight "}
+        else
+          return {"\\markdownRendererFancyOlBegin{",
+                  numstyle,"}{",numdelim,"}",contents,
+                  "\n\\markdownRendererFancyOlEnd "}
+        end
+      end
+%    \end{macrocode}
+% \begin{markdown}
+%
+% Define \luamdef{writer->fancyitem} as a function that will transform an
+% input fancy ordered list item to the output format, where `s` is the text of
+% the list item, `numstyle` is the style of the list item labels, and
+% `numdelim` is the style of delimiters between list item labels. If the
+% optional parameter `num` is present, it is the number of the list item.
+%
+% \end{markdown}
+%  \begin{macrocode}
+      function self.fancyitem(s,numstyle,numdelim,num)
+        if num ~= nil then
+          return {"\\markdownRendererFancyOlItemWithNumber{",numstyle,
+                  "}{",numdelim,"}{",num,"}",s,
+                  "\\markdownRendererFancyOlItemEnd "}
+        else
+          return {"\\markdownRendererFancyOlItem{",numstyle,"}{",numdelim,
+                  "}",s,"\\markdownRendererFancyOlItemEnd "}
+        end
+      end
+    end, extend_reader = function(self)
+      local parsers = self.parsers
+      local options = self.options
+      local syntax = self.syntax
+      local writer = self.writer
+
+      local label = parsers.dig + parsers.letter
+      local numdelim = parsers.period + parsers.rparent
+      local enumerator = C(label^3 * numdelim) * #parsers.spacing
+                       + C(label^2 * numdelim) * #parsers.spacing
+                                         * (parsers.tab + parsers.space^1)
+                       + C(label * numdelim) * #parsers.spacing
+                                       * (parsers.tab + parsers.space^-2)
+                       + parsers.space * C(label^2 * numdelim)
+                                       * #parsers.spacing
+                       + parsers.space * C(label * numdelim)
+                                       * #parsers.spacing
+                                       * (parsers.tab + parsers.space^-1)
+                       + parsers.space * parsers.space * C(label^1
+                                       * numdelim) * #parsers.spacing
+
+      local function roman2number(roman)
+        local romans = { ["L"] = 50, ["X"] = 10, ["V"] = 5, ["I"] = 1 }
+        local numeral = 0
+
+        local i = 1
+        local len = string.len(roman)
+        while i < len do
+          local z1, z2 = romans[ string.sub(roman, i, i) ], romans[ string.sub(roman, i+1, i+1) ]
+          if z1 < z2 then
+              numeral = numeral + (z2 - z1)
+              i = i + 2
+          else
+              numeral = numeral + z1
+              i = i + 1
+          end
+        end
+        if i <= len then numeral = numeral + romans[ string.sub(roman,i,i) ] end
+        return numeral
+      end
+
+      local function sniffstyle(itemprefix)
+        local numstr, delimend = itemprefix:match("^([A-Za-z0-9]*)([.)]*)")
+        local numdelim
+        if delimend == ")" then
+          numdelim = "OneParen"
+        elseif delimend == "." then
+          numdelim = "Period"
+        else
+          numdelim = "Default"
+        end
+        numstr = numstr or itemprefix
+
+        local num
+        num = numstr:match("^([IVXL]+)")
+        if num then
+          return roman2number(num), "UpperRoman", numdelim
+        end
+        num = numstr:match("^([ivxl]+)")
+        if num then
+          return roman2number(string.upper(num)), "LowerRoman", numdelim
+        end
+        num = numstr:match("^([A-Z])")
+        if num then
+          return string.byte(num) - string.byte("A") + 1, "UpperAlpha", numdelim
+        end
+        num = numstr:match("^([a-z])")
+        if num then
+          return string.byte(num) - string.byte("a") + 1, "LowerAlpha", numdelim
+        end
+        return math.floor(tonumber(numstr) or 1), "Decimal", numdelim
+      end
+
+      local function fancylist(items,tight,start)
+        local startnum, numstyle, numdelim = sniffstyle(start)
+        return writer.fancylist(items,tight,
+                                options.startNumber and startnum,
+                                numstyle or "Decimal",
+                                numdelim or "Default")
+      end
+
+      local FancyList = Cg(enumerator, "listtype") *
+                      ( Ct(parsers.TightListItem(Cb("listtype"))
+                          * parsers.TightListItem(enumerator)^0)
+                      * Cc(true) * parsers.skipblanklines * -enumerator
+                      + Ct(parsers.LooseListItem(Cb("listtype"))
+                          * parsers.LooseListItem(enumerator)^0)
+                      * Cc(false) * parsers.skipblanklines
+                      ) * Cb("listtype") / fancylist
+
+      syntax.OrderedList = FancyList
+
+    end
+  }
+end
+%    \end{macrocode}
+% \begin{markdown}
+%
 %### Conversion from Markdown to Plain \TeX{}
 %
 % The \luamref{new} method returns the \luamref{reader->convert} function of a reader
@@ -22265,6 +22807,11 @@ function M.new(options)
   if options.superscripts then
     local superscript_extension = M.extensions.superscripts()
     table.insert(extensions, superscript_extension)
+  end
+
+  if options.fancyLists then
+    local fancy_lists_extension = M.extensions.fancy_lists()
+    table.insert(extensions, fancy_lists_extension)
   end
 
   local writer = M.writer.new(options)
@@ -22417,11 +22964,18 @@ end
 \def\markdownRendererUlEndTightPrototype{}%
 \def\markdownRendererOlBeginPrototype{}%
 \def\markdownRendererOlBeginTightPrototype{}%
+\def\markdownRendererFancyOlBeginPrototype#1#2{\markdownRendererOlBegin}%
+\def\markdownRendererFancyOlBeginTightPrototype#1#2{\markdownRendererOlBeginTight}%
 \def\markdownRendererOlItemPrototype{}%
 \def\markdownRendererOlItemWithNumberPrototype#1{}%
 \def\markdownRendererOlItemEndPrototype{}%
+\def\markdownRendererFancyOlItemPrototype#1#2{\markdownRendererOlItem}%
+\def\markdownRendererFancyOlItemWithNumberPrototype#1#2#3{\markdownRendererOlItemWithNumber{#3}}%
+\def\markdownRendererFancyOlItemEndPrototype{}%
 \def\markdownRendererOlEndPrototype{}%
 \def\markdownRendererOlEndTightPrototype{}%
+\def\markdownRendererFancyOlEndPrototype{\markdownRendererOlEnd}%
+\def\markdownRendererFancyOlEndTightPrototype{\markdownRendererOlEndTight}%
 \def\markdownRendererDlBeginPrototype{}%
 \def\markdownRendererDlBeginTightPrototype{}%
 \def\markdownRendererDlItemPrototype#1{#1}%
@@ -23785,22 +24339,89 @@ end
 %
 % \end{markdown}
 %  \begin{macrocode}
+\ExplSyntaxOn
 \@ifpackageloaded{paralist}{
+  \cs_new:Nn
+    \@@_latex_translate_list_item_label_number:nn
+    {
+      \str_case:nn
+        { #1 }
+        {
+          { Decimal } { #2 }
+          { LowerRoman } { \int_to_roman:n { #2 } }
+          { UpperRoman } { \int_to_Roman:n { #2 } }
+          { LowerAlpha } { \int_to_alph:n { #2 } }
+          { UpperAlpha } { \int_to_alph:n { #2 } }
+        }
+    }
+  \cs_new:Nn
+    \@@_latex_translate_list_item_label_delimiter:n
+    {
+      \str_case:nn
+        { #1 }
+        {
+          { Default } { . }
+          { OneParen } { ) }
+          { Period } { - }
+        }
+    }
+  \cs_new:Nn
+    \@@_latex_translate_list_item_label:nnn
+    {
+      \@@_latex_translate_list_item_label_delimiter:n
+        { #2 }
+      \@@_latex_translate_list_item_label_number:nn
+        { #1 }
+        { #3 }
+    }
+  \cs_new:Nn
+    \@@_latex_paralist_style:nn
+    {
+      \str_case:nn
+        { #1 }
+        {
+          { Decimal } { 1 }
+          { LowerRoman } { i }
+          { UpperRoman } { I }
+          { LowerAlpha } { a }
+          { UpperAlpha } { A }
+        }
+      \@@_latex_translate_list_item_label_delimiter:n
+        { #2 }
+    }
   \markdownSetup{rendererPrototypes={
     ulBeginTight = {\begin{compactitem}},
     ulEndTight = {\end{compactitem}},
+    fancyOlBegin = {
+      \begin{enumerate}[ \@@_latex_paralist_style:nn { #1 } { #2 } ]
+    },
+    fancyOlEnd = {\end{enumerate}},
     olBeginTight = {\begin{compactenum}},
     olEndTight = {\end{compactenum}},
+    fancyOlBeginTight = {
+      \begin{compactenum}[ \@@_latex_paralist_style:nn { #1 } { #2 } ]
+    },
+    fancyOlEndTight = {\end{compactenum}},
+    fancyOlItemWithNumber = {
+      \markdownRendererOlItemWithNumber
+        { \@@_latex_translate_list_item_label:nnn { #1 } { #2 } { #3 } }
+    },
     dlBeginTight = {\begin{compactdesc}},
     dlEndTight = {\end{compactdesc}}}}
 }{
   \markdownSetup{rendererPrototypes={
     ulBeginTight = {\markdownRendererUlBegin},
     ulEndTight = {\markdownRendererUlEnd},
+    fancyOlBegin = {\markdownRendererOlBegin},
+    fancyOlEnd = {\markdownRendererOlEnd},
     olBeginTight = {\markdownRendererOlBegin},
     olEndTight = {\markdownRendererOlEnd},
+    fancyOlBeginTight = {\markdownRendererOlBegin},
+    fancyOlEndTight = {\markdownRendererOlEnd},
     dlBeginTight = {\markdownRendererDlBegin},
-    dlEndTight = {\markdownRendererDlEnd}}}}
+    dlEndTight = {\markdownRendererDlEnd}}}
+}
+\ExplSyntaxOff
 \RequirePackage{amsmath,ifthen}
 %    \end{macrocode}
 % \par
