@@ -43,17 +43,9 @@ BEGIN fancyOlBegin
 - numstyle: LowerRoman
 - numdelim: Period
 END fancyOlBegin
-BEGIN fancyOlItemWithNumber
-- numstyle: LowerRoman
-- numdelim: Period
-- number: 4
-END fancyOlItemWithNumber
+fancyOlItemWithNumber: 4
 fancyOlItemEnd
-BEGIN fancyOlItemWithNumber
-- numstyle: LowerRoman
-- numdelim: Period
-- number: 5
-END fancyOlItemWithNumber
+fancyOlItemWithNumber: 5
 fancyOlItemEnd
 fancyOlEnd
 interblockSeparator
@@ -63,11 +55,9 @@ BEGIN fancyOlBeginTight
 - numstyle: UpperRoman
 - numdelim: Period
 END fancyOlBeginTight
-BEGIN fancyOlItemWithNumber
-- numstyle: UpperRoman
-- numdelim: Period
-- number: 4
-END fancyOlItemWithNumber
+fancyOlItemWithNumber: 4
+fancyOlItemEnd
+fancyOlItemWithNumber: 5
 fancyOlItemEnd
 fancyOlEndTight
 interblockSeparator
@@ -77,17 +67,9 @@ BEGIN fancyOlBegin
 - numstyle: LowerAlpha
 - numdelim: Period
 END fancyOlBegin
-BEGIN fancyOlItemWithNumber
-- numstyle: LowerAlpha
-- numdelim: Period
-- number: 4
-END fancyOlItemWithNumber
+fancyOlItemWithNumber: 4
 fancyOlItemEnd
-BEGIN fancyOlItemWithNumber
-- numstyle: LowerAlpha
-- numdelim: Period
-- number: 5
-END fancyOlItemWithNumber
+fancyOlItemWithNumber: 5
 fancyOlItemEnd
 fancyOlEnd
 interblockSeparator
@@ -97,11 +79,9 @@ BEGIN fancyOlBeginTight
 - numstyle: UpperAlpha
 - numdelim: Period
 END fancyOlBeginTight
-BEGIN fancyOlItemWithNumber
-- numstyle: UpperAlpha
-- numdelim: Period
-- number: 4
-END fancyOlItemWithNumber
+fancyOlItemWithNumber: 4
+fancyOlItemEnd
+fancyOlItemWithNumber: 5
 fancyOlItemEnd
 fancyOlEndTight
 interblockSeparator
@@ -111,17 +91,9 @@ BEGIN fancyOlBegin
 - numstyle: Decimal
 - numdelim: OneParen
 END fancyOlBegin
-BEGIN fancyOlItemWithNumber
-- numstyle: Decimal
-- numdelim: OneParen
-- number: 4
-END fancyOlItemWithNumber
+fancyOlItemWithNumber: 4
 fancyOlItemEnd
-BEGIN fancyOlItemWithNumber
-- numstyle: Decimal
-- numdelim: OneParen
-- number: 5
-END fancyOlItemWithNumber
+fancyOlItemWithNumber: 5
 fancyOlItemEnd
 fancyOlEnd
 documentEnd

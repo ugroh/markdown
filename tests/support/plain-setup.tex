@@ -112,19 +112,12 @@
   \TYPE{olItemEnd}}%
 \def\markdownRendererOlItemWithNumber#1{%
   \TYPE{olItemWithNumber:      #1}}%
-\def\markdownRendererFancyOlItem#1#2{%
-  \TYPE{BEGIN fancyOlItem}%
-  \TYPE{- numstyle:            #1}%
-  \TYPE{- numdelim:            #2}%
-  \TYPE{END fancyOlItem}}%
+\def\markdownRendererFancyOlItem{%
+  \TYPE{fancyOlItem}}%
 \def\markdownRendererFancyOlItemEnd{%
   \TYPE{fancyOlItemEnd}}%
-\def\markdownRendererFancyOlItemWithNumber#1#2#3{%
-  \TYPE{BEGIN fancyOlItemWithNumber}%
-  \TYPE{- numstyle:            #1}%
-  \TYPE{- numdelim:            #2}%
-  \TYPE{- number:              #3}%
-  \TYPE{END fancyOlItemWithNumber}}%
+\def\markdownRendererFancyOlItemWithNumber#1{%
+  \TYPE{fancyOlItemWithNumber: #1}}%
 \def\markdownRendererOlEnd{%
   \TYPE{olEnd}}%
 \def\markdownRendererOlEndTight{%

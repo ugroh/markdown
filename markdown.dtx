@@ -11314,9 +11314,7 @@ receives a single numeric argument that corresponds to the item number.
 The \mdef{markdownRendererFancyOlItem} macro represents an item in a fancy
 ordered list. This macro will only be produced, when the \Opt{startNumber}
 option is disabled and the \Opt{fancyLists} option is enabled. The macro receives
-two arguments: the style of the list item labels, and the style of delimiters
-between list item labels and texts. See the
-\mref{markdownRendererFancyOlBegin} macro for the valid style values.
+no arguments.
 
 % \end{markdown}
 %
@@ -11335,7 +11333,7 @@ between list item labels and texts. See the
 \prop_put:Nnn
   \g_@@_renderer_arities_prop
   { fancyOlItem }
-  { 2 }
+  { 0 }
 \ExplSyntaxOff
 %    \end{macrocode}
 % \par
@@ -11382,10 +11380,8 @@ option is enabled. The macro receives no arguments.
 
 The \mdef{markdownRendererFancyOlItemWithNumber} macro represents an item in a
 fancy ordered list. This macro will only be produced, when the \Opt{startNumber}
-and \Opt{tightLists} options are enabled. The macro receives three arguments:
-the style of the list item labels, the style of delimiters between list item
-labels and texts, and the item number. See the
-\mref{markdownRendererFancyOlBegin} macro for the valid style values.
+and \Opt{fancyLists} options are enabled. The macro receives a single numeric
+argument that corresponds to the item number.
 
 % \end{markdown}
 %
@@ -11404,7 +11400,7 @@ labels and texts, and the item number. See the
 \prop_put:Nnn
   \g_@@_renderer_arities_prop
   { fancyOlItemWithNumber }
-  { 3 }
+  { 1 }
 \ExplSyntaxOff
 %    \end{macrocode}
 % \par
@@ -22568,7 +22564,7 @@ M.extensions.fancy_lists = function()
         local buffer = {}
         local num = startnum
         for _,item in ipairs(items) do
-          buffer[#buffer + 1] = self.fancyitem(item,numstyle,numdelim,num)
+          buffer[#buffer + 1] = self.fancyitem(item,num)
           if num ~= nil then
             num = num + 1
           end
@@ -22589,20 +22585,17 @@ M.extensions.fancy_lists = function()
 %
 % Define \luamdef{writer->fancyitem} as a function that will transform an
 % input fancy ordered list item to the output format, where `s` is the text of
-% the list item, `numstyle` is the style of the list item labels, and
-% `numdelim` is the style of delimiters between list item labels. If the
-% optional parameter `num` is present, it is the number of the list item.
+% the list item. If the optional parameter `num` is present, it is the number
+% of the list item.
 %
 % \end{markdown}
 %  \begin{macrocode}
-      function self.fancyitem(s,numstyle,numdelim,num)
+      function self.fancyitem(s,num)
         if num ~= nil then
-          return {"\\markdownRendererFancyOlItemWithNumber{",numstyle,
-                  "}{",numdelim,"}{",num,"}",s,
+          return {"\\markdownRendererFancyOlItemWithNumber{",num,"}",s,
                   "\\markdownRendererFancyOlItemEnd "}
         else
-          return {"\\markdownRendererFancyOlItem{",numstyle,"}{",numdelim,
-                  "}",s,"\\markdownRendererFancyOlItemEnd "}
+          return {"\\markdownRendererFancyOlItem ",s,"\\markdownRendererFancyOlItemEnd "}
         end
       end
     end, extend_reader = function(self)
@@ -22625,6 +22618,35 @@ M.extensions.fancy_lists = function()
                                        * (parsers.tab + parsers.space^-1)
                        + parsers.space * parsers.space * C(label^1
                                        * numdelim) * #parsers.spacing
+      local starter = parsers.bullet + enumerator
+
+      local NestedList = Cs((parsers.optionallyindentedline
+                            - starter)^1)
+                       / function(a) return "\001"..a end
+
+      local ListBlockLine  = parsers.optionallyindentedline
+                           - parsers.blankline - (parsers.indent^-1
+                                                 * starter)
+
+      local ListBlock = parsers.line * ListBlockLine^0
+
+      local ListContinuationBlock = parsers.blanklines * (parsers.indent / "")
+                                  * ListBlock
+
+      local TightListItem = function(starter)
+          return -parsers.HorizontalRule
+                 * (Cs(starter / "" * parsers.tickbox^-1 * ListBlock * NestedList^-1)
+                   / self.parser_functions.parse_blocks_nested)
+                 * -(parsers.blanklines * parsers.indent)
+      end
+
+      local LooseListItem = function(starter)
+          return -parsers.HorizontalRule
+                 * Cs( starter / "" * parsers.tickbox^-1 * ListBlock * Cc("\n")
+                   * (NestedList + ListContinuationBlock^0)
+                   * (parsers.blanklines / "\n\n")
+                   ) / self.parser_functions.parse_blocks_nested
+      end
 
       local function roman2number(roman)
         local romans = { ["L"] = 50, ["X"] = 10, ["V"] = 5, ["I"] = 1 }
@@ -22687,11 +22709,11 @@ M.extensions.fancy_lists = function()
       end
 
       local FancyList = Cg(enumerator, "listtype") *
-                      ( Ct(parsers.TightListItem(Cb("listtype"))
-                          * parsers.TightListItem(enumerator)^0)
+                      ( Ct(TightListItem(Cb("listtype"))
+                          * TightListItem(enumerator)^0)
                       * Cc(true) * parsers.skipblanklines * -enumerator
-                      + Ct(parsers.LooseListItem(Cb("listtype"))
-                          * parsers.LooseListItem(enumerator)^0)
+                      + Ct(LooseListItem(Cb("listtype"))
+                          * LooseListItem(enumerator)^0)
                       * Cc(false) * parsers.skipblanklines
                       ) * Cb("listtype") / fancylist
 
@@ -22954,8 +22976,8 @@ end
 \def\markdownRendererOlItemPrototype{}%
 \def\markdownRendererOlItemWithNumberPrototype#1{}%
 \def\markdownRendererOlItemEndPrototype{}%
-\def\markdownRendererFancyOlItemPrototype#1#2{\markdownRendererOlItem}%
-\def\markdownRendererFancyOlItemWithNumberPrototype#1#2#3{\markdownRendererOlItemWithNumber{#3}}%
+\def\markdownRendererFancyOlItemPrototype{\markdownRendererOlItem}%
+\def\markdownRendererFancyOlItemWithNumberPrototype{\markdownRendererOlItemWithNumber}%
 \def\markdownRendererFancyOlItemEndPrototype{}%
 \def\markdownRendererOlEndPrototype{}%
 \def\markdownRendererOlEndTightPrototype{}%
@@ -24326,8 +24348,12 @@ end
 %  \begin{macrocode}
 \ExplSyntaxOn
 \@ifpackageloaded{paralist}{
+  \tl_new:N
+    \l_@@_latex_fancy_list_item_label_number_style_tl
+  \tl_new:N
+    \l_@@_latex_fancy_list_item_label_delimiter_style_tl
   \cs_new:Nn
-    \@@_latex_translate_list_item_label_number:nn
+    \@@_latex_fancy_list_item_label_number:nn
     {
       \str_case:nn
         { #1 }
@@ -24340,7 +24366,7 @@ end
         }
     }
   \cs_new:Nn
-    \@@_latex_translate_list_item_label_delimiter:n
+    \@@_latex_fancy_list_item_label_delimiter:n
     {
       \str_case:nn
         { #1 }
@@ -24351,11 +24377,11 @@ end
         }
     }
   \cs_new:Nn
-    \@@_latex_translate_list_item_label:nnn
+    \@@_latex_fancy_list_item_label:nnn
     {
-      \@@_latex_translate_list_item_label_delimiter:n
+      \@@_latex_fancy_list_item_label_delimiter:n
         { #2 }
-      \@@_latex_translate_list_item_label_number:nn
+      \@@_latex_fancy_list_item_label_number:nn
         { #1 }
         { #3 }
     }
@@ -24371,28 +24397,56 @@ end
           { LowerAlpha } { a }
           { UpperAlpha } { A }
         }
-      \@@_latex_translate_list_item_label_delimiter:n
+      \@@_latex_fancy_list_item_label_delimiter:n
         { #2 }
     }
   \markdownSetup{rendererPrototypes={
     ulBeginTight = {\begin{compactitem}},
     ulEndTight = {\end{compactitem}},
     fancyOlBegin = {
+      \group_begin:
+      \tl_set:Nn
+        \l_@@_latex_fancy_list_item_label_number_style_tl
+        { #1 }
+      \tl_set:Nn
+        \l_@@_latex_fancy_list_item_label_delimiter_style_tl
+        { #2 }
       \begin{enumerate}[ \@@_latex_paralist_style:nn { #1 } { #2 } ]
     },
-    fancyOlEnd = {\end{enumerate}},
+    fancyOlEnd = {
+      \end{enumerate}
+      \group_end:
+    },
     olBeginTight = {\begin{compactenum}},
     olEndTight = {\end{compactenum}},
     fancyOlBeginTight = {
+      \group_begin:
+      \tl_set:Nn
+        \l_@@_latex_fancy_list_item_label_number_style_tl
+        { #1 }
+      \tl_set:Nn
+        \l_@@_latex_fancy_list_item_label_delimiter_style_tl
+        { #2 }
       \begin{compactenum}[ \@@_latex_paralist_style:nn { #1 } { #2 } ]
     },
-    fancyOlEndTight = {\end{compactenum}},
+    fancyOlEndTight = {
+      \end{compactenum}
+      \group_end:
+    },
     fancyOlItemWithNumber = {
       \markdownRendererOlItemWithNumber
-        { \@@_latex_translate_list_item_label:nnn { #1 } { #2 } { #3 } }
+        {
+          \@@_latex_fancy_list_item_label:VVn
+            \l_@@_latex_fancy_list_item_label_number_style_tl
+            \l_@@_latex_fancy_list_item_label_delimiter_style_tl
+            { #1 }
+        }
     },
     dlBeginTight = {\begin{compactdesc}},
     dlEndTight = {\end{compactdesc}}}}
+  \cs_generate_variant:Nn
+    \@@_latex_fancy_list_item_label:nnn
+    { VVn }
 }{
   \markdownSetup{rendererPrototypes={
     ulBeginTight = {\markdownRendererUlBegin},
