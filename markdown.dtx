@@ -22618,6 +22618,35 @@ M.extensions.fancy_lists = function()
                                        * (parsers.tab + parsers.space^-1)
                        + parsers.space * parsers.space * C(label^1
                                        * numdelim) * #parsers.spacing
+      local starter = parsers.bullet + enumerator
+
+      local NestedList = Cs((parsers.optionallyindentedline
+                            - starter)^1)
+                       / function(a) return "\001"..a end
+
+      local ListBlockLine  = parsers.optionallyindentedline
+                           - parsers.blankline - (parsers.indent^-1
+                                                 * starter)
+
+      local ListBlock = parsers.line * ListBlockLine^0
+
+      local ListContinuationBlock = parsers.blanklines * (parsers.indent / "")
+                                  * ListBlock
+
+      local TightListItem = function(starter)
+          return -parsers.HorizontalRule
+                 * (Cs(starter / "" * parsers.tickbox^-1 * ListBlock * NestedList^-1)
+                   / self.parser_functions.parse_blocks_nested)
+                 * -(parsers.blanklines * parsers.indent)
+      end
+
+      local LooseListItem = function(starter)
+          return -parsers.HorizontalRule
+                 * Cs( starter / "" * parsers.tickbox^-1 * ListBlock * Cc("\n")
+                   * (NestedList + ListContinuationBlock^0)
+                   * (parsers.blanklines / "\n\n")
+                   ) / self.parser_functions.parse_blocks_nested
+      end
 
       local function roman2number(roman)
         local romans = { ["L"] = 50, ["X"] = 10, ["V"] = 5, ["I"] = 1 }
@@ -22680,11 +22709,11 @@ M.extensions.fancy_lists = function()
       end
 
       local FancyList = Cg(enumerator, "listtype") *
-                      ( Ct(parsers.TightListItem(Cb("listtype"))
-                          * parsers.TightListItem(enumerator)^0)
+                      ( Ct(TightListItem(Cb("listtype"))
+                          * TightListItem(enumerator)^0)
                       * Cc(true) * parsers.skipblanklines * -enumerator
-                      + Ct(parsers.LooseListItem(Cb("listtype"))
-                          * parsers.LooseListItem(enumerator)^0)
+                      + Ct(LooseListItem(Cb("listtype"))
+                          * LooseListItem(enumerator)^0)
                       * Cc(false) * parsers.skipblanklines
                       ) * Cb("listtype") / fancylist
 
