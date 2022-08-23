@@ -4,11 +4,13 @@ Markdown
 [![license](https://img.shields.io/github/license/witiko/markdown)](LICENSE)
 [![ci](https://github.com/witiko/markdown/actions/workflows/main.yml/badge.svg)][ci]
 [![release](https://img.shields.io/github/release/witiko/markdown)][release]
-[![chat](https://img.shields.io/matrix/witiko-markdown:matrix.org)][chat]
+[![matrix](https://img.shields.io/matrix/witiko-markdown:matrix.org?label=matrix%20chat)][matrix]
+[![discord](https://img.shields.io/discord/1011667276908474440?label=discord%20chat&color=blueviolet)][discord]
 
  [release]:  https://github.com/Witiko/markdown/releases/latest "Releases · Witiko/markdown"
  [ci]:       https://github.com/Witiko/markdown/actions         "GitHub Actions"
- [chat]:     https://matrix.to/#/#witiko-markdown:matrix.org    "The witiko-markdown:matrix.org space"
+ [matrix]:   https://matrix.to/#/#witiko-markdown:matrix.org    "The Matrix Chat Space for the Markdown package"
+ [discord]:  https://discord.gg/8xJsPghzSH                      "The Discord Chat Space for the Markdown package"
 
 The Markdown package converts [markdown][] markup to TeX commands. The
 functionality is provided both as a Lua module, and as plain TeX, LaTeX, and
