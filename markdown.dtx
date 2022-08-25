@@ -806,6 +806,21 @@ abbr {
       }%
     },
   },
+  jekyllDataRenderers = {
+    author = {%
+      \gdef\ltd@title@author{#1}%
+      \hypersetup{pdfauthor={#1}}%
+    },
+    title = {%
+      \gdef\ltd@title@title{#1}%
+      \gdef\ltd@title@subtitle{}%
+      \hypersetup{pdftitle={#1}}%
+    },
+    date = {\gdef\ltd@title@date{#1}},
+    email = {\gdef\ltd@title@email{#1}},
+    revision = {\gdef\ltd@title@revision{#1}},
+    url = {\gdef\ltd@title@url{#1}},
+  }
 }
 \renewcommand\markdownLaTeXRendererDirectOrIndirectLink[4]{%
   #1\footnote{See \url{#3}.}}
@@ -838,27 +853,6 @@ abbr {
     dlEnd = {\end{optionlist}},
   }
 }
-\ExplSyntaxOn
-\keys_define:nn
-  { markdown/jekyllData }
-  {
-    author   .code:n =
-      {
-        \gdef\ltd@title@author   { #1 }
-        \hypersetup{ pdfauthor = { #1 } }
-      },
-    title    .code:n =
-      {
-        \gdef\ltd@title@title    { #1 }
-        \gdef\ltd@title@subtitle {    }
-        \hypersetup{ pdftitle  = { #1 } }
-      },
-    date     .code:n = { \gdef\ltd@title@date     { #1 } },
-    email    .code:n = { \gdef\ltd@title@email    { #1 } },
-    revision .code:n = { \gdef\ltd@title@revision { #1 } },
-    url      .code:n = { \gdef\ltd@title@url      { #1 } },
-  }
-\ExplSyntaxOff
 %</latex-themes-witiko-markdown-techdoc>
 %<*manual>
 
@@ -4443,15 +4437,11 @@ following content:
 ``` tex
 \documentclass{article}
 \usepackage[jekyllData]{markdown}
-\ExplSyntaxOn
-\keys_define:nn
-  { markdown/jekyllData }
-  {
-    name .code:n = { \gdef\name{#1} },
-    age  .code:n = { \gdef\age{#1}  },
-  }
-\ExplSyntaxOff
 \markdownSetup{
+  jekyllDataRenderers = {
+    name = {\gdef\name{#1}},
+    code = {\gdef\age{#1}},
+  },
   renderers = {
     jekyllDataEnd = {\name{} is \age{} years old.},
   }
@@ -6075,15 +6065,11 @@ following content:
 ``` tex
 \documentclass{article}
 \usepackage[jekyllData]{markdown}
-\ExplSyntaxOn
-\keys_define:nn
-  { markdown/jekyllData }
-  {
-    name .code:n = { \gdef\name{#1} },
-    age  .code:n = { \gdef\age{#1}  },
-  }
-\ExplSyntaxOff
 \markdownSetup{
+  jekyllDataRenderers = {
+    name = {\gdef\name{#1}},
+    code = {\gdef\age{#1}},
+  },
   renderers = {
     jekyllDataEnd = {\name{} is \age{} years old.},
   }
@@ -15118,15 +15104,11 @@ following content:
 ``` tex
 \documentclass{article}
 \usepackage[jekyllData]{markdown}
-\ExplSyntaxOn
-\keys_define:nn
-  { markdown/jekyllData }
-  {
-    name .code:n = { \gdef\name{#1} },
-    age  .code:n = { \gdef\age{#1}  },
-  }
-\ExplSyntaxOff
 \markdownSetup{
+  jekyllDataRenderers = {
+    name = {\gdef\name{#1}},
+    code = {\gdef\age{#1}},
+  },
   renderers = {
     jekyllDataEnd = {\name{} is \age{} years old.},
   }
@@ -24292,9 +24274,8 @@ end
 %    \end{macrocode}
 % \begin{markdown}
 %
-% After processing the options, activate the `renderers`, `rendererPrototypes`,
-% and `code` keys. The `code` key is used to immediately expand and execute code,
-% which can be especially useful in \LaTeX{} setup snippets.
+% After processing the options, activate the `jekyllDataRenderes`, `renderers`,
+% `rendererPrototypes`, and `code` keys.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -24312,8 +24293,50 @@ end
         { markdown/latex-options/renderer-prototypes }
         { #1 }
     },
+%    \end{macrocode}
+% \begin{markdown}
+%
+% The `code` key is used to immediately expand and execute code, which can be
+% especially useful in \LaTeX{} setup snippets.
+%
+% \end{markdown}
+%  \begin{macrocode}
     code .code:n = { #1 },
+%    \end{macrocode}
+% \begin{markdown}
+%
+% The `jekyllDataRenderers` key can be used as a syntactic sugar for setting
+% the `markdown/jekyllData` key--values (see Section <#sec:expl3yamlmetadata>)
+% without using the expl3 language.
+%
+% \end{markdown}
+%  \begin{macrocode}
+    jekyllDataRenderers .code:n = {
+      \keys_set:nn
+        { markdown/latex-options/jekyll-data-renderers }
+        { #1 }
+    },
   }
+\keys_define:nn
+  { markdown/latex-options/jekyll-data-renderers }
+  {
+    unknown .code:n = {
+      \tl_set_eq:NN
+        \l_tmpa_tl
+        \l_keys_key_str
+      \tl_put_right:Nn
+        \l_tmpa_tl
+        {
+          .code:n = { #1 }
+        }
+      \keys_define:nV
+        { markdown/jekyllData }
+        \l_tmpa_tl
+    }
+  }
+\cs_generate_variant:Nn
+  \keys_define:nn
+  { nV }
 \ExplSyntaxOff
 %    \end{macrocode}
 % \par
