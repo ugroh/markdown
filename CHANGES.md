@@ -2,14 +2,15 @@
 
 ## 2.16.0 (2022-08-30)
 
-New Syntax Extensions:
+Development:
 
 - Add support for strike-throughs, fenced divs, inline spans, subscripts,
   superscripts, and fancy lists. (#149, #160, #162, #168, #170)
+- Add facade in front of expl3 inferface for YAML metadata. (#118, #175)
 
 Fixes:
 
-- Maky any ASCII character escapable as per
+- Make any ASCII character escapable as per
   [CommonMark](https://spec.commonmark.org/0.30/#backslash-escapes).
   (#163)
 
