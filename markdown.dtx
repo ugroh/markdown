@@ -2175,7 +2175,7 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownOptionCacheDir{cache}
+\setupmarkdown[cacheDir = cache]
 \starttext
 \startmarkdown
 Hello *world*!
@@ -2380,8 +2380,11 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownOptionFinalizeCache{true}
-\def\markdownOptionFrozenCacheFileName{cache.tex}
+\setupmarkdown
+  [
+    finalizeCache = yes,
+    frozenCacheFileName = cache.tex,
+  ]
 \starttext
 \startmarkdown
 Hello *world*!
@@ -2401,8 +2404,11 @@ Next, create a new text document `frozen-document.tex` with the following
 content:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownOptionFrozenCache{true}
-\def\markdownOptionFrozenCacheFileName{cache.tex}
+\setupmarkdown
+  [
+    frozenCache = yes,
+    frozenCacheFileName = cache.tex,
+  ]
 \starttext
 \startmarkdown
 Hi *world*!
@@ -2622,7 +2628,7 @@ A paragraph.
 > A quote.
 \stopmarkdown
 
-\def\markdownOptionBlankBeforeBlockquote{true}
+\setupmarkdown[blankBeforeBlockquote = yes]
 \startmarkdown
 A paragraph.
 > Not a quote.
@@ -2857,7 +2863,7 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ```` tex
 \usemodule[t][markdown]
-\def\markdownOptionFencedCode{true}
+\setupmarkdown[fencedCode = yes]
 \starttext
 
 \startmarkdown
@@ -2867,7 +2873,7 @@ A code fence.
 ```
 \stopmarkdown
 
-\def\markdownOptionBlankBeforeCodeFence{true}
+\setupmarkdown[blankBeforeCodeFence = yes]
 \startmarkdown
 A paragraph.
 ```
@@ -3101,7 +3107,7 @@ A heading.
 ==========
 \stopmarkdown
 
-\def\markdownOptionBlankBeforeHeading{true}
+\setupmarkdown[blankBeforeHeading = yes]
 \startmarkdown
 A paragraph.
 Not a heading.
@@ -3326,7 +3332,7 @@ following content:
 > block quote.
 \stopmarkdown
 
-\def\markdownOptionBreakableBlockquotes{true}
+\setupmarkdown[breakableBlockquotes = yes]
 \startmarkdown
 > A block quote.
 
@@ -3742,7 +3748,7 @@ following content:
 ``This is no longer a code span.''
 \stopmarkdown
 
-\def\markdownOptionCodeSpans{false}
+\setupmarkdown[codeSpans = no]
 \startmarkdown
 ``This is a quote.''
 ``This is another quote.''
@@ -3903,7 +3909,7 @@ This is a *transcluded markdown document*.
 Create also a text document named `document.tex` with the following content:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownOptionContentBlocks{true}
+\setupmarkdown[contentBlocks = yes]
 \definetyping [ConTeXt]
 \setuptyping  [ConTeXt] [option=TEX]
 \starttext
@@ -4062,8 +4068,11 @@ This is a *transcluded markdown document*.
 Create also a text document named `document.tex` with the following content:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownOptionContentBlocks{true}
-\def\markdownOptionContentBlocksLanguageMap{language-map.json}
+\setupmarkdown
+  [
+    contentBlocks = yes,
+    contentBlocksLanguageMap = language-map.json,
+  ]
 \definetyping [ConTeXt]
 \setuptyping  [ConTeXt] [option=TEX]
 \starttext
@@ -4198,7 +4207,7 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownOptionDefinitionLists{true}
+\setupmarkdown[definitionLists = yes]
 \starttext
 \startmarkdown
 Term 1
@@ -4539,7 +4548,7 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ```` tex
 \usemodule[t][markdown]
-\def\markdownOptionFancyLists{true}
+\setupmarkdown[fancyLists = yes]
 \starttext
 \startmarkdown
 a) first item
@@ -4678,7 +4687,7 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ```` tex
 \usemodule[t][markdown]
-\def\markdownOptionFencedCode{true}
+\setupmarkdown[fencedCode = yes]
 \definetyping [js]
 \definetyping [html]
 \setuptyping  [html] [option=XML]
@@ -4856,7 +4865,7 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownOptionFinalizeCache{true}
+\setupmarkdown[finalizeCache = yes]
 \starttext
 \startmarkdown
 Hello *world*!
@@ -4874,7 +4883,7 @@ output file as we requested using the `finalizeCache` option.
 Next, change the content of `document.tex` as follows:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownOptionFrozenCache{true}
+\setupmarkdown[frozenCache = yes]
 \starttext
 \startmarkdown
 Hi *world*!
@@ -5012,7 +5021,7 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownOptionFootnotes{true}
+\setupmarkdown[footnotes = yes]
 \starttext
 \startmarkdown
 Here is a footnote reference,[^1] and another.[^longnote]
@@ -5268,15 +5277,15 @@ following content:
 \begin{document}
 
 \begin{markdown}
-. Bird
-. McHale
-. Parish
+#. Bird
+#. McHale
+#. Parish
 \end{markdown}
 
 \begin{markdown*}{hashEnumerators}
-. Bird
-. McHale
-. Parish
+#. Bird
+#. McHale
+#. Parish
 \end{markdown*}
 
 \end{document}
@@ -5308,16 +5317,16 @@ following content:
 \starttext
 
 \startmarkdown
-. Bird
-. McHale
-. Parish
+#. Bird
+#. McHale
+#. Parish
 \stopmarkdown
 
-\def\markdownOptionHashEnumerators{true}
+\setupmarkdown[hashEnumerators = yes]
 \startmarkdown
-. Bird
-. McHale
-. Parish
+#. Bird
+#. McHale
+#. Parish
 \stopmarkdown
 
 \stoptext
@@ -5631,7 +5640,7 @@ _There is no <!-- comment --> support._
 _There is no <? HTML instruction ?> support._
 \stopmarkdown
 
-\def\markdownOptionHtml{true}
+\setupmarkdown[html = yes]
 \startmarkdown
 <div>
 *There is block tag support.*
@@ -5850,7 +5859,7 @@ following content:
 $\sqrt{-1}$ *equals* $i$.
 \stopmarkdown
 
-\def\markdownOptionHybrid{true}
+\setupmarkdown[hybrid = yes]
 \startmarkdown
 $\sqrt{-1}$ *equals* $i$.
 \stopmarkdown
@@ -5947,7 +5956,7 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownOptionInlineFootnotes{true}
+\setupmarkdown[inlineFootnotes = yes]
 \starttext
 \startmarkdown
 Here is an inline note.^[Inlines notes are easier to
@@ -6100,7 +6109,7 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownOptionJekyllData{true}
+\setupmarkdown[jekyllData = yes]
 \ExplSyntaxOn
 \keys_define:nn
   { markdown/jekyllData }
@@ -6216,7 +6225,7 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownOptionPipeTables{true}
+\setupmarkdown[pipeTables = yes]
 \starttext
 \startmarkdown
 | Right | Left | Default | Center |
@@ -6492,14 +6501,9 @@ following content:
 \usemodule[t][markdown]
 \starttext
 
-\def\markdownOptionShiftHeadings{-1}
-\markdownInput{example.md}
-
-\def\markdownOptionShiftHeadings{0}
-\markdownInput{example.md}
-
-\def\markdownOptionShiftHeadings{+1}
-\markdownInput{example.md}
+\inputmarkdown[shiftHeadings = -1]{example.md}
+\inputmarkdown[shiftHeadings =  0]{example.md}
+\inputmarkdown[shiftHeadings = +1]{example.md}
 
 \stoptext
 ````````
@@ -6699,17 +6703,12 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownOptionHeaderAttributes{true}
+\setupmarkdown[headerAttributes = yes]
 \starttext
 
-\def\markdownOptionSlice{^ ^act-3}
-\markdownInput{hamlet.md}
-
-\def\markdownOptionSlice{act-1}
-\markdownInput{hamlet.md}
-
-\def\markdownOptionSlice{act-3 act-5}
-\markdownInput{hamlet.md}
+\inputmarkdown[slice = ^ ^act-3]{example.md}
+\inputmarkdown[slice = act-1]{example.md}
+\inputmarkdown[slice = act-3 act-5]{example.md}
 
 \stoptext
 ````````
@@ -6921,7 +6920,7 @@ following content:
 These are just three regular dots ...
 \stopmarkdown
 
-\def\markdownOptionSmartEllipses{true}
+\setupmarkdown[smartEllipses = yes]
 \startmarkdown
 ... and this is a victorian ellipsis.
 \stopmarkdown
@@ -7046,7 +7045,7 @@ The following list respects the numbers specified in the markup:
 5. fifth item
 \stopmarkdown
 
-\def\markdownOptionStartNumber{false}
+\setupmarkdown[startNumber = no]
 \startmarkdown
 The following list respects the numbers specified in the markup:
 
@@ -7177,7 +7176,7 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownOptionStrikeThrough{true}
+\setupmarkdown[strikeThrough = yes]
 \def\markdownRendererStrikeThrough#1{\overstrikes{#1}}
 \starttext
 \startmarkdown
@@ -7293,7 +7292,7 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownOptionStripIndent{true}
+\setupmarkdown[stripIndent = yes]
 \starttext
     \startmarkdown
         Hello *world*!
@@ -7380,7 +7379,7 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownOptionSubscripts{true}
+\setupmarkdown[subscripts = yes]
 \starttext
 \startmarkdown
 H~2~O is a liquid.
@@ -7469,7 +7468,7 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownOptionSuperscripts{true}
+\setupmarkdown[superscripts = yes]
 \starttext
 \startmarkdown
 2^10^ is 1024.
@@ -7580,8 +7579,11 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownOptionPipeTables{true}
-\def\markdownOptionTableCaptions{true}
+\setupmarkdown
+  [
+    pipeTables = yes,
+    tableCaptions = yes,
+  ]
 \starttext
 \startmarkdown
 | Right | Left | Default | Center |
@@ -7696,7 +7698,7 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownOptionTaskLists{true}
+\setupmarkdown[taskLists = yes]
 \def\markdownRendererUntickedBox{No}
 \def\markdownRendererHalftickedBox{Maybe}
 \def\markdownRendererTickedBox{Yes}
@@ -7820,7 +7822,7 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownOptionTexComments{true}
+\setupmarkdown[texComments = yes]
 \starttext
 \startmarkdown
 Hel%  this is a comment
@@ -8074,14 +8076,14 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownOptionHybrid{true}
+\setupmarkdown[hybrid = yes]
 \starttext
 
 \startmarkdown
 This is _emphasized text_ and this is a math subscript: $m\_n$.
 \stopmarkdown
 
-\def\markdownOptionUnderscores{false}
+\setupmarkdown[underscores = yes]
 \startmarkdown
 This is *emphasized text* and this is a math subscript: $m_n$.
 \stopmarkdown
@@ -9095,7 +9097,7 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownOptionTaskLists{true}
+\setupmarkdown[taskLists = yes]
 \def\markdownRendererUntickedBox{No}
 \def\markdownRendererTickedBox{Yes}
 \starttext
@@ -9660,7 +9662,7 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownOptionSmartEllipses{true}
+\setupmarkdown[smartEllipses = yes]
 \def\markdownRendererEllipsis{\emph{SHAZAM}!}
 \starttext
 \startmarkdown
@@ -10126,7 +10128,7 @@ following content:
 $\sqrt{-1}$ *equals* $i$
 \stopmarkdown
 
-\def\markdownOptionHybrid{true}
+\setupmarkdown[hybrid = yes]
 \startmarkdown
 $\sqrt{-1}$ *equals* $i$
 \stopmarkdown
@@ -10583,7 +10585,7 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownOptionContentBlocks{true}
+\setupmarkdown[contentBlocks = yes]
 \def\markdownRendererContentBlock#1#2#3#4{%
   This is {\tt #2}, #4.
 }
@@ -10966,7 +10968,7 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownOptionTightLists{true}
+\setupmarkdown[tightLists = yes]
 \starttext
 
 \def\markdownRendererInterblockSeparator{}
@@ -11685,8 +11687,11 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownOptionTightLists{true}
-\def\markdownOptionStartNumber{true}
+\setupmarkdown
+  [
+    tightLists = yes,
+    startNumber = yes,
+  ]
 \starttext
 
 \def\markdownRendererInterblockSeparator{}
@@ -12261,8 +12266,11 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownOptionDefinitionLists{true}
-\def\markdownOptionTightLists{true}
+\setupmarkdown
+  [
+    definitionLists = yes,
+    tightLists = yes,
+  ]
 \starttext
 
 \def\markdownRendererInterblockSeparator{%
@@ -13283,7 +13291,7 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownOptionJekyllData{true}
+\setupmarkdown[jekyllData = yes]
 \def\markdownRendererJekyllDataString#1#2{\gdef\name{#2}}
 \def\markdownRendererJekyllDataNumber#1#2{\gdef\age{#2}}
 \def\markdownRendererJekyllDataEnd{%
@@ -13813,7 +13821,7 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownOptionFootnotes{true}
+\setupmarkdown[footnotes = yes]
 \def\markdownRendererFootnote#1{ (and \lowercase{#1})}
 \starttext
 \startmarkdown
@@ -14681,7 +14689,7 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownOptionStrikeThrough{true}
+\setupmarkdown[strikeThrough = yes]
 \def\markdownRendererStrikeThrough#1{\overstrikes{#1}}
 \starttext
 \startmarkdown
@@ -14789,7 +14797,7 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownOptionSuperscripts{true}
+\setupmarkdown[superscripts = yes]
 \def\markdownRendererSuperscript#1{ taken to the power of #1}
 \starttext
 \startmarkdown
@@ -14897,7 +14905,7 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownOptionSubscripts{true}
+\setupmarkdown[subscripts = yes]
 \def\markdownRendererSubscript#1{ (#1 moles) and }
 \starttext
 \startmarkdown
@@ -15139,7 +15147,7 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownOptionJekyllData{true}
+\setupmarkdown[jekyllData = yes]
 \ExplSyntaxOn
 \keys_define:nn
   { markdown/jekyllData }

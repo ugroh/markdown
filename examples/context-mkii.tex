@@ -7,20 +7,23 @@
 \usemodule[t][markdown]
 
 % Set options of the Markdown module.
-\def\markdownOptionHashEnumerators{true}
-\def\markdownOptionDefinitionLists{true}
-\def\markdownOptionSmartEllipses{true}
-\def\markdownOptionFootnotes{true}
-\def\markdownOptionInlineFootnotes{true}
-\def\markdownOptionFencedCode{true}
-\def\markdownOptionContentBlocks{true}
-\def\markdownOptionPipeTables{true}
-\def\markdownOptionTableCaptions{true}
-\def\markdownOptionTaskLists{true}
-\def\markdownOptionStrikeThrough{true}
-\def\markdownOptionSuperscripts{true}
-\def\markdownOptionSubscripts{true}
-\def\markdownOptionFancyLists{true}
+\setupmarkdown
+  [
+    hashEnumerators = yes,
+    definitionLists = yes,
+    smartEllipses = yes,
+    footnotes = yes,
+    inlineFootnotes = yes,
+    fencedCode = yes,
+    contentBlocks = yes,
+    pipeTables = yes,
+    tableCaptions = yes,
+    taskLists = yes,
+    strikeThrough = yes,
+    superscripts = yes,
+    subscripts = yes,
+    fancyLists = yes,
+  ]
 
 % Set renderers of the Markdown module.
 \definetyping
@@ -34,7 +37,7 @@
 
 % Typeset the document `example.md` by letting the Markdown package handle
 % the conversion internally.
-\markdownInput{./example.md}
+\inputmarkdown{./example.md}
 
 % Typeset the document `example.tex` that we prepared separately using the
 % Lua command-line interface and that contains a plain TeX representation

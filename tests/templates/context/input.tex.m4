@@ -7,5 +7,5 @@
 \input TEST_SETUP_FILENAME\relax
 % Perform the test.
 \starttext
-  \markdownInput{TEST_INPUT_FILENAME}%
+  \inputmarkdown{TEST_INPUT_FILENAME}%
 \stoptext
