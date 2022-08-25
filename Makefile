@@ -25,6 +25,7 @@ READMES=$(ROOT_README) LICENSE examples/README.md tests/README.md \
   tests/support/README.md tests/templates/README.md tests/testfiles/README.md \
   tests/templates/*/README.md tests/testfiles/*/README.md
 VERSION_FILE=VERSION
+CHANGES_FILE=CHANGES.md
 DTXARCHIVE=markdown.dtx
 INSTALLER=markdown.ins docstrip.cfg
 TECHNICAL_DOCUMENTATION_RESOURCES=markdown.bib markdown-figure-block-diagram.tex \
@@ -33,7 +34,8 @@ TECHNICAL_DOCUMENTATION=markdown.pdf
 MARKDOWN_USER_MANUAL=markdown.md markdown.css
 HTML_USER_MANUAL=markdown.html markdown.css
 USER_MANUAL=$(MARKDOWN_USER_MANUAL) $(HTML_USER_MANUAL)
-DOCUMENTATION=$(TECHNICAL_DOCUMENTATION) $(HTML_USER_MANUAL) $(ROOT_README) $(VERSION_FILE)
+DOCUMENTATION=$(TECHNICAL_DOCUMENTATION) $(HTML_USER_MANUAL) $(ROOT_README) $(VERSION_FILE) \
+  $(CHANGES_FILE)
 LIBRARIES=libraries/markdown-tinyyaml.lua
 INSTALLABLES=markdown.lua markdown-cli.lua markdown.tex markdown.sty t-markdown.tex \
   markdownthemewitiko_dot.sty markdownthemewitiko_graphicx_http.sty \
