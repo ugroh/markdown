@@ -48,7 +48,7 @@ EVERYTHING=$(RESOURCES) $(INSTALLABLES) $(LIBRARIES)
 GITHUB_PAGES=gh-pages
 
 VERSION=$(shell git describe --tags --always --long --exclude latest)
-LASTMODIFIED=$(shell git log -1 --date=format:%Y/%m/%d --format=%ad)
+LASTMODIFIED=$(shell git log -1 --date=format:%Y-%m-%d --format=%ad)
 
 # This is the default pseudo-target. It typesets the manual,
 # the examples, and extracts the package files.
