@@ -1,5 +1,11 @@
 # Changes
 
+## 2.17.0 (2022-09-30)
+
+Continuous Integration:
+
+- Use all available CPU cores for unit tests. (#178)
+
 ## 2.16.0 (2022-08-26)
 
 Development:
