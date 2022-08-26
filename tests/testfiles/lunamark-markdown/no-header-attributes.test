@@ -1,10 +1,10 @@
 <<<
 This test ensures that the Lua `headerAttributes` option is disabled by default.
 
-# A level one heading {#first-id}
+# A level one heading { - #first-id   }
 
-A level one heading {#second_id2}
-=================================
+A level one heading {#second_id2 - some_key =  "some quoted value with escaped quotes and Unicode: \"ěščřžýáíé\""}
+==================================================================================================================
 
 ## A level two heading ### {#third-3id .a-class}
 
@@ -13,15 +13,15 @@ A level two heading {#fourth4-id .2not-a-class}
 
 ### A level three heading ## {#5not-the-fifth-id}
 #### A level four heading {#-6not-the-sixth-id}
-##### A level five heading ## {#--7the-seventh-id}
-###### A level six heading {#-_the-eighth-id attribute=value}
+##### A level five heading ## {#--not-7the-seventh-id}
+###### A level six heading {#the-eighth-id attribute=value}
 >>>
 documentBegin
 codeSpan: headerAttributes
 interblockSeparator
-headingOne: A level one heading (leftBrace)(hash)first-id(rightBrace)
+headingOne: A level one heading (leftBrace) - (hash)first-id (rightBrace)
 interblockSeparator
-headingOne: A level one heading (leftBrace)(hash)second(underscore)id2(rightBrace)
+headingOne: A level one heading (leftBrace)(hash)second(emphasis: id2 - some)key = "some quoted value with escaped quotes and Unicode: "ěščřžýáíé""(rightBrace)
 interblockSeparator
 headingTwo: A level two heading (hash)(hash)(hash) (leftBrace)(hash)third-3id .a-class(rightBrace)
 interblockSeparator
@@ -31,7 +31,7 @@ headingThree: A level three heading (hash)(hash) (leftBrace)(hash)5not-the-fifth
 interblockSeparator
 headingFour: A level four heading (leftBrace)(hash)-6not-the-sixth-id(rightBrace)
 interblockSeparator
-headingFive: A level five heading (hash)(hash) (leftBrace)(hash)--7the-seventh-id(rightBrace)
+headingFive: A level five heading (hash)(hash) (leftBrace)(hash)--not-7the-seventh-id(rightBrace)
 interblockSeparator
-headingSix: A level six heading (leftBrace)(hash)-(underscore)the-eighth-id attribute=value(rightBrace)
+headingSix: A level six heading (leftBrace)(hash)the-eighth-id attribute=value(rightBrace)
 documentEnd
