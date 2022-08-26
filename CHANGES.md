@@ -1,6 +1,6 @@
 # Changes
 
-## 2.16.0 (2022-08-30)
+## 2.16.0 (2022-08-26)
 
 Development:
 
@@ -13,6 +13,8 @@ Fixes:
 - Make any ASCII character escapable as per
   [CommonMark](https://spec.commonmark.org/0.30/#backslash-escapes).
   (#163)
+- Make our implementation of header attributes compatible with jgm/lunamark.
+  (#164, #177)
 
 Documentation:
 
