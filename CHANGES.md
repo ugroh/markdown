@@ -1,6 +1,10 @@
 # Changes
 
-## 2.17.0 (2022-09-30)
+## 2.16.1 (2022-08-31)
+
+Fixes:
+
+- Fix default rendering of fancy lists in LaTeX. (#179, #180)
 
 Continuous Integration:
 

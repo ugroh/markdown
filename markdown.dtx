@@ -24542,17 +24542,17 @@ end
         {
           { Default } { . }
           { OneParen } { ) }
-          { Period } { - }
+          { Period } { . }
         }
     }
   \cs_new:Nn
     \@@_latex_fancy_list_item_label:nnn
     {
-      \@@_latex_fancy_list_item_label_delimiter:n
-        { #2 }
       \@@_latex_fancy_list_item_label_number:nn
         { #1 }
         { #3 }
+      \@@_latex_fancy_list_item_label_delimiter:n
+        { #2 }
     }
   \cs_new:Nn
     \@@_latex_paralist_style:nn
@@ -24580,7 +24580,16 @@ end
       \tl_set:Nn
         \l_@@_latex_fancy_list_item_label_delimiter_style_tl
         { #2 }
-      \begin{enumerate}[ \@@_latex_paralist_style:nn { #1 } { #2 } ]
+      \tl_set:Nn
+        \l_tmpa_tl
+        { \begin{enumerate}[ }
+      \tl_put_right:Nx
+        \l_tmpa_tl
+        { \@@_latex_paralist_style:nn { #1 } { #2 } }
+      \tl_put_right:Nn
+        \l_tmpa_tl
+        { ] }
+      \l_tmpa_tl
     },
     fancyOlEnd = {
       \end{enumerate}
@@ -24596,20 +24605,29 @@ end
       \tl_set:Nn
         \l_@@_latex_fancy_list_item_label_delimiter_style_tl
         { #2 }
-      \begin{compactenum}[ \@@_latex_paralist_style:nn { #1 } { #2 } ]
+      \tl_set:Nn
+        \l_tmpa_tl
+        { \begin{compactenum}[ }
+      \tl_put_right:Nx
+        \l_tmpa_tl
+        { \@@_latex_paralist_style:nn { #1 } { #2 } }
+      \tl_put_right:Nn
+        \l_tmpa_tl
+        { ] }
+      \l_tmpa_tl
     },
     fancyOlEndTight = {
       \end{compactenum}
       \group_end:
     },
     fancyOlItemWithNumber = {
-      \markdownRendererOlItemWithNumber
-        {
+      \item
+        [
           \@@_latex_fancy_list_item_label:VVn
             \l_@@_latex_fancy_list_item_label_number_style_tl
             \l_@@_latex_fancy_list_item_label_delimiter_style_tl
             { #1 }
-        }
+        ]
     },
     dlBeginTight = {\begin{compactdesc}},
     dlEndTight = {\end{compactdesc}}}}
