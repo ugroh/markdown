@@ -14,8 +14,8 @@ Continuous Integration:
 
 Development:
 
-- Add support for strike-throughs, fenced divs, inline spans, subscripts,
-  superscripts, and fancy lists. (#149, #160, #162, #168, #170)
+- Add support for strike-throughs, fenced divs, subscripts, superscripts,
+  and fancy lists. (#149, #160, #162, #168, #170)
 - Add facade in front of expl3 inferface for YAML metadata. (#118, #175)
 - Add `\setupmarkdown` and `\inputmarkdown` commands to ConTeXt. (#17, #176)
 
