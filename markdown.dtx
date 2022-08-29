@@ -23963,11 +23963,13 @@ end
 %    \end{macrocode}
 % \begin{markdown}
 % Swap the category code of the backslash symbol and the pipe symbol, so that
-% we may use the backslash symbol freely inside the Lua code.
+% we may use the backslash symbol freely inside the Lua code. Furthermore,
+% use the ampersand symbol to specify parameters.
 % \end{markdown}
 %  \begin{macrocode}
   \catcode`|=0%
   \catcode`\\=12%
+  \catcode`|&=6%
   |gdef|markdownInput#1{%
 %    \end{macrocode}
 % \begin{markdown}
@@ -23978,6 +23980,14 @@ end
 %  \begin{macrocode}
     |begingroup
     |catcode`|%=12
+%    \end{macrocode}
+% \begin{markdown}
+% Furthermore, also change the category code of the hash sign (`#`) to other,
+% so that it's safe to tokenize the plain TeX output without mistaking hash
+% signs with TeX's parameter numbers.
+% \end{markdown}
+%  \begin{macrocode}
+    |catcode`|#=12
 %    \end{macrocode}
 % \begin{markdown}
 % If we are reading from the frozen cache, input it, expand the corresponding
@@ -23996,7 +24006,7 @@ end
       |csname markdownFrozenCache|the|markdownOptionFrozenCacheCounter|endcsname
       |global|advance|markdownOptionFrozenCacheCounter by 1|relax
     }{%
-      |markdownInfo{Including markdown document "#1"}%
+      |markdownInfo{Including markdown document "&1"}%
 %    \end{macrocode}
 % \begin{markdown}
 % Attempt to open the markdown document to record it in the `.log` and
@@ -24004,13 +24014,13 @@ end
 % changes to the markdown document.
 % \end{markdown}
 %  \begin{macrocode}
-      |openin|markdownInputFileStream#1
+      |openin|markdownInputFileStream&1
       |closein|markdownInputFileStream
       |markdownPrepareLuaOptions
       |markdownLuaExecute{%
         |markdownPrepare
-        local file = assert(io.open("#1", "r"),
-          [[could not open file "#1" for reading]])
+        local file = assert(io.open("&1", "r"),
+          [[could not open file "&1" for reading]])
         local input = assert(file:read("*a"))
         assert(file:close())
 %    \end{macrocode}
@@ -24719,8 +24729,10 @@ end
     }{%
       \ifthenelse{\equal{#1}{tex}}{%
         \catcode`\%=14\relax
+        \catcode`\#=6\relax
         \input #3\relax
         \catcode`\%=12\relax
+        \catcode`\#=12\relax
       }{%
         \markdownInput{#3}%
       }%
@@ -24811,7 +24823,9 @@ end
 % \end{markdown}
 %  \begin{macrocode}
       }{%
+        \catcode`\#=6\relax
         \inputminted{#2}{#1}%
+        \catcode`\#=12\relax
       }%
     \fi},
   horizontalRule = {\noindent\rule[0.5ex]{\linewidth}{1pt}},
@@ -25174,11 +25188,23 @@ end
 \RequirePackage{url}
 \RequirePackage{expl3}
 \ExplSyntaxOn
-\def\markdownRendererLinkPrototype{
-  \begingroup
-  \catcode`\#=12
-  \def\next##1##2##3##4{
-    \endgroup
+\def\markdownRendererLinkPrototype#1#2#3#4{
+  \tl_set:Nn \l_tmpa_tl { #1 }
+  \tl_set:Nn \l_tmpb_tl { #2 }
+  \bool_set:Nn
+    \l_tmpa_bool
+    {
+      \tl_if_eq_p:NN
+        \l_tmpa_tl
+        \l_tmpb_tl
+    }
+  \tl_set:Nn \l_tmpa_tl { #4 }
+  \bool_set:Nn
+    \l_tmpb_bool
+    {
+      \tl_if_empty_p:N
+        \l_tmpa_tl
+    }
 %    \end{macrocode}
 % \begin{markdown}
 % If the label and the fully-escaped URI are equivalent and the title is
@@ -25186,33 +25212,15 @@ end
 % link is either direct or indirect.
 % \end{markdown}
 %  \begin{macrocode}
-    \tl_set:Nn \l_tmpa_tl { ##1 }
-    \tl_set:Nn \l_tmpb_tl { ##2 }
-    \bool_set:Nn
-      \l_tmpa_bool
-      {
-        \tl_if_eq_p:NN
-          \l_tmpa_tl
-          \l_tmpb_tl
-      }
-    \tl_set:Nn \l_tmpa_tl { ##4 }
-    \bool_set:Nn
-      \l_tmpb_bool
-      {
-        \tl_if_empty_p:N
-          \l_tmpa_tl
-      }
-    \bool_if:nTF
-      {
-        \l_tmpa_bool && \l_tmpb_bool
-      }
-      {
-        \markdownLaTeXRendererAutolink { ##2 } { ##3 }
-      }{
-        \markdownLaTeXRendererDirectOrIndirectLink { ##1 } { ##2 } { ##3 } { ##4 }
-      }
-  }
-  \next
+  \bool_if:nTF
+    {
+      \l_tmpa_bool && \l_tmpb_bool
+    }
+    {
+      \markdownLaTeXRendererAutolink { #2 } { #3 }
+    }{
+      \markdownLaTeXRendererDirectOrIndirectLink { #1 } { #2 } { #3 } { #4 }
+    }
 }
 \def\markdownLaTeXRendererAutolink#1#2{%
 %    \end{macrocode}

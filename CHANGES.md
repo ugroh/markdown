@@ -5,6 +5,8 @@
 Fixes:
 
 - Fix default rendering of fancy lists in LaTeX. (#179, #180)
+- Change category code of hash sign (`#`) to other in the
+  `\markdownInput` command. (#181)
 
 Continuous Integration:
 
