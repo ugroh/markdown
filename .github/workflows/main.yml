@@ -6,6 +6,8 @@ on:
     paths-ignore:
       - '**/README.md'
       - 'CHANGES.md'
+      - 'contributions/*'
+      - '.github/**/*'
   pull_request:
   workflow_dispatch:
   schedule:
