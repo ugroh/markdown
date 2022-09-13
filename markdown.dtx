@@ -8290,6 +8290,11 @@ for i = 1, #arg do
         options[key] = (value == "true")
       elseif default_type == "number" then
         options[key] = tonumber(value)
+      elseif default_type == "table" then
+        options[key] = {}
+        for item in value:gmatch("[^ ,]+") do
+          table.insert(options[key], item)
+        end
       else
         if default_type ~= "string" then
           if default_type == "nil" then
