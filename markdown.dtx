@@ -4365,6 +4365,44 @@ defaultOptions.eagerCache = true
 %</lua,lua-cli>
 %<*manual-options>
 
+#### Option `extensions`
+
+`extensions` (default value: \meta{empty})
+
+% \fi
+% \begin{markdown}
+%
+% \Valitem[.]{extensions}{filenames}
+%
+:    The filenames of user-defined syntax extensions that will be applied to the
+     Markdown reader.
+
+% \end{markdown}
+% \iffalse
+%</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\cs_generate_variant:Nn
+  \@@_add_lua_option:nnn
+  { nnV }
+\@@_add_lua_option:nnV
+  { extensions }
+  { clist }
+  \c_empty_clist
+%    \end{macrocode}
+% \iffalse
+%</tex>
+%<*lua,lua-cli>
+% \fi
+%  \begin{macrocode}
+defaultOptions.extensions = {}
+%    \end{macrocode}
+% \par
+% \iffalse
+%</lua,lua-cli>
+%<*manual-options>
+
 #### Option `expectJekyllData`
 
 `expectJekyllData` (default value: `false`)
