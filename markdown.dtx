@@ -21430,9 +21430,13 @@ function M.reader.new(writer, options, extensions)
 % \end{markdown}
 %  \begin{macrocode}
     local opt_string = {}
-    for k,_ in pairs(defaultOptions) do
+    for k, _ in pairs(defaultOptions) do
       local v = options[k]
-      if k ~= "cacheDir" then
+      if type(v) == "table" then
+        for _, i in ipairs(v) do
+          opt_string[#opt_string+1] = k .. "=" .. tostring(i)
+        end
+      elseif k ~= "cacheDir" then
         opt_string[#opt_string+1] = k .. "=" .. tostring(v)
       end
     end
