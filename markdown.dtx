@@ -1897,6 +1897,8 @@ interfaces and all the way up to the \LaTeX{} and \Hologo{ConTeXt} interfaces.
   \msg_error:nnnn
   { nnnV }
 \seq_new:N \g_@@_option_types_seq
+\tl_const:Nn \c_@@_option_type_clist_tl { clist }
+\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_clist_tl
 \tl_const:Nn \c_@@_option_type_counter_tl { counter }
 \seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_counter_tl
 \tl_const:Nn \c_@@_option_type_boolean_tl { boolean }
