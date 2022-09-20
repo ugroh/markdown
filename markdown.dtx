@@ -4377,7 +4377,9 @@ defaultOptions.eagerCache = true
 % \Valitem[.]{extensions}{filenames}
 %
 :    The filenames of user-defined syntax extensions that will be applied to the
-     Markdown reader.
+     Markdown reader. If the \pkg{kpathsea} library is available, files will be
+     searched for not only in the current working directory but also in the
+     \TeX{} directory structure.
 
 % \end{markdown}
 % \iffalse
@@ -10506,11 +10508,11 @@ as \mref{markdownRendererContentBlock}.
 The \mdef{markdownRendererContentBlockCode} macro represents an iA\,Writer
 content block that was recognized as a file in a known programming language
 by its filename extension $s$. If any `markdown-languages.json` file found
-by \pkg{kpathsea}\footnote{Local files take precedence. Filenames other
-than `markdown-languages.json` may be specified using the
-`contentBlocksLanguageMap` Lua option.} contains a record $(k, v)$, then a
-non-online-image content block with the filename extension $s,
-s$`:lower()`${}=k$ is considered to be in a known programming language $v$.
+by \pkg{kpathsea}\footnote{Filenames other than `markdown-languages.json` may
+be specified using the `contentBlocksLanguageMap` Lua option.} contains a
+record $(k, v)$, then a non-online-image content block with the filename
+extension $s, s$`:lower()`${}=k$ is considered to be in a known programming
+language $v$.
 The macro receives five arguments: the local file name extension $s$ cast to
 the lower case, the language $v$, the fully escaped \acro{uri} that can be
 directly typeset, the raw \acro{uri} that can be used outside typesetting,
@@ -15766,7 +15768,7 @@ package. Setting the option after loading the package will have no effect.
 #### \LaTeX{} themes {#latexthemes}
 
 User-contributed \LaTeX{} themes for the Markdown package provide a
-domain-specific interpretation of some Markdown tokens. Similarly to \LaTeX{}
+domain-specific interpretation of Markdown tokens. Similarly to \LaTeX{}
 packages, themes allow the authors to achieve a specific look and other
 high-level goals without low-level programming.
 
