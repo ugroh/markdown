@@ -4369,18 +4369,59 @@ defaultOptions.eagerCache = true
 
 #### Option `extensions`
 
-`extensions` (default value: \meta{empty})
+`extensions` (default value: `{}`)
 
 % \fi
 % \begin{markdown}
 %
-% \Valitem[.]{extensions}{filenames}
+% \Valitem[\{\}]{extensions}{filenames}
 %
 :    The filenames of user-defined syntax extensions that will be applied to the
-     Markdown reader. If the \pkg{kpathsea} library is available, files will be
+     markdown reader. If the \pkg{kpathsea} library is available, files will be
      searched for not only in the current working directory but also in the
      \TeX{} directory structure.
 
+%    A user-defined syntax extension is a Lua file in the following format:
+%
+%    ``` lua
+%    local strike_through = {
+%      api_version = 1,
+%      grammar_version = 1,
+%      finalize_grammar = function(reader)
+%        local nonspacechar = lpeg.P(1) - lpeg.S("\t ")
+%        local doubletildes = lpeg.P("~~")
+%        local function between(p, starter, ender)
+%          ender = lpeg.B(nonspacechar) * ender
+%          return (starter * #nonspacechar
+%                 * lpeg.Ct(p * (p - ender)^0) * ender)
+%        end
+%
+%        local read_strike_through = between(
+%          lpeg.V("Inline"), doubletildes, doubletildes
+%        ) / function(s) return {"\\st{", s, "}"} end
+%
+%        reader.insert_pattern("Inline after Emph", read_strike_through)
+%        reader.add_special_character("~")
+%      end
+%    }
+%
+%    return strike_through
+%    ```````
+%
+%    The `api_version` and `grammar_version` fields specify the version of the
+%    syntax extension API (currently 1) and the markdown grammar (currently 1)
+%    for which the extension was written. Any changes to the API or grammar
+%    will cause the corresponding current version to be incremented.  After
+%    Markdown 3.0.0, any changes to the API and the grammar will be either
+%    backwards-compatible or constitute a breaking change that will cause
+%    the major version of the Markdown package to increment (to 4.0.0).
+%
+%    The `finalize_grammar` field is a function that finalizes the grammar of
+%    markdown using the public interface of a \luamref{reader} object, such as
+%    the \luamref{reader->insert_pattern} and
+%    \luamref{reader->add_special_character} methods, before the grammar has
+%    been compiled.
+%
 % \end{markdown}
 % \iffalse
 %</manual-options>
