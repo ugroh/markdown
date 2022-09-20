@@ -15837,13 +15837,21 @@ would use the following code in the preamble of your document:
 \cs_new:Nn
   \@@_set_latex_theme:n
   {
-    \str_if_in:NnF
+    \str_if_in:nnF
       { #1 }
       { / }
       {
         \markdownError
-        { Won't load theme with unqualified name #1 }
-        { Theme names must contain at least one forward slash }
+        { Won't~load~theme~with~unqualified~name~#1 }
+        { Theme~names~must~contain~at~least~one~forward~slash }
+      }
+    \str_if_in:nnT
+      { #1 }
+      { _ }
+      {
+        \markdownError
+        { Won't~load~theme~with~an~underscore~in~its~name~#1 }
+        { Theme~names~must~not~contain~underscores~in~their~names }
       }
     \tl_set:Nn \markdownLaTeXThemePackageName { #1 }
     \str_replace_all:Nnn
