@@ -8,6 +8,10 @@ Fixes:
 - Change category code of hash sign (`#`) to other in the
   `\markdownInput` command. (#181)
 
+Deprecation:
+
+- Use `make4ht` instead of `htlatex` in `examples/Makefile`. (#183)
+
 Continuous Integration:
 
 - Use all available CPU cores for unit tests. (#178)
