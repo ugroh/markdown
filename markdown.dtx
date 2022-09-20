@@ -15662,8 +15662,8 @@ pdflatex --shell-escape document.tex
 ### \LaTeX{}
 
 \LaTeX{} options allow us to disable the redefinition of the default renderer
-prototypes from plain \TeX{}, load user-contributed themes, and invoke
-user-defined setup snippets.
+prototypes from plain \TeX{}, load user-defined themes, and invoke user-defined
+setup snippets.
 
 #### Setting Lua and plain \TeX{} options from \LaTeX{}
 
@@ -15767,20 +15767,19 @@ package. Setting the option after loading the package will have no effect.
 
 #### \LaTeX{} themes {#latexthemes}
 
-User-contributed \LaTeX{} themes for the Markdown package provide a
-domain-specific interpretation of Markdown tokens. Similarly to \LaTeX{}
-packages, themes allow the authors to achieve a specific look and other
-high-level goals without low-level programming.
+User-defined \LaTeX{} themes for the Markdown package provide a domain-specific
+interpretation of Markdown tokens. Similarly to \LaTeX{} packages, themes
+allow the authors to achieve a specific look and other high-level goals
+without low-level programming.
 
-% The \LaTeX{} option with key `theme` loads a \LaTeX{} package (further
-% referred to as *a theme*) named `markdowntheme`\meta{munged theme
-% name}`.sty`, where the *munged theme name* is the *theme name* after a
-% substitution of all forward slashes (\texttt{/}) for an underscore
-% (\texttt{_}), the theme name is a value that is *qualified* and contains no
-% underscores, and a value is qualified if and only if it contains at least one
-% forward slash. Themes are inspired by the Beamer \LaTeX{} package, which
-% provides similar functionality with its \mref{usetheme} macro [@tantau21,
-% Section 15.1].
+% The \LaTeX{} option `theme`=\meta{theme name} loads a \LaTeX{} package
+% (further referred to as *a theme*) named `markdowntheme`\meta{munged theme
+% name}`.sty`, where the *munged theme name* is the *theme name* after the
+% substitution of all forward slashes (`/`) for an underscore (`_`), the theme
+% *name* is *qualified* and contains no underscores, and a value is qualified
+% if and only if it contains at least one forward slash. Themes are inspired by
+% the Beamer \LaTeX{} package, which provides similar functionality with its
+% \mref{usetheme} macro [@tantau21, Section 15.1].
 %
 % Theme names must be qualified to minimize naming conflicts between different
 % themes intended for a single \LaTeX{} document class or for a single \LaTeX{}
@@ -16176,7 +16175,7 @@ following text, where the middot (`·`) denotes a non-breaking space:
 % \end{markdown}
 % \iffalse
 
-User-contributed \LaTeX{} themes provide global control over high-level goals.
+User-defined \LaTeX{} themes provide global control over high-level goals.
 However, it is often desirable to change only some local aspects of a document.
 \LaTeX{} setup snippets provide syntactic sugar for defining and invoking
 various options locally.
