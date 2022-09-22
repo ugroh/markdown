@@ -16352,6 +16352,85 @@ The following ordered list will be preceded by roman numerals:
             #2 .default:n = { true },
           }
       }
+%    \end{macrocode}
+% \begin{markdown}
+%
+% For options of type `clist`, we assume that \meta{key} is a regular English
+% noun in plural (such as `extensions`) and we also define the
+% \meta{singular key}`=`\meta{value} interface, where \meta{singular key} is
+% \meta{key} after stripping the trailing -s (such as `extension`). Rather
+% than setting the option to \meta{value}, this interface appends \meta{value}
+% to the current value as the rightmost item in the list.
+%
+% \end{markdown}
+%  \begin{macrocode}
+    \str_if_eq:VVT
+      \l_tmpa_tl
+      \c_@@_option_type_clist_tl
+      {
+        \tl_set:Nn
+          \l_tmpa_tl
+          { #2 }
+        \tl_reverse:N
+          \l_tmpa_tl
+        \str_if_eq:enF
+          {
+            \tl_head:V
+              \l_tmpa_tl
+          }
+          { s }
+          {
+              \msg_error:nnn
+                { @@ }
+                { malformed-name-for-clist-option }
+                { #2 }
+          }
+        \tl_set:Nx
+          \l_tmpa_tl
+          {
+            \tl_tail:V
+              \l_tmpa_tl
+          }
+        \tl_reverse:N
+          \l_tmpa_tl
+        \tl_put_right:Nn
+          \l_tmpa_tl
+          {
+            .code:n = {
+              \@@_get_option_value:nN
+                { #2 }
+                \l_tmpa_tl
+              \clist_set:NV
+                \l_tmpa_clist
+                { \l_tmpa_tl, { ##1 } }
+              \@@_set_option_value:nV
+                { #2 }
+                \l_tmpa_clist
+            }
+          }
+        \keys_define:nV
+          { markdown/latex-options }
+          \l_tmpa_tl
+      }
+  }
+\cs_generate_variant:Nn
+  \clist_set:Nn
+  { NV }
+\cs_generate_variant:Nn
+  \keys_define:nn
+  { nV }
+\cs_generate_variant:Nn
+  \@@_set_option_value:nn
+  { nV }
+\prg_generate_conditional_variant:Nnn
+  \str_if_eq:nn
+  { en }
+  { F }
+\msg_new:nnn
+  { @@ }
+  { malformed-name-for-clist-option }
+  {
+    Clist~option~name~#1~does~not~end~with~-s.
   }
 \@@_latex_define_option_commands_and_keyvals:
 \ExplSyntaxOff
