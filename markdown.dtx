@@ -1601,6 +1601,37 @@ local M = {metadata = metadata}
 % print(convert("Hello *world*!"))
 % ```````
 %
+%### User-Defined Syntax Extensions {#luauserextensions}
+%
+% For the purpose of user-defined syntax extensions, the Lua interface also
+% declares the \luamdef{reader} object, which performs the lexical and
+% syntactic analysis of markdown text and which exposes the
+% \luamdef{reader->insert_pattern} and \luamdef{reader->add_special_character}
+% methods for extending the \acro{peg} grammar of markdown.
+%
+% The \luamref{reader->insert_pattern} method inserts a \acro{peg} pattern into
+% the grammar of markdown. The method receives two arguments: a selector string
+% in the form `"`\meta{left-hand side terminal symbol} \meta{`before` or
+% `after`} \meta{right-hand side terminal symbol}`"` and an \acro{peg} pattarn
+% to insert. For example, imagine that the markdown grammar contains the
+% following rules:
+%
+% ``` lua
+% Inline = V("Str")
+%        + ...
+%        + V("Emph")
+%        + V("InlineNote")
+%        + ...,
+% ```
+% \noindent If we'd like to insert `pattern` into the grammar between the
+% `Inline -> Emph` and `Inline -> InlineNote` rules, we would call
+% \luamref{reader->insert_pattern} with `"Inline after Emph"` (or `"Inline
+% before InlineNote"`) and `pattern` as the arguments.
+%
+% The \luamdef{reader->add_special_character} method adds a new character with
+% special meaning to the grammar of markdown. The method receives the character
+% as its only argument.
+%
 % \end{markdown}
 % \iffalse
 %</lua>
@@ -4417,10 +4448,10 @@ defaultOptions.eagerCache = true
 %    the major version of the Markdown package to increment (to 4.0.0).
 %
 %    The `finalize_grammar` field is a function that finalizes the grammar of
-%    markdown using the public interface of a \luamref{reader} object, such as
+%    markdown using the interface of a Lua \luamref{reader} object, such as
 %    the \luamref{reader->insert_pattern} and
-%    \luamref{reader->add_special_character} methods, before the grammar has
-%    been compiled.
+%    \luamref{reader->add_special_character} methods,
+%    see Section <#luauserextensions>.
 %
 % \end{markdown}
 % \iffalse
@@ -16896,7 +16927,7 @@ texexec --passon=--shell-escape document.tex
 % Lua Implementation {#luaimplementation}
 %--------------------
 %
-% The Lua implementation implements \luamdef{writer} and \luamdef{reader}
+% The Lua implementation implements \luamdef{writer} and \luamref{reader}
 % objects, which provide the conversion from markdown to plain \TeX, and
 % \luamdef{extensions} objects, which provide syntax extensions for the
 % \luamref{writer} and \luamref{reader} objects.
@@ -20645,12 +20676,6 @@ end
 % markdown reader object that was located in the
 % `lunamark/reader/markdown.lua` file in the Lunamark Lua module.
 %
-% Although not specified in the Lua interface (see Section
-% <#sec:luainterface>), the \luamref{reader} object is exported, so that the
-% curious user could easily tinker with the methods of the objects produced by
-% the \luamref{reader.new} method described below. The user should be aware,
-% however, that the implementation may change in a future revision.
-%
 % The \luamdef{reader.new} method creates and returns a new \TeX{} reader
 % object associated with the Lua interface options (see Section
 % <#sec:luaoptions>) `options` and with a writer object `writer`. When
@@ -21446,8 +21471,8 @@ function M.reader.new(writer, options, extensions)
 % \begin{markdown}
 %
 % Define a hash table of all characters with special meaning and add method
-% `reader->add_special_character` that extends the hash table and updates the
-% \acro{peg} grammar.
+% \luamref{reader->add_special_character} that extends the hash table and
+% updates the \acro{peg} grammar of markdown.
 %
 % \end{markdown}
 %  \begin{macrocode}
