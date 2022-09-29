@@ -1616,69 +1616,50 @@ local M = {metadata = metadata}
 %
 % \end{markdown}
 %  \begin{macrocode}
-  local walkable_syntax = {
-    Block = {
-      "Blockquote",
-      "Verbatim",
-      "HorizontalRule",
-      "BulletList",
-      "OrderedList",
-      "Heading",
-      "DisplayHtml",
-      "Paragraph",
-      "Plain",
-    },
-    Inline = {
-      "Str",
-      "Space",
-      "Endline",
-      "UlOrStarLine",
-      "Strong",
-      "Emph",
-      "Link",
-      "Image",
-      "Code",
-      "AutoLinkUrl",
-      "AutoLinkEmail",
-      "AutoLinkRelativeReference",
-      "InlineHtml",
-      "HtmlEntity",
-      "EscapedChar",
-      "Smart",
-      "Symbol",
-    },
-    IndentedInline = {
-      "Str",
-      "OptionalIndent",
-      "Endline",
-      "UlOrStarLine",
-      "Strong",
-      "Emph",
-      "Link",
-      "Image",
-      "Code",
-      "AutoLinkUrl",
-      "AutoLinkEmail",
-      "AutoLinkRelativeReference",
-      "InlineHtml",
-      "HtmlEntity",
-      "EscapedChar",
-      "Smart",
-      "Symbol",
-    },
-  }
+local walkable_syntax = {
+  Block = {
+    "Blockquote",
+    "Verbatim",
+    "HorizontalRule",
+    "BulletList",
+    "OrderedList",
+    "Heading",
+    "DisplayHtml",
+    "Paragraph",
+    "Plain",
+  },
+  Inline = {
+    "Str",
+    "Space",
+    "Endline",
+    "UlOrStarLine",
+    "Strong",
+    "Emph",
+    "Link",
+    "Image",
+    "Code",
+    "AutoLinkUrl",
+    "AutoLinkEmail",
+    "AutoLinkRelativeReference",
+    "InlineHtml",
+    "HtmlEntity",
+    "EscapedChar",
+    "Smart",
+    "Symbol",
+  },
+}
 %    \end{macrocode}
 % \par
 % \begin{markdown}
 %
 % The \luamref{reader->insert_pattern} method inserts a \acro{peg} pattern into
 % the grammar of markdown. The method receives two arguments: a selector string
-% in the form `"`\meta{left-hand side terminal symbol} \meta{`before` or
-% `after`} \meta{right-hand side terminal symbol}`"` and a \acro{peg} pattarn
-% to insert. For example. if we'd like to insert `pattern` into the grammar
-% between the `Inline -> Emph` and `Inline -> Link` rules, we would call
-% \luamref{reader->insert_pattern} with `"Inline after Emph"` (or `"Inline
-% before InlineNote"`) and `pattern` as the arguments.
+% in the form `"`\meta{left-hand side terminal symbol} \meta{`before`, `after`,
+% or `instead of`} \meta{right-hand side terminal symbol}`"` and a \acro{peg}
+% pattarn to insert. For example. if we'd like to insert `pattern` into the
+% grammar between the `Inline -> Emph` and `Inline -> Link` rules, we would
+% call \luamref{reader->insert_pattern} with `"Inline after Emph"` (or `"Inline
+% before Link"`) and `pattern` as the arguments.
 %
 % The \luamdef{reader->add_special_character} method adds a new character with
 % special meaning to the grammar of markdown. The method receives the character
@@ -21414,22 +21395,22 @@ function M.reader.new(writer, options, extensions)
 %
 % Define \luamref{reader->insert_pattern} as a function that receives two
 % arguments: a selector string in the form `"`\meta{left-hand side terminal
-% symbol} \meta{`before` or `after`} \meta{right-hand side terminal symbol}`"`
-% and a \acro{peg} pattarn to insert. The function adds the pattern to
-% \luamref{walkable_syntax}`[`*left-hand side terminal symbol*`]` before or
-% after *right-hand side terminal symbol*.
+% symbol} \meta{`before`, `after`, or `instead of`} \meta{right-hand side
+% terminal symbol}`"` and a \acro{peg} pattarn to insert. The function adds
+% the pattern to \luamref{walkable_syntax}`[`*left-hand side terminal
+% symbol*`]` before or after *right-hand side terminal symbol*.
 %
 % \end{markdown}
 %  \begin{macrocode}
   self.insert_pattern = function(selector, pattern)
-    local _, _, lhs, pos, rhs = selector:find("(%a+)%s+(%a+)%s+(%a+)")
+    local _, _, lhs, pos, rhs = selector:find("^(%a+)%s+([%a%s]+%a+)%s+(%a+)$")
     assert(lhs ~= nil,
-      [[Expected selector in form "LHS (before|after) RHS", not "]]
+      [[Expected selector in form "LHS (before|after|instead of) RHS", not "]]
       .. selector .. [["]])
     assert(walkable_syntax[lhs] ~= nil,
       [[Rule ]] .. lhs .. [[ -> ... does not exist in markdown grammar]])
-    assert(pos == "before" or pos == "after",
-      [[Expected positional specifier "before" or "after", not "]]
+    assert(pos == "before" or pos == "after" or pos == "instead of",
+      [[Expected positional specifier "before", "after", or "instead of", not "]]
       .. pos .. [["]])
     local rule = walkable_syntax[lhs]
     local index = nil
@@ -21445,7 +21426,11 @@ function M.reader.new(writer, options, extensions)
     assert(index ~= nil,
       [[Rule ]] .. lhs .. [[ -> ]] .. rhs
         .. [[ does not exist in markdown grammar]])
-    table.insert(rule, index, pattern)
+    if pos == "instead of" then
+      rule[index] = pattern
+    else
+      table.insert(rule, index, pattern)
+    end
   end
 %    \end{macrocode}
 % \par
@@ -21556,6 +21541,20 @@ function M.reader.new(writer, options, extensions)
     extension.extend_writer(writer)
     extension.extend_reader(self)
   end
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Duplicate the `Inline` rule as `IndentedInline` with the right-hand-side
+% terminal symbol `Space` replaced with `OptionalIndent`.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  walkable_syntax["IndentedInline"] = util.table_copy(
+    walkable_syntax["Inline"])
+  self.insert_pattern(
+    "IndentedInline instead of Space",
+    "OptionalIndent")
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -21944,7 +21943,6 @@ M.extensions.citations = function(citation_nbsps)
 
       local Citations = TextCitations + ParenthesizedCitations
 
-      self.insert_pattern("IndentedInline after Emph", Citations)
       self.insert_pattern("Inline after Emph", Citations)
 
       self.add_special_character("@")
@@ -22382,7 +22380,6 @@ M.extensions.footnotes = function(footnotes, inline_footnotes)
                     * (parsers.tag / self.parser_functions.parse_inlines_no_inline_note)
                     / writer.note
 
-        self.insert_pattern("IndentedInline after Emph", InlineNote)
         self.insert_pattern("Inline after Emph", InlineNote)
       end
       if footnotes then
@@ -22425,7 +22422,6 @@ M.extensions.footnotes = function(footnotes, inline_footnotes)
         local Blank = NoteBlock + parsers.Blank
         self.update_rule("Blank", Blank)
 
-        self.insert_pattern("IndentedInline after Emph", NoteRef)
         self.insert_pattern("Inline after Emph", NoteRef)
       end
 
@@ -22847,7 +22843,6 @@ M.extensions.strike_through = function()
                         parsers.doubletildes)
       ) / writer.strike_through
 
-      self.insert_pattern("IndentedInline after Emph", StrikeThrough)
       self.insert_pattern("Inline after Emph", StrikeThrough)
 
       self.add_special_character("~")
@@ -22887,7 +22882,6 @@ M.extensions.superscripts = function()
         parsers.between(parsers.Str, parsers.circumflex, parsers.circumflex)
       ) / writer.superscript
 
-      self.insert_pattern("IndentedInline after Emph", Superscript)
       self.insert_pattern("Inline after Emph", Superscript)
 
       self.add_special_character("^")
@@ -22927,7 +22921,6 @@ M.extensions.subscripts = function()
         parsers.between(parsers.Str, parsers.tilde, parsers.tilde)
       ) / writer.subscript
 
-      self.insert_pattern("IndentedInline after Emph", Subscript)
       self.insert_pattern("Inline after Emph", Subscript)
 
       self.add_special_character("~")
