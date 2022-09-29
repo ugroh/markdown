@@ -1609,22 +1609,74 @@ local M = {metadata = metadata}
 % \luamdef{reader->insert_pattern} and \luamdef{reader->add_special_character}
 % methods for extending the \acro{peg} grammar of markdown.
 %
+% The read-only \luamdef{walkable_syntax} hash table stores those rules of the
+% \acro{peg} grammar of markdown that can be represented as an ordered choice
+% of terminal symbols. These rules can be modified by user-defined syntax
+% extensions.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  local walkable_syntax = {
+    Block = {
+      "Blockquote",
+      "Verbatim",
+      "HorizontalRule",
+      "BulletList",
+      "OrderedList",
+      "Heading",
+      "DisplayHtml",
+      "Paragraph",
+      "Plain",
+    },
+    Inline = {
+      "Str",
+      "Space",
+      "Endline",
+      "UlOrStarLine",
+      "Strong",
+      "Emph",
+      "Link",
+      "Image",
+      "Code",
+      "AutoLinkUrl",
+      "AutoLinkEmail",
+      "AutoLinkRelativeReference",
+      "InlineHtml",
+      "HtmlEntity",
+      "EscapedChar",
+      "Smart",
+      "Symbol",
+    },
+    IndentedInline = {
+      "Str",
+      "OptionalIndent",
+      "Endline",
+      "UlOrStarLine",
+      "Strong",
+      "Emph",
+      "Link",
+      "Image",
+      "Code",
+      "AutoLinkUrl",
+      "AutoLinkEmail",
+      "AutoLinkRelativeReference",
+      "InlineHtml",
+      "HtmlEntity",
+      "EscapedChar",
+      "Smart",
+      "Symbol",
+    },
+  }
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
 % The \luamref{reader->insert_pattern} method inserts a \acro{peg} pattern into
 % the grammar of markdown. The method receives two arguments: a selector string
 % in the form `"`\meta{left-hand side terminal symbol} \meta{`before` or
 % `after`} \meta{right-hand side terminal symbol}`"` and an \acro{peg} pattarn
-% to insert. For example, imagine that the markdown grammar contains the
-% following rules:
-%
-% ``` lua
-% Inline = V("Str")
-%        + ...
-%        + V("Emph")
-%        + V("InlineNote")
-%        + ...,
-% ```
-% \noindent If we'd like to insert `pattern` into the grammar between the
-% `Inline -> Emph` and `Inline -> InlineNote` rules, we would call
+% to insert. For example. if we'd like to insert `pattern` into the grammar
+% between the `Inline -> Emph` and `Inline -> Link` rules, we would call
 % \luamref{reader->insert_pattern} with `"Inline after Emph"` (or `"Inline
 % before InlineNote"`) and `pattern` as the arguments.
 %
@@ -21339,12 +21391,66 @@ function M.reader.new(writer, options, extensions)
 %
 %#### Syntax Specification
 %
-% Create a \luamdef{reader->syntax} hash table that stores the \acro{peg}
-% grammar.
+% Create a local writable copy of the global read-only
+% \luamdef{walkable_syntax} hash table. This table can be used by user-defined
+% syntax extensions to insert new patterns into existing rules using the
+% \luamref{reader->insert_pattern} method. Furthermore, built-in syntax
+% extensions can use this table to override existing rules using the
+% \luamref{reader->update_rule} method
 %
 % \end{markdown}
 %  \begin{macrocode}
-  self.syntax =
+  local walkable_syntax = util.table_copy(walkable_syntax)
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Define \luamref{reader->insert_pattern} as a function that receives two
+% arguments: a selector string in the form `"`\meta{left-hand side terminal
+% symbol} \meta{`before` or `after`} \meta{right-hand side terminal symbol}`"`
+% and an \acro{peg} pattarn to insert. The function adds the pattern to
+% \luamref{walkable_syntax}`[`*left-hand side terminal symbol*`]` before or
+% after *right-hand side terminal symbol*.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  self.insert_pattern = function(selector, pattern)
+    local _, _, lhs, pos, rhs = selector:find("(%a+)%s+(%a+)%s+(%a+)")
+    assert(lhs ~= nil,
+      [[Expected selector in form "LHS (before|after) RHS", not "]]
+      .. selector .. [["]])
+    assert(walkable_syntax[lhs] ~= nil,
+      [[Rule ]] .. lhs .. [[ -> ... does not exist in markdown grammar]])
+    assert(pos == "before" or pos == "after",
+      [[Expected positional specifier "before" or "after", not "]]
+      .. pos .. [["]])
+    local rule = walkable_syntax[lhs]
+    local index = nil
+    for current_index, current_rhs in ipairs(rule) do
+      if type(current_rhs) == "string" and current_rhs == rhs then
+        index = current_index
+        if pos == "after" then
+          index = index + 1
+        end
+        break
+      end
+    end
+    assert(index ~= nil,
+      [[Rule ]] .. lhs .. [[ -> ]] .. rhs
+        .. [[ does not exist in markdown grammar]])
+    table.insert(rule, index, pattern)
+  end
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Create a local \luamdef{syntax} hash table that stores those rules of the
+% \acro{peg} grammar of markdown that can't be represented as an ordered choice
+% of terminal symbols.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  local syntax =
     { "Blocks",
 
       Blocks                = ( V("ExpectedJekyllData")
@@ -21356,88 +21462,20 @@ function M.reader.new(writer, options, extensions)
                               * V("Block"))^0
                             * V("Blank")^0 * parsers.eof,
 
-      Blank                 = parsers.Blank,
-
-      UnexpectedJekyllData  = parsers.fail,
       ExpectedJekyllData    = parsers.fail,
 
-      Block                 = V("ContentBlock")
-                            + V("UnexpectedJekyllData")
-                            + V("Blockquote")
-                            + V("PipeTable")
-                            + V("Verbatim")
-                            + V("FencedCode")
-                            + V("HorizontalRule")
-                            + V("BulletList")
-                            + V("OrderedList")
-                            + V("Heading")
-                            + V("DefinitionList")
-                            + V("DisplayHtml")
-                            + V("Paragraph")
-                            + V("Plain"),
+      Blank                 = parsers.Blank,
 
-      ContentBlock          = parsers.fail,
       Blockquote            = parsers.Blockquote,
       Verbatim              = parsers.Verbatim,
-      FencedCode            = parsers.fail,
       HorizontalRule        = parsers.HorizontalRule,
       BulletList            = parsers.BulletList,
       OrderedList           = parsers.OrderedList,
       Heading               = parsers.Heading,
-      DefinitionList        = parsers.fail,
       DisplayHtml           = parsers.DisplayHtml,
       Paragraph             = parsers.Paragraph,
-      PipeTable             = parsers.fail,
       Plain                 = parsers.Plain,
       EndlineExceptions     = parsers.EndlineExceptions,
-
-      Inline                = V("Str")
-                            + V("Space")
-                            + V("Endline")
-                            + V("UlOrStarLine")
-                            + V("Strong")
-                            + V("Emph")
-                            + V("StrikeThrough")
-                            + V("Superscript")
-                            + V("Subscript")
-                            + V("InlineNote")
-                            + V("NoteRef")
-                            + V("Citations")
-                            + V("Link")
-                            + V("Image")
-                            + V("Code")
-                            + V("AutoLinkUrl")
-                            + V("AutoLinkEmail")
-                            + V("AutoLinkRelativeReference")
-                            + V("InlineHtml")
-                            + V("HtmlEntity")
-                            + V("EscapedChar")
-                            + V("Smart")
-                            + V("Symbol"),
-
-      IndentedInline        = V("Str")
-                            + V("OptionalIndent")
-                            + V("Endline")
-                            + V("UlOrStarLine")
-                            + V("Strong")
-                            + V("Emph")
-                            + V("StrikeThrough")
-                            + V("Superscript")
-                            + V("Subscript")
-                            + V("InlineNote")
-                            + V("NoteRef")
-                            + V("Citations")
-                            + V("Link")
-                            + V("Image")
-                            + V("Code")
-                            + V("AutoLinkUrl")
-                            + V("AutoLinkEmail")
-                            + V("AutoLinkRelativeReference")
-                            + V("InlineHtml")
-                            + V("HtmlEntity")
-                            + V("EscapedChar")
-                            + V("Smart")
-                            + V("Symbol"),
 
       Str                   = parsers.Str,
       Space                 = parsers.Space,
@@ -21446,12 +21484,6 @@ function M.reader.new(writer, options, extensions)
       UlOrStarLine          = parsers.UlOrStarLine,
       Strong                = parsers.Strong,
       Emph                  = parsers.Emph,
-      StrikeThrough         = parsers.fail,
-      Superscript           = parsers.fail,
-      Subscript             = parsers.fail,
-      InlineNote            = parsers.fail,
-      NoteRef               = parsers.fail,
-      Citations             = parsers.fail,
       Link                  = parsers.Link,
       Image                 = parsers.Image,
       Code                  = parsers.Code,
@@ -21470,18 +21502,41 @@ function M.reader.new(writer, options, extensions)
 % \par
 % \begin{markdown}
 %
+% Define \luamref{reader->update_rule} as a function that receives two arguments:
+% a left-hand side terminal symbol and an \acro{peg} pattarn. The function
+% (re)defines \luamref{walkable_syntax}`[`left-hand side terminal symbol`]` to
+% be equal to pattern.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  self.update_rule = function(rule_name, pattern)
+    assert(syntax[rule_name] ~= nil,
+      [[Rule ]] .. rule_name .. [[ -> ... does not exist in markdown grammar]])
+    walkable_syntax[rule_name] = { pattern }
+  end
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
 % Define a hash table of all characters with special meaning and add method
 % \luamref{reader->add_special_character} that extends the hash table and
 % updates the \acro{peg} grammar of markdown.
 %
 % \end{markdown}
 %  \begin{macrocode}
-  local special_characters = {"*", "`", "[", "]", "<", "!", "\\"}
+  local special_characters = {}
   self.add_special_character = function(c)
     table.insert(special_characters, c)
-    self.syntax.SpecialChar = S(table.concat(special_characters, ""))
+    syntax.SpecialChar = S(table.concat(special_characters, ""))
   end
-  self.syntax.SpecialChar = S(table.concat(special_characters, ""))
+
+  self.add_special_character("*")
+  self.add_special_character("`")
+  self.add_special_character("[")
+  self.add_special_character("]")
+  self.add_special_character("<")
+  self.add_special_character("!")
+  self.add_special_character("\\")
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -21494,19 +21549,51 @@ function M.reader.new(writer, options, extensions)
     extension.extend_writer(writer)
     extension.extend_reader(self)
   end
-
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Materialize \luamref{walkable_syntax} and merge it into \luamref{syntax} to
+% produce the complete \acro{peg} grammar of markdown. Whenever a rule exists
+% in both \luamref{walkable_syntax} and \luamref{syntax}, the rule from
+% \luamref{walkable_syntax} overrides the rule from \luamref{syntax}.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  for lhs, rule in pairs(walkable_syntax) do
+    syntax[lhs] = parsers.fail
+    for _, rhs in ipairs(rule) do
+      local pattern
+      if type(rhs) == "string" then
+        pattern = V(rhs)
+      else
+        pattern = rhs
+      end
+      syntax[lhs] = syntax[lhs] + pattern
+    end
+  end
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Finalize the parser by enabling built-in syntax extensions and producing
+% special parsers for difficult edge cases such as blocks nested in definition
+% lists or inline content nested in link, note, and image labels.
+%
+% \end{markdown}
+%  \begin{macrocode}
   if options.underscores then
     self.add_special_character("_")
   end
 
   if not options.codeSpans then
-    self.syntax.Code = parsers.fail
+    syntax.Code = parsers.fail
   end
 
   if not options.html then
-    self.syntax.DisplayHtml = parsers.fail
-    self.syntax.InlineHtml = parsers.fail
-    self.syntax.HtmlEntity  = parsers.fail
+    syntax.DisplayHtml = parsers.fail
+    syntax.InlineHtml = parsers.fail
+    syntax.HtmlEntity  = parsers.fail
   else
     self.add_special_character("&")
   end
@@ -21516,22 +21603,22 @@ function M.reader.new(writer, options, extensions)
   end
 
   if not options.smartEllipses then
-    self.syntax.Smart = parsers.fail
+    syntax.Smart = parsers.fail
   else
     self.add_special_character(".")
   end
 
   if not options.relativeReferences then
-    self.syntax.AutoLinkRelativeReference = parsers.fail
+    syntax.AutoLinkRelativeReference = parsers.fail
   end
 
-  local blocks_nested_t = util.table_copy(self.syntax)
+  local blocks_nested_t = util.table_copy(syntax)
   blocks_nested_t.ExpectedJekyllData = parsers.fail
   parsers.blocks_nested = Ct(blocks_nested_t)
 
-  parsers.blocks = Ct(self.syntax)
+  parsers.blocks = Ct(syntax)
 
-  local inlines_t = util.table_copy(self.syntax)
+  local inlines_t = util.table_copy(syntax)
   inlines_t[1] = "Inlines"
   inlines_t.Inlines = parsers.Inline^0 * (parsers.spacing^0 * parsers.eof / "")
   parsers.inlines = Ct(inlines_t)
@@ -21743,7 +21830,6 @@ M.extensions.citations = function(citation_nbsps)
       end
     end, extend_reader = function(self)
       local parsers = self.parsers
-      local syntax = self.syntax
       local writer = self.writer
 
       local citation_chars
@@ -21851,7 +21937,8 @@ M.extensions.citations = function(citation_nbsps)
 
       local Citations = TextCitations + ParenthesizedCitations
 
-      syntax.Citations = Citations
+      self.insert_pattern("IndentedInline after Emph", Citations)
+      self.insert_pattern("Inline after Emph", Citations)
 
       self.add_special_character("@")
       self.add_special_character("-")
@@ -21959,7 +22046,6 @@ M.extensions.content_blocks = function(language_map)
       end
     end, extend_reader = function(self)
       local parsers = self.parsers
-      local syntax = self.syntax
       local writer = self.writer
 
       local contentblock_tail
@@ -22033,7 +22119,7 @@ M.extensions.content_blocks = function(language_map)
                     * contentblock_tail
                     / writer.contentblock
 
-      syntax.ContentBlock = ContentBlock
+      self.insert_pattern("Block before Blockquote", ContentBlock)
     end
   }
 end
@@ -22089,7 +22175,6 @@ M.extensions.definition_lists = function(tight_lists)
       end
     end, extend_reader = function(self)
       local parsers = self.parsers
-      local syntax = self.syntax
       local writer = self.writer
 
       local defstartchar = S("~:")
@@ -22132,7 +22217,7 @@ M.extensions.definition_lists = function(tight_lists)
                         * -DefinitionListItemLoose * Cc(true))
                       ) / writer.definitionlist
 
-      syntax.DefinitionList = DefinitionList
+      self.insert_pattern("Block after Heading", DefinitionList)
     end
   }
 end
@@ -22171,7 +22256,6 @@ M.extensions.fenced_code = function(blank_before_code_fence)
       end
     end, extend_reader = function(self)
       local parsers = self.parsers
-      local syntax = self.syntax
       local writer = self.writer
 
       local function captures_geq_length(_,i,a,b)
@@ -22234,7 +22318,8 @@ M.extensions.fenced_code = function(blank_before_code_fence)
                                                       self.expandtabs(code))
                            end
 
-      syntax.FencedCode = FencedCode
+      self.insert_pattern("Block after Verbatim",
+                          FencedCode)
 
       local fencestart
       if blank_before_code_fence then
@@ -22244,8 +22329,8 @@ M.extensions.fenced_code = function(blank_before_code_fence)
                    + fencehead(parsers.tilde)
       end
 
-      parsers.EndlineExceptions = parsers.EndlineExceptions + fencestart
-      syntax.EndlineExceptions = parsers.EndlineExceptions
+      local EndlineExceptions = parsers.EndlineExceptions + fencestart
+      self.update_rule("EndlineExceptions", EndlineExceptions)
 
       self.add_special_character("~")
     end
@@ -22282,9 +22367,17 @@ M.extensions.footnotes = function(footnotes, inline_footnotes)
       end
     end, extend_reader = function(self)
       local parsers = self.parsers
-      local syntax = self.syntax
       local writer = self.writer
 
+      if inline_footnotes then
+        local InlineNote
+                    = parsers.circumflex
+                    * (parsers.tag / self.parser_functions.parse_inlines_no_inline_note)
+                    / writer.note
+
+        self.insert_pattern("IndentedInline after Emph", InlineNote)
+        self.insert_pattern("Inline after Emph", InlineNote)
+      end
       if footnotes then
         local function strip_first_char(s)
           return s:sub(2)
@@ -22322,17 +22415,11 @@ M.extensions.footnotes = function(footnotes, inline_footnotes)
                     * parsers.spnl * parsers.indented_blocks(parsers.chunk)
                     / register_note
 
-        parsers.Blank = NoteBlock + parsers.Blank
-        syntax.Blank = parsers.Blank
+        local Blank = NoteBlock + parsers.Blank
+        self.update_rule("Blank", Blank)
 
-        syntax.NoteRef = NoteRef
-      end
-      if inline_footnotes then
-        local InlineNote
-                    = parsers.circumflex
-                    * (parsers.tag / self.parser_functions.parse_inlines_no_inline_note)
-                    / writer.note
-        syntax.InlineNote = InlineNote
+        self.insert_pattern("IndentedInline after Emph", NoteRef)
+        self.insert_pattern("Inline after Emph", NoteRef)
       end
 
       self.add_special_character("^")
@@ -22354,7 +22441,6 @@ M.extensions.header_attributes = function()
     extend_writer = function()
     end, extend_reader = function(self)
       local parsers = self.parsers
-      local syntax = self.syntax
       local writer = self.writer
 
       parsers.AtxHeading = Cg(parsers.HeadingStart,"level")
@@ -22399,8 +22485,8 @@ M.extensions.header_attributes = function()
                             * parsers.newline
                             / writer.heading
 
-      parsers.Heading = parsers.AtxHeading + parsers.SetextHeading
-      syntax.Heading = parsers.Heading
+      local Heading = parsers.AtxHeading + parsers.SetextHeading
+      self.update_rule("Heading", Heading)
     end
   }
 end
@@ -22517,7 +22603,6 @@ M.extensions.jekyll_data = function(expect_jekyll_data)
       end
     end, extend_reader = function(self)
       local parsers = self.parsers
-      local syntax = self.syntax
       local writer = self.writer
 
       local JekyllData
@@ -22553,9 +22638,9 @@ M.extensions.jekyll_data = function(expect_jekyll_data)
                     * JekyllData
                     * (P("---") + P("..."))^-1
 
-      syntax.UnexpectedJekyllData = UnexpectedJekyllData
+      self.insert_pattern("Block before Blockquote", UnexpectedJekyllData)
       if expect_jekyll_data then
-        syntax.ExpectedJekyllData = ExpectedJekyllData
+        self.update_rule("ExpectedJekyllData", ExpectedJekyllData)
       end
     end
   }
@@ -22663,7 +22748,6 @@ M.extensions.pipe_tables = function(table_captions)
       end
     end, extend_reader = function(self)
       local parsers = self.parsers
-      local syntax = self.syntax
       local writer = self.writer
 
       local table_hline_separator = parsers.pipe + parsers.plus
@@ -22718,7 +22802,7 @@ M.extensions.pipe_tables = function(table_captions)
                       * table_caption^-1
                       / writer.table
 
-      syntax.PipeTable = PipeTable
+      self.insert_pattern("Block after Blockquote", PipeTable)
     end
   }
 end
@@ -22749,7 +22833,6 @@ M.extensions.strike_through = function()
       end
     end, extend_reader = function(self)
       local parsers = self.parsers
-      local syntax = self.syntax
       local writer = self.writer
 
       local StrikeThrough = (
@@ -22757,7 +22840,8 @@ M.extensions.strike_through = function()
                         parsers.doubletildes)
       ) / writer.strike_through
 
-      syntax.StrikeThrough = StrikeThrough
+      self.insert_pattern("IndentedInline after Emph", StrikeThrough)
+      self.insert_pattern("Inline after Emph", StrikeThrough)
 
       self.add_special_character("~")
     end
@@ -22790,14 +22874,14 @@ M.extensions.superscripts = function()
       end
     end, extend_reader = function(self)
       local parsers = self.parsers
-      local syntax = self.syntax
       local writer = self.writer
 
       local Superscript = (
         parsers.between(parsers.Str, parsers.circumflex, parsers.circumflex)
       ) / writer.superscript
 
-      syntax.Superscript = Superscript
+      self.insert_pattern("IndentedInline after Emph", Superscript)
+      self.insert_pattern("Inline after Emph", Superscript)
 
       self.add_special_character("^")
     end
@@ -22830,14 +22914,14 @@ M.extensions.subscripts = function()
       end
     end, extend_reader = function(self)
       local parsers = self.parsers
-      local syntax = self.syntax
       local writer = self.writer
 
       local Subscript = (
         parsers.between(parsers.Str, parsers.tilde, parsers.tilde)
       ) / writer.subscript
 
-      syntax.Subscript = Subscript
+      self.insert_pattern("IndentedInline after Emph", Subscript)
+      self.insert_pattern("Inline after Emph", Subscript)
 
       self.add_special_character("~")
     end
@@ -22924,7 +23008,6 @@ M.extensions.fancy_lists = function()
     end, extend_reader = function(self)
       local parsers = self.parsers
       local options = self.options
-      local syntax = self.syntax
       local writer = self.writer
 
       local label = parsers.dig + parsers.letter
@@ -23040,8 +23123,7 @@ M.extensions.fancy_lists = function()
                       * Cc(false) * parsers.skipblanklines
                       ) * Cb("listtype") / fancylist
 
-      syntax.OrderedList = FancyList
-
+      self.update_rule("OrderedList", FancyList)
     end
   }
 end
@@ -23078,11 +23160,6 @@ function M.new(options)
 %  \begin{macrocode}
   local extensions = {}
 
-  if options.citations then
-    local citations_extension = M.extensions.citations(options.citationNbsps)
-    table.insert(extensions, citations_extension)
-  end
-
   if options.contentBlocks then
     local content_blocks_extension = M.extensions.content_blocks(
       options.contentBlocksLanguageMap)
@@ -23099,12 +23176,6 @@ function M.new(options)
     local fenced_code_extension = M.extensions.fenced_code(
       options.blankBeforeCodeFence)
     table.insert(extensions, fenced_code_extension)
-  end
-
-  if options.footnotes or options.inlineFootnotes then
-    local footnotes_extension = M.extensions.footnotes(
-      options.footnotes, options.inlineFootnotes)
-    table.insert(extensions, footnotes_extension)
   end
 
   if options.headerAttributes then
@@ -23137,6 +23208,17 @@ function M.new(options)
   if options.superscripts then
     local superscript_extension = M.extensions.superscripts()
     table.insert(extensions, superscript_extension)
+  end
+
+  if options.footnotes or options.inlineFootnotes then
+    local footnotes_extension = M.extensions.footnotes(
+      options.footnotes, options.inlineFootnotes)
+    table.insert(extensions, footnotes_extension)
+  end
+
+  if options.citations then
+    local citations_extension = M.extensions.citations(options.citationNbsps)
+    table.insert(extensions, citations_extension)
   end
 
   if options.fancyLists then
