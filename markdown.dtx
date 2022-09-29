@@ -1674,7 +1674,7 @@ local M = {metadata = metadata}
 % The \luamref{reader->insert_pattern} method inserts a \acro{peg} pattern into
 % the grammar of markdown. The method receives two arguments: a selector string
 % in the form `"`\meta{left-hand side terminal symbol} \meta{`before` or
-% `after`} \meta{right-hand side terminal symbol}`"` and an \acro{peg} pattarn
+% `after`} \meta{right-hand side terminal symbol}`"` and a \acro{peg} pattarn
 % to insert. For example. if we'd like to insert `pattern` into the grammar
 % between the `Inline -> Emph` and `Inline -> Link` rules, we would call
 % \luamref{reader->insert_pattern} with `"Inline after Emph"` (or `"Inline
@@ -21393,14 +21393,21 @@ function M.reader.new(writer, options, extensions)
 %
 % Create a local writable copy of the global read-only
 % \luamdef{walkable_syntax} hash table. This table can be used by user-defined
-% syntax extensions to insert new patterns into existing rules using the
-% \luamref{reader->insert_pattern} method. Furthermore, built-in syntax
+% syntax extensions to insert new \acro{peg} patterns into existing rules
+% of the \acro{peg} grammar of markdown using
+% the \luamref{reader->insert_pattern} method. Furthermore, built-in syntax
 % extensions can use this table to override existing rules using the
-% \luamref{reader->update_rule} method
+% \luamref{reader->update_rule} method.
 %
 % \end{markdown}
 %  \begin{macrocode}
-  local walkable_syntax = util.table_copy(walkable_syntax)
+  local walkable_syntax = (function(global_walkable_syntax)
+    local local_walkable_syntax = {}
+    for lhs, rule in pairs(global_walkable_syntax) do
+      local_walkable_syntax[lhs] = util.table_copy(rule)
+    end
+    return local_walkable_syntax
+  end)(walkable_syntax)
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -21408,7 +21415,7 @@ function M.reader.new(writer, options, extensions)
 % Define \luamref{reader->insert_pattern} as a function that receives two
 % arguments: a selector string in the form `"`\meta{left-hand side terminal
 % symbol} \meta{`before` or `after`} \meta{right-hand side terminal symbol}`"`
-% and an \acro{peg} pattarn to insert. The function adds the pattern to
+% and a \acro{peg} pattarn to insert. The function adds the pattern to
 % \luamref{walkable_syntax}`[`*left-hand side terminal symbol*`]` before or
 % after *right-hand side terminal symbol*.
 %
@@ -21503,7 +21510,7 @@ function M.reader.new(writer, options, extensions)
 % \begin{markdown}
 %
 % Define \luamref{reader->update_rule} as a function that receives two arguments:
-% a left-hand side terminal symbol and an \acro{peg} pattarn. The function
+% a left-hand side terminal symbol and a \acro{peg} pattarn. The function
 % (re)defines \luamref{walkable_syntax}`[`left-hand side terminal symbol`]` to
 % be equal to pattern.
 %
