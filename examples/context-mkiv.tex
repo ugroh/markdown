@@ -55,8 +55,10 @@
 % Lua command-line interface and that contains a plain TeX representation
 % of the document `example.md`.
 \catcode`\%=12\relax
+\catcode`\#=12\relax
 \doiffileelse{./example.tex}{\input example}{}
 \catcode`\%=14\relax
+\catcode`\#=6\relax
 
 % Typeset inline markdown text.
 \startmarkdown
