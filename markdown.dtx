@@ -680,13 +680,13 @@ abbr {
   date      = {2017-01-19},
   url       = {https://github.com/iainc/Markdown-Content-Blocks},
   urldate   = {2018-01-08}}
-@book{luatex17,
+@book{luatex21,
   author    = {{Lua\TeX{} development team}},
   title     = {Lua\TeX{} reference manual},
-  year      = {2017},
-  month     = {2},
-  url       = {http://www.luatex.org/svn/trunk/manual/luatex.pdf},
-  urldate   = {2018-01-08}}
+  date      = {2021-07-23},
+  note      = {Version 1.10 (stable)},
+  url       = {https://www.pragma-ade.com/general/manuals/luatex.pdf},
+  urldate   = {2022-09-30}}
 @book{latex17,
   author    = {Braams, Johannes and Carlisle, David and Jeffrey, Alan and
                Lamport, Leslie and Mittelbach, Frank and Rowley, Chris and
@@ -1080,7 +1080,7 @@ local md5 = require("md5")
 % \begin{markdown}
 %
 % All the abovelisted modules are statically linked into the current version of
-% the Lua\TeX{} engine~[@luatex17, Section 3.3]. Beside these, we also carry
+% the Lua\TeX{} engine~[@luatex21, Section 4.3]. Beside these, we also carry
 % the following third-party Lua libraries:
 %
 % \pkg{api7/lua-tinyyaml}
@@ -1137,10 +1137,10 @@ local md5 = require("md5")
 %
 %     The plain \TeX{} code makes use of the \luamref{isdir} method that was added
 %     to the \pkg{Lua File System} library by the Lua\TeX{} engine
-%     developers~[@luatex17, Section 3.2].
+%     developers~[@luatex21, Section 4.2.4].
 %
 % The \pkg{Lua File System} module is statically linked into the Lua\TeX{}
-% engine~[@luatex17, Section~3.3].
+% engine~[@luatex21, Section 4.3].
 %
 % Unless you convert markdown documents to \TeX{} manually using the Lua
 % command-line interface (see Section <#sec:lua-cli-interface>), the plain
@@ -1585,12 +1585,12 @@ local M = {metadata = metadata}
 %
 %### Conversion from Markdown to Plain \TeX{} {#luaconversion}
 %
-% The Lua interface exposes the \luamdef{new}`(options)` method.  This
-% method creates converter functions that perform the conversion from markdown
-% to plain \TeX{} according to the table `options` that contains options
-% recognized by the Lua interface.  (see Section <#sec:luaoptions>). The
-% `options` parameter is optional; when unspecified, the behaviour will be
-% the same as if `options` were an empty table.
+% The Lua interface exposes the \luamdef{new}`(options)` function.  This
+% function returns a conversion function from markdown to plain \TeX{} according
+% to the table `options` that contains options recognized by the Lua interface
+% (see Section <#sec:luaoptions>). The `options` parameter is optional; when
+% unspecified, the behaviour will be the same as if `options` were an empty
+% table.
 %
 % The following example Lua code converts the markdown string `Hello
 % *world*!` to a \TeX{} output using the default options and prints the \TeX{}
@@ -1600,6 +1600,70 @@ local M = {metadata = metadata}
 % local convert = md.new()
 % print(convert("Hello *world*!"))
 % ```````
+%
+%### User-Defined Syntax Extensions {#luauserextensions}
+%
+% For the purpose of user-defined syntax extensions, the Lua interface also
+% exposes the \luamdef{reader} object, which performs the lexical and
+% syntactic analysis of markdown text and which exposes the
+% \luamdef{reader->insert_pattern} and \luamdef{reader->add_special_character}
+% methods for extending the \acro{peg} grammar of markdown.
+%
+% The read-only \luamdef{walkable_syntax} hash table stores those rules of the
+% \acro{peg} grammar of markdown that can be represented as an ordered choice
+% of terminal symbols. These rules can be modified by user-defined syntax
+% extensions.
+%
+% \end{markdown}
+%  \begin{macrocode}
+local walkable_syntax = {
+  Block = {
+    "Blockquote",
+    "Verbatim",
+    "HorizontalRule",
+    "BulletList",
+    "OrderedList",
+    "Heading",
+    "DisplayHtml",
+    "Paragraph",
+    "Plain",
+  },
+  Inline = {
+    "Str",
+    "Space",
+    "Endline",
+    "UlOrStarLine",
+    "Strong",
+    "Emph",
+    "Link",
+    "Image",
+    "Code",
+    "AutoLinkUrl",
+    "AutoLinkEmail",
+    "AutoLinkRelativeReference",
+    "InlineHtml",
+    "HtmlEntity",
+    "EscapedChar",
+    "Smart",
+    "Symbol",
+  },
+}
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% The \luamref{reader->insert_pattern} method inserts a \acro{peg} pattern into
+% the grammar of markdown. The method receives two arguments: a selector string
+% in the form `"`\meta{left-hand side terminal symbol} \meta{`before`, `after`,
+% or `instead of`} \meta{right-hand side terminal symbol}`"` and a \acro{peg}
+% pattarn to insert. For example. if we'd like to insert `pattern` into the
+% grammar between the `Inline -> Emph` and `Inline -> Link` rules, we would
+% call \luamref{reader->insert_pattern} with `"Inline after Emph"` (or `"Inline
+% before Link"`) and `pattern` as the arguments.
+%
+% The \luamdef{reader->add_special_character} method adds a new character with
+% special meaning to the grammar of markdown. The method receives the character
+% as its only argument.
 %
 % \end{markdown}
 % \iffalse
@@ -1897,6 +1961,8 @@ interfaces and all the way up to the \LaTeX{} and \Hologo{ConTeXt} interfaces.
   \msg_error:nnnn
   { nnnV }
 \seq_new:N \g_@@_option_types_seq
+\tl_const:Nn \c_@@_option_type_clist_tl { clist }
+\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_clist_tl
 \tl_const:Nn \c_@@_option_type_counter_tl { counter }
 \seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_counter_tl
 \tl_const:Nn \c_@@_option_type_boolean_tl { boolean }
@@ -4359,6 +4425,153 @@ Hello \markdownRendererEmphasis{world}!\relax
 % \fi
 %  \begin{macrocode}
 defaultOptions.eagerCache = true
+%    \end{macrocode}
+% \par
+% \iffalse
+%</lua,lua-cli>
+%<*manual-options>
+
+#### Option `extensions`
+
+`extensions` (default value: `{}`)
+
+% \fi
+% \begin{markdown}
+%
+% \Valitem[\{\}]{extensions}{filenames}
+%
+:    The filenames of user-defined syntax extensions that will be applied to the
+     markdown reader. If the \pkg{kpathsea} library is available, files will be
+     searched for not only in the current working directory but also in the
+     \TeX{} directory structure.
+
+%    A user-defined syntax extension is a Lua file in the following format:
+%
+%    ``` lua
+%    local strike_through = {
+%      api_version = 1,
+%      grammar_version = 1,
+%      finalize_grammar = function(reader)
+%        local nonspacechar = lpeg.P(1) - lpeg.S("\t ")
+%        local doubleslashes = lpeg.P("//")
+%        local function between(p, starter, ender)
+%          ender = lpeg.B(nonspacechar) * ender
+%          return (starter * #nonspacechar
+%                 * lpeg.Ct(p * (p - ender)^0) * ender)
+%        end
+%
+%        local read_strike_through = between(
+%          lpeg.V("Inline"), doubletildes, doubletildes
+%        ) / function(s) return {"\\st{", s, "}"} end
+%
+%        reader.insert_pattern("Inline after Emph", read_strike_through)
+%        reader.add_special_character("/")
+%      end
+%    }
+%
+%    return strike_through
+%    ```````
+%
+%    The `api_version` and `grammar_version` fields specify the version of the
+%    user-defined syntax extension API and the markdown grammar for which
+%    the extension was written. See the current API and grammar versions
+%    below:
+%
+% \end{markdown}
+% \iffalse
+%</manual-options>
+%<*lua>
+% \fi
+%  \begin{macrocode}
+metadata.user_extension_api_version = 1
+metadata.grammar_version = 1
+%    \end{macrocode}
+% \iffalse
+%</lua>
+%<*manual-options>
+% \fi
+% \begin{markdown}
+%
+%    Any changes to the syntax extension API or grammar will cause the
+%    corresponding current version to be incremented.  After Markdown 3.0.0,
+%    any changes to the API and the grammar will be either backwards-compatible
+%    or constitute a breaking change that will cause the major version of the
+%    Markdown package to increment (to 4.0.0).
+%
+%    The `finalize_grammar` field is a function that finalizes the grammar of
+%    markdown using the interface of a Lua \luamref{reader} object, such as
+%    the \luamref{reader->insert_pattern} and
+%    \luamref{reader->add_special_character} methods,
+%    see Section <#luauserextensions>.
+%
+% \end{markdown}
+% \iffalse
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `strike-through.lua` with the
+following content:
+``` lua
+local strike_through = {
+  api_version = 1,
+  grammar_version = 1,
+  finalize_grammar = function(reader)
+    local nonspacechar = lpeg.P(1) - lpeg.S("\t ")
+    local doubleslashes = lpeg.P("//")
+    local function between(p, starter, ender)
+      ender = lpeg.B(nonspacechar) * ender
+      return (starter * #nonspacechar
+             * lpeg.Ct(p * (p - ender)^0) * ender)
+    end
+
+    local read_strike_through = between(
+      lpeg.V("Inline"), doubletildes, doubletildes
+    ) / function(s) return {"\\st{", s, "}"} end
+
+    reader.insert_pattern("Inline after Emph", read_strike_through)
+    reader.add_special_character("/")
+  end
+}
+```````
+Using a text editor, create also a text document named `document.tex` with the
+following content:
+``` tex
+\documentclass{article}
+\usepackage{soul}
+\usepackage[extension = strike-through.lua]{markdown}
+\begin{document}
+\begin{markdown}
+This is //a lunar roving vehicle// strike-through text.
+\end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> This is ~~a lunar roving vehicle~~ strike-through text.
+
+%</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\cs_generate_variant:Nn
+  \@@_add_lua_option:nnn
+  { nnV }
+\@@_add_lua_option:nnV
+  { extensions }
+  { clist }
+  \c_empty_clist
+%    \end{macrocode}
+% \iffalse
+%</tex>
+%<*lua,lua-cli>
+% \fi
+%  \begin{macrocode}
+defaultOptions.extensions = {}
 %    \end{macrocode}
 % \par
 % \iffalse
@@ -8250,6 +8463,11 @@ for i = 1, #arg do
         options[key] = (value == "true")
       elseif default_type == "number" then
         options[key] = tonumber(value)
+      elseif default_type == "table" then
+        options[key] = {}
+        for item in value:gmatch("[^ ,]+") do
+          table.insert(options[key], item)
+        end
       else
         if default_type ~= "string" then
           if default_type == "nil" then
@@ -10461,11 +10679,11 @@ as \mref{markdownRendererContentBlock}.
 The \mdef{markdownRendererContentBlockCode} macro represents an iA\,Writer
 content block that was recognized as a file in a known programming language
 by its filename extension $s$. If any `markdown-languages.json` file found
-by \pkg{kpathsea}\footnote{Local files take precedence. Filenames other
-than `markdown-languages.json` may be specified using the
-`contentBlocksLanguageMap` Lua option.} contains a record $(k, v)$, then a
-non-online-image content block with the filename extension $s,
-s$`:lower()`${}=k$ is considered to be in a known programming language $v$.
+by \pkg{kpathsea}\footnote{Filenames other than `markdown-languages.json` may
+be specified using the `contentBlocksLanguageMap` Lua option.} contains a
+record $(k, v)$, then a non-online-image content block with the filename
+extension $s, s$`:lower()`${}=k$ is considered to be in a known programming
+language $v$.
 The macro receives five arguments: the local file name extension $s$ cast to
 the lower case, the language $v$, the fully escaped \acro{uri} that can be
 directly typeset, the raw \acro{uri} that can be used outside typesetting,
@@ -15615,8 +15833,8 @@ pdflatex --shell-escape document.tex
 ### \LaTeX{}
 
 \LaTeX{} options allow us to disable the redefinition of the default renderer
-prototypes from plain \TeX{}, load user-contributed themes, and invoke
-user-defined setup snippets.
+prototypes from plain \TeX{}, load user-defined themes, and invoke user-defined
+setup snippets.
 
 #### Setting Lua and plain \TeX{} options from \LaTeX{}
 
@@ -15720,20 +15938,19 @@ package. Setting the option after loading the package will have no effect.
 
 #### \LaTeX{} themes {#latexthemes}
 
-User-contributed \LaTeX{} themes for the Markdown package provide a
-domain-specific interpretation of some Markdown tokens. Similarly to \LaTeX{}
-packages, themes allow the authors to achieve a specific look and other
-high-level goals without low-level programming.
+User-defined \LaTeX{} themes for the Markdown package provide a domain-specific
+interpretation of Markdown tokens. Similarly to \LaTeX{} packages, themes
+allow the authors to achieve a specific look and other high-level goals
+without low-level programming.
 
-% The \LaTeX{} option with key `theme` loads a \LaTeX{} package (further
-% referred to as *a theme*) named `markdowntheme`\meta{munged theme
-% name}`.sty`, where the *munged theme name* is the *theme name* after a
-% substitution of all forward slashes (\texttt{/}) for an underscore
-% (\texttt{_}), the theme name is a value that is *qualified* and contains no
-% underscores, and a value is qualified if and only if it contains at least one
-% forward slash. Themes are inspired by the Beamer \LaTeX{} package, which
-% provides similar functionality with its \mref{usetheme} macro [@tantau21,
-% Section 15.1].
+% The \LaTeX{} option `theme`=\meta{theme name} loads a \LaTeX{} package
+% (further referred to as *a theme*) named `markdowntheme`\meta{munged theme
+% name}`.sty`, where the *munged theme name* is the *theme name* after the
+% substitution of all forward slashes (`/`) for an underscore (`_`), the theme
+% *name* is *qualified* and contains no underscores, and a value is qualified
+% if and only if it contains at least one forward slash. Themes are inspired by
+% the Beamer \LaTeX{} package, which provides similar functionality with its
+% \mref{usetheme} macro [@tantau21, Section 15.1].
 %
 % Theme names must be qualified to minimize naming conflicts between different
 % themes intended for a single \LaTeX{} document class or for a single \LaTeX{}
@@ -15790,13 +16007,21 @@ would use the following code in the preamble of your document:
 \cs_new:Nn
   \@@_set_latex_theme:n
   {
-    \str_if_in:NnF
+    \str_if_in:nnF
       { #1 }
       { / }
       {
         \markdownError
-        { Won't load theme with unqualified name #1 }
-        { Theme names must contain at least one forward slash }
+        { Won't~load~theme~with~unqualified~name~#1 }
+        { Theme~names~must~contain~at~least~one~forward~slash }
+      }
+    \str_if_in:nnT
+      { #1 }
+      { _ }
+      {
+        \markdownError
+        { Won't~load~theme~with~an~underscore~in~its~name~#1 }
+        { Theme~names~must~not~contain~underscores~in~their~names }
       }
     \tl_set:Nn \markdownLaTeXThemePackageName { #1 }
     \str_replace_all:Nnn
@@ -16121,7 +16346,7 @@ following text, where the middot (`·`) denotes a non-breaking space:
 % \end{markdown}
 % \iffalse
 
-User-contributed \LaTeX{} themes provide global control over high-level goals.
+User-defined \LaTeX{} themes provide global control over high-level goals.
 However, it is often desirable to change only some local aspects of a document.
 \LaTeX{} setup snippets provide syntactic sugar for defining and invoking
 various options locally.
@@ -16257,6 +16482,85 @@ The following ordered list will be preceded by roman numerals:
             #2 .default:n = { true },
           }
       }
+%    \end{macrocode}
+% \begin{markdown}
+%
+% For options of type `clist`, we assume that \meta{key} is a regular English
+% noun in plural (such as `extensions`) and we also define the
+% \meta{singular key}`=`\meta{value} interface, where \meta{singular key} is
+% \meta{key} after stripping the trailing -s (such as `extension`). Rather
+% than setting the option to \meta{value}, this interface appends \meta{value}
+% to the current value as the rightmost item in the list.
+%
+% \end{markdown}
+%  \begin{macrocode}
+    \str_if_eq:VVT
+      \l_tmpa_tl
+      \c_@@_option_type_clist_tl
+      {
+        \tl_set:Nn
+          \l_tmpa_tl
+          { #2 }
+        \tl_reverse:N
+          \l_tmpa_tl
+        \str_if_eq:enF
+          {
+            \tl_head:V
+              \l_tmpa_tl
+          }
+          { s }
+          {
+              \msg_error:nnn
+                { @@ }
+                { malformed-name-for-clist-option }
+                { #2 }
+          }
+        \tl_set:Nx
+          \l_tmpa_tl
+          {
+            \tl_tail:V
+              \l_tmpa_tl
+          }
+        \tl_reverse:N
+          \l_tmpa_tl
+        \tl_put_right:Nn
+          \l_tmpa_tl
+          {
+            .code:n = {
+              \@@_get_option_value:nN
+                { #2 }
+                \l_tmpa_tl
+              \clist_set:NV
+                \l_tmpa_clist
+                { \l_tmpa_tl, { ##1 } }
+              \@@_set_option_value:nV
+                { #2 }
+                \l_tmpa_clist
+            }
+          }
+        \keys_define:nV
+          { markdown/latex-options }
+          \l_tmpa_tl
+      }
+  }
+\cs_generate_variant:Nn
+  \clist_set:Nn
+  { NV }
+\cs_generate_variant:Nn
+  \keys_define:nn
+  { nV }
+\cs_generate_variant:Nn
+  \@@_set_option_value:nn
+  { nV }
+\prg_generate_conditional_variant:Nnn
+  \str_if_eq:nn
+  { en }
+  { F }
+\msg_new:nnn
+  { @@ }
+  { malformed-name-for-clist-option }
+  {
+    Clist~option~name~#1~does~not~end~with~-s.
   }
 \@@_latex_define_option_commands_and_keyvals:
 \ExplSyntaxOff
@@ -16722,7 +17026,7 @@ texexec --passon=--shell-escape document.tex
 % Lua Implementation {#luaimplementation}
 %--------------------
 %
-% The Lua implementation implements \luamdef{writer} and \luamdef{reader}
+% The Lua implementation implements \luamdef{writer} and \luamref{reader}
 % objects, which provide the conversion from markdown to plain \TeX, and
 % \luamdef{extensions} objects, which provide syntax extensions for the
 % \luamref{writer} and \luamref{reader} objects.
@@ -16784,7 +17088,7 @@ function util.cache(dir, string, salt, transform, suffix)
   local file = io.open(name, "r")
   if file == nil then -- If no cache entry exists, then create a new one.
     file = assert(io.open(name, "w"),
-      [[could not open file "]] .. name .. [[" for writing]])
+      [[Could not open file "]] .. name .. [[" for writing]])
     local result = string
     if transform ~= nil then
       result = transform(result)
@@ -16808,6 +17112,32 @@ function util.table_copy(t)
   for k, v in pairs(t) do u[k] = v end
   return setmetatable(u, getmetatable(t))
 end
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% The \luamdef{util.lookup_files} method looks up files with filename `f`
+% and returns its path. If the \pkg{kpathsea} library is available, it will
+% search for files not only in the current working directory but also in the
+% \TeX{} directory structure. Further options for \pkg{kpathsea} can be
+% specified in table `options`. [@luatex21, Section 10.7.4]
+%
+% \end{markdown}
+%  \begin{macrocode}
+util.lookup_files = (function()
+  local ran_ok, kpse = pcall(require, "kpse")
+  if ran_ok then
+    kpse.set_program_name("luatex")
+  else
+    kpse = { lookup = function(f, _) return f end }
+  end
+
+  local function lookup_files(f, options)
+    return kpse.lookup(f, options)
+  end
+
+  return lookup_files
+end)()
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -20432,14 +20762,6 @@ end
 % \par
 % \begin{markdown}
 %
-%#### Lists
-%
-% \end{markdown}
-%  \begin{macrocode}
-%    \end{macrocode}
-% \par
-% \begin{markdown}
-%
 %#### Headings
 %
 % \end{markdown}
@@ -20479,12 +20801,6 @@ end
 % markdown reader object that was located in the
 % `lunamark/reader/markdown.lua` file in the Lunamark Lua module.
 %
-% Although not specified in the Lua interface (see Section
-% <#sec:luainterface>), the \luamref{reader} object is exported, so that the
-% curious user could easily tinker with the methods of the objects produced by
-% the \luamref{reader.new} method described below. The user should be aware,
-% however, that the implementation may change in a future revision.
-%
 % The \luamdef{reader.new} method creates and returns a new \TeX{} reader
 % object associated with the Lua interface options (see Section
 % <#sec:luaoptions>) `options` and with a writer object `writer`. When
@@ -20498,7 +20814,7 @@ end
 % \end{markdown}
 %  \begin{macrocode}
 M.reader = {}
-function M.reader.new(writer, options, extensions)
+function M.reader.new(writer, options)
   local self = {}
 %    \end{macrocode}
 % \par
@@ -21147,150 +21463,174 @@ function M.reader.new(writer, options, extensions)
 % \begin{markdown}
 %
 %#### Syntax Specification
-%
-% Create a \luamdef{reader->syntax} hash table that stores the \acro{peg}
-% grammar.
+% Define \luamdef{reader->finalize_grammar} as a function that constructs the
+% \acro{peg} grammar of markdown, applies syntax extensions `extensions` and
+% returns a conversion function that takes a markdown string and turns it into
+% a plain \TeX{} output.
 %
 % \end{markdown}
 %  \begin{macrocode}
-  self.syntax =
-    { "Blocks",
+  function self.finalize_grammar(extensions)
+%    \end{macrocode}
+% \begin{markdown}
+%
+% Create a local writable copy of the global read-only
+% \luamdef{walkable_syntax} hash table. This table can be used by user-defined
+% syntax extensions to insert new \acro{peg} patterns into existing rules
+% of the \acro{peg} grammar of markdown using
+% the \luamref{reader->insert_pattern} method. Furthermore, built-in syntax
+% extensions can use this table to override existing rules using the
+% \luamref{reader->update_rule} method.
+%
+% \end{markdown}
+%  \begin{macrocode}
+    local walkable_syntax = (function(global_walkable_syntax)
+      local local_walkable_syntax = {}
+      for lhs, rule in pairs(global_walkable_syntax) do
+        local_walkable_syntax[lhs] = util.table_copy(rule)
+      end
+      return local_walkable_syntax
+    end)(walkable_syntax)
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Define \luamref{reader->insert_pattern} as a function that receives two
+% arguments: a selector string in the form `"`\meta{left-hand side terminal
+% symbol} \meta{`before`, `after`, or `instead of`} \meta{right-hand side
+% terminal symbol}`"` and a \acro{peg} pattarn to insert. The function adds
+% the pattern to \luamref{walkable_syntax}`[`*left-hand side terminal
+% symbol*`]` before or after *right-hand side terminal symbol*.
+%
+% \end{markdown}
+%  \begin{macrocode}
+    self.insert_pattern = function(selector, pattern)
+      local _, _, lhs, pos, rhs = selector:find("^(%a+)%s+([%a%s]+%a+)%s+(%a+)$")
+      assert(lhs ~= nil,
+        [[Expected selector in form "LHS (before|after|instead of) RHS", not "]]
+        .. selector .. [["]])
+      assert(walkable_syntax[lhs] ~= nil,
+        [[Rule ]] .. lhs .. [[ -> ... does not exist in markdown grammar]])
+      assert(pos == "before" or pos == "after" or pos == "instead of",
+        [[Expected positional specifier "before", "after", or "instead of", not "]]
+        .. pos .. [["]])
+      local rule = walkable_syntax[lhs]
+      local index = nil
+      for current_index, current_rhs in ipairs(rule) do
+        if type(current_rhs) == "string" and current_rhs == rhs then
+          index = current_index
+          if pos == "after" then
+            index = index + 1
+          end
+          break
+        end
+      end
+      assert(index ~= nil,
+        [[Rule ]] .. lhs .. [[ -> ]] .. rhs
+          .. [[ does not exist in markdown grammar]])
+      if pos == "instead of" then
+        rule[index] = pattern
+      else
+        table.insert(rule, index, pattern)
+      end
+    end
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Create a local \luamdef{syntax} hash table that stores those rules of the
+% \acro{peg} grammar of markdown that can't be represented as an ordered choice
+% of terminal symbols.
+%
+% \end{markdown}
+%  \begin{macrocode}
+    local syntax =
+      { "Blocks",
 
-      Blocks                = ( V("ExpectedJekyllData")
-                              * (V("Blank")^0 / writer.interblocksep)
-                              )^-1
-                            * V("Blank")^0
-                            * V("Block")^-1
-                            * (V("Blank")^0 / writer.interblocksep
-                              * V("Block"))^0
-                            * V("Blank")^0 * parsers.eof,
+        Blocks                = ( V("ExpectedJekyllData")
+                                * (V("Blank")^0 / writer.interblocksep)
+                                )^-1
+                              * V("Blank")^0
+                              * V("Block")^-1
+                              * (V("Blank")^0 / writer.interblocksep
+                                * V("Block"))^0
+                              * V("Blank")^0 * parsers.eof,
 
-      Blank                 = parsers.Blank,
+        ExpectedJekyllData    = parsers.fail,
 
-      UnexpectedJekyllData  = parsers.fail,
-      ExpectedJekyllData    = parsers.fail,
+        Blank                 = parsers.Blank,
 
-      Block                 = V("ContentBlock")
-                            + V("UnexpectedJekyllData")
-                            + V("Blockquote")
-                            + V("PipeTable")
-                            + V("Verbatim")
-                            + V("FencedCode")
-                            + V("HorizontalRule")
-                            + V("BulletList")
-                            + V("OrderedList")
-                            + V("Heading")
-                            + V("DefinitionList")
-                            + V("DisplayHtml")
-                            + V("Paragraph")
-                            + V("Plain"),
+        Blockquote            = parsers.Blockquote,
+        Verbatim              = parsers.Verbatim,
+        HorizontalRule        = parsers.HorizontalRule,
+        BulletList            = parsers.BulletList,
+        OrderedList           = parsers.OrderedList,
+        Heading               = parsers.Heading,
+        DisplayHtml           = parsers.DisplayHtml,
+        Paragraph             = parsers.Paragraph,
+        Plain                 = parsers.Plain,
+        EndlineExceptions     = parsers.EndlineExceptions,
 
-      ContentBlock          = parsers.fail,
-      Blockquote            = parsers.Blockquote,
-      Verbatim              = parsers.Verbatim,
-      FencedCode            = parsers.fail,
-      HorizontalRule        = parsers.HorizontalRule,
-      BulletList            = parsers.BulletList,
-      OrderedList           = parsers.OrderedList,
-      Heading               = parsers.Heading,
-      DefinitionList        = parsers.fail,
-      DisplayHtml           = parsers.DisplayHtml,
-      Paragraph             = parsers.Paragraph,
-      PipeTable             = parsers.fail,
-      Plain                 = parsers.Plain,
-      EndlineExceptions     = parsers.EndlineExceptions,
-
-      Inline                = V("Str")
-                            + V("Space")
-                            + V("Endline")
-                            + V("UlOrStarLine")
-                            + V("Strong")
-                            + V("Emph")
-                            + V("StrikeThrough")
-                            + V("Superscript")
-                            + V("Subscript")
-                            + V("InlineNote")
-                            + V("NoteRef")
-                            + V("Citations")
-                            + V("Link")
-                            + V("Image")
-                            + V("Code")
-                            + V("AutoLinkUrl")
-                            + V("AutoLinkEmail")
-                            + V("AutoLinkRelativeReference")
-                            + V("InlineHtml")
-                            + V("HtmlEntity")
-                            + V("EscapedChar")
-                            + V("Smart")
-                            + V("Symbol"),
-
-      IndentedInline        = V("Str")
-                            + V("OptionalIndent")
-                            + V("Endline")
-                            + V("UlOrStarLine")
-                            + V("Strong")
-                            + V("Emph")
-                            + V("StrikeThrough")
-                            + V("Superscript")
-                            + V("Subscript")
-                            + V("InlineNote")
-                            + V("NoteRef")
-                            + V("Citations")
-                            + V("Link")
-                            + V("Image")
-                            + V("Code")
-                            + V("AutoLinkUrl")
-                            + V("AutoLinkEmail")
-                            + V("AutoLinkRelativeReference")
-                            + V("InlineHtml")
-                            + V("HtmlEntity")
-                            + V("EscapedChar")
-                            + V("Smart")
-                            + V("Symbol"),
-
-      Str                   = parsers.Str,
-      Space                 = parsers.Space,
-      OptionalIndent        = parsers.OptionalIndent,
-      Endline               = parsers.Endline,
-      UlOrStarLine          = parsers.UlOrStarLine,
-      Strong                = parsers.Strong,
-      Emph                  = parsers.Emph,
-      StrikeThrough         = parsers.fail,
-      Superscript           = parsers.fail,
-      Subscript             = parsers.fail,
-      InlineNote            = parsers.fail,
-      NoteRef               = parsers.fail,
-      Citations             = parsers.fail,
-      Link                  = parsers.Link,
-      Image                 = parsers.Image,
-      Code                  = parsers.Code,
-      AutoLinkUrl           = parsers.AutoLinkUrl,
-      AutoLinkEmail         = parsers.AutoLinkEmail,
-      AutoLinkRelativeReference
-                            = parsers.AutoLinkRelativeReference,
-      InlineHtml            = parsers.InlineHtml,
-      HtmlEntity            = parsers.HtmlEntity,
-      EscapedChar           = parsers.EscapedChar,
-      Smart                 = parsers.Smart,
-      Symbol                = parsers.Symbol,
-      SpecialChar           = parsers.fail,
-    }
+        Str                   = parsers.Str,
+        Space                 = parsers.Space,
+        OptionalIndent        = parsers.OptionalIndent,
+        Endline               = parsers.Endline,
+        UlOrStarLine          = parsers.UlOrStarLine,
+        Strong                = parsers.Strong,
+        Emph                  = parsers.Emph,
+        Link                  = parsers.Link,
+        Image                 = parsers.Image,
+        Code                  = parsers.Code,
+        AutoLinkUrl           = parsers.AutoLinkUrl,
+        AutoLinkEmail         = parsers.AutoLinkEmail,
+        AutoLinkRelativeReference
+                              = parsers.AutoLinkRelativeReference,
+        InlineHtml            = parsers.InlineHtml,
+        HtmlEntity            = parsers.HtmlEntity,
+        EscapedChar           = parsers.EscapedChar,
+        Smart                 = parsers.Smart,
+        Symbol                = parsers.Symbol,
+        SpecialChar           = parsers.fail,
+      }
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Define \luamref{reader->update_rule} as a function that receives two arguments:
+% a left-hand side terminal symbol and a \acro{peg} pattarn. The function
+% (re)defines \luamref{walkable_syntax}`[`left-hand side terminal symbol`]` to
+% be equal to pattern.
+%
+% \end{markdown}
+%  \begin{macrocode}
+    self.update_rule = function(rule_name, pattern)
+      assert(syntax[rule_name] ~= nil,
+        [[Rule ]] .. rule_name .. [[ -> ... does not exist in markdown grammar]])
+      walkable_syntax[rule_name] = { pattern }
+    end
 %    \end{macrocode}
 % \par
 % \begin{markdown}
 %
 % Define a hash table of all characters with special meaning and add method
-% `reader->add_special_character` that extends the hash table and updates the
-% \acro{peg} grammar.
+% \luamref{reader->add_special_character} that extends the hash table and
+% updates the \acro{peg} grammar of markdown.
 %
 % \end{markdown}
 %  \begin{macrocode}
-  local special_characters = {"*", "`", "[", "]", "<", "!", "\\"}
-  self.add_special_character = function(c)
-    table.insert(special_characters, c)
-    self.syntax.SpecialChar = S(table.concat(special_characters, ""))
-  end
-  self.syntax.SpecialChar = S(table.concat(special_characters, ""))
+    local special_characters = {}
+    self.add_special_character = function(c)
+      table.insert(special_characters, c)
+      syntax.SpecialChar = S(table.concat(special_characters, ""))
+    end
+
+    self.add_special_character("*")
+    self.add_special_character("`")
+    self.add_special_character("[")
+    self.add_special_character("]")
+    self.add_special_character("<")
+    self.add_special_character("!")
+    self.add_special_character("\\")
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -21299,83 +21639,128 @@ function M.reader.new(writer, options, extensions)
 %
 % \end{markdown}
 %  \begin{macrocode}
-  for _, extension in ipairs(extensions) do
-    extension.extend_writer(writer)
-    extension.extend_reader(self)
-  end
-
-  if options.underscores then
-    self.add_special_character("_")
-  end
-
-  if not options.codeSpans then
-    self.syntax.Code = parsers.fail
-  end
-
-  if not options.html then
-    self.syntax.DisplayHtml = parsers.fail
-    self.syntax.InlineHtml = parsers.fail
-    self.syntax.HtmlEntity  = parsers.fail
-  else
-    self.add_special_character("&")
-  end
-
-  if options.preserveTabs then
-    options.stripIndent = false
-  end
-
-  if not options.smartEllipses then
-    self.syntax.Smart = parsers.fail
-  else
-    self.add_special_character(".")
-  end
-
-  if not options.relativeReferences then
-    self.syntax.AutoLinkRelativeReference = parsers.fail
-  end
-
-  local blocks_nested_t = util.table_copy(self.syntax)
-  blocks_nested_t.ExpectedJekyllData = parsers.fail
-  parsers.blocks_nested = Ct(blocks_nested_t)
-
-  parsers.blocks = Ct(self.syntax)
-
-  local inlines_t = util.table_copy(self.syntax)
-  inlines_t[1] = "Inlines"
-  inlines_t.Inlines = parsers.Inline^0 * (parsers.spacing^0 * parsers.eof / "")
-  parsers.inlines = Ct(inlines_t)
-
-  local inlines_no_link_t = util.table_copy(inlines_t)
-  inlines_no_link_t.Link = parsers.fail
-  parsers.inlines_no_link = Ct(inlines_no_link_t)
-
-  local inlines_no_inline_note_t = util.table_copy(inlines_t)
-  inlines_no_inline_note_t.InlineNote = parsers.fail
-  parsers.inlines_no_inline_note = Ct(inlines_no_inline_note_t)
-
-  local inlines_no_html_t = util.table_copy(inlines_t)
-  inlines_no_html_t.DisplayHtml = parsers.fail
-  inlines_no_html_t.InlineHtml = parsers.fail
-  inlines_no_html_t.HtmlEntity = parsers.fail
-  parsers.inlines_no_html = Ct(inlines_no_html_t)
-
-  local inlines_nbsp_t = util.table_copy(inlines_t)
-  inlines_nbsp_t.Endline = parsers.NonbreakingEndline
-  inlines_nbsp_t.Space = parsers.NonbreakingSpace
-  parsers.inlines_nbsp = Ct(inlines_nbsp_t)
+    for _, extension in ipairs(extensions) do
+      extension.extend_writer(writer)
+      extension.extend_reader(self)
+    end
 %    \end{macrocode}
 % \par
 % \begin{markdown}
 %
-%#### Exported Conversion Function
-% Define \luamdef{reader->convert} as a function that converts markdown string
-% `input` into a plain \TeX{} output and returns it. Note that the converter
-% assumes that the input has \acro{unix} line endings.
+% Duplicate the `Inline` rule as `IndentedInline` with the right-hand-side
+% terminal symbol `Space` replaced with `OptionalIndent`.
 %
 % \end{markdown}
 %  \begin{macrocode}
-  function self.convert(input)
-    references = {}
+    walkable_syntax["IndentedInline"] = util.table_copy(
+      walkable_syntax["Inline"])
+    self.insert_pattern(
+      "IndentedInline instead of Space",
+      "OptionalIndent")
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Materialize \luamref{walkable_syntax} and merge it into \luamref{syntax} to
+% produce the complete \acro{peg} grammar of markdown. Whenever a rule exists
+% in both \luamref{walkable_syntax} and \luamref{syntax}, the rule from
+% \luamref{walkable_syntax} overrides the rule from \luamref{syntax}.
+%
+% \end{markdown}
+%  \begin{macrocode}
+    for lhs, rule in pairs(walkable_syntax) do
+      syntax[lhs] = parsers.fail
+      for _, rhs in ipairs(rule) do
+        local pattern
+        if type(rhs) == "string" then
+          pattern = V(rhs)
+        else
+          pattern = rhs
+        end
+        syntax[lhs] = syntax[lhs] + pattern
+      end
+    end
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Finalize the parser by enabling built-in syntax extensions and producing
+% special parsers for difficult edge cases such as blocks nested in definition
+% lists or inline content nested in link, note, and image labels.
+%
+% \end{markdown}
+%  \begin{macrocode}
+    if options.underscores then
+      self.add_special_character("_")
+    end
+
+    if not options.codeSpans then
+      syntax.Code = parsers.fail
+    end
+
+    if not options.html then
+      syntax.DisplayHtml = parsers.fail
+      syntax.InlineHtml = parsers.fail
+      syntax.HtmlEntity  = parsers.fail
+    else
+      self.add_special_character("&")
+    end
+
+    if options.preserveTabs then
+      options.stripIndent = false
+    end
+
+    if not options.smartEllipses then
+      syntax.Smart = parsers.fail
+    else
+      self.add_special_character(".")
+    end
+
+    if not options.relativeReferences then
+      syntax.AutoLinkRelativeReference = parsers.fail
+    end
+
+    local blocks_nested_t = util.table_copy(syntax)
+    blocks_nested_t.ExpectedJekyllData = parsers.fail
+    parsers.blocks_nested = Ct(blocks_nested_t)
+
+    parsers.blocks = Ct(syntax)
+
+    local inlines_t = util.table_copy(syntax)
+    inlines_t[1] = "Inlines"
+    inlines_t.Inlines = parsers.Inline^0 * (parsers.spacing^0 * parsers.eof / "")
+    parsers.inlines = Ct(inlines_t)
+
+    local inlines_no_link_t = util.table_copy(inlines_t)
+    inlines_no_link_t.Link = parsers.fail
+    parsers.inlines_no_link = Ct(inlines_no_link_t)
+
+    local inlines_no_inline_note_t = util.table_copy(inlines_t)
+    inlines_no_inline_note_t.InlineNote = parsers.fail
+    parsers.inlines_no_inline_note = Ct(inlines_no_inline_note_t)
+
+    local inlines_no_html_t = util.table_copy(inlines_t)
+    inlines_no_html_t.DisplayHtml = parsers.fail
+    inlines_no_html_t.InlineHtml = parsers.fail
+    inlines_no_html_t.HtmlEntity = parsers.fail
+    parsers.inlines_no_html = Ct(inlines_no_html_t)
+
+    local inlines_nbsp_t = util.table_copy(inlines_t)
+    inlines_nbsp_t.Endline = parsers.NonbreakingEndline
+    inlines_nbsp_t.Space = parsers.NonbreakingSpace
+    parsers.inlines_nbsp = Ct(inlines_nbsp_t)
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Return a function that converts markdown string `input` into a plain \TeX{}
+% output and returns it. Note that the converter assumes that the input has
+% \acro{unix} line endings.
+%
+% \end{markdown}
+%  \begin{macrocode}
+    return function(input)
+      references = {}
 %    \end{macrocode}
 % \begin{markdown}
 % When determining the name of the cache file, create salt for the hashing
@@ -21384,37 +21769,42 @@ function M.reader.new(writer, options, extensions)
 % is disregarded.
 % \end{markdown}
 %  \begin{macrocode}
-    local opt_string = {}
-    for k,_ in pairs(defaultOptions) do
-      local v = options[k]
-      if k ~= "cacheDir" then
-        opt_string[#opt_string+1] = k .. "=" .. tostring(v)
+      local opt_string = {}
+      for k, _ in pairs(defaultOptions) do
+        local v = options[k]
+        if type(v) == "table" then
+          for _, i in ipairs(v) do
+            opt_string[#opt_string+1] = k .. "=" .. tostring(i)
+          end
+        elseif k ~= "cacheDir" then
+          opt_string[#opt_string+1] = k .. "=" .. tostring(v)
+        end
       end
-    end
-    table.sort(opt_string)
-    local salt = table.concat(opt_string, ",") .. "," .. metadata.version
-    local output
+      table.sort(opt_string)
+      local salt = table.concat(opt_string, ",") .. "," .. metadata.version
+      local output
 %    \end{macrocode}
 % \begin{markdown}
 % If we cache markdown documents, produce the cache file and transform its
 % filename to plain \TeX{} output via the \luamref{writer->pack} method.
 % \end{markdown}
 %  \begin{macrocode}
-    local function convert(input)
-      local document = self.parser_functions.parse_blocks(input)
-      return util.rope_to_string(writer.document(document))
-    end
-    if options.eagerCache or options.finalizeCache then
-      local name = util.cache(options.cacheDir, input, salt, convert, ".md" .. writer.suffix)
-      output = writer.pack(name)
+      local function convert(input)
+        local document = self.parser_functions.parse_blocks(input)
+        return util.rope_to_string(writer.document(document))
+      end
+      if options.eagerCache or options.finalizeCache then
+        local name = util.cache(options.cacheDir, input, salt, convert,
+                                ".md" .. writer.suffix)
+        output = writer.pack(name)
 %    \end{macrocode}
 % \begin{markdown}
 % Otherwise, return the result of the conversion directly.
 % \end{markdown}
 %  \begin{macrocode}
-    else
-      output = convert(input)
-    end
+      else
+        output = convert(input)
+      end
 %    \end{macrocode}
 % \begin{markdown}
 % If the \Opt{finalizeCache} option is enabled, populate the frozen cache in
@@ -21422,36 +21812,37 @@ function M.reader.new(writer, options, extensions)
 % number \Opt{frozenCacheCounter}.
 % \end{markdown}
 %  \begin{macrocode}
-    if options.finalizeCache then
-      local file, mode
-      if options.frozenCacheCounter > 0 then
-        mode = "a"
-      else
-        mode = "w"
+      if options.finalizeCache then
+        local file, mode
+        if options.frozenCacheCounter > 0 then
+          mode = "a"
+        else
+          mode = "w"
+        end
+        file = assert(io.open(options.frozenCacheFileName, mode),
+          [[Could not open file "]] .. options.frozenCacheFileName
+          .. [[" for writing]])
+        assert(file:write([[\expandafter\global\expandafter\def\csname ]]
+          .. [[markdownFrozenCache]] .. options.frozenCacheCounter
+          .. [[\endcsname{]] .. output .. [[}]] .. "\n"))
+        assert(file:close())
       end
-      file = assert(io.open(options.frozenCacheFileName, mode),
-        [[could not open file "]] .. options.frozenCacheFileName
-        .. [[" for writing]])
-      assert(file:write([[\expandafter\global\expandafter\def\csname ]]
-        .. [[markdownFrozenCache]] .. options.frozenCacheCounter
-        .. [[\endcsname{]] .. output .. [[}]] .. "\n"))
-      assert(file:close())
+      return output
     end
-    return output
   end
   return self
 end
 %    \end{macrocode}
 % \begin{markdown}
 %
-%### Syntax Extensions for Markdown
+%### Built-In Syntax Extensions {#luabuiltinextensions}
 %
-% Create \luamdef{extensions} hash table that contains syntax extensions.
-% Syntax extensions are functions that produce objects with two methods:
-% `extend_writer` and `extend_reader`. The `extend_writer` object takes a
-% \luamref{writer} object as the only parameter and mutates it. Similarly,
-% `extend_reader` takes a \luamref{reader} object as the only parameter and
-% mutates it.
+% Create \luamdef{extensions} hash table that contains built-in syntax
+% extensions. Syntax extensions are functions that produce objects with two
+% methods: `extend_writer` and `extend_reader`. The `extend_writer` object
+% takes a \luamref{writer} object as the only parameter and mutates it.
+% Similarly, `extend_reader` takes a \luamref{reader} object as the only
+% parameter and mutates it.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -21548,7 +21939,6 @@ M.extensions.citations = function(citation_nbsps)
       end
     end, extend_reader = function(self)
       local parsers = self.parsers
-      local syntax = self.syntax
       local writer = self.writer
 
       local citation_chars
@@ -21656,7 +22046,7 @@ M.extensions.citations = function(citation_nbsps)
 
       local Citations = TextCitations + ParenthesizedCitations
 
-      syntax.Citations = Citations
+      self.insert_pattern("Inline after Emph", Citations)
 
       self.add_special_character("@")
       self.add_special_character("-")
@@ -21682,37 +22072,21 @@ M.extensions.content_blocks = function(language_map)
 %
 % The \luamdef{languages_json} table maps programming language filename
 % extensions to fence infostrings. All `language_map` files located by the
-% KPathSea library are loaded into a chain of tables. \luamref{languages_json}
-% corresponds to the first table and is chained with the rest via Lua
-% metatables.
+% \pkg{kpathsea} library are loaded into a chain of tables.
+% \luamref{languages_json} corresponds to the first table and is chained with
+% the rest via Lua metatables.
 %
 % \end{markdown}
 %  \begin{macrocode}
   local languages_json = (function()
-    local ran_ok, kpse = pcall(require, "kpse")
-    if ran_ok then
-      kpse.set_program_name("luatex")
-%    \end{macrocode}
-% \begin{markdown}
-%
-% If the KPathSea library is unavailable, perhaps because we are using
-% LuaMeta\TeX, we will only locate the `options.`\luamref{contentBlocksLanguageMap}
-% in the current working directory:
-%
-% \end{markdown}
-%  \begin{macrocode}
-    else
-      kpse = {lookup=function(filename, _) return filename end}
-    end
     local base, prev, curr
-    for _, filename in ipairs{kpse.lookup(language_map, { all=true })} do
-      local file = io.open(filename, "r")
+    for _, pathname in ipairs{util.lookup_files(language_map, { all=true })} do
+      local file = io.open(pathname, "r")
       if not file then goto continue end
-      local json = file:read("*all"):gsub('("[^\n]-"):','[%1]=')
-      curr = (function()
-        local _ENV={ json=json, load=load } -- luacheck: ignore _ENV
-        return load("return "..json)()
-      end)()
+      local input = assert(file:read("*a"))
+      assert(file:close())
+      local json = input:gsub('("[^\n]-"):','[%1]=')
+      curr = load("_ENV = {}; return "..json)()
       if type(curr) == "table" then
         if base == nil then
           base = curr
@@ -21764,7 +22138,6 @@ M.extensions.content_blocks = function(language_map)
       end
     end, extend_reader = function(self)
       local parsers = self.parsers
-      local syntax = self.syntax
       local writer = self.writer
 
       local contentblock_tail
@@ -21838,7 +22211,7 @@ M.extensions.content_blocks = function(language_map)
                     * contentblock_tail
                     / writer.contentblock
 
-      syntax.ContentBlock = ContentBlock
+      self.insert_pattern("Block before Blockquote", ContentBlock)
     end
   }
 end
@@ -21894,7 +22267,6 @@ M.extensions.definition_lists = function(tight_lists)
       end
     end, extend_reader = function(self)
       local parsers = self.parsers
-      local syntax = self.syntax
       local writer = self.writer
 
       local defstartchar = S("~:")
@@ -21937,7 +22309,7 @@ M.extensions.definition_lists = function(tight_lists)
                         * -DefinitionListItemLoose * Cc(true))
                       ) / writer.definitionlist
 
-      syntax.DefinitionList = DefinitionList
+      self.insert_pattern("Block after Heading", DefinitionList)
     end
   }
 end
@@ -21976,7 +22348,6 @@ M.extensions.fenced_code = function(blank_before_code_fence)
       end
     end, extend_reader = function(self)
       local parsers = self.parsers
-      local syntax = self.syntax
       local writer = self.writer
 
       local function captures_geq_length(_,i,a,b)
@@ -22039,7 +22410,8 @@ M.extensions.fenced_code = function(blank_before_code_fence)
                                                       self.expandtabs(code))
                            end
 
-      syntax.FencedCode = FencedCode
+      self.insert_pattern("Block after Verbatim",
+                          FencedCode)
 
       local fencestart
       if blank_before_code_fence then
@@ -22049,8 +22421,8 @@ M.extensions.fenced_code = function(blank_before_code_fence)
                    + fencehead(parsers.tilde)
       end
 
-      parsers.EndlineExceptions = parsers.EndlineExceptions + fencestart
-      syntax.EndlineExceptions = parsers.EndlineExceptions
+      local EndlineExceptions = parsers.EndlineExceptions + fencestart
+      self.update_rule("EndlineExceptions", EndlineExceptions)
 
       self.add_special_character("~")
     end
@@ -22087,9 +22459,16 @@ M.extensions.footnotes = function(footnotes, inline_footnotes)
       end
     end, extend_reader = function(self)
       local parsers = self.parsers
-      local syntax = self.syntax
       local writer = self.writer
 
+      if inline_footnotes then
+        local InlineNote
+                    = parsers.circumflex
+                    * (parsers.tag / self.parser_functions.parse_inlines_no_inline_note)
+                    / writer.note
+
+        self.insert_pattern("Inline after Emph", InlineNote)
+      end
       if footnotes then
         local function strip_first_char(s)
           return s:sub(2)
@@ -22127,17 +22506,10 @@ M.extensions.footnotes = function(footnotes, inline_footnotes)
                     * parsers.spnl * parsers.indented_blocks(parsers.chunk)
                     / register_note
 
-        parsers.Blank = NoteBlock + parsers.Blank
-        syntax.Blank = parsers.Blank
+        local Blank = NoteBlock + parsers.Blank
+        self.update_rule("Blank", Blank)
 
-        syntax.NoteRef = NoteRef
-      end
-      if inline_footnotes then
-        local InlineNote
-                    = parsers.circumflex
-                    * (parsers.tag / self.parser_functions.parse_inlines_no_inline_note)
-                    / writer.note
-        syntax.InlineNote = InlineNote
+        self.insert_pattern("Inline after Emph", NoteRef)
       end
 
       self.add_special_character("^")
@@ -22159,7 +22531,6 @@ M.extensions.header_attributes = function()
     extend_writer = function()
     end, extend_reader = function(self)
       local parsers = self.parsers
-      local syntax = self.syntax
       local writer = self.writer
 
       parsers.AtxHeading = Cg(parsers.HeadingStart,"level")
@@ -22204,8 +22575,8 @@ M.extensions.header_attributes = function()
                             * parsers.newline
                             / writer.heading
 
-      parsers.Heading = parsers.AtxHeading + parsers.SetextHeading
-      syntax.Heading = parsers.Heading
+      local Heading = parsers.AtxHeading + parsers.SetextHeading
+      self.update_rule("Heading", Heading)
     end
   }
 end
@@ -22322,7 +22693,6 @@ M.extensions.jekyll_data = function(expect_jekyll_data)
       end
     end, extend_reader = function(self)
       local parsers = self.parsers
-      local syntax = self.syntax
       local writer = self.writer
 
       local JekyllData
@@ -22358,9 +22728,9 @@ M.extensions.jekyll_data = function(expect_jekyll_data)
                     * JekyllData
                     * (P("---") + P("..."))^-1
 
-      syntax.UnexpectedJekyllData = UnexpectedJekyllData
+      self.insert_pattern("Block before Blockquote", UnexpectedJekyllData)
       if expect_jekyll_data then
-        syntax.ExpectedJekyllData = ExpectedJekyllData
+        self.update_rule("ExpectedJekyllData", ExpectedJekyllData)
       end
     end
   }
@@ -22468,7 +22838,6 @@ M.extensions.pipe_tables = function(table_captions)
       end
     end, extend_reader = function(self)
       local parsers = self.parsers
-      local syntax = self.syntax
       local writer = self.writer
 
       local table_hline_separator = parsers.pipe + parsers.plus
@@ -22523,7 +22892,7 @@ M.extensions.pipe_tables = function(table_captions)
                       * table_caption^-1
                       / writer.table
 
-      syntax.PipeTable = PipeTable
+      self.insert_pattern("Block after Blockquote", PipeTable)
     end
   }
 end
@@ -22554,7 +22923,6 @@ M.extensions.strike_through = function()
       end
     end, extend_reader = function(self)
       local parsers = self.parsers
-      local syntax = self.syntax
       local writer = self.writer
 
       local StrikeThrough = (
@@ -22562,7 +22930,7 @@ M.extensions.strike_through = function()
                         parsers.doubletildes)
       ) / writer.strike_through
 
-      syntax.StrikeThrough = StrikeThrough
+      self.insert_pattern("Inline after Emph", StrikeThrough)
 
       self.add_special_character("~")
     end
@@ -22595,14 +22963,13 @@ M.extensions.superscripts = function()
       end
     end, extend_reader = function(self)
       local parsers = self.parsers
-      local syntax = self.syntax
       local writer = self.writer
 
       local Superscript = (
         parsers.between(parsers.Str, parsers.circumflex, parsers.circumflex)
       ) / writer.superscript
 
-      syntax.Superscript = Superscript
+      self.insert_pattern("Inline after Emph", Superscript)
 
       self.add_special_character("^")
     end
@@ -22635,14 +23002,13 @@ M.extensions.subscripts = function()
       end
     end, extend_reader = function(self)
       local parsers = self.parsers
-      local syntax = self.syntax
       local writer = self.writer
 
       local Subscript = (
         parsers.between(parsers.Str, parsers.tilde, parsers.tilde)
       ) / writer.subscript
 
-      syntax.Subscript = Subscript
+      self.insert_pattern("Inline after Emph", Subscript)
 
       self.add_special_character("~")
     end
@@ -22729,7 +23095,6 @@ M.extensions.fancy_lists = function()
     end, extend_reader = function(self)
       local parsers = self.parsers
       local options = self.options
-      local syntax = self.syntax
       local writer = self.writer
 
       local label = parsers.dig + parsers.letter
@@ -22845,8 +23210,7 @@ M.extensions.fancy_lists = function()
                       * Cc(false) * parsers.skipblanklines
                       ) * Cb("listtype") / fancylist
 
-      syntax.OrderedList = FancyList
-
+      self.update_rule("OrderedList", FancyList)
     end
   }
 end
@@ -22855,10 +23219,9 @@ end
 %
 %### Conversion from Markdown to Plain \TeX{}
 %
-% The \luamref{new} method returns the \luamref{reader->convert} function of a reader
-% object associated with the Lua interface options (see Section
-% <#sec:luaoptions>) `options` and with a writer object associated with
-% `options`.
+% The \luamref{new} function returns a conversion function that takes a
+% markdown string and turns it into a plain \TeX{} output. See Section
+% <#luaconversion>.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -22874,19 +23237,15 @@ function M.new(options)
   options = options or {}
   setmetatable(options, { __index = function (_, key)
     return defaultOptions[key] end })
+%    \end{macrocode}
 % \par
 % \begin{markdown}
 %
-% Apply syntax extensions based on `options`.
+% Apply built-in syntax extensions based on `options`.
 %
 % \end{markdown}
 %  \begin{macrocode}
   local extensions = {}
-
-  if options.citations then
-    local citations_extension = M.extensions.citations(options.citationNbsps)
-    table.insert(extensions, citations_extension)
-  end
 
   if options.contentBlocks then
     local content_blocks_extension = M.extensions.content_blocks(
@@ -22904,12 +23263,6 @@ function M.new(options)
     local fenced_code_extension = M.extensions.fenced_code(
       options.blankBeforeCodeFence)
     table.insert(extensions, fenced_code_extension)
-  end
-
-  if options.footnotes or options.inlineFootnotes then
-    local footnotes_extension = M.extensions.footnotes(
-      options.footnotes, options.inlineFootnotes)
-    table.insert(extensions, footnotes_extension)
   end
 
   if options.headerAttributes then
@@ -22944,15 +23297,128 @@ function M.new(options)
     table.insert(extensions, superscript_extension)
   end
 
+  if options.footnotes or options.inlineFootnotes then
+    local footnotes_extension = M.extensions.footnotes(
+      options.footnotes, options.inlineFootnotes)
+    table.insert(extensions, footnotes_extension)
+  end
+
+  if options.citations then
+    local citations_extension = M.extensions.citations(options.citationNbsps)
+    table.insert(extensions, citations_extension)
+  end
+
   if options.fancyLists then
     local fancy_lists_extension = M.extensions.fancy_lists()
     table.insert(extensions, fancy_lists_extension)
   end
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Apply user-defined syntax extensions based on `options.extensions`.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  for _, user_extension_filename in ipairs(options.extensions) do
+    local user_extension = (function(filename)
+%    \end{macrocode}
+% \begin{markdown}
+%
+% First, load and compile the contents of the user-defined syntax extension.
+%
+% \end{markdown}
+%  \begin{macrocode}
+      local pathname = util.lookup_files(filename)
+      local input_file = assert(io.open(pathname, "r"),
+        [[Could not open user-defined syntax extension "]]
+        .. pathname .. [[" for reading]])
+      local input = assert(input_file:read("*a"))
+      assert(input_file:close())
+      local user_extension, err = load([[
+        local sandbox = {}
+        setmetatable(sandbox, {__index = _G})
+        _ENV = sandbox
+      ]] .. input)()
+      assert(user_extension,
+        [[Failed to compile user-defined syntax extension "]]
+        .. pathname .. [[": ]] .. (err or [[]]))
+%    \end{macrocode}
+% \begin{markdown}
+%
+% Then, validate the user-defined syntax extension.
+%
+% \end{markdown}
+%  \begin{macrocode}
+      assert(user_extension.api_version ~= nil,
+        [[User-defined syntax extension "]] .. pathname
+        .. [[" does not specify mandatory field "api_version"]])
+      assert(type(user_extension.api_version) == "number",
+        [[User-defined syntax extension "]] .. pathname
+        .. [[" specifies field "api_version" of type "]]
+        .. type(user_extension.api_version)
+        .. [[" but "number" was expected]])
+      assert(user_extension.api_version == metadata.user_extension_api_version,
+        [[User-defined syntax extension "]] .. pathname
+        .. [[" uses syntax extension API version "]]
+        .. user_extension.api_version .. [[ but markdown.lua ]]
+        .. metadata.version .. [[ uses API version ]]
+        .. metadata.user_extension_api_version
+        .. [[, which is incompatible]])
 
+      assert(user_extension.grammar_version ~= nil,
+        [[User-defined syntax extension "]] .. pathname
+        .. [[" does not specify mandatory field "grammar_version"]])
+      assert(type(user_extension.grammar_version) == "number",
+        [[User-defined syntax extension "]] .. pathname
+        .. [[" specifies field "grammar_version" of type "]]
+        .. type(user_extension.grammar_version)
+        .. [[" but "number" was expected]])
+      assert(user_extension.grammar_version == metadata.grammar_version,
+        [[User-defined syntax extension "]] .. pathname
+        .. [[" uses grammar version "]] .. user_extension.grammar_version
+        .. [[ but markdown.lua ]] .. metadata.version
+        .. [[ uses grammar version ]] .. metadata.grammar_version
+        .. [[, which is incompatible]])
+
+      assert(user_extension.finalize_grammar ~= nil,
+        [[User-defined syntax extension "]] .. pathname
+        .. [[" does not specify mandatory "finalize_grammar" field]])
+      assert(type(user_extension.finalize_grammar) == "function",
+        [[User-defined syntax extension "]] .. pathname
+        .. [[" specifies field "finalize_grammar" of type "]]
+        .. type(user_extension.finalize_grammar)
+        .. [[" but "function" was expected]])
+%    \end{macrocode}
+% \begin{markdown}
+%
+% Finally, cast the user-defined syntax extension to the internal format
+% of user extensions used by the Markdown package (see Section
+% <#luabuiltinextensions>.)
+%
+% \end{markdown}
+%  \begin{macrocode}
+      local extension = {
+        extend_reader = user_extension.finalize_grammar,
+        extend_writer = function() end,
+      }
+      return extension
+    end)(user_extension_filename)
+    table.insert(extensions, user_extension)
+  end
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Produce and return a conversion function from markdown to plain \TeX.
+%
+% \end{markdown}
+%  \begin{macrocode}
   local writer = M.writer.new(options)
-  local reader = M.reader.new(writer, options, extensions)
+  local reader = M.reader.new(writer, options)
+  local convert = reader.finalize_grammar(extensions)
 
-  return reader.convert
+  return convert
 end
 
 return M
@@ -22975,7 +23441,7 @@ return M
 local input
 if input_filename then
   local input_file = assert(io.open(input_filename, "r"),
-    [[could not open file "]] .. input_filename .. [[" for reading]])
+    [[Could not open file "]] .. input_filename .. [[" for reading]])
   input = assert(input_file:read("*a"))
   assert(input_file:close())
 else
@@ -23018,7 +23484,7 @@ local output = convert(input:gsub("\r\n?", "\n") .. "\n")
 
 if output_filename then
   local output_file = assert(io.open(output_filename, "w"),
-    [[could not open file "]] .. output_filename .. [[" for writing]])
+    [[Could not open file "]] .. output_filename .. [[" for writing]])
   assert(output_file:write(output))
   assert(output_file:close())
 else
@@ -23409,25 +23875,50 @@ end
     \@@_get_option_type:nN
       { #1 }
       \l_tmpa_tl
-    \bool_if:nTF
+    \bool_case_true:nF
       {
-        \str_if_eq_p:VV
-          \l_tmpa_tl
-          \c_@@_option_type_boolean_tl ||
-        \str_if_eq_p:VV
-          \l_tmpa_tl
-          \c_@@_option_type_number_tl ||
-        \str_if_eq_p:VV
-          \l_tmpa_tl
-          \c_@@_option_type_counter_tl
-      }
-      {
-        \@@_get_option_value:nN
-          { #1 }
-          \l_tmpa_tl
-        \tl_gput_right:Nx
-          \g_@@_formatted_lua_options_tl
-          { #1~=~  \l_tmpa_tl   ,~ }
+        {
+          \str_if_eq_p:VV
+            \l_tmpa_tl
+            \c_@@_option_type_boolean_tl ||
+          \str_if_eq_p:VV
+            \l_tmpa_tl
+            \c_@@_option_type_number_tl ||
+          \str_if_eq_p:VV
+            \l_tmpa_tl
+            \c_@@_option_type_counter_tl
+        }
+          {
+            \@@_get_option_value:nN
+              { #1 }
+              \l_tmpa_tl
+            \tl_gput_right:Nx
+              \g_@@_formatted_lua_options_tl
+              { #1~=~  \l_tmpa_tl   ,~ }
+          }
+        {
+          \str_if_eq_p:VV
+            \l_tmpa_tl
+            \c_@@_option_type_clist_tl
+        }
+          {
+            \@@_get_option_value:nN
+              { #1 }
+              \l_tmpa_tl
+            \tl_gput_right:Nx
+              \g_@@_formatted_lua_options_tl
+              { #1~=~\c_left_brace_str }
+            \clist_map_inline:Vn
+              \l_tmpa_tl
+              {
+                \tl_gput_right:Nx
+                  \g_@@_formatted_lua_options_tl
+                  { "##1" ,~ }
+              }
+            \tl_gput_right:Nx
+              \g_@@_formatted_lua_options_tl
+              { \c_right_brace_str ,~ }
+          }
       }
       {
         \@@_get_option_value:nN
@@ -23438,6 +23929,9 @@ end
           { #1~=~ " \l_tmpa_tl " ,~ }
       }
   }
+\cs_generate_variant:Nn
+  \clist_map_inline:nn
+  { Vn }
 \let\markdownPrepareLuaOptions=\@@_format_lua_options:
 \def\markdownLuaOptions{{ \g_@@_formatted_lua_options_tl }}
 \ExplSyntaxOff
@@ -23737,8 +24231,8 @@ end
 %
 % The package assumes that although the user is not using the Lua\TeX{} engine,
 % their \TeX{} distribution contains it, and uses shell access to produce and
-% execute Lua scripts using the \TeX{}Lua interpreter~[@luatex17, Section
-% 3.1.1].
+% execute Lua scripts using the \TeX{}Lua interpreter~[@luatex21, Section
+% 4.1.1].
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -24020,7 +24514,7 @@ end
       |markdownLuaExecute{%
         |markdownPrepare
         local file = assert(io.open("&1", "r"),
-          [[could not open file "&1" for reading]])
+          [[Could not open file "&1" for reading]])
         local input = assert(file:read("*a"))
         assert(file:close())
 %    \end{macrocode}

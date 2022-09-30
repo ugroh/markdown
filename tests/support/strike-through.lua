@@ -1,0 +1,22 @@
+local strike_through = {
+  api_version = 1,
+  grammar_version = 1,
+  finalize_grammar = function(reader)
+    local nonspacechar = lpeg.P(1) - lpeg.S("\t ")
+    local doubleslashes = lpeg.P("//")
+    local function between(p, starter, ender)
+      ender = lpeg.B(nonspacechar) * ender
+      return (starter * #nonspacechar
+             * lpeg.Ct(p * (p - ender)^0) * ender)
+    end
+
+    local read_strike_through = between(
+      lpeg.V("Inline"), doubleslashes, doubleslashes
+    ) / function(s) return {"\\markdownRendererStrikeThrough{", s, "}"} end
+
+    reader.insert_pattern("Inline after Emph", read_strike_through)
+    reader.add_special_character("/")
+  end
+}
+
+return strike_through
