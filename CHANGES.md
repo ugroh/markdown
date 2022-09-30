@@ -1,5 +1,11 @@
 # Changes
 
+## 2.17.0 (2022-10-01)
+
+Development:
+
+- Add support for user-defined syntax extensions. (#182)
+
 ## 2.16.1 (2022-08-30)
 
 Fixes:
