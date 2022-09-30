@@ -4453,7 +4453,7 @@ defaultOptions.eagerCache = true
 %      grammar_version = 1,
 %      finalize_grammar = function(reader)
 %        local nonspacechar = lpeg.P(1) - lpeg.S("\t ")
-%        local doubletildes = lpeg.P("~~")
+%        local doubleslashes = lpeg.P("//")
 %        local function between(p, starter, ender)
 %          ender = lpeg.B(nonspacechar) * ender
 %          return (starter * #nonspacechar
@@ -4465,7 +4465,7 @@ defaultOptions.eagerCache = true
 %        ) / function(s) return {"\\st{", s, "}"} end
 %
 %        reader.insert_pattern("Inline after Emph", read_strike_through)
-%        reader.add_special_character("~")
+%        reader.add_special_character("/")
 %      end
 %    }
 %
@@ -4506,6 +4506,54 @@ metadata.grammar_version = 1
 %
 % \end{markdown}
 % \iffalse
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `strike-through.lua` with the
+following content:
+``` lua
+local strike_through = {
+  api_version = 1,
+  grammar_version = 1,
+  finalize_grammar = function(reader)
+    local nonspacechar = lpeg.P(1) - lpeg.S("\t ")
+    local doubleslashes = lpeg.P("//")
+    local function between(p, starter, ender)
+      ender = lpeg.B(nonspacechar) * ender
+      return (starter * #nonspacechar
+             * lpeg.Ct(p * (p - ender)^0) * ender)
+    end
+
+    local read_strike_through = between(
+      lpeg.V("Inline"), doubletildes, doubletildes
+    ) / function(s) return {"\\st{", s, "}"} end
+
+    reader.insert_pattern("Inline after Emph", read_strike_through)
+    reader.add_special_character("/")
+  end
+}
+```````
+Using a text editor, create also a text document named `document.tex` with the
+following content:
+``` tex
+\documentclass{article}
+\usepackage{soul}
+\usepackage[extension = strike-through.lua]{markdown}
+\begin{document}
+\begin{markdown}
+This is //a lunar roving vehicle// strike-through text.
+\end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> This is ~~a lunar roving vehicle~~ strike-through text.
+
 %</manual-options>
 %<*tex>
 % \fi
