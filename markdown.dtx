@@ -20739,7 +20739,7 @@ end
 % \end{markdown}
 %  \begin{macrocode}
 M.reader = {}
-function M.reader.new(writer, options, extensions)
+function M.reader.new(writer, options)
   local self = {}
 %    \end{macrocode}
 % \par
@@ -21388,6 +21388,16 @@ function M.reader.new(writer, options, extensions)
 % \begin{markdown}
 %
 %#### Syntax Specification
+% Define \luamdef{reader->finalize_grammar} as a function that constructs the
+% \acro{peg} grammar of markdown, applies syntax extensions `extensions` and
+% returns a conversion function that takes a markdown string and turns it into
+% a plain \TeX{} output.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  function self.finalize_grammar(extensions)
+%    \end{macrocode}
+% \begin{markdown}
 %
 % Create a local writable copy of the global read-only
 % \luamdef{walkable_syntax} hash table. This table can be used by user-defined
@@ -21399,13 +21409,13 @@ function M.reader.new(writer, options, extensions)
 %
 % \end{markdown}
 %  \begin{macrocode}
-  local walkable_syntax = (function(global_walkable_syntax)
-    local local_walkable_syntax = {}
-    for lhs, rule in pairs(global_walkable_syntax) do
-      local_walkable_syntax[lhs] = util.table_copy(rule)
-    end
-    return local_walkable_syntax
-  end)(walkable_syntax)
+    local walkable_syntax = (function(global_walkable_syntax)
+      local local_walkable_syntax = {}
+      for lhs, rule in pairs(global_walkable_syntax) do
+        local_walkable_syntax[lhs] = util.table_copy(rule)
+      end
+      return local_walkable_syntax
+    end)(walkable_syntax)
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -21419,36 +21429,36 @@ function M.reader.new(writer, options, extensions)
 %
 % \end{markdown}
 %  \begin{macrocode}
-  self.insert_pattern = function(selector, pattern)
-    local _, _, lhs, pos, rhs = selector:find("^(%a+)%s+([%a%s]+%a+)%s+(%a+)$")
-    assert(lhs ~= nil,
-      [[Expected selector in form "LHS (before|after|instead of) RHS", not "]]
-      .. selector .. [["]])
-    assert(walkable_syntax[lhs] ~= nil,
-      [[Rule ]] .. lhs .. [[ -> ... does not exist in markdown grammar]])
-    assert(pos == "before" or pos == "after" or pos == "instead of",
-      [[Expected positional specifier "before", "after", or "instead of", not "]]
-      .. pos .. [["]])
-    local rule = walkable_syntax[lhs]
-    local index = nil
-    for current_index, current_rhs in ipairs(rule) do
-      if type(current_rhs) == "string" and current_rhs == rhs then
-        index = current_index
-        if pos == "after" then
-          index = index + 1
+    self.insert_pattern = function(selector, pattern)
+      local _, _, lhs, pos, rhs = selector:find("^(%a+)%s+([%a%s]+%a+)%s+(%a+)$")
+      assert(lhs ~= nil,
+        [[Expected selector in form "LHS (before|after|instead of) RHS", not "]]
+        .. selector .. [["]])
+      assert(walkable_syntax[lhs] ~= nil,
+        [[Rule ]] .. lhs .. [[ -> ... does not exist in markdown grammar]])
+      assert(pos == "before" or pos == "after" or pos == "instead of",
+        [[Expected positional specifier "before", "after", or "instead of", not "]]
+        .. pos .. [["]])
+      local rule = walkable_syntax[lhs]
+      local index = nil
+      for current_index, current_rhs in ipairs(rule) do
+        if type(current_rhs) == "string" and current_rhs == rhs then
+          index = current_index
+          if pos == "after" then
+            index = index + 1
+          end
+          break
         end
-        break
+      end
+      assert(index ~= nil,
+        [[Rule ]] .. lhs .. [[ -> ]] .. rhs
+          .. [[ does not exist in markdown grammar]])
+      if pos == "instead of" then
+        rule[index] = pattern
+      else
+        table.insert(rule, index, pattern)
       end
     end
-    assert(index ~= nil,
-      [[Rule ]] .. lhs .. [[ -> ]] .. rhs
-        .. [[ does not exist in markdown grammar]])
-    if pos == "instead of" then
-      rule[index] = pattern
-    else
-      table.insert(rule, index, pattern)
-    end
-  end
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -21459,54 +21469,54 @@ function M.reader.new(writer, options, extensions)
 %
 % \end{markdown}
 %  \begin{macrocode}
-  local syntax =
-    { "Blocks",
+    local syntax =
+      { "Blocks",
 
-      Blocks                = ( V("ExpectedJekyllData")
-                              * (V("Blank")^0 / writer.interblocksep)
-                              )^-1
-                            * V("Blank")^0
-                            * V("Block")^-1
-                            * (V("Blank")^0 / writer.interblocksep
-                              * V("Block"))^0
-                            * V("Blank")^0 * parsers.eof,
+        Blocks                = ( V("ExpectedJekyllData")
+                                * (V("Blank")^0 / writer.interblocksep)
+                                )^-1
+                              * V("Blank")^0
+                              * V("Block")^-1
+                              * (V("Blank")^0 / writer.interblocksep
+                                * V("Block"))^0
+                              * V("Blank")^0 * parsers.eof,
 
-      ExpectedJekyllData    = parsers.fail,
+        ExpectedJekyllData    = parsers.fail,
 
-      Blank                 = parsers.Blank,
+        Blank                 = parsers.Blank,
 
-      Blockquote            = parsers.Blockquote,
-      Verbatim              = parsers.Verbatim,
-      HorizontalRule        = parsers.HorizontalRule,
-      BulletList            = parsers.BulletList,
-      OrderedList           = parsers.OrderedList,
-      Heading               = parsers.Heading,
-      DisplayHtml           = parsers.DisplayHtml,
-      Paragraph             = parsers.Paragraph,
-      Plain                 = parsers.Plain,
-      EndlineExceptions     = parsers.EndlineExceptions,
+        Blockquote            = parsers.Blockquote,
+        Verbatim              = parsers.Verbatim,
+        HorizontalRule        = parsers.HorizontalRule,
+        BulletList            = parsers.BulletList,
+        OrderedList           = parsers.OrderedList,
+        Heading               = parsers.Heading,
+        DisplayHtml           = parsers.DisplayHtml,
+        Paragraph             = parsers.Paragraph,
+        Plain                 = parsers.Plain,
+        EndlineExceptions     = parsers.EndlineExceptions,
 
-      Str                   = parsers.Str,
-      Space                 = parsers.Space,
-      OptionalIndent        = parsers.OptionalIndent,
-      Endline               = parsers.Endline,
-      UlOrStarLine          = parsers.UlOrStarLine,
-      Strong                = parsers.Strong,
-      Emph                  = parsers.Emph,
-      Link                  = parsers.Link,
-      Image                 = parsers.Image,
-      Code                  = parsers.Code,
-      AutoLinkUrl           = parsers.AutoLinkUrl,
-      AutoLinkEmail         = parsers.AutoLinkEmail,
-      AutoLinkRelativeReference
-                            = parsers.AutoLinkRelativeReference,
-      InlineHtml            = parsers.InlineHtml,
-      HtmlEntity            = parsers.HtmlEntity,
-      EscapedChar           = parsers.EscapedChar,
-      Smart                 = parsers.Smart,
-      Symbol                = parsers.Symbol,
-      SpecialChar           = parsers.fail,
-    }
+        Str                   = parsers.Str,
+        Space                 = parsers.Space,
+        OptionalIndent        = parsers.OptionalIndent,
+        Endline               = parsers.Endline,
+        UlOrStarLine          = parsers.UlOrStarLine,
+        Strong                = parsers.Strong,
+        Emph                  = parsers.Emph,
+        Link                  = parsers.Link,
+        Image                 = parsers.Image,
+        Code                  = parsers.Code,
+        AutoLinkUrl           = parsers.AutoLinkUrl,
+        AutoLinkEmail         = parsers.AutoLinkEmail,
+        AutoLinkRelativeReference
+                              = parsers.AutoLinkRelativeReference,
+        InlineHtml            = parsers.InlineHtml,
+        HtmlEntity            = parsers.HtmlEntity,
+        EscapedChar           = parsers.EscapedChar,
+        Smart                 = parsers.Smart,
+        Symbol                = parsers.Symbol,
+        SpecialChar           = parsers.fail,
+      }
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -21518,11 +21528,11 @@ function M.reader.new(writer, options, extensions)
 %
 % \end{markdown}
 %  \begin{macrocode}
-  self.update_rule = function(rule_name, pattern)
-    assert(syntax[rule_name] ~= nil,
-      [[Rule ]] .. rule_name .. [[ -> ... does not exist in markdown grammar]])
-    walkable_syntax[rule_name] = { pattern }
-  end
+    self.update_rule = function(rule_name, pattern)
+      assert(syntax[rule_name] ~= nil,
+        [[Rule ]] .. rule_name .. [[ -> ... does not exist in markdown grammar]])
+      walkable_syntax[rule_name] = { pattern }
+    end
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -21533,19 +21543,19 @@ function M.reader.new(writer, options, extensions)
 %
 % \end{markdown}
 %  \begin{macrocode}
-  local special_characters = {}
-  self.add_special_character = function(c)
-    table.insert(special_characters, c)
-    syntax.SpecialChar = S(table.concat(special_characters, ""))
-  end
+    local special_characters = {}
+    self.add_special_character = function(c)
+      table.insert(special_characters, c)
+      syntax.SpecialChar = S(table.concat(special_characters, ""))
+    end
 
-  self.add_special_character("*")
-  self.add_special_character("`")
-  self.add_special_character("[")
-  self.add_special_character("]")
-  self.add_special_character("<")
-  self.add_special_character("!")
-  self.add_special_character("\\")
+    self.add_special_character("*")
+    self.add_special_character("`")
+    self.add_special_character("[")
+    self.add_special_character("]")
+    self.add_special_character("<")
+    self.add_special_character("!")
+    self.add_special_character("\\")
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -21554,10 +21564,10 @@ function M.reader.new(writer, options, extensions)
 %
 % \end{markdown}
 %  \begin{macrocode}
-  for _, extension in ipairs(extensions) do
-    extension.extend_writer(writer)
-    extension.extend_reader(self)
-  end
+    for _, extension in ipairs(extensions) do
+      extension.extend_writer(writer)
+      extension.extend_reader(self)
+    end
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -21567,11 +21577,11 @@ function M.reader.new(writer, options, extensions)
 %
 % \end{markdown}
 %  \begin{macrocode}
-  walkable_syntax["IndentedInline"] = util.table_copy(
-    walkable_syntax["Inline"])
-  self.insert_pattern(
-    "IndentedInline instead of Space",
-    "OptionalIndent")
+    walkable_syntax["IndentedInline"] = util.table_copy(
+      walkable_syntax["Inline"])
+    self.insert_pattern(
+      "IndentedInline instead of Space",
+      "OptionalIndent")
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -21583,18 +21593,18 @@ function M.reader.new(writer, options, extensions)
 %
 % \end{markdown}
 %  \begin{macrocode}
-  for lhs, rule in pairs(walkable_syntax) do
-    syntax[lhs] = parsers.fail
-    for _, rhs in ipairs(rule) do
-      local pattern
-      if type(rhs) == "string" then
-        pattern = V(rhs)
-      else
-        pattern = rhs
+    for lhs, rule in pairs(walkable_syntax) do
+      syntax[lhs] = parsers.fail
+      for _, rhs in ipairs(rule) do
+        local pattern
+        if type(rhs) == "string" then
+          pattern = V(rhs)
+        else
+          pattern = rhs
+        end
+        syntax[lhs] = syntax[lhs] + pattern
       end
-      syntax[lhs] = syntax[lhs] + pattern
     end
-  end
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -21605,78 +21615,77 @@ function M.reader.new(writer, options, extensions)
 %
 % \end{markdown}
 %  \begin{macrocode}
-  if options.underscores then
-    self.add_special_character("_")
-  end
+    if options.underscores then
+      self.add_special_character("_")
+    end
 
-  if not options.codeSpans then
-    syntax.Code = parsers.fail
-  end
+    if not options.codeSpans then
+      syntax.Code = parsers.fail
+    end
 
-  if not options.html then
-    syntax.DisplayHtml = parsers.fail
-    syntax.InlineHtml = parsers.fail
-    syntax.HtmlEntity  = parsers.fail
-  else
-    self.add_special_character("&")
-  end
+    if not options.html then
+      syntax.DisplayHtml = parsers.fail
+      syntax.InlineHtml = parsers.fail
+      syntax.HtmlEntity  = parsers.fail
+    else
+      self.add_special_character("&")
+    end
 
-  if options.preserveTabs then
-    options.stripIndent = false
-  end
+    if options.preserveTabs then
+      options.stripIndent = false
+    end
 
-  if not options.smartEllipses then
-    syntax.Smart = parsers.fail
-  else
-    self.add_special_character(".")
-  end
+    if not options.smartEllipses then
+      syntax.Smart = parsers.fail
+    else
+      self.add_special_character(".")
+    end
 
-  if not options.relativeReferences then
-    syntax.AutoLinkRelativeReference = parsers.fail
-  end
+    if not options.relativeReferences then
+      syntax.AutoLinkRelativeReference = parsers.fail
+    end
 
-  local blocks_nested_t = util.table_copy(syntax)
-  blocks_nested_t.ExpectedJekyllData = parsers.fail
-  parsers.blocks_nested = Ct(blocks_nested_t)
+    local blocks_nested_t = util.table_copy(syntax)
+    blocks_nested_t.ExpectedJekyllData = parsers.fail
+    parsers.blocks_nested = Ct(blocks_nested_t)
 
-  parsers.blocks = Ct(syntax)
+    parsers.blocks = Ct(syntax)
 
-  local inlines_t = util.table_copy(syntax)
-  inlines_t[1] = "Inlines"
-  inlines_t.Inlines = parsers.Inline^0 * (parsers.spacing^0 * parsers.eof / "")
-  parsers.inlines = Ct(inlines_t)
+    local inlines_t = util.table_copy(syntax)
+    inlines_t[1] = "Inlines"
+    inlines_t.Inlines = parsers.Inline^0 * (parsers.spacing^0 * parsers.eof / "")
+    parsers.inlines = Ct(inlines_t)
 
-  local inlines_no_link_t = util.table_copy(inlines_t)
-  inlines_no_link_t.Link = parsers.fail
-  parsers.inlines_no_link = Ct(inlines_no_link_t)
+    local inlines_no_link_t = util.table_copy(inlines_t)
+    inlines_no_link_t.Link = parsers.fail
+    parsers.inlines_no_link = Ct(inlines_no_link_t)
 
-  local inlines_no_inline_note_t = util.table_copy(inlines_t)
-  inlines_no_inline_note_t.InlineNote = parsers.fail
-  parsers.inlines_no_inline_note = Ct(inlines_no_inline_note_t)
+    local inlines_no_inline_note_t = util.table_copy(inlines_t)
+    inlines_no_inline_note_t.InlineNote = parsers.fail
+    parsers.inlines_no_inline_note = Ct(inlines_no_inline_note_t)
 
-  local inlines_no_html_t = util.table_copy(inlines_t)
-  inlines_no_html_t.DisplayHtml = parsers.fail
-  inlines_no_html_t.InlineHtml = parsers.fail
-  inlines_no_html_t.HtmlEntity = parsers.fail
-  parsers.inlines_no_html = Ct(inlines_no_html_t)
+    local inlines_no_html_t = util.table_copy(inlines_t)
+    inlines_no_html_t.DisplayHtml = parsers.fail
+    inlines_no_html_t.InlineHtml = parsers.fail
+    inlines_no_html_t.HtmlEntity = parsers.fail
+    parsers.inlines_no_html = Ct(inlines_no_html_t)
 
-  local inlines_nbsp_t = util.table_copy(inlines_t)
-  inlines_nbsp_t.Endline = parsers.NonbreakingEndline
-  inlines_nbsp_t.Space = parsers.NonbreakingSpace
-  parsers.inlines_nbsp = Ct(inlines_nbsp_t)
+    local inlines_nbsp_t = util.table_copy(inlines_t)
+    inlines_nbsp_t.Endline = parsers.NonbreakingEndline
+    inlines_nbsp_t.Space = parsers.NonbreakingSpace
+    parsers.inlines_nbsp = Ct(inlines_nbsp_t)
 %    \end{macrocode}
 % \par
 % \begin{markdown}
 %
-%#### Exported Conversion Function
-% Define \luamdef{reader->convert} as a function that converts markdown string
-% `input` into a plain \TeX{} output and returns it. Note that the converter
-% assumes that the input has \acro{unix} line endings.
+% Return a function that converts markdown string `input` into a plain \TeX{}
+% output and returns it. Note that the converter assumes that the input has
+% \acro{unix} line endings.
 %
 % \end{markdown}
 %  \begin{macrocode}
-  function self.convert(input)
-    references = {}
+    return function(input)
+      references = {}
 %    \end{macrocode}
 % \begin{markdown}
 % When determining the name of the cache file, create salt for the hashing
@@ -21685,41 +21694,42 @@ function M.reader.new(writer, options, extensions)
 % is disregarded.
 % \end{markdown}
 %  \begin{macrocode}
-    local opt_string = {}
-    for k, _ in pairs(defaultOptions) do
-      local v = options[k]
-      if type(v) == "table" then
-        for _, i in ipairs(v) do
-          opt_string[#opt_string+1] = k .. "=" .. tostring(i)
+      local opt_string = {}
+      for k, _ in pairs(defaultOptions) do
+        local v = options[k]
+        if type(v) == "table" then
+          for _, i in ipairs(v) do
+            opt_string[#opt_string+1] = k .. "=" .. tostring(i)
+          end
+        elseif k ~= "cacheDir" then
+          opt_string[#opt_string+1] = k .. "=" .. tostring(v)
         end
-      elseif k ~= "cacheDir" then
-        opt_string[#opt_string+1] = k .. "=" .. tostring(v)
       end
-    end
-    table.sort(opt_string)
-    local salt = table.concat(opt_string, ",") .. "," .. metadata.version
-    local output
+      table.sort(opt_string)
+      local salt = table.concat(opt_string, ",") .. "," .. metadata.version
+      local output
 %    \end{macrocode}
 % \begin{markdown}
 % If we cache markdown documents, produce the cache file and transform its
 % filename to plain \TeX{} output via the \luamref{writer->pack} method.
 % \end{markdown}
 %  \begin{macrocode}
-    local function convert(input)
-      local document = self.parser_functions.parse_blocks(input)
-      return util.rope_to_string(writer.document(document))
-    end
-    if options.eagerCache or options.finalizeCache then
-      local name = util.cache(options.cacheDir, input, salt, convert, ".md" .. writer.suffix)
-      output = writer.pack(name)
+      local function convert(input)
+        local document = self.parser_functions.parse_blocks(input)
+        return util.rope_to_string(writer.document(document))
+      end
+      if options.eagerCache or options.finalizeCache then
+        local name = util.cache(options.cacheDir, input, salt, convert,
+                                ".md" .. writer.suffix)
+        output = writer.pack(name)
 %    \end{macrocode}
 % \begin{markdown}
 % Otherwise, return the result of the conversion directly.
 % \end{markdown}
 %  \begin{macrocode}
-    else
-      output = convert(input)
-    end
+      else
+        output = convert(input)
+      end
 %    \end{macrocode}
 % \begin{markdown}
 % If the \Opt{finalizeCache} option is enabled, populate the frozen cache in
@@ -21727,22 +21737,23 @@ function M.reader.new(writer, options, extensions)
 % number \Opt{frozenCacheCounter}.
 % \end{markdown}
 %  \begin{macrocode}
-    if options.finalizeCache then
-      local file, mode
-      if options.frozenCacheCounter > 0 then
-        mode = "a"
-      else
-        mode = "w"
+      if options.finalizeCache then
+        local file, mode
+        if options.frozenCacheCounter > 0 then
+          mode = "a"
+        else
+          mode = "w"
+        end
+        file = assert(io.open(options.frozenCacheFileName, mode),
+          [[could not open file "]] .. options.frozenCacheFileName
+          .. [[" for writing]])
+        assert(file:write([[\expandafter\global\expandafter\def\csname ]]
+          .. [[markdownFrozenCache]] .. options.frozenCacheCounter
+          .. [[\endcsname{]] .. output .. [[}]] .. "\n"))
+        assert(file:close())
       end
-      file = assert(io.open(options.frozenCacheFileName, mode),
-        [[could not open file "]] .. options.frozenCacheFileName
-        .. [[" for writing]])
-      assert(file:write([[\expandafter\global\expandafter\def\csname ]]
-        .. [[markdownFrozenCache]] .. options.frozenCacheCounter
-        .. [[\endcsname{]] .. output .. [[}]] .. "\n"))
-      assert(file:close())
+      return output
     end
-    return output
   end
   return self
 end
@@ -21751,12 +21762,12 @@ end
 %
 %### Built-In Syntax Extensions
 %
-% Create \luamdef{extensions} hash table that contains syntax extensions.
-% Syntax extensions are functions that produce objects with two methods:
-% `extend_writer` and `extend_reader`. The `extend_writer` object takes a
-% \luamref{writer} object as the only parameter and mutates it. Similarly,
-% `extend_reader` takes a \luamref{reader} object as the only parameter and
-% mutates it.
+% Create \luamdef{extensions} hash table that contains built-in syntax
+% extensions. Syntax extensions are functions that produce objects with two
+% methods: `extend_writer` and `extend_reader`. The `extend_writer` object
+% takes a \luamref{writer} object as the only parameter and mutates it.
+% Similarly, `extend_reader` takes a \luamref{reader} object as the only
+% parameter and mutates it.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -23171,7 +23182,7 @@ function M.new(options)
 % \par
 % \begin{markdown}
 %
-% Apply syntax extensions based on `options`.
+% Apply built-in syntax extensions based on `options`.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -23244,9 +23255,10 @@ function M.new(options)
   end
 
   local writer = M.writer.new(options)
-  local reader = M.reader.new(writer, options, extensions)
+  local reader = M.reader.new(writer, options)
+  local convert = reader.finalize_grammar(extensions)
 
-  return reader.convert
+  return convert
 end
 
 return M
