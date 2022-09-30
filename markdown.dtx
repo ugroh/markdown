@@ -680,13 +680,13 @@ abbr {
   date      = {2017-01-19},
   url       = {https://github.com/iainc/Markdown-Content-Blocks},
   urldate   = {2018-01-08}}
-@book{luatex17,
+@book{luatex21,
   author    = {{Lua\TeX{} development team}},
   title     = {Lua\TeX{} reference manual},
-  year      = {2017},
-  month     = {2},
-  url       = {http://www.luatex.org/svn/trunk/manual/luatex.pdf},
-  urldate   = {2018-01-08}}
+  date      = {2021-07-23},
+  note      = {Version 1.10 (stable)},
+  url       = {https://www.pragma-ade.com/general/manuals/luatex.pdf},
+  urldate   = {2022-09-30}}
 @book{latex17,
   author    = {Braams, Johannes and Carlisle, David and Jeffrey, Alan and
                Lamport, Leslie and Mittelbach, Frank and Rowley, Chris and
@@ -1080,7 +1080,7 @@ local md5 = require("md5")
 % \begin{markdown}
 %
 % All the abovelisted modules are statically linked into the current version of
-% the Lua\TeX{} engine~[@luatex17, Section 3.3]. Beside these, we also carry
+% the Lua\TeX{} engine~[@luatex21, Section 4.3]. Beside these, we also carry
 % the following third-party Lua libraries:
 %
 % \pkg{api7/lua-tinyyaml}
@@ -1137,10 +1137,10 @@ local md5 = require("md5")
 %
 %     The plain \TeX{} code makes use of the \luamref{isdir} method that was added
 %     to the \pkg{Lua File System} library by the Lua\TeX{} engine
-%     developers~[@luatex17, Section 3.2].
+%     developers~[@luatex21, Section 4.2.4].
 %
 % The \pkg{Lua File System} module is statically linked into the Lua\TeX{}
-% engine~[@luatex17, Section~3.3].
+% engine~[@luatex21, Section 4.3].
 %
 % Unless you convert markdown documents to \TeX{} manually using the Lua
 % command-line interface (see Section <#sec:lua-cli-interface>), the plain
@@ -1585,12 +1585,12 @@ local M = {metadata = metadata}
 %
 %### Conversion from Markdown to Plain \TeX{} {#luaconversion}
 %
-% The Lua interface exposes the \luamdef{new}`(options)` method.  This
-% method creates converter functions that perform the conversion from markdown
-% to plain \TeX{} according to the table `options` that contains options
-% recognized by the Lua interface.  (see Section <#sec:luaoptions>). The
-% `options` parameter is optional; when unspecified, the behaviour will be
-% the same as if `options` were an empty table.
+% The Lua interface exposes the \luamdef{new}`(options)` function.  This
+% function returns a conversion function from markdown to plain \TeX{} according
+% to the table `options` that contains options recognized by the Lua interface
+% (see Section <#sec:luaoptions>). The `options` parameter is optional; when
+% unspecified, the behaviour will be the same as if `options` were an empty
+% table.
 %
 % The following example Lua code converts the markdown string `Hello
 % *world*!` to a \TeX{} output using the default options and prints the \TeX{}
@@ -4449,7 +4449,7 @@ defaultOptions.eagerCache = true
 %
 %    ``` lua
 %    local strike_through = {
-%      extension_api = 1,
+%      api_version = 1,
 %      grammar_version = 1,
 %      finalize_grammar = function(reader)
 %        local nonspacechar = lpeg.P(1) - lpeg.S("\t ")
@@ -4472,9 +4472,10 @@ defaultOptions.eagerCache = true
 %    return strike_through
 %    ```````
 %
-%    The `extension_api` and `grammar_version` fields specify the version of the
-%    syntax extension API and the markdown grammar for which the extension was
-%    written. See the current API and grammar versions below:
+%    The `api_version` and `grammar_version` fields specify the version of the
+%    user-defined syntax extension API and the markdown grammar for which
+%    the extension was written. See the current API and grammar versions
+%    below:
 %
 % \end{markdown}
 % \iffalse
@@ -4482,8 +4483,8 @@ defaultOptions.eagerCache = true
 %<*lua>
 % \fi
 %  \begin{macrocode}
-local extension_api = 1   -- luacheck: ignore extension_api
-local grammar_version = 1 -- luacheck: ignore grammar_version
+metadata.user_extension_api_version = 1
+metadata.grammar_version = 1
 %    \end{macrocode}
 % \iffalse
 %</lua>
@@ -17039,7 +17040,7 @@ function util.cache(dir, string, salt, transform, suffix)
   local file = io.open(name, "r")
   if file == nil then -- If no cache entry exists, then create a new one.
     file = assert(io.open(name, "w"),
-      [[could not open file "]] .. name .. [[" for writing]])
+      [[Could not open file "]] .. name .. [[" for writing]])
     local result = string
     if transform ~= nil then
       result = transform(result)
@@ -17063,6 +17064,32 @@ function util.table_copy(t)
   for k, v in pairs(t) do u[k] = v end
   return setmetatable(u, getmetatable(t))
 end
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% The \luamdef{util.lookup_files} method looks up files with filename `f`
+% and returns its path. If the \pkg{kpathsea} library is available, it will
+% search for files not only in the current working directory but also in the
+% \TeX{} directory structure. Further options for \pkg{kpathsea} can be
+% specified in table `options`. [@luatex21, Section 10.7.4]
+%
+% \end{markdown}
+%  \begin{macrocode}
+util.lookup_files = (function()
+  local ran_ok, kpse = pcall(require, "kpse")
+  if ran_ok then
+    kpse.set_program_name("luatex")
+  else
+    kpse = { lookup = function(f, _) return f end }
+  end
+
+  local function lookup_files(f, options)
+    return kpse.lookup(f, options)
+  end
+
+  return lookup_files
+end)()
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -21745,7 +21772,7 @@ function M.reader.new(writer, options)
           mode = "w"
         end
         file = assert(io.open(options.frozenCacheFileName, mode),
-          [[could not open file "]] .. options.frozenCacheFileName
+          [[Could not open file "]] .. options.frozenCacheFileName
           .. [[" for writing]])
         assert(file:write([[\expandafter\global\expandafter\def\csname ]]
           .. [[markdownFrozenCache]] .. options.frozenCacheCounter
@@ -21760,7 +21787,7 @@ end
 %    \end{macrocode}
 % \begin{markdown}
 %
-%### Built-In Syntax Extensions
+%### Built-In Syntax Extensions {#luabuiltinextensions}
 %
 % Create \luamdef{extensions} hash table that contains built-in syntax
 % extensions. Syntax extensions are functions that produce objects with two
@@ -21997,37 +22024,21 @@ M.extensions.content_blocks = function(language_map)
 %
 % The \luamdef{languages_json} table maps programming language filename
 % extensions to fence infostrings. All `language_map` files located by the
-% KPathSea library are loaded into a chain of tables. \luamref{languages_json}
-% corresponds to the first table and is chained with the rest via Lua
-% metatables.
+% \pkg{kpathsea} library are loaded into a chain of tables.
+% \luamref{languages_json} corresponds to the first table and is chained with
+% the rest via Lua metatables.
 %
 % \end{markdown}
 %  \begin{macrocode}
   local languages_json = (function()
-    local ran_ok, kpse = pcall(require, "kpse")
-    if ran_ok then
-      kpse.set_program_name("luatex")
-%    \end{macrocode}
-% \begin{markdown}
-%
-% If the KPathSea library is unavailable, perhaps because we are using
-% LuaMeta\TeX, we will only locate the `options.`\luamref{contentBlocksLanguageMap}
-% in the current working directory:
-%
-% \end{markdown}
-%  \begin{macrocode}
-    else
-      kpse = {lookup=function(filename, _) return filename end}
-    end
     local base, prev, curr
-    for _, filename in ipairs{kpse.lookup(language_map, { all=true })} do
-      local file = io.open(filename, "r")
+    for _, pathname in ipairs{util.lookup_files(language_map, { all=true })} do
+      local file = io.open(pathname, "r")
       if not file then goto continue end
-      local json = file:read("*all"):gsub('("[^\n]-"):','[%1]=')
-      curr = (function()
-        local _ENV={ json=json, load=load } -- luacheck: ignore _ENV
-        return load("return "..json)()
-      end)()
+      local input = assert(file:read("*a"))
+      assert(file:close())
+      local json = input:gsub('("[^\n]-"):','[%1]=')
+      curr = load("_ENV = {}; return "..json)()
       if type(curr) == "table" then
         if base == nil then
           base = curr
@@ -23160,10 +23171,9 @@ end
 %
 %### Conversion from Markdown to Plain \TeX{}
 %
-% The \luamref{new} method returns the \luamref{reader->convert} function of a reader
-% object associated with the Lua interface options (see Section
-% <#sec:luaoptions>) `options` and with a writer object associated with
-% `options`.
+% The \luamref{new} function returns a conversion function that takes a
+% markdown string and turns it into a plain \TeX{} output. See Section
+% <#luaconversion>.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -23179,6 +23189,7 @@ function M.new(options)
   options = options or {}
   setmetatable(options, { __index = function (_, key)
     return defaultOptions[key] end })
+%    \end{macrocode}
 % \par
 % \begin{markdown}
 %
@@ -23253,7 +23264,108 @@ function M.new(options)
     local fancy_lists_extension = M.extensions.fancy_lists()
     table.insert(extensions, fancy_lists_extension)
   end
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Apply user-defined syntax extensions based on `options.extensions`.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  for _, user_extension_filename in ipairs(options.extensions) do
+    local user_extension = (function(filename)
+%    \end{macrocode}
+% \begin{markdown}
+%
+% First, load and compile the contents of the user-defined syntax extension.
+%
+% \end{markdown}
+%  \begin{macrocode}
+      local pathname = util.lookup_files(filename)
+      local input_file = assert(io.open(pathname, "r"),
+        [[Could not open user-defined syntax extension "]]
+        .. pathname .. [[" for reading]])
+      local input = assert(input_file:read("*a"))
+      assert(input_file:close())
+      local user_extension, err = load([[
+        local sandbox = {}
+        setmetatable(sandbox, {__index = _G})
+        _ENV = sandbox
+      ]] .. input)()
+      assert(user_extension,
+        [[Failed to compile user-defined syntax extension "]]
+        .. pathname .. [[": ]] .. (err or [[]]))
+%    \end{macrocode}
+% \begin{markdown}
+%
+% Then, validate the user-defined syntax extension.
+%
+% \end{markdown}
+%  \begin{macrocode}
+      assert(user_extension.api_version ~= nil,
+        [[User-defined syntax extension "]] .. pathname
+        .. [[" does not specify mandatory field "api_version"]])
+      assert(type(user_extension.api_version) == "number",
+        [[User-defined syntax extension "]] .. pathname
+        .. [[" specifies field "api_version" of type "]]
+        .. type(user_extension.api_version)
+        .. [[" but "number" was expected]])
+      assert(user_extension.api_version == metadata.user_extension_api_version,
+        [[User-defined syntax extension "]] .. pathname
+        .. [[" uses syntax extension API version "]]
+        .. user_extension.api_version .. [[ but markdown.lua ]]
+        .. metadata.version .. [[ uses API version ]]
+        .. metadata.user_extension_api_version
+        .. [[, which is incompatible]])
 
+      assert(user_extension.grammar_version ~= nil,
+        [[User-defined syntax extension "]] .. pathname
+        .. [[" does not specify mandatory field "grammar_version"]])
+      assert(type(user_extension.grammar_version) == "number",
+        [[User-defined syntax extension "]] .. pathname
+        .. [[" specifies field "grammar_version" of type "]]
+        .. type(user_extension.grammar_version)
+        .. [[" but "number" was expected]])
+      assert(user_extension.grammar_version == metadata.grammar_version,
+        [[User-defined syntax extension "]] .. pathname
+        .. [[" uses grammar version "]] .. user_extension.grammar_version
+        .. [[ but markdown.lua ]] .. metadata.version
+        .. [[ uses grammar version ]] .. metadata.grammar_version
+        .. [[, which is incompatible]])
+
+      assert(user_extension.finalize_grammar ~= nil,
+        [[User-defined syntax extension "]] .. pathname
+        .. [[" does not specify mandatory "finalize_grammar" field]])
+      assert(type(user_extension.finalize_grammar) == "function",
+        [[User-defined syntax extension "]] .. pathname
+        .. [[" specifies field "finalize_grammar" of type "]]
+        .. type(user_extension.finalize_grammar)
+        .. [[" but "function" was expected]])
+%    \end{macrocode}
+% \begin{markdown}
+%
+% Finally, cast the user-defined syntax extension to the internal format
+% of user extensions used by the Markdown package (see Section
+% <#luabuiltinextensions>.)
+%
+% \end{markdown}
+%  \begin{macrocode}
+      local extension = {
+        extend_reader = user_extension.finalize_grammar,
+        extend_writer = function() end,
+      }
+      return extension
+    end)(user_extension_filename)
+    table.insert(extensions, user_extension)
+  end
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% Produce and return a conversion function from markdown to plain \TeX.
+%
+% \end{markdown}
+%  \begin{macrocode}
   local writer = M.writer.new(options)
   local reader = M.reader.new(writer, options)
   local convert = reader.finalize_grammar(extensions)
@@ -23281,7 +23393,7 @@ return M
 local input
 if input_filename then
   local input_file = assert(io.open(input_filename, "r"),
-    [[could not open file "]] .. input_filename .. [[" for reading]])
+    [[Could not open file "]] .. input_filename .. [[" for reading]])
   input = assert(input_file:read("*a"))
   assert(input_file:close())
 else
@@ -23324,7 +23436,7 @@ local output = convert(input:gsub("\r\n?", "\n") .. "\n")
 
 if output_filename then
   local output_file = assert(io.open(output_filename, "w"),
-    [[could not open file "]] .. output_filename .. [[" for writing]])
+    [[Could not open file "]] .. output_filename .. [[" for writing]])
   assert(output_file:write(output))
   assert(output_file:close())
 else
@@ -24071,8 +24183,8 @@ end
 %
 % The package assumes that although the user is not using the Lua\TeX{} engine,
 % their \TeX{} distribution contains it, and uses shell access to produce and
-% execute Lua scripts using the \TeX{}Lua interpreter~[@luatex17, Section
-% 3.1.1].
+% execute Lua scripts using the \TeX{}Lua interpreter~[@luatex21, Section
+% 4.1.1].
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -24354,7 +24466,7 @@ end
       |markdownLuaExecute{%
         |markdownPrepare
         local file = assert(io.open("&1", "r"),
-          [[could not open file "&1" for reading]])
+          [[Could not open file "&1" for reading]])
         local input = assert(file:read("*a"))
         assert(file:close())
 %    \end{macrocode}
