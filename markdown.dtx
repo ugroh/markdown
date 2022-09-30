@@ -1604,7 +1604,7 @@ local M = {metadata = metadata}
 %### User-Defined Syntax Extensions {#luauserextensions}
 %
 % For the purpose of user-defined syntax extensions, the Lua interface also
-% declares the \luamdef{reader} object, which performs the lexical and
+% exposes the \luamdef{reader} object, which performs the lexical and
 % syntactic analysis of markdown text and which exposes the
 % \luamdef{reader->insert_pattern} and \luamdef{reader->add_special_character}
 % methods for extending the \acro{peg} grammar of markdown.
@@ -21732,7 +21732,7 @@ end
 %    \end{macrocode}
 % \begin{markdown}
 %
-%### Syntax Extensions for Markdown
+%### Built-In Syntax Extensions
 %
 % Create \luamdef{extensions} hash table that contains syntax extensions.
 % Syntax extensions are functions that produce objects with two methods:
