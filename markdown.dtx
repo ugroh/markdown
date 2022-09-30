@@ -4449,7 +4449,7 @@ defaultOptions.eagerCache = true
 %
 %    ``` lua
 %    local strike_through = {
-%      api_version = 1,
+%      extension_api = 1,
 %      grammar_version = 1,
 %      finalize_grammar = function(reader)
 %        local nonspacechar = lpeg.P(1) - lpeg.S("\t ")
@@ -4472,13 +4472,30 @@ defaultOptions.eagerCache = true
 %    return strike_through
 %    ```````
 %
-%    The `api_version` and `grammar_version` fields specify the version of the
-%    syntax extension API (currently 1) and the markdown grammar (currently 1)
-%    for which the extension was written. Any changes to the API or grammar
-%    will cause the corresponding current version to be incremented.  After
-%    Markdown 3.0.0, any changes to the API and the grammar will be either
-%    backwards-compatible or constitute a breaking change that will cause
-%    the major version of the Markdown package to increment (to 4.0.0).
+%    The `extension_api` and `grammar_version` fields specify the version of the
+%    syntax extension API and the markdown grammar for which the extension was
+%    written. See the current API and grammar versions below:
+%
+% \end{markdown}
+% \iffalse
+%</manual-options>
+%<*lua>
+% \fi
+%  \begin{macrocode}
+local extension_api = 1   -- luacheck: ignore extension_api
+local grammar_version = 1 -- luacheck: ignore grammar_version
+%    \end{macrocode}
+% \iffalse
+%</lua>
+%<*manual-options>
+% \fi
+% \begin{markdown}
+%
+%    Any changes to the syntax extension API or grammar will cause the
+%    corresponding current version to be incremented.  After Markdown 3.0.0,
+%    any changes to the API and the grammar will be either backwards-compatible
+%    or constitute a breaking change that will cause the major version of the
+%    Markdown package to increment (to 4.0.0).
 %
 %    The `finalize_grammar` field is a function that finalizes the grammar of
 %    markdown using the interface of a Lua \luamref{reader} object, such as
