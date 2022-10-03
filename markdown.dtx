@@ -4284,6 +4284,100 @@ defaultOptions.contentBlocks = false
 % \iffalse
 %</manual-options>
 %<*tex>
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `strike-through.lua` with the
+following content:
+``` lua
+local strike_through = {
+  api_version = 2,
+  grammar_version = 1,
+  finalize_grammar = function(reader)
+    local nonspacechar = lpeg.P(1) - lpeg.S("\t ")
+    local doubleslashes = lpeg.P("//")
+    local function between(p, starter, ender)
+      ender = lpeg.B(nonspacechar) * ender
+      return (starter * #nonspacechar
+             * lpeg.Ct(p * (p - ender)^0) * ender)
+    end
+
+    local read_strike_through = between(
+      lpeg.V("Inline"), doubleslashes, doubleslashes
+    ) / function(s) return {"\\st{", s, "}"} end
+
+    reader.insert_pattern("Inline after Emph", read_strike_through,
+                          "StrikeThrough")
+    reader.add_special_character("/")
+  end
+}
+
+return strike_through
+```````
+Using a text editor, create also a text document named `document.tex` with the
+following content:
+``` tex
+\documentclass{article}
+\usepackage{soul}
+\usepackage[extension = strike-through.lua,
+            debugExtensions]{markdown}
+\begin{document}
+\begin{markdown}
+This is //a lunar roving vehicle// strike-through text.
+\end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> This is ~~a lunar roving vehicle~~ strike-through text.
+
+Furthermore, a JSON document named `document.debug-extensions.json` should also
+be produced and contain the following text:
+
+``` json
+{
+    "Block": [
+        "Blockquote",
+        "Verbatim",
+        "HorizontalRule",
+        "BulletList",
+        "OrderedList",
+        "Heading",
+        "DisplayHtml",
+        "Paragraph",
+        "Plain"
+    ],
+    "Inline": [
+        "Str",
+        "Space",
+        "Endline",
+        "UlOrStarLine",
+        "Strong",
+        "Emph",
+        "StrikeThrough (user-defined \"./strike-through.lua\" syntax extension)",
+        "Link",
+        "Image",
+        "Code",
+        "AutoLinkUrl",
+        "AutoLinkEmail",
+        "AutoLinkRelativeReference",
+        "InlineHtml",
+        "HtmlEntity",
+        "EscapedChar",
+        "Smart",
+        "Symbol"
+    ]
+}
+````````
+
+This output shows us that our user-defined syntax extension has been correctly
+inserted to the grammar of markdown.
+
 % \fi
 %  \begin{macrocode}
 \@@_add_lua_option:nnn
@@ -4573,7 +4667,7 @@ defaultOptions.eagerCache = true
 %        end
 %
 %        local read_strike_through = between(
-%          lpeg.V("Inline"), doubletildes, doubletildes
+%          lpeg.V("Inline"), doubleslashes, doubleslashes
 %        ) / function(s) return {"\\st{", s, "}"} end
 %
 %        reader.insert_pattern("Inline after Emph", read_strike_through,
@@ -4638,7 +4732,7 @@ local strike_through = {
     end
 
     local read_strike_through = between(
-      lpeg.V("Inline"), doubletildes, doubletildes
+      lpeg.V("Inline"), doubleslashes, doubleslashes
     ) / function(s) return {"\\st{", s, "}"} end
 
     reader.insert_pattern("Inline after Emph", read_strike_through,
@@ -4646,6 +4740,8 @@ local strike_through = {
     reader.add_special_character("/")
   end
 }
+
+return strike_through
 ```````
 Using a text editor, create also a text document named `document.tex` with the
 following content:
