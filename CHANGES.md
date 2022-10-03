@@ -1,6 +1,17 @@
 # Changes
 
-## 2.17.1
+## 2.17.1 (2022-10-03)
+
+Fixes:
+
+- Add `debugExtensions` and `debugExtensionsFileName` Lua options for debugging
+  user-defined syntax extensions. (#191, #192)
+  - Add a third optional argument to the `reader->insert_pattern()` method and
+    increment `user_extension_api_version` to `2`. This change is fully
+    backwards-compatible with the `user_extension_api_version` of `1`.
+    (658fbbe)
+  - Fix typos in example code for user-defined syntax extensions.
+    (7c6de52, d3195f7)
 
 Documentation:
 
