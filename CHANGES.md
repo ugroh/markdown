@@ -1,5 +1,12 @@
 # Changes
 
+## 2.17.1
+
+Documentation:
+
+- Move `contentBlocksLanguageMap` option to the file and directory names
+  section of the technical documentation. (dd564f2)
+
 ## 2.17.0 (2022-09-30)
 
 Development:
