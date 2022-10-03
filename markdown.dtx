@@ -1653,12 +1653,17 @@ local walkable_syntax = {
 % \begin{markdown}
 %
 % The \luamref{reader->insert_pattern} method inserts a \acro{peg} pattern into
-% the grammar of markdown. The method receives two arguments: a selector string
-% in the form `"`\meta{left-hand side terminal symbol} \meta{`before`, `after`,
-% or `instead of`} \meta{right-hand side terminal symbol}`"` and a \acro{peg}
-% pattarn to insert. For example. if we'd like to insert `pattern` into the
-% grammar between the `Inline -> Emph` and `Inline -> Link` rules, we would
-% call \luamref{reader->insert_pattern} with `"Inline after Emph"` (or `"Inline
+% the grammar of markdown. The method receives two mandatory arguments: a
+% selector string in the form `"`\meta{left-hand side terminal symbol}
+% \meta{`before`, `after`, or `instead of`} \meta{right-hand side terminal
+% symbol}`"` and a \acro{peg} pattern to insert, and an optional third argument
+% with a name of the \acro{peg} pattern for debugging purposes (see the
+% \Opt{debugExtensions} option). The name does not need to be unique and shall
+% not be interpreted by the Markdown package; you can treat it as a comment.
+%
+% For example. if we'd like to insert `pattern` into the grammar between the
+% `Inline -> Emph` and `Inline -> Link` rules, we would call
+% \luamref{reader->insert_pattern} with `"Inline after Emph"` (or `"Inline
 % before Link"`) and `pattern` as the arguments.
 %
 % The \luamdef{reader->add_special_character} method adds a new character with
@@ -2278,6 +2283,219 @@ defaultOptions.cacheDir = "."
 %</lua,lua-cli>
 %<*manual-options>
 
+#### Option `contentBlocksLanguageMap`
+
+`contentBlocksLanguageMap` (default value: `"markdown-languages.json"`)
+
+% \fi
+% \begin{markdown}
+%
+% \Valitem[markdown-languages.json]{contentBlocksLanguageMap}{filename}
+%
+:    The filename of the \acro{JSON} file that maps filename extensions to
+     programming language names in the iA\,Writer content blocks when the
+     \Opt{contentBlocks} option is enabled.
+%    See Section <#sec:texcontentblockrenderers> for more information.
+
+% \end{markdown}
+% \iffalse
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `table.csv` with the
+following content:
+``` csv
+Name,Surname,Born
+Albert,Einstein,1879
+Marie,Curie,1867
+Thomas,Edison,1847
+```````
+Create also a text document named `language-map.json` with the following
+content:
+``` js
+{
+  "tex": "LaTeX"
+}
+``````
+Create also a text document named `code.tex` with the following content:
+``` tex
+This is an example code listing in \LaTeX.
+```````
+Create also a text document named `part.md` with the following content:
+``` md
+This is a *transcluded markdown document*.
+``````
+Create also a text document named `document.tex` with the following content:
+``` tex
+\documentclass{article}
+\usepackage{minted}
+\usepackage[contentBlocks]{markdown}
+\markdownSetup{
+  contentBlocksLanguageMap = {language-map.json},
+}
+\begin{document}
+\begin{markdown}
+/table.csv  (An example table)
+/code.tex   (An example code listing)
+/part.md    (A file transclusion example)
+\end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex --shell-escape document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> | Name   | Surname  | Born |
+> | ------ | ---------| ---- |
+> | Albert | Einstein | 1879 |
+> | Marie  | Curie    | 1867 |
+> | Thomas | Edison   | 1847 |
+>
+> Table 1: An example table
+>
+> ``` tex
+> This is an example code listing in \LaTeX.
+> ```````
+>
+> This is a *transcluded markdown document*.
+
+##### \Hologo{ConTeXt} Example {.unnumbered}
+
+Using a text editor, create a text document named `table.csv` with the
+following content:
+``` csv
+Name,Surname,Born
+Albert,Einstein,1879
+Marie,Curie,1867
+Thomas,Edison,1847
+```````
+Create also a text document named `language-map.json` with the following
+content:
+``` js
+{
+  "tex": "ConTeXt"
+}
+``````
+Create also a text document named `code.tex` with the following content:
+``` tex
+This is an example code listing in \ConTeXt.
+```````
+Create also a text document named `part.md` with the following content:
+``` md
+This is a *transcluded markdown document*.
+``````
+Create also a text document named `document.tex` with the following content:
+``` tex
+\usemodule[t][markdown]
+\setupmarkdown
+  [
+    contentBlocks = yes,
+    contentBlocksLanguageMap = language-map.json,
+  ]
+\definetyping [ConTeXt]
+\setuptyping  [ConTeXt] [option=TEX]
+\starttext
+\startmarkdown
+/table.csv  (An example table)
+/code.tex   (An example code listing)
+/part.md    (A file transclusion example)
+\stopmarkdown
+\stoptext
+````````
+Next, invoke LuaTeX from the terminal:
+``` sh
+context document.tex
+`````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> | Name   | Surname  | Born |
+> | ------ | ---------| ---- |
+> | Albert | Einstein | 1879 |
+> | Marie  | Curie    | 1867 |
+> | Thomas | Edison   | 1847 |
+>
+> Table 1: An example table
+>
+> ``` tex
+> This is an example code listing in \ConTeXt.
+> ```````
+>
+> This is a *transcluded markdown document*.
+
+%</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\@@_add_lua_option:nnn
+  { contentBlocksLanguageMap }
+  { path }
+  { markdown-languages.json }
+%    \end{macrocode}
+% \iffalse
+%</tex>
+%<*lua,lua-cli>
+% \fi
+%  \begin{macrocode}
+defaultOptions.contentBlocksLanguageMap = "markdown-languages.json"
+%    \end{macrocode}
+% \par
+% \iffalse
+%</lua,lua-cli>
+%<*manual-options>
+
+#### Option `debugExtensionsFileName`
+
+`debugExtensionsFileName` (default value: `"debug-extensions.json"`)
+
+% \fi
+% \begin{markdown}
+%
+% \Valitem[debug-extensions.json]{debugExtensionsFileName}{filename}
+%
+:    The filename of the \acro{JSON} file that will be produced when the
+     \Opt{debugExtensions} option is enabled. This file will contain the
+     extensible subset of the \acro{peg} grammar of markdown
+%    (see the \luamref{walkable_syntax} hash table)
+     after built-in syntax extensions
+%    (see Section <#luabuiltinextensions>)
+%    \iffalse
+     (see options \Opt{citations}, \Opt{contentBlocks}, \Opt{definitionLists},
+     etc.)
+%    \fi
+     and user-defined syntax extensions
+%    (see Section <#luauserextensions>)
+%    \iffalse
+     (see option \Opt{extensions})
+%    \fi
+     have been applied.
+
+% \end{markdown}
+% \iffalse
+%</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\@@_add_lua_option:nnn
+  { debugExtensionsFileName }
+  { path }
+  { \markdownOptionOutputDir / \jobname .debug-extensions.json }
+%    \end{macrocode}
+% \iffalse
+%</tex>
+%<*lua,lua-cli>
+% \fi
+%  \begin{macrocode}
+defaultOptions.debugExtensionsFileName = "debug-extensions.json"
+%    \end{macrocode}
+% \par
+% \iffalse
+%</lua,lua-cli>
+%<*manual-options>
+
 #### Option `frozenCacheFileName`
 
 `frozenCacheFileName` (default value: `"frozenCache.tex"`)
@@ -2513,9 +2731,9 @@ defaultOptions.frozenCacheFileName = "frozenCache.tex"
 %<*manual-options>
 % \fi
 % \begin{markdown}
-% 
+%
 %### Parser Options
-% 
+%
 % \end{markdown}
 % \par
 % \iffalse
@@ -4028,163 +4246,151 @@ defaultOptions.contentBlocks = false
 %</lua,lua-cli>
 %<*manual-options>
 
-#### Option `contentBlocksLanguageMap`
+#### Option `debugExtensions`
 
-`contentBlocksLanguageMap` (default value: `"markdown-languages.json"`)
+`debugExtensions` (default value: `false`)
 
 % \fi
 % \begin{markdown}
 %
-% \Valitem[markdown-languages.json]{contentBlocksLanguageMap}{filename}
+% \Optitem[false]{debugExtensions}{\opt{true}, \opt{false}}
 %
-:    The filename of the \acro{JSON} file that maps filename extensions to
-     programming language names in the iA\,Writer content blocks.
-%    See Section <#sec:texcontentblockrenderers> for more information.
+:    true
+
+     :  Produce a \acro{JSON} file that will contain the
+        extensible subset of the \acro{peg} grammar of markdown
+%       (see the \luamref{walkable_syntax} hash table)
+        after built-in syntax extensions
+%       (see Section <#luabuiltinextensions>)
+%       \iffalse
+        (see options \Opt{citations}, \Opt{contentBlocks},
+        \Opt{definitionLists}, etc.)
+%       \fi
+        and user-defined syntax extensions
+%       (see Section <#luauserextensions>)
+%       \iffalse
+        (see option \Opt{extensions})
+%       \fi
+        have been applied. This helps you to see how the different
+        extensions interact. The name of the produced \acro{JSON} file is
+        controlled by the \Opt{debugExtensionsFileName} option.
+
+:    false
+
+     :  Do not produce a \acro{JSON} file with the \acro{peg} grammar of
+        markdown.
 
 % \end{markdown}
 % \iffalse
 
 ##### \LaTeX{} Example {.unnumbered}
 
-Using a text editor, create a text document named `table.csv` with the
+Using a text editor, create a text document named `strike-through.lua` with the
 following content:
-``` csv
-Name,Surname,Born
-Albert,Einstein,1879
-Marie,Curie,1867
-Thomas,Edison,1847
-```````
-Create also a text document named `language-map.json` with the following
-content:
-``` js
-{
-  "tex": "LaTeX"
+``` lua
+local strike_through = {
+  api_version = 2,
+  grammar_version = 1,
+  finalize_grammar = function(reader)
+    local nonspacechar = lpeg.P(1) - lpeg.S("\t ")
+    local doubleslashes = lpeg.P("//")
+    local function between(p, starter, ender)
+      ender = lpeg.B(nonspacechar) * ender
+      return (starter * #nonspacechar
+             * lpeg.Ct(p * (p - ender)^0) * ender)
+    end
+
+    local read_strike_through = between(
+      lpeg.V("Inline"), doubleslashes, doubleslashes
+    ) / function(s) return {"\\st{", s, "}"} end
+
+    reader.insert_pattern("Inline after Emph", read_strike_through,
+                          "StrikeThrough")
+    reader.add_special_character("/")
+  end
 }
-``````
-Create also a text document named `code.tex` with the following content:
-``` tex
-This is an example code listing in \LaTeX.
+
+return strike_through
 ```````
-Create also a text document named `part.md` with the following content:
-``` md
-This is a *transcluded markdown document*.
-``````
-Create also a text document named `document.tex` with the following content:
+Using a text editor, create also a text document named `document.tex` with the
+following content:
 ``` tex
 \documentclass{article}
-\usepackage{minted}
-\usepackage[contentBlocks]{markdown}
-\markdownSetup{
-  contentBlocksLanguageMap = {language-map.json},
-}
+\usepackage{soul}
+\usepackage[extension = strike-through.lua,
+            debugExtensions]{markdown}
 \begin{document}
 \begin{markdown}
-/table.csv  (An example table)
-/code.tex   (An example code listing)
-/part.md    (A file transclusion example)
+This is //a lunar roving vehicle// strike-through text.
 \end{markdown}
 \end{document}
 ```````
 Next, invoke LuaTeX from the terminal:
 ``` sh
-lualatex --shell-escape document.tex
+lualatex document.tex
 ``````
 A PDF document named `document.pdf` should be produced and contain the
 following text:
 
-> | Name   | Surname  | Born |
-> | ------ | ---------| ---- |
-> | Albert | Einstein | 1879 |
-> | Marie  | Curie    | 1867 |
-> | Thomas | Edison   | 1847 |
->
-> Table 1: An example table
->
-> ``` tex
-> This is an example code listing in \LaTeX.
-> ```````
->
-> This is a *transcluded markdown document*.
+> This is ~~a lunar roving vehicle~~ strike-through text.
 
-##### \Hologo{ConTeXt} Example {.unnumbered}
+Furthermore, a JSON document named `document.debug-extensions.json` should also
+be produced and contain the following text:
 
-Using a text editor, create a text document named `table.csv` with the
-following content:
-``` csv
-Name,Surname,Born
-Albert,Einstein,1879
-Marie,Curie,1867
-Thomas,Edison,1847
-```````
-Create also a text document named `language-map.json` with the following
-content:
-``` js
+``` json
 {
-  "tex": "ConTeXt"
+    "Block": [
+        "Blockquote",
+        "Verbatim",
+        "HorizontalRule",
+        "BulletList",
+        "OrderedList",
+        "Heading",
+        "DisplayHtml",
+        "Paragraph",
+        "Plain"
+    ],
+    "Inline": [
+        "Str",
+        "Space",
+        "Endline",
+        "UlOrStarLine",
+        "Strong",
+        "Emph",
+        "StrikeThrough (user-defined \"./strike-through.lua\" syntax extension)",
+        "Link",
+        "Image",
+        "Code",
+        "AutoLinkUrl",
+        "AutoLinkEmail",
+        "AutoLinkRelativeReference",
+        "InlineHtml",
+        "HtmlEntity",
+        "EscapedChar",
+        "Smart",
+        "Symbol"
+    ]
 }
-``````
-Create also a text document named `code.tex` with the following content:
-``` tex
-This is an example code listing in \ConTeXt.
-```````
-Create also a text document named `part.md` with the following content:
-``` md
-This is a *transcluded markdown document*.
-``````
-Create also a text document named `document.tex` with the following content:
-``` tex
-\usemodule[t][markdown]
-\setupmarkdown
-  [
-    contentBlocks = yes,
-    contentBlocksLanguageMap = language-map.json,
-  ]
-\definetyping [ConTeXt]
-\setuptyping  [ConTeXt] [option=TEX]
-\starttext
-\startmarkdown
-/table.csv  (An example table)
-/code.tex   (An example code listing)
-/part.md    (A file transclusion example)
-\stopmarkdown
-\stoptext
 ````````
-Next, invoke LuaTeX from the terminal:
-``` sh
-context document.tex
-`````
-A PDF document named `document.pdf` should be produced and contain the
-following text:
 
-> | Name   | Surname  | Born |
-> | ------ | ---------| ---- |
-> | Albert | Einstein | 1879 |
-> | Marie  | Curie    | 1867 |
-> | Thomas | Edison   | 1847 |
->
-> Table 1: An example table
->
-> ``` tex
-> This is an example code listing in \ConTeXt.
-> ```````
->
-> This is a *transcluded markdown document*.
+This output shows us that our user-defined syntax extension has been correctly
+inserted to the grammar of markdown.
 
 %</manual-options>
 %<*tex>
 % \fi
 %  \begin{macrocode}
 \@@_add_lua_option:nnn
-  { contentBlocksLanguageMap }
-  { path }
-  { markdown-languages.json }
+  { debugExtensions }
+  { boolean }
+  { false }
 %    \end{macrocode}
 % \iffalse
 %</tex>
 %<*lua,lua-cli>
 % \fi
 %  \begin{macrocode}
-defaultOptions.contentBlocksLanguageMap = "markdown-languages.json"
+defaultOptions.debugExtensions = false
 %    \end{macrocode}
 % \par
 % \iffalse
@@ -4449,7 +4655,7 @@ defaultOptions.eagerCache = true
 %
 %    ``` lua
 %    local strike_through = {
-%      api_version = 1,
+%      api_version = 2,
 %      grammar_version = 1,
 %      finalize_grammar = function(reader)
 %        local nonspacechar = lpeg.P(1) - lpeg.S("\t ")
@@ -4461,10 +4667,11 @@ defaultOptions.eagerCache = true
 %        end
 %
 %        local read_strike_through = between(
-%          lpeg.V("Inline"), doubletildes, doubletildes
+%          lpeg.V("Inline"), doubleslashes, doubleslashes
 %        ) / function(s) return {"\\st{", s, "}"} end
 %
-%        reader.insert_pattern("Inline after Emph", read_strike_through)
+%        reader.insert_pattern("Inline after Emph", read_strike_through,
+%                              "StrikeThrough")
 %        reader.add_special_character("/")
 %      end
 %    }
@@ -4483,7 +4690,7 @@ defaultOptions.eagerCache = true
 %<*lua>
 % \fi
 %  \begin{macrocode}
-metadata.user_extension_api_version = 1
+metadata.user_extension_api_version = 2
 metadata.grammar_version = 1
 %    \end{macrocode}
 % \iffalse
@@ -4513,7 +4720,7 @@ Using a text editor, create a text document named `strike-through.lua` with the
 following content:
 ``` lua
 local strike_through = {
-  api_version = 1,
+  api_version = 2,
   grammar_version = 1,
   finalize_grammar = function(reader)
     local nonspacechar = lpeg.P(1) - lpeg.S("\t ")
@@ -4525,10 +4732,11 @@ local strike_through = {
     end
 
     local read_strike_through = between(
-      lpeg.V("Inline"), doubletildes, doubletildes
+      lpeg.V("Inline"), doubleslashes, doubleslashes
     ) / function(s) return {"\\st{", s, "}"} end
 
-    reader.insert_pattern("Inline after Emph", read_strike_through)
+    reader.insert_pattern("Inline after Emph", read_strike_through,
+                          "StrikeThrough")
     reader.add_special_character("/")
   end
 }
@@ -17118,6 +17326,20 @@ end
 % \par
 % \begin{markdown}
 %
+% The \luamdef{util.encode_json_string} method encodes a string `s` in
+% \acro{JSON}.
+%
+% \end{markdown}
+%  \begin{macrocode}
+function util.encode_json_string(s)
+  s = s:gsub([[\]], [[\\]])
+  s = s:gsub([["]], [[\"]])
+  return [["]] .. s .. [["]]
+end
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
 % The \luamdef{util.lookup_files} method looks up files with filename `f`
 % and returns its path. If the \pkg{kpathsea} library is available, it will
 % search for files not only in the current working directory but also in the
@@ -21497,16 +21719,15 @@ function M.reader.new(writer, options)
 % \par
 % \begin{markdown}
 %
-% Define \luamref{reader->insert_pattern} as a function that receives two
-% arguments: a selector string in the form `"`\meta{left-hand side terminal
-% symbol} \meta{`before`, `after`, or `instead of`} \meta{right-hand side
-% terminal symbol}`"` and a \acro{peg} pattarn to insert. The function adds
-% the pattern to \luamref{walkable_syntax}`[`*left-hand side terminal
-% symbol*`]` before or after *right-hand side terminal symbol*.
+% The \luamref{reader->insert_pattern} method adds a pattern to
+% \luamref{walkable_syntax}`[`*left-hand side terminal symbol*`]` before,
+% instead of, or after a right-hand-side terminal symbol.
 %
 % \end{markdown}
 %  \begin{macrocode}
-    self.insert_pattern = function(selector, pattern)
+    local current_extension_name = nil
+    self.insert_pattern = function(selector, pattern, pattern_name)
+      assert(pattern_name == nil or type(pattern_name) == "string")
       local _, _, lhs, pos, rhs = selector:find("^(%a+)%s+([%a%s]+%a+)%s+(%a+)$")
       assert(lhs ~= nil,
         [[Expected selector in form "LHS (before|after|instead of) RHS", not "]]
@@ -21530,10 +21751,19 @@ function M.reader.new(writer, options)
       assert(index ~= nil,
         [[Rule ]] .. lhs .. [[ -> ]] .. rhs
           .. [[ does not exist in markdown grammar]])
-      if pos == "instead of" then
-        rule[index] = pattern
+      local accountable_pattern
+      if current_extension_name then
+        accountable_pattern = { pattern, current_extension_name, pattern_name }
       else
-        table.insert(rule, index, pattern)
+        assert(type(pattern) == "string",
+          [[reader->insert_pattern() was called outside an extension with ]]
+          .. [[a PEG pattern instead of a rule name]])
+        accountable_pattern = pattern
+      end
+      if pos == "instead of" then
+        rule[index] = accountable_pattern
+      else
+        table.insert(rule, index, accountable_pattern)
       end
     end
 %    \end{macrocode}
@@ -21598,17 +21828,19 @@ function M.reader.new(writer, options)
 % \par
 % \begin{markdown}
 %
-% Define \luamref{reader->update_rule} as a function that receives two arguments:
-% a left-hand side terminal symbol and a \acro{peg} pattarn. The function
-% (re)defines \luamref{walkable_syntax}`[`left-hand side terminal symbol`]` to
-% be equal to pattern.
+% Define \luamref{reader->update_rule} as a function that receives two
+% arguments: a left-hand side terminal symbol and a \acro{peg} pattern.
+% The function (re)defines \luamref{walkable_syntax}`[`left-hand side terminal
+% symbol`]` to be equal to pattern.
 %
 % \end{markdown}
 %  \begin{macrocode}
     self.update_rule = function(rule_name, pattern)
+      assert(current_extension_name ~= nil)
       assert(syntax[rule_name] ~= nil,
         [[Rule ]] .. rule_name .. [[ -> ... does not exist in markdown grammar]])
-      walkable_syntax[rule_name] = { pattern }
+      local accountable_pattern = { pattern, current_extension_name, rule_name }
+      walkable_syntax[rule_name] = { accountable_pattern }
     end
 %    \end{macrocode}
 % \par
@@ -21642,8 +21874,67 @@ function M.reader.new(writer, options)
 % \end{markdown}
 %  \begin{macrocode}
     for _, extension in ipairs(extensions) do
+      current_extension_name = extension.name
       extension.extend_writer(writer)
       extension.extend_reader(self)
+    end
+    current_extension_name = nil
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
+% If the \Opt{debugExtensions} option is enabled, serialize
+% \luamref{walkable_syntax} to a \acro{JSON} for debugging purposes.
+%
+% \end{markdown}
+%  \begin{macrocode}
+    if options.debugExtensions then
+      local sorted_lhs = {}
+      for lhs, _ in pairs(walkable_syntax) do
+        table.insert(sorted_lhs, lhs)
+      end
+      table.sort(sorted_lhs)
+
+      local output_lines = {"{"}
+      for lhs_index, lhs in ipairs(sorted_lhs) do
+        local encoded_lhs = util.encode_json_string(lhs)
+        table.insert(output_lines, [[    ]] ..encoded_lhs .. [[: []])
+        local rule = walkable_syntax[lhs]
+        for rhs_index, rhs in ipairs(rule) do
+          local human_readable_rhs
+          if type(rhs) == "string" then
+            human_readable_rhs = rhs
+          else
+            local pattern_name
+            if rhs[3] then
+              pattern_name = rhs[3]
+            else
+              pattern_name = "Anonymous Pattern"
+            end
+            local extension_name = rhs[2]
+            human_readable_rhs = pattern_name .. [[ (]] .. extension_name .. [[)]]
+          end
+          local encoded_rhs = util.encode_json_string(human_readable_rhs)
+          local output_line = [[        ]] .. encoded_rhs
+          if rhs_index < #rule then
+            output_line = output_line .. ","
+          end
+          table.insert(output_lines, output_line)
+        end
+        local output_line = "    ]"
+        if lhs_index < #sorted_lhs then
+          output_line = output_line .. ","
+        end
+        table.insert(output_lines, output_line)
+      end
+      table.insert(output_lines, "}")
+
+      local output = table.concat(output_lines, "\n")
+      local output_filename = options.debugExtensionsFileName
+      local output_file = assert(io.open(output_filename, "w"),
+        [[Could not open file "]] .. output_filename .. [[" for writing]])
+      assert(output_file:write(output))
+      assert(output_file:close())
     end
 %    \end{macrocode}
 % \par
@@ -21674,10 +21965,24 @@ function M.reader.new(writer, options)
       syntax[lhs] = parsers.fail
       for _, rhs in ipairs(rule) do
         local pattern
+%    \end{macrocode}
+% \begin{markdown}
+%
+% Although the interface of the \luamref{reader->insert_pattern} method does
+% document this (see Section <#luauserextensions>), we allow the
+% \luamref{reader->insert_pattern} and \luamref{reader->update_rule}
+% methods to insert not just \acro{peg} patterns, but also rule names that
+% reference the \acro{peg} grammar of Markdown.
+%
+% \end{markdown}
+%  \begin{macrocode}
         if type(rhs) == "string" then
           pattern = V(rhs)
         else
-          pattern = rhs
+          pattern = rhs[1]
+          if type(pattern) == "string" then
+            pattern = V(pattern)
+          end
         end
         syntax[lhs] = syntax[lhs] + pattern
       end
@@ -21686,9 +21991,9 @@ function M.reader.new(writer, options)
 % \par
 % \begin{markdown}
 %
-% Finalize the parser by enabling built-in syntax extensions and producing
-% special parsers for difficult edge cases such as blocks nested in definition
-% lists or inline content nested in link, note, and image labels.
+% Finalize the parser by reacting to options and by producing special parsers
+% for difficult edge cases such as blocks nested in definition lists or
+% inline content nested in link, note, and image labels.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -21879,6 +22184,7 @@ M.extensions.citations = function(citation_nbsps)
     ["#"] = "\\markdownRendererHash{}",
   }
   return {
+    name = "built-in citations syntax extension",
     extend_writer = function(self)
       local options = self.options
 
@@ -22048,7 +22354,8 @@ M.extensions.citations = function(citation_nbsps)
 
       local Citations = TextCitations + ParenthesizedCitations
 
-      self.insert_pattern("Inline after Emph", Citations)
+      self.insert_pattern("Inline after Emph",
+                          Citations, "Citations")
 
       self.add_special_character("@")
       self.add_special_character("-")
@@ -22103,6 +22410,7 @@ M.extensions.content_blocks = function(language_map)
   end)()
 
   return {
+    name = "built-in content_blocks syntax extension",
     extend_writer = function(self)
 %    \end{macrocode}
 % \par
@@ -22213,7 +22521,8 @@ M.extensions.content_blocks = function(language_map)
                     * contentblock_tail
                     / writer.contentblock
 
-      self.insert_pattern("Block before Blockquote", ContentBlock)
+      self.insert_pattern("Block before Blockquote",
+                          ContentBlock, "ContentBlock")
     end
   }
 end
@@ -22230,6 +22539,7 @@ end
 %  \begin{macrocode}
 M.extensions.definition_lists = function(tight_lists)
   return {
+    name = "built-in definition_lists syntax extension",
     extend_writer = function(self)
 %    \end{macrocode}
 % \par
@@ -22311,7 +22621,8 @@ M.extensions.definition_lists = function(tight_lists)
                         * -DefinitionListItemLoose * Cc(true))
                       ) / writer.definitionlist
 
-      self.insert_pattern("Block after Heading", DefinitionList)
+      self.insert_pattern("Block after Heading",
+                          DefinitionList, "DefinitionList")
     end
   }
 end
@@ -22329,6 +22640,7 @@ end
 %  \begin{macrocode}
 M.extensions.fenced_code = function(blank_before_code_fence)
   return {
+    name = "built-in fenced_code syntax extension",
     extend_writer = function(self)
       local options = self.options
 
@@ -22413,7 +22725,7 @@ M.extensions.fenced_code = function(blank_before_code_fence)
                            end
 
       self.insert_pattern("Block after Verbatim",
-                          FencedCode)
+                          FencedCode, "FencedCode")
 
       local fencestart
       if blank_before_code_fence then
@@ -22446,6 +22758,7 @@ end
 M.extensions.footnotes = function(footnotes, inline_footnotes)
   assert(footnotes or inline_footnotes)
   return {
+    name = "built-in footnotes syntax extension",
     extend_writer = function(self)
 %    \end{macrocode}
 % \par
@@ -22469,7 +22782,8 @@ M.extensions.footnotes = function(footnotes, inline_footnotes)
                     * (parsers.tag / self.parser_functions.parse_inlines_no_inline_note)
                     / writer.note
 
-        self.insert_pattern("Inline after Emph", InlineNote)
+        self.insert_pattern("Inline after Emph",
+                            InlineNote, "InlineNote")
       end
       if footnotes then
         local function strip_first_char(s)
@@ -22511,7 +22825,8 @@ M.extensions.footnotes = function(footnotes, inline_footnotes)
         local Blank = NoteBlock + parsers.Blank
         self.update_rule("Blank", Blank)
 
-        self.insert_pattern("Inline after Emph", NoteRef)
+        self.insert_pattern("Inline after Emph",
+                            NoteRef, "NoteRef")
       end
 
       self.add_special_character("^")
@@ -22530,6 +22845,7 @@ end
 %  \begin{macrocode}
 M.extensions.header_attributes = function()
   return {
+    name = "built-in header_attributes syntax extension",
     extend_writer = function()
     end, extend_reader = function(self)
       local parsers = self.parsers
@@ -22597,6 +22913,7 @@ end
 %  \begin{macrocode}
 M.extensions.jekyll_data = function(expect_jekyll_data)
   return {
+    name = "built-in jekyll_data syntax extension",
     extend_writer = function(self)
 %    \end{macrocode}
 % \par
@@ -22730,7 +23047,8 @@ M.extensions.jekyll_data = function(expect_jekyll_data)
                     * JekyllData
                     * (P("---") + P("..."))^-1
 
-      self.insert_pattern("Block before Blockquote", UnexpectedJekyllData)
+      self.insert_pattern("Block before Blockquote",
+                          UnexpectedJekyllData, "UnexpectedJekyllData")
       if expect_jekyll_data then
         self.update_rule("ExpectedJekyllData", ExpectedJekyllData)
       end
@@ -22805,6 +23123,7 @@ M.extensions.pipe_tables = function(table_captions)
   end
 
   return {
+    name = "built-in pipe_tables syntax extension",
     extend_writer = function(self)
 %    \end{macrocode}
 % \par
@@ -22894,7 +23213,8 @@ M.extensions.pipe_tables = function(table_captions)
                       * table_caption^-1
                       / writer.table
 
-      self.insert_pattern("Block after Blockquote", PipeTable)
+      self.insert_pattern("Block after Blockquote",
+                          PipeTable, "PipeTable")
     end
   }
 end
@@ -22910,6 +23230,7 @@ end
 %  \begin{macrocode}
 M.extensions.strike_through = function()
   return {
+    name = "built-in strike_through syntax extension",
     extend_writer = function(self)
 %    \end{macrocode}
 % \par
@@ -22932,7 +23253,8 @@ M.extensions.strike_through = function()
                         parsers.doubletildes)
       ) / writer.strike_through
 
-      self.insert_pattern("Inline after Emph", StrikeThrough)
+      self.insert_pattern("Inline after Emph",
+                          StrikeThrough, "StrikeThrough")
 
       self.add_special_character("~")
     end
@@ -22950,6 +23272,7 @@ end
 %  \begin{macrocode}
 M.extensions.superscripts = function()
   return {
+    name = "built-in superscripts syntax extension",
     extend_writer = function(self)
 %    \end{macrocode}
 % \par
@@ -22971,7 +23294,8 @@ M.extensions.superscripts = function()
         parsers.between(parsers.Str, parsers.circumflex, parsers.circumflex)
       ) / writer.superscript
 
-      self.insert_pattern("Inline after Emph", Superscript)
+      self.insert_pattern("Inline after Emph",
+                          Superscript, "Superscript")
 
       self.add_special_character("^")
     end
@@ -22989,6 +23313,7 @@ end
 %  \begin{macrocode}
 M.extensions.subscripts = function()
   return {
+    name = "built-in subscripts syntax extension",
     extend_writer = function(self)
 %    \end{macrocode}
 % \par
@@ -23010,7 +23335,8 @@ M.extensions.subscripts = function()
         parsers.between(parsers.Str, parsers.tilde, parsers.tilde)
       ) / writer.subscript
 
-      self.insert_pattern("Inline after Emph", Subscript)
+      self.insert_pattern("Inline after Emph",
+                          Subscript, "Subscript")
 
       self.add_special_character("~")
     end
@@ -23028,6 +23354,7 @@ end
 %  \begin{macrocode}
 M.extensions.fancy_lists = function()
   return {
+    name = "built-in fancy_lists syntax extension",
     extend_writer = function(self)
       local options = self.options
 
@@ -23360,7 +23687,8 @@ function M.new(options)
         .. [[" specifies field "api_version" of type "]]
         .. type(user_extension.api_version)
         .. [[" but "number" was expected]])
-      assert(user_extension.api_version == metadata.user_extension_api_version,
+      assert(user_extension.api_version > 0
+         and user_extension.api_version <= metadata.user_extension_api_version,
         [[User-defined syntax extension "]] .. pathname
         .. [[" uses syntax extension API version "]]
         .. user_extension.api_version .. [[ but markdown.lua ]]
@@ -23401,6 +23729,7 @@ function M.new(options)
 % \end{markdown}
 %  \begin{macrocode}
       local extension = {
+        name = [[user-defined "]] .. pathname .. [[" syntax extension]],
         extend_reader = user_extension.finalize_grammar,
         extend_writer = function() end,
       }
