@@ -21807,7 +21807,7 @@ function M.reader.new(writer, options)
         for rhs_index, rhs in ipairs(rule) do
           local human_readable_rhs
           if type(rhs) == "string" then
-            human_readable_rhs = rhs .. [[ (built-in)]]
+            human_readable_rhs = rhs
           else
             local pattern_name
             if rhs[3] then
