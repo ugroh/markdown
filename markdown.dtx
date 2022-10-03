@@ -1653,12 +1653,17 @@ local walkable_syntax = {
 % \begin{markdown}
 %
 % The \luamref{reader->insert_pattern} method inserts a \acro{peg} pattern into
-% the grammar of markdown. The method receives two arguments: a selector string
-% in the form `"`\meta{left-hand side terminal symbol} \meta{`before`, `after`,
-% or `instead of`} \meta{right-hand side terminal symbol}`"` and a \acro{peg}
-% pattarn to insert. For example. if we'd like to insert `pattern` into the
-% grammar between the `Inline -> Emph` and `Inline -> Link` rules, we would
-% call \luamref{reader->insert_pattern} with `"Inline after Emph"` (or `"Inline
+% the grammar of markdown. The method receives two mandatory arguments: a
+% selector string in the form `"`\meta{left-hand side terminal symbol}
+% \meta{`before`, `after`, or `instead of`} \meta{right-hand side terminal
+% symbol}`"` and a \acro{peg} pattern to insert, and an optional third argument
+% with a name of the \acro{peg} pattern for debugging purposes (see the
+% \Opt{debugExtensions} option). The name does not need to be unique and shall
+% not be interpreted by the Markdown package; you can treat it as a comment.
+%
+% For example. if we'd like to insert `pattern` into the grammar between the
+% `Inline -> Emph` and `Inline -> Link` rules, we would call
+% \luamref{reader->insert_pattern} with `"Inline after Emph"` (or `"Inline
 % before Link"`) and `pattern` as the arguments.
 %
 % The \luamdef{reader->add_special_character} method adds a new character with
@@ -4556,7 +4561,7 @@ defaultOptions.eagerCache = true
 %
 %    ``` lua
 %    local strike_through = {
-%      api_version = 1,
+%      api_version = 2,
 %      grammar_version = 1,
 %      finalize_grammar = function(reader)
 %        local nonspacechar = lpeg.P(1) - lpeg.S("\t ")
@@ -4571,7 +4576,8 @@ defaultOptions.eagerCache = true
 %          lpeg.V("Inline"), doubletildes, doubletildes
 %        ) / function(s) return {"\\st{", s, "}"} end
 %
-%        reader.insert_pattern("Inline after Emph", read_strike_through)
+%        reader.insert_pattern("Inline after Emph", read_strike_through,
+%                              "StrikeThrough")
 %        reader.add_special_character("/")
 %      end
 %    }
@@ -4590,7 +4596,7 @@ defaultOptions.eagerCache = true
 %<*lua>
 % \fi
 %  \begin{macrocode}
-metadata.user_extension_api_version = 1
+metadata.user_extension_api_version = 2
 metadata.grammar_version = 1
 %    \end{macrocode}
 % \iffalse
@@ -4620,7 +4626,7 @@ Using a text editor, create a text document named `strike-through.lua` with the
 following content:
 ``` lua
 local strike_through = {
-  api_version = 1,
+  api_version = 2,
   grammar_version = 1,
   finalize_grammar = function(reader)
     local nonspacechar = lpeg.P(1) - lpeg.S("\t ")
@@ -4635,7 +4641,8 @@ local strike_through = {
       lpeg.V("Inline"), doubletildes, doubletildes
     ) / function(s) return {"\\st{", s, "}"} end
 
-    reader.insert_pattern("Inline after Emph", read_strike_through)
+    reader.insert_pattern("Inline after Emph", read_strike_through,
+                          "StrikeThrough")
     reader.add_special_character("/")
   end
 }
@@ -17223,6 +17230,20 @@ end
 % \par
 % \begin{markdown}
 %
+% The \luamdef{util.encode_json_string} method encodes a string `s` in
+% \acro{JSON}.
+%
+% \end{markdown}
+%  \begin{macrocode}
+function util.encode_json_string(s)
+  s = s:gsub([[\]], [[\\]])
+  s = s:gsub([["]], [[\"]])
+  return [["]] .. s .. [["]]
+end
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
 % The \luamdef{util.lookup_files} method looks up files with filename `f`
 % and returns its path. If the \pkg{kpathsea} library is available, it will
 % search for files not only in the current working directory but also in the
@@ -21602,17 +21623,15 @@ function M.reader.new(writer, options)
 % \par
 % \begin{markdown}
 %
-% Define \luamref{reader->insert_pattern} as a function that receives two
-% arguments: a selector string in the form `"`\meta{left-hand side terminal
-% symbol} \meta{`before`, `after`, or `instead of`} \meta{right-hand side
-% terminal symbol}`"` and a \acro{peg} pattarn to insert. The function adds
-% the pattern to \luamref{walkable_syntax}`[`*left-hand side terminal
-% symbol*`]` before or after *right-hand side terminal symbol*.
+% The \luamref{reader->insert_pattern} method adds a pattern to
+% \luamref{walkable_syntax}`[`*left-hand side terminal symbol*`]` before,
+% instead of, or after a right-hand-side terminal symbol.
 %
 % \end{markdown}
 %  \begin{macrocode}
     local current_extension_name = nil
-    self.insert_pattern = function(selector, pattern)
+    self.insert_pattern = function(selector, pattern, pattern_name)
+      assert(pattern_name == nil or type(pattern_name) == "string")
       local _, _, lhs, pos, rhs = selector:find("^(%a+)%s+([%a%s]+%a+)%s+(%a+)$")
       assert(lhs ~= nil,
         [[Expected selector in form "LHS (before|after|instead of) RHS", not "]]
@@ -21638,7 +21657,7 @@ function M.reader.new(writer, options)
           .. [[ does not exist in markdown grammar]])
       local accountable_pattern
       if current_extension_name then
-        accountable_pattern = { pattern, current_extension_name }
+        accountable_pattern = { pattern, current_extension_name, pattern_name }
       else
         assert(type(pattern) == "string",
           [[reader->insert_pattern() was called outside an extension with ]]
@@ -21713,17 +21732,18 @@ function M.reader.new(writer, options)
 % \par
 % \begin{markdown}
 %
-% Define \luamref{reader->update_rule} as a function that receives two arguments:
-% a left-hand side terminal symbol and a \acro{peg} pattarn. The function
-% (re)defines \luamref{walkable_syntax}`[`left-hand side terminal symbol`]` to
-% be equal to pattern.
+% Define \luamref{reader->update_rule} as a function that receives two
+% arguments: a left-hand side terminal symbol and a \acro{peg} pattern.
+% The function (re)defines \luamref{walkable_syntax}`[`left-hand side terminal
+% symbol`]` to be equal to pattern.
 %
 % \end{markdown}
 %  \begin{macrocode}
     self.update_rule = function(rule_name, pattern)
+      assert(current_extension_name ~= nil)
       assert(syntax[rule_name] ~= nil,
         [[Rule ]] .. rule_name .. [[ -> ... does not exist in markdown grammar]])
-      local accountable_pattern = { pattern, current_extension_name }
+      local accountable_pattern = { pattern, current_extension_name, rule_name }
       walkable_syntax[rule_name] = { accountable_pattern }
     end
 %    \end{macrocode}
@@ -21782,17 +21802,24 @@ function M.reader.new(writer, options)
       local output_lines = {"{"}
       for lhs_index, lhs in ipairs(sorted_lhs) do
         local encoded_lhs = util.encode_json_string(lhs)
-        table.insert(output_lines, [[    "]] ..encoded_lhs .. [[": []])
+        table.insert(output_lines, [[    ]] ..encoded_lhs .. [[: []])
         local rule = walkable_syntax[lhs]
         for rhs_index, rhs in ipairs(rule) do
           local human_readable_rhs
           if type(rhs) == "string" then
             human_readable_rhs = rhs .. [[ (built-in)]]
           else
-            human_readable_rhs = [[Anonymous Pattern (]] .. rhs[2] .. [[)]]
+            local pattern_name
+            if rhs[3] then
+              pattern_name = rhs[3]
+            else
+              pattern_name = "Anonymous Pattern"
+            end
+            local extension_name = rhs[2]
+            human_readable_rhs = pattern_name .. [[ (]] .. extension_name .. [[)]]
           end
           local encoded_rhs = util.encode_json_string(human_readable_rhs)
-          local output_line = [[        "]] .. encoded_rhs .. [["]]
+          local output_line = [[        ]] .. encoded_rhs
           if rhs_index < #rule then
             output_line = output_line .. ","
           end
@@ -22231,7 +22258,8 @@ M.extensions.citations = function(citation_nbsps)
 
       local Citations = TextCitations + ParenthesizedCitations
 
-      self.insert_pattern("Inline after Emph", Citations)
+      self.insert_pattern("Inline after Emph",
+                          Citations, "Citations")
 
       self.add_special_character("@")
       self.add_special_character("-")
@@ -22397,7 +22425,8 @@ M.extensions.content_blocks = function(language_map)
                     * contentblock_tail
                     / writer.contentblock
 
-      self.insert_pattern("Block before Blockquote", ContentBlock)
+      self.insert_pattern("Block before Blockquote",
+                          ContentBlock, "ContentBlock")
     end
   }
 end
@@ -22496,7 +22525,8 @@ M.extensions.definition_lists = function(tight_lists)
                         * -DefinitionListItemLoose * Cc(true))
                       ) / writer.definitionlist
 
-      self.insert_pattern("Block after Heading", DefinitionList)
+      self.insert_pattern("Block after Heading",
+                          DefinitionList, "DefinitionList")
     end
   }
 end
@@ -22599,7 +22629,7 @@ M.extensions.fenced_code = function(blank_before_code_fence)
                            end
 
       self.insert_pattern("Block after Verbatim",
-                          FencedCode)
+                          FencedCode, "FencedCode")
 
       local fencestart
       if blank_before_code_fence then
@@ -22656,7 +22686,8 @@ M.extensions.footnotes = function(footnotes, inline_footnotes)
                     * (parsers.tag / self.parser_functions.parse_inlines_no_inline_note)
                     / writer.note
 
-        self.insert_pattern("Inline after Emph", InlineNote)
+        self.insert_pattern("Inline after Emph",
+                            InlineNote, "InlineNote")
       end
       if footnotes then
         local function strip_first_char(s)
@@ -22698,7 +22729,8 @@ M.extensions.footnotes = function(footnotes, inline_footnotes)
         local Blank = NoteBlock + parsers.Blank
         self.update_rule("Blank", Blank)
 
-        self.insert_pattern("Inline after Emph", NoteRef)
+        self.insert_pattern("Inline after Emph",
+                            NoteRef, "NoteRef")
       end
 
       self.add_special_character("^")
@@ -22919,7 +22951,8 @@ M.extensions.jekyll_data = function(expect_jekyll_data)
                     * JekyllData
                     * (P("---") + P("..."))^-1
 
-      self.insert_pattern("Block before Blockquote", UnexpectedJekyllData)
+      self.insert_pattern("Block before Blockquote",
+                          UnexpectedJekyllData, "UnexpectedJekyllData")
       if expect_jekyll_data then
         self.update_rule("ExpectedJekyllData", ExpectedJekyllData)
       end
@@ -23084,7 +23117,8 @@ M.extensions.pipe_tables = function(table_captions)
                       * table_caption^-1
                       / writer.table
 
-      self.insert_pattern("Block after Blockquote", PipeTable)
+      self.insert_pattern("Block after Blockquote",
+                          PipeTable, "PipeTable")
     end
   }
 end
@@ -23123,7 +23157,8 @@ M.extensions.strike_through = function()
                         parsers.doubletildes)
       ) / writer.strike_through
 
-      self.insert_pattern("Inline after Emph", StrikeThrough)
+      self.insert_pattern("Inline after Emph",
+                          StrikeThrough, "StrikeThrough")
 
       self.add_special_character("~")
     end
@@ -23163,7 +23198,8 @@ M.extensions.superscripts = function()
         parsers.between(parsers.Str, parsers.circumflex, parsers.circumflex)
       ) / writer.superscript
 
-      self.insert_pattern("Inline after Emph", Superscript)
+      self.insert_pattern("Inline after Emph",
+                          Superscript, "Superscript")
 
       self.add_special_character("^")
     end
@@ -23203,7 +23239,8 @@ M.extensions.subscripts = function()
         parsers.between(parsers.Str, parsers.tilde, parsers.tilde)
       ) / writer.subscript
 
-      self.insert_pattern("Inline after Emph", Subscript)
+      self.insert_pattern("Inline after Emph",
+                          Subscript, "Subscript")
 
       self.add_special_character("~")
     end
@@ -23554,7 +23591,8 @@ function M.new(options)
         .. [[" specifies field "api_version" of type "]]
         .. type(user_extension.api_version)
         .. [[" but "number" was expected]])
-      assert(user_extension.api_version == metadata.user_extension_api_version,
+      assert(user_extension.api_version > 0
+         and user_extension.api_version <= metadata.user_extension_api_version,
         [[User-defined syntax extension "]] .. pathname
         .. [[" uses syntax extension API version "]]
         .. user_extension.api_version .. [[ but markdown.lua ]]
