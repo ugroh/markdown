@@ -2442,6 +2442,54 @@ defaultOptions.contentBlocksLanguageMap = "markdown-languages.json"
 %</lua,lua-cli>
 %<*manual-options>
 
+#### Option `debugExtensionsFileName`
+
+`debugExtensionsFileName` (default value: `"debug-extensions.json"`)
+
+% \fi
+% \begin{markdown}
+%
+% \Valitem[debug-extensions.json]{debugExtensionsFileName}{filename}
+%
+:    The filename of the \acro{JSON} file that will be produced when the
+     \Opt{debugExtensions} option is enabled. This file will contain the
+     extensible subset of the \acro{peg} grammar of markdown
+%    (see the \luamref{walkable_syntax} hash table)
+     after built-in syntax extensions
+%    (see Section <#luabuiltinextensions>)
+%    \iffalse
+     (see options \Opt{citations}, \Opt{contentBlocks}, \Opt{definitionLists}, etc.)
+%    \fi
+     and user-defined syntax extensions
+%    (see Section <#luauserextensions>)
+%    \iffalse
+     (see option \Opt{extensions})
+%    \fi
+     have been applied.
+
+% \end{markdown}
+% \iffalse
+%</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\@@_add_lua_option:nnn
+  { debugExtensionsFileName }
+  { path }
+  { \markdownOptionOutputDir / \jobname .debug-extensions.json }
+%    \end{macrocode}
+% \iffalse
+%</tex>
+%<*lua,lua-cli>
+% \fi
+%  \begin{macrocode}
+defaultOptions.contentBlocksLanguageMap = "markdown-languages.json"
+%    \end{macrocode}
+% \par
+% \iffalse
+%</lua,lua-cli>
+%<*manual-options>
+
 #### Option `frozenCacheFileName`
 
 `frozenCacheFileName` (default value: `"frozenCache.tex"`)
