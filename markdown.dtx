@@ -21611,6 +21611,7 @@ function M.reader.new(writer, options)
 %
 % \end{markdown}
 %  \begin{macrocode}
+    local current_extension_name = nil
     self.insert_pattern = function(selector, pattern)
       local _, _, lhs, pos, rhs = selector:find("^(%a+)%s+([%a%s]+%a+)%s+(%a+)$")
       assert(lhs ~= nil,
@@ -21635,10 +21636,19 @@ function M.reader.new(writer, options)
       assert(index ~= nil,
         [[Rule ]] .. lhs .. [[ -> ]] .. rhs
           .. [[ does not exist in markdown grammar]])
-      if pos == "instead of" then
-        rule[index] = pattern
+      local accountable_pattern
+      if current_extension_name then
+        accountable_pattern = { pattern, current_extension_name }
       else
-        table.insert(rule, index, pattern)
+        assert(type(pattern) == "string",
+          [[reader->insert_pattern() was called outside an extension with ]]
+          .. [[a PEG pattern instead of a rule name]])
+        accountable_pattern = pattern
+      end
+      if pos == "instead of" then
+        rule[index] = accountable_pattern
+      else
+        table.insert(rule, index, accountable_pattern)
       end
     end
 %    \end{macrocode}
@@ -21713,7 +21723,8 @@ function M.reader.new(writer, options)
     self.update_rule = function(rule_name, pattern)
       assert(syntax[rule_name] ~= nil,
         [[Rule ]] .. rule_name .. [[ -> ... does not exist in markdown grammar]])
-      walkable_syntax[rule_name] = { pattern }
+      local accountable_pattern = { pattern, current_extension_name }
+      walkable_syntax[rule_name] = { accountable_pattern }
     end
 %    \end{macrocode}
 % \par
@@ -21747,9 +21758,11 @@ function M.reader.new(writer, options)
 % \end{markdown}
 %  \begin{macrocode}
     for _, extension in ipairs(extensions) do
+      current_extension_name = extension.name
       extension.extend_writer(writer)
       extension.extend_reader(self)
     end
+    current_extension_name = nil
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -21779,10 +21792,24 @@ function M.reader.new(writer, options)
       syntax[lhs] = parsers.fail
       for _, rhs in ipairs(rule) do
         local pattern
+%    \end{macrocode}
+% \begin{markdown}
+%
+% Although the interface of the \luamref{reader->insert_pattern} method does
+% document this (see Section <#luauserextensions>), we allow the
+% \luamref{reader->insert_pattern} and \luamref{reader->update_rule}
+% methods to insert not just \acro{peg} patterns, but also rule names that
+% reference the \acro{peg} grammar of Markdown.
+%
+% \end{markdown}
+%  \begin{macrocode}
         if type(rhs) == "string" then
           pattern = V(rhs)
         else
-          pattern = rhs
+          pattern = rhs[1]
+          if type(pattern) == "string" then
+            pattern = V(pattern)
+          end
         end
         syntax[lhs] = syntax[lhs] + pattern
       end
@@ -21791,9 +21818,9 @@ function M.reader.new(writer, options)
 % \par
 % \begin{markdown}
 %
-% Finalize the parser by enabling built-in syntax extensions and producing
-% special parsers for difficult edge cases such as blocks nested in definition
-% lists or inline content nested in link, note, and image labels.
+% Finalize the parser by reacting to options and by producing special parsers
+% for difficult edge cases such as blocks nested in definition lists or
+% inline content nested in link, note, and image labels.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -21984,6 +22011,7 @@ M.extensions.citations = function(citation_nbsps)
     ["#"] = "\\markdownRendererHash{}",
   }
   return {
+    name = "built-in citations syntax extension",
     extend_writer = function(self)
       local options = self.options
 
@@ -22208,6 +22236,7 @@ M.extensions.content_blocks = function(language_map)
   end)()
 
   return {
+    name = "built-in content_blocks syntax extension",
     extend_writer = function(self)
 %    \end{macrocode}
 % \par
@@ -22335,6 +22364,7 @@ end
 %  \begin{macrocode}
 M.extensions.definition_lists = function(tight_lists)
   return {
+    name = "built-in definition_lists syntax extension",
     extend_writer = function(self)
 %    \end{macrocode}
 % \par
@@ -22434,6 +22464,7 @@ end
 %  \begin{macrocode}
 M.extensions.fenced_code = function(blank_before_code_fence)
   return {
+    name = "built-in fenced_code syntax extension",
     extend_writer = function(self)
       local options = self.options
 
@@ -22551,6 +22582,7 @@ end
 M.extensions.footnotes = function(footnotes, inline_footnotes)
   assert(footnotes or inline_footnotes)
   return {
+    name = "built-in footnotes syntax extension",
     extend_writer = function(self)
 %    \end{macrocode}
 % \par
@@ -22635,6 +22667,7 @@ end
 %  \begin{macrocode}
 M.extensions.header_attributes = function()
   return {
+    name = "built-in header_attributes syntax extension",
     extend_writer = function()
     end, extend_reader = function(self)
       local parsers = self.parsers
@@ -22702,6 +22735,7 @@ end
 %  \begin{macrocode}
 M.extensions.jekyll_data = function(expect_jekyll_data)
   return {
+    name = "built-in jekyll_data syntax extension",
     extend_writer = function(self)
 %    \end{macrocode}
 % \par
@@ -22910,6 +22944,7 @@ M.extensions.pipe_tables = function(table_captions)
   end
 
   return {
+    name = "built-in pipe_tables syntax extension",
     extend_writer = function(self)
 %    \end{macrocode}
 % \par
@@ -23015,6 +23050,7 @@ end
 %  \begin{macrocode}
 M.extensions.strike_through = function()
   return {
+    name = "built-in strike_through syntax extension",
     extend_writer = function(self)
 %    \end{macrocode}
 % \par
@@ -23055,6 +23091,7 @@ end
 %  \begin{macrocode}
 M.extensions.superscripts = function()
   return {
+    name = "built-in superscripts syntax extension",
     extend_writer = function(self)
 %    \end{macrocode}
 % \par
@@ -23094,6 +23131,7 @@ end
 %  \begin{macrocode}
 M.extensions.subscripts = function()
   return {
+    name = "built-in subscripts syntax extension",
     extend_writer = function(self)
 %    \end{macrocode}
 % \par
@@ -23133,6 +23171,7 @@ end
 %  \begin{macrocode}
 M.extensions.fancy_lists = function()
   return {
+    name = "built-in fancy_lists syntax extension",
     extend_writer = function(self)
       local options = self.options
 
@@ -23506,6 +23545,7 @@ function M.new(options)
 % \end{markdown}
 %  \begin{macrocode}
       local extension = {
+        name = [[user-defined "]] .. pathname .. [[" syntax extension]],
         extend_reader = user_extension.finalize_grammar,
         extend_writer = function() end,
       }
