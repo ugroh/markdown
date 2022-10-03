@@ -2458,7 +2458,8 @@ defaultOptions.contentBlocksLanguageMap = "markdown-languages.json"
      after built-in syntax extensions
 %    (see Section <#luabuiltinextensions>)
 %    \iffalse
-     (see options \Opt{citations}, \Opt{contentBlocks}, \Opt{definitionLists}, etc.)
+     (see options \Opt{citations}, \Opt{contentBlocks}, \Opt{definitionLists},
+     etc.)
 %    \fi
      and user-defined syntax extensions
 %    (see Section <#luauserextensions>)
@@ -4234,6 +4235,63 @@ following text:
 % \fi
 %  \begin{macrocode}
 defaultOptions.contentBlocks = false
+%    \end{macrocode}
+% \par
+% \iffalse
+%</lua,lua-cli>
+%<*manual-options>
+
+#### Option `debugExtensions`
+
+`debugExtensions` (default value: `false`)
+
+% \fi
+% \begin{markdown}
+%
+% \Optitem[false]{debugExtensions}{\opt{true}, \opt{false}}
+%
+:    true
+
+     :  Produce a \acro{JSON} file that will contain the
+        extensible subset of the \acro{peg} grammar of markdown
+%       (see the \luamref{walkable_syntax} hash table)
+        after built-in syntax extensions
+%       (see Section <#luabuiltinextensions>)
+%       \iffalse
+        (see options \Opt{citations}, \Opt{contentBlocks},
+        \Opt{definitionLists}, etc.)
+%       \fi
+        and user-defined syntax extensions
+%       (see Section <#luauserextensions>)
+%       \iffalse
+        (see option \Opt{extensions})
+%       \fi
+        have been applied. This helps you to see how the different
+        extensions interact. The name of the produced \acro{JSON} file is
+        controlled by the \Opt{debugExtensionsFileName} option.
+
+:    false
+
+     :  Do not produce a \acro{JSON} file with the \acro{peg} grammar of
+        markdown.
+
+% \end{markdown}
+% \iffalse
+%</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\@@_add_lua_option:nnn
+  { debugExtensions }
+  { boolean }
+  { false }
+%    \end{macrocode}
+% \iffalse
+%</tex>
+%<*lua,lua-cli>
+% \fi
+%  \begin{macrocode}
+defaultOptions.debugExtensions = false
 %    \end{macrocode}
 % \par
 % \iffalse
