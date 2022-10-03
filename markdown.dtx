@@ -2278,6 +2278,170 @@ defaultOptions.cacheDir = "."
 %</lua,lua-cli>
 %<*manual-options>
 
+#### Option `contentBlocksLanguageMap`
+
+`contentBlocksLanguageMap` (default value: `"markdown-languages.json"`)
+
+% \fi
+% \begin{markdown}
+%
+% \Valitem[markdown-languages.json]{contentBlocksLanguageMap}{filename}
+%
+:    The filename of the \acro{JSON} file that maps filename extensions to
+     programming language names in the iA\,Writer content blocks when the
+     \Opt{contentBlocks} option is enabled.
+%    See Section <#sec:texcontentblockrenderers> for more information.
+
+% \end{markdown}
+% \iffalse
+
+##### \LaTeX{} Example {.unnumbered}
+
+Using a text editor, create a text document named `table.csv` with the
+following content:
+``` csv
+Name,Surname,Born
+Albert,Einstein,1879
+Marie,Curie,1867
+Thomas,Edison,1847
+```````
+Create also a text document named `language-map.json` with the following
+content:
+``` js
+{
+  "tex": "LaTeX"
+}
+``````
+Create also a text document named `code.tex` with the following content:
+``` tex
+This is an example code listing in \LaTeX.
+```````
+Create also a text document named `part.md` with the following content:
+``` md
+This is a *transcluded markdown document*.
+``````
+Create also a text document named `document.tex` with the following content:
+``` tex
+\documentclass{article}
+\usepackage{minted}
+\usepackage[contentBlocks]{markdown}
+\markdownSetup{
+  contentBlocksLanguageMap = {language-map.json},
+}
+\begin{document}
+\begin{markdown}
+/table.csv  (An example table)
+/code.tex   (An example code listing)
+/part.md    (A file transclusion example)
+\end{markdown}
+\end{document}
+```````
+Next, invoke LuaTeX from the terminal:
+``` sh
+lualatex --shell-escape document.tex
+``````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> | Name   | Surname  | Born |
+> | ------ | ---------| ---- |
+> | Albert | Einstein | 1879 |
+> | Marie  | Curie    | 1867 |
+> | Thomas | Edison   | 1847 |
+>
+> Table 1: An example table
+>
+> ``` tex
+> This is an example code listing in \LaTeX.
+> ```````
+>
+> This is a *transcluded markdown document*.
+
+##### \Hologo{ConTeXt} Example {.unnumbered}
+
+Using a text editor, create a text document named `table.csv` with the
+following content:
+``` csv
+Name,Surname,Born
+Albert,Einstein,1879
+Marie,Curie,1867
+Thomas,Edison,1847
+```````
+Create also a text document named `language-map.json` with the following
+content:
+``` js
+{
+  "tex": "ConTeXt"
+}
+``````
+Create also a text document named `code.tex` with the following content:
+``` tex
+This is an example code listing in \ConTeXt.
+```````
+Create also a text document named `part.md` with the following content:
+``` md
+This is a *transcluded markdown document*.
+``````
+Create also a text document named `document.tex` with the following content:
+``` tex
+\usemodule[t][markdown]
+\setupmarkdown
+  [
+    contentBlocks = yes,
+    contentBlocksLanguageMap = language-map.json,
+  ]
+\definetyping [ConTeXt]
+\setuptyping  [ConTeXt] [option=TEX]
+\starttext
+\startmarkdown
+/table.csv  (An example table)
+/code.tex   (An example code listing)
+/part.md    (A file transclusion example)
+\stopmarkdown
+\stoptext
+````````
+Next, invoke LuaTeX from the terminal:
+``` sh
+context document.tex
+`````
+A PDF document named `document.pdf` should be produced and contain the
+following text:
+
+> | Name   | Surname  | Born |
+> | ------ | ---------| ---- |
+> | Albert | Einstein | 1879 |
+> | Marie  | Curie    | 1867 |
+> | Thomas | Edison   | 1847 |
+>
+> Table 1: An example table
+>
+> ``` tex
+> This is an example code listing in \ConTeXt.
+> ```````
+>
+> This is a *transcluded markdown document*.
+
+%</manual-options>
+%<*tex>
+% \fi
+%  \begin{macrocode}
+\@@_add_lua_option:nnn
+  { contentBlocksLanguageMap }
+  { path }
+  { markdown-languages.json }
+%    \end{macrocode}
+% \iffalse
+%</tex>
+%<*lua,lua-cli>
+% \fi
+%  \begin{macrocode}
+defaultOptions.contentBlocksLanguageMap = "markdown-languages.json"
+%    \end{macrocode}
+% \par
+% \iffalse
+%</lua,lua-cli>
+%<*manual-options>
+
 #### Option `frozenCacheFileName`
 
 `frozenCacheFileName` (default value: `"frozenCache.tex"`)
@@ -4022,169 +4186,6 @@ following text:
 % \fi
 %  \begin{macrocode}
 defaultOptions.contentBlocks = false
-%    \end{macrocode}
-% \par
-% \iffalse
-%</lua,lua-cli>
-%<*manual-options>
-
-#### Option `contentBlocksLanguageMap`
-
-`contentBlocksLanguageMap` (default value: `"markdown-languages.json"`)
-
-% \fi
-% \begin{markdown}
-%
-% \Valitem[markdown-languages.json]{contentBlocksLanguageMap}{filename}
-%
-:    The filename of the \acro{JSON} file that maps filename extensions to
-     programming language names in the iA\,Writer content blocks.
-%    See Section <#sec:texcontentblockrenderers> for more information.
-
-% \end{markdown}
-% \iffalse
-
-##### \LaTeX{} Example {.unnumbered}
-
-Using a text editor, create a text document named `table.csv` with the
-following content:
-``` csv
-Name,Surname,Born
-Albert,Einstein,1879
-Marie,Curie,1867
-Thomas,Edison,1847
-```````
-Create also a text document named `language-map.json` with the following
-content:
-``` js
-{
-  "tex": "LaTeX"
-}
-``````
-Create also a text document named `code.tex` with the following content:
-``` tex
-This is an example code listing in \LaTeX.
-```````
-Create also a text document named `part.md` with the following content:
-``` md
-This is a *transcluded markdown document*.
-``````
-Create also a text document named `document.tex` with the following content:
-``` tex
-\documentclass{article}
-\usepackage{minted}
-\usepackage[contentBlocks]{markdown}
-\markdownSetup{
-  contentBlocksLanguageMap = {language-map.json},
-}
-\begin{document}
-\begin{markdown}
-/table.csv  (An example table)
-/code.tex   (An example code listing)
-/part.md    (A file transclusion example)
-\end{markdown}
-\end{document}
-```````
-Next, invoke LuaTeX from the terminal:
-``` sh
-lualatex --shell-escape document.tex
-``````
-A PDF document named `document.pdf` should be produced and contain the
-following text:
-
-> | Name   | Surname  | Born |
-> | ------ | ---------| ---- |
-> | Albert | Einstein | 1879 |
-> | Marie  | Curie    | 1867 |
-> | Thomas | Edison   | 1847 |
->
-> Table 1: An example table
->
-> ``` tex
-> This is an example code listing in \LaTeX.
-> ```````
->
-> This is a *transcluded markdown document*.
-
-##### \Hologo{ConTeXt} Example {.unnumbered}
-
-Using a text editor, create a text document named `table.csv` with the
-following content:
-``` csv
-Name,Surname,Born
-Albert,Einstein,1879
-Marie,Curie,1867
-Thomas,Edison,1847
-```````
-Create also a text document named `language-map.json` with the following
-content:
-``` js
-{
-  "tex": "ConTeXt"
-}
-``````
-Create also a text document named `code.tex` with the following content:
-``` tex
-This is an example code listing in \ConTeXt.
-```````
-Create also a text document named `part.md` with the following content:
-``` md
-This is a *transcluded markdown document*.
-``````
-Create also a text document named `document.tex` with the following content:
-``` tex
-\usemodule[t][markdown]
-\setupmarkdown
-  [
-    contentBlocks = yes,
-    contentBlocksLanguageMap = language-map.json,
-  ]
-\definetyping [ConTeXt]
-\setuptyping  [ConTeXt] [option=TEX]
-\starttext
-\startmarkdown
-/table.csv  (An example table)
-/code.tex   (An example code listing)
-/part.md    (A file transclusion example)
-\stopmarkdown
-\stoptext
-````````
-Next, invoke LuaTeX from the terminal:
-``` sh
-context document.tex
-`````
-A PDF document named `document.pdf` should be produced and contain the
-following text:
-
-> | Name   | Surname  | Born |
-> | ------ | ---------| ---- |
-> | Albert | Einstein | 1879 |
-> | Marie  | Curie    | 1867 |
-> | Thomas | Edison   | 1847 |
->
-> Table 1: An example table
->
-> ``` tex
-> This is an example code listing in \ConTeXt.
-> ```````
->
-> This is a *transcluded markdown document*.
-
-%</manual-options>
-%<*tex>
-% \fi
-%  \begin{macrocode}
-\@@_add_lua_option:nnn
-  { contentBlocksLanguageMap }
-  { path }
-  { markdown-languages.json }
-%    \end{macrocode}
-% \iffalse
-%</tex>
-%<*lua,lua-cli>
-% \fi
-%  \begin{macrocode}
-defaultOptions.contentBlocksLanguageMap = "markdown-languages.json"
 %    \end{macrocode}
 % \par
 % \iffalse
