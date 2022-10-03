@@ -21767,6 +21767,56 @@ function M.reader.new(writer, options)
 % \par
 % \begin{markdown}
 %
+% If the \Opt{debugExtensions} option is enabled, serialize
+% \luamref{walkable_syntax} to a \acro{JSON} for debugging purposes.
+%
+% \end{markdown}
+%  \begin{macrocode}
+    if options.debugExtensions then
+      local sorted_lhs = {}
+      for lhs, _ in pairs(walkable_syntax) do
+        table.insert(sorted_lhs, lhs)
+      end
+      table.sort(sorted_lhs)
+
+      local output_lines = {"{"}
+      for lhs_index, lhs in ipairs(sorted_lhs) do
+        local encoded_lhs = util.encode_json_string(lhs)
+        table.insert(output_lines, [[    "]] ..encoded_lhs .. [[": []])
+        local rule = walkable_syntax[lhs]
+        for rhs_index, rhs in ipairs(rule) do
+          local human_readable_rhs
+          if type(rhs) == "string" then
+            human_readable_rhs = rhs .. [[ (built-in)]]
+          else
+            human_readable_rhs = [[Anonymous Pattern (]] .. rhs[2] .. [[)]]
+          end
+          local encoded_rhs = util.encode_json_string(human_readable_rhs)
+          local output_line = [[        "]] .. encoded_rhs .. [["]]
+          if rhs_index < #rule then
+            output_line = output_line .. ","
+          end
+          table.insert(output_lines, output_line)
+        end
+        local output_line = "    ]"
+        if lhs_index < #sorted_lhs then
+          output_line = output_line .. ","
+        end
+        table.insert(output_lines, output_line)
+      end
+      table.insert(output_lines, "}")
+
+      local output = table.concat(output_lines, "\n")
+      local output_filename = options.debugExtensionsFileName
+      local output_file = assert(io.open(output_filename, "w"),
+        [[Could not open file "]] .. output_filename .. [[" for writing]])
+      assert(output_file:write(output))
+      assert(output_file:close())
+    end
+%    \end{macrocode}
+% \par
+% \begin{markdown}
+%
 % Duplicate the `Inline` rule as `IndentedInline` with the right-hand-side
 % terminal symbol `Space` replaced with `OptionalIndent`.
 %
