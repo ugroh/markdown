@@ -17234,13 +17234,27 @@ texexec --passon=--shell-escape document.tex
         \seq_map_inline:cn
           { g_@@_ ##1 _options_seq }
           {
-              \@@_context_define_option_keyval:nn
-                { ##1 }
+%    \end{macrocode}
+% \begin{markdown}
+%
+% To make it easier to copy-and-paste options from Pandoc [@macfarlane22] such
+% as `fancy_lists`, `header_attributes`, and `pipe_tables`, we accept both
+% snake\\\_case and camelCase variants of options.
+%
+% \end{markdown}
+%  \begin{macrocode}
+              \@@_with_various_cases:nn
                 { ####1 }
+                {
+                  \@@_context_define_option_keyval:nnn
+                    { ##1 }
+                    { ####1 }
+                    { ########1 }
+                }
           }
       }
   }
-\cs_new:Nn \@@_context_define_option_keyval:nn
+\cs_new:Nn \@@_context_define_option_keyval:nnn
   {
     \prop_get:cnN
       { g_@@_ #1 _option_types_prop }
@@ -17249,7 +17263,7 @@ texexec --passon=--shell-escape document.tex
     \keys_define:nn
       { markdown/context-options }
       {
-        #2 .code:n = {
+        #3 .code:n = {
           \tl_set:Nx
             \l_tmpa_tl
             {
@@ -17273,7 +17287,7 @@ texexec --passon=--shell-escape document.tex
         \keys_define:nn
           { markdown/context-options }
           {
-            #2 .default:n = { true },
+            #3 .default:n = { true },
           }
       }
   }
