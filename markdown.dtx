@@ -2110,6 +2110,59 @@ interfaces and all the way up to the \LaTeX{} and \Hologo{ConTeXt} interfaces.
         \tl_tail:n { #1 }
       }
   }
+\cs_new:Nn \@@_with_various_cases:nn
+  {
+    \seq_clear:N
+      \l_tmpa_seq
+    \clist_map_inline:nn
+      {
+        @@_camel_case:N,
+        @@_snake_case:N,
+      }
+      {
+        \tl_set:Nn
+          \l_tmpa_tl
+          { #1 }
+        \use:c { ##1 }
+          \l_tmpa_tl
+        \seq_put_right:NV
+          \l_tmpa_seq
+          \l_tmpa_tl
+      }
+    \seq_map_inline:Nn
+      \l_tmpa_seq
+      { #2 }
+  }
+\cs_new:Nn \@@_camel_case:N
+  {
+    \regex_replace_all:nnN
+      { _ ([a-z]) }
+      { \c { str_uppercase:n } \cB\{ \1 \cE\} }
+      #1
+    \tl_set:Nx
+      #1
+      { #1 }
+  }
+\cs_new:Nn \@@_snake_case:N
+  {
+    \regex_replace_all:nnN
+      { ([a-z])([A-Z]) }
+      { \1 _ \c { str_lowercase:n } \cB\{ \2 \cE\} }
+      #1
+    \tl_set:Nx
+      #1
+      { #1 }
+  }
+\cs_new:Nn \@@_snake_case_without_underscores:N
+  {
+    \regex_replace_all:nnN
+      { ([a-z])([A-Z]) }
+      { \1 \c { str_lowercase:n } \cB\{ \2 \cE\} }
+      #1
+    \tl_set:Nx
+      #1
+      { #1 }
+  }
 %    \end{macrocode}
 % \iffalse
 %</tex>
