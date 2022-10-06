@@ -17007,16 +17007,20 @@ The following ordered list will be preceded by roman numerals:
   }
 \cs_new:Nn \@@_latex_define_renderer_prototype:nNn
   {
-    \keys_define:nn
-      { markdown/latex-options/renderer-prototypes }
+    \@@_with_various_cases:nn
+      { #1 }
       {
-        #1 .code:n = {
-          \cs_generate_from_arg_count:NNnn
-            #2
-            \cs_set:Npn
-            { #3 }
-            { ##1 }
-        },
+        \keys_define:nn
+          { markdown/latex-options/renderer-prototypes }
+          {
+            ##1 .code:n = {
+              \cs_generate_from_arg_count:NNnn
+                #2
+                \cs_set:Npn
+                { #3 }
+                { ####1 }
+            },
+          }
       }
   }
 \cs_generate_variant:Nn
