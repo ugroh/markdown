@@ -25354,11 +25354,20 @@ end
         { markdown/latex-options/renderers }
         { #1 }
     },
-    rendererPrototypes .code:n = {
-      \keys_set:nn
-        { markdown/latex-options/renderer-prototypes }
-        { #1 }
-    },
+  }
+\@@_with_various_cases:nn
+  { rendererPrototypes }
+  {
+    \keys_define:nn
+      { markdown/latex-options }
+      {
+        #1 .code:n = {
+          \keys_set:nn
+            { markdown/latex-options/renderer-prototypes }
+            { ##1 }
+        },
+      }
+  }
 %    \end{macrocode}
 % \begin{markdown}
 %
@@ -25367,7 +25376,11 @@ end
 %
 % \end{markdown}
 %  \begin{macrocode}
+\keys_define:nn
+  { markdown/latex-options }
+  {
     code .code:n = { #1 },
+  }
 %    \end{macrocode}
 % \begin{markdown}
 %
@@ -25377,11 +25390,18 @@ end
 %
 % \end{markdown}
 %  \begin{macrocode}
-    jekyllDataRenderers .code:n = {
-      \keys_set:nn
-        { markdown/latex-options/jekyll-data-renderers }
-        { #1 }
-    },
+\@@_with_various_cases:nn
+  { jekyllDataRenderers }
+  {
+    \keys_define:nn
+      { markdown/latex-options }
+      {
+        #1 .code:n = {
+          \keys_set:nn
+            { markdown/latex-options/jekyll-data-renderers }
+            { ##1 }
+        },
+      }
   }
 \keys_define:nn
   { markdown/latex-options/jekyll-data-renderers }
