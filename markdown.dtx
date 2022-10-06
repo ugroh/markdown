@@ -709,6 +709,13 @@ abbr {
   version   = {v2.5},
   url       = {https://mirrors.ctan.org/macros/latex/contrib/minted/minted.pdf},
   urldate   = {2020-09-01}}
+@online{macfarlane22,
+  title     = {Pandoc},
+  subtitle  = {a universal document converter},
+  author    = {John MacFarlane},
+  year      = {2022},
+  url       = {https://pandoc.org/},
+  urldate   = {2022-10-05}}
 @online{novotny15,
   author    = {Novotný, Vít},
   year      = {2015},
@@ -16714,13 +16721,27 @@ The following ordered list will be preceded by roman numerals:
         \seq_map_inline:cn
           { g_@@_ ##1 _options_seq }
           {
-              \@@_latex_define_option_keyval:nn
-                { ##1 }
+%    \end{macrocode}
+% \begin{markdown}
+%
+% To make it easier to copy-and-paste options from Pandoc [@macfarlane22] such
+% as `fancy_lists`, `header_attributes`, and `pipe_tables`, we accept both
+% snake\\\_case and camelCase variants of options.
+%
+% \end{markdown}
+%  \begin{macrocode}
+              \@@_with_various_cases:nn
                 { ####1 }
+                {
+                  \@@_latex_define_option_keyval:nnn
+                    { ##1 }
+                    { ####1 }
+                    { ########1 }
+                }
           }
       }
   }
-\cs_new:Nn \@@_latex_define_option_keyval:nn
+\cs_new:Nn \@@_latex_define_option_keyval:nnn
   {
     \prop_get:cnN
       { g_@@_ #1 _option_types_prop }
@@ -16729,7 +16750,7 @@ The following ordered list will be preceded by roman numerals:
     \keys_define:nn
       { markdown/latex-options }
       {
-        #2 .code:n = {
+        #3 .code:n = {
           \@@_set_option_value:nn
             { #2 }
             { ##1 }
@@ -16742,7 +16763,7 @@ The following ordered list will be preceded by roman numerals:
         \keys_define:nn
           { markdown/latex-options }
           {
-            #2 .default:n = { true },
+            #3 .default:n = { true },
           }
       }
 %    \end{macrocode}
@@ -16763,7 +16784,7 @@ The following ordered list will be preceded by roman numerals:
       {
         \tl_set:Nn
           \l_tmpa_tl
-          { #2 }
+          { #3 }
         \tl_reverse:N
           \l_tmpa_tl
         \str_if_eq:enF
@@ -16776,7 +16797,7 @@ The following ordered list will be preceded by roman numerals:
               \msg_error:nnn
                 { @@ }
                 { malformed-name-for-clist-option }
-                { #2 }
+                { #3 }
           }
         \tl_set:Nx
           \l_tmpa_tl
