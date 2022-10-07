@@ -1,5 +1,12 @@
 # Changes
 
+## 2.18.0
+
+Development:
+
+- Accept snake_case and snakecase variants of options in `\markdownSetup` and
+  `\setupmarkdown`. (#193, #194)
+
 ## 2.17.1 (2022-10-03)
 
 Fixes:
