@@ -766,9 +766,16 @@ abbr {
   subtitle  = {A \TeX nician's Reference},
   isbn      = {0-201-56882-0},
   pagetotal = {307},
-  date = {1992-02-01},
-  location = {Wokingham, England},
+  date      = {1992-02-01},
+  location  = {Wokingham, England},
   publisher = {Addison-Wesley}}
+@inproceedings{sharif10,
+  author    = {Sharif, Bonita and Maletic, Jonathan I.},
+  booktitle = {2010 IEEE 18th International Conference on Program Comprehension},
+  title     = {An Eye Tracking Study on camelCase and under\_score Identifier Styles},
+  year      = {2010},
+  pages     = {196-205},
+  doi       = {10.1109/ICPC.2010.41}}
 %</techdoc-bibliography>
 %<*latex-themes-witiko-markdown-techdoc>
 \ProvidesPackage{markdownthemewitiko_markdown_techdoc}[2022/02/23]
@@ -8694,7 +8701,34 @@ local function warn(s)
 
 local function error(s)
   io.stderr:write("Error: " .. s .. "\n")
-  os.exit(1) end
+  os.exit(1)
+end
+%    \end{macrocode}
+% \begin{markdown}
+%
+% To make it easier to copy-and-paste options from Pandoc [@macfarlane22] such
+% as `fancy_lists`, `header_attributes`, and `pipe_tables`, we accept
+% snake\\\_case in addition to camelCase variants of options. As a bonus,
+% studies [@sharif10] also show that snake\\\_case is faster to read than
+% camelCase.
+%
+% \end{markdown}
+%  \begin{macrocode}
+local function camel_case(s)
+  return s:gsub("_(%l)", function(m) return m[2]:upper() end)
+end
+
+local function snake_case(s)
+  return s:gsub("%l%u", function(m) return m[1] .. "_" .. m[2]:lower() end)
+end
+
+local cases = {camel_case, snake_case}
+local various_case_options = {}
+for option_name, _ in pairs(defaultOptions) do
+  for _, case in ipairs(cases) do
+    various_case_options[case(option_name)] = option_name
+  end
+end
 
 local process_options = true
 local options = {}
@@ -8723,10 +8757,13 @@ for i = 1, #arg do
 %  \begin{macrocode}
     elseif arg[i]:match("=") then
       local key, value = arg[i]:match("(.-)=(.*)")
+      if defaultOptions[key] == nil then
+        key = various_case_options[key]
+      end
 %    \end{macrocode}
 % \begin{markdown}
 % The \luamref{defaultOptions} table is consulted to identify whether \meta{value}
-% should be parsed as a string or as a boolean.
+% should be parsed as a string, number, table, or boolean.
 % \end{markdown}
 %  \begin{macrocode}
       local default_type = type(defaultOptions[key])
