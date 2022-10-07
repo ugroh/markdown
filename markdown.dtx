@@ -1895,7 +1895,7 @@ interfaces and all the way up to the \LaTeX{} and \Hologo{ConTeXt} interfaces.
 \prop_new:N \g_@@_default_lua_options_prop
 \seq_new:N \g_@@_option_layers_seq
 \tl_const:Nn \c_@@_option_layer_lua_tl { lua }
-\seq_put_right:NV \g_@@_option_layers_seq \c_@@_option_layer_lua_tl
+\seq_gput_right:NV \g_@@_option_layers_seq \c_@@_option_layer_lua_tl
 \cs_new:Nn
   \@@_add_lua_option:nnn
   {
@@ -1908,14 +1908,14 @@ interfaces and all the way up to the \LaTeX{} and \Hologo{ConTeXt} interfaces.
 \cs_new:Nn
   \@@_add_option:nnnn
   {
-    \seq_put_right:cn
+    \seq_gput_right:cn
       { g_@@_ #1 _options_seq }
       { #2 }
-    \prop_put:cnn
+    \prop_gput:cnn
       { g_@@_ #1 _option_types_prop }
       { #2 }
       { #3 }
-    \prop_put:cnn
+    \prop_gput:cnn
       { g_@@_default_ #1 _options_prop }
       { #2 }
       { #4 }
@@ -1974,19 +1974,19 @@ interfaces and all the way up to the \LaTeX{} and \Hologo{ConTeXt} interfaces.
   { nnnV }
 \seq_new:N \g_@@_option_types_seq
 \tl_const:Nn \c_@@_option_type_clist_tl { clist }
-\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_clist_tl
+\seq_gput_right:NV \g_@@_option_types_seq \c_@@_option_type_clist_tl
 \tl_const:Nn \c_@@_option_type_counter_tl { counter }
-\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_counter_tl
+\seq_gput_right:NV \g_@@_option_types_seq \c_@@_option_type_counter_tl
 \tl_const:Nn \c_@@_option_type_boolean_tl { boolean }
-\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_boolean_tl
+\seq_gput_right:NV \g_@@_option_types_seq \c_@@_option_type_boolean_tl
 \tl_const:Nn \c_@@_option_type_number_tl  { number  }
-\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_number_tl
+\seq_gput_right:NV \g_@@_option_types_seq \c_@@_option_type_number_tl
 \tl_const:Nn \c_@@_option_type_path_tl    { path    }
-\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_path_tl
+\seq_gput_right:NV \g_@@_option_types_seq \c_@@_option_type_path_tl
 \tl_const:Nn \c_@@_option_type_slice_tl   { slice   }
-\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_slice_tl
+\seq_gput_right:NV \g_@@_option_types_seq \c_@@_option_type_slice_tl
 \tl_const:Nn \c_@@_option_type_string_tl  { string  }
-\seq_put_right:NV \g_@@_option_types_seq \c_@@_option_type_string_tl
+\seq_gput_right:NV \g_@@_option_types_seq \c_@@_option_type_string_tl
 \cs_new:Nn
   \@@_get_option_type:nN
   {
@@ -2148,7 +2148,7 @@ interfaces and all the way up to the \LaTeX{} and \Hologo{ConTeXt} interfaces.
       #1
       { #1 }
   }
-\seq_put_right:Nn \g_@@_cases_seq { @@_camel_case:N }
+\seq_gput_right:Nn \g_@@_cases_seq { @@_camel_case:N }
 \cs_new:Nn \@@_snake_case:N
   {
     \regex_replace_all:nnN
@@ -2159,7 +2159,7 @@ interfaces and all the way up to the \LaTeX{} and \Hologo{ConTeXt} interfaces.
       #1
       { #1 }
   }
-\seq_put_right:Nn \g_@@_cases_seq { @@_snake_case:N }
+\seq_gput_right:Nn \g_@@_cases_seq { @@_snake_case:N }
 %    \end{macrocode}
 % \iffalse
 %</tex>
@@ -8998,7 +8998,7 @@ pdftex --shell-escape document.tex
 \prop_new:N \g_@@_plain_tex_option_types_prop
 \prop_new:N \g_@@_default_plain_tex_options_prop
 \tl_const:Nn \c_@@_option_layer_plain_tex_tl { plain_tex }
-\seq_put_right:NV \g_@@_option_layers_seq \c_@@_option_layer_plain_tex_tl
+\seq_gput_right:NV \g_@@_option_layers_seq \c_@@_option_layer_plain_tex_tl
 \cs_new:Nn
   \@@_add_plain_tex_option:nnn
   {
@@ -9450,14 +9450,14 @@ A PDF document named `document.pdf` should be produced and contain the text
 %
 % \end{markdown}
 %  \begin{macrocode}
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_plain_tex_options_seq
   { stripPercentSigns }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_plain_tex_option_types_prop
   { stripPercentSigns }
   { boolean }
-\prop_put:Nnx
+\prop_gput:Nnx
   \g_@@_default_plain_tex_options_prop
   { stripPercentSigns }
   { false }
@@ -9603,10 +9603,10 @@ following text:
 \def\markdownRendererTickedBox{%
   \markdownRendererTickedBoxPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { tickedBox }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { tickedBox }
   { 0 }
@@ -9614,10 +9614,10 @@ following text:
 \def\markdownRendererHalfTickedBox{%
   \markdownRendererHalfTickedBoxPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { halfTickedBox }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { halfTickedBox }
   { 0 }
@@ -9625,10 +9625,10 @@ following text:
 \def\markdownRendererUntickedBox{%
   \markdownRendererUntickedBoxPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { untickedBox }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { untickedBox }
   { 0 }
@@ -9767,10 +9767,10 @@ following text:
 \def\markdownRendererDocumentBegin{%
   \markdownRendererDocumentBeginPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { documentBegin }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { documentBegin }
   { 0 }
@@ -9778,10 +9778,10 @@ following text:
 \def\markdownRendererDocumentEnd{%
   \markdownRendererDocumentEndPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { documentEnd }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { documentEnd }
   { 0 }
@@ -9912,10 +9912,10 @@ following text:
 \def\markdownRendererInterblockSeparator{%
   \markdownRendererInterblockSeparatorPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { interblockSeparator }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { interblockSeparator }
   { 0 }
@@ -10058,10 +10058,10 @@ following text:
 \def\markdownRendererLineBreak{%
   \markdownRendererLineBreakPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { lineBreak }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { lineBreak }
   { 0 }
@@ -10169,10 +10169,10 @@ following text:
 \def\markdownRendererEllipsis{%
   \markdownRendererEllipsisPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { ellipsis }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { ellipsis }
   { 0 }
@@ -10254,10 +10254,10 @@ following text:
 \def\markdownRendererNbsp{%
   \markdownRendererNbspPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { nbsp }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { nbsp }
   { 0 }
@@ -10379,10 +10379,10 @@ following text, where the middot (`·`) denotes a non-breaking space:
 \def\markdownRendererLeftBrace{%
   \markdownRendererLeftBracePrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { leftBrace }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { leftBrace }
   { 0 }
@@ -10390,10 +10390,10 @@ following text, where the middot (`·`) denotes a non-breaking space:
 \def\markdownRendererRightBrace{%
   \markdownRendererRightBracePrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { rightBrace }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { rightBrace }
   { 0 }
@@ -10401,10 +10401,10 @@ following text, where the middot (`·`) denotes a non-breaking space:
 \def\markdownRendererDollarSign{%
   \markdownRendererDollarSignPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { dollarSign }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { dollarSign }
   { 0 }
@@ -10412,10 +10412,10 @@ following text, where the middot (`·`) denotes a non-breaking space:
 \def\markdownRendererPercentSign{%
   \markdownRendererPercentSignPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { percentSign }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { percentSign }
   { 0 }
@@ -10423,10 +10423,10 @@ following text, where the middot (`·`) denotes a non-breaking space:
 \def\markdownRendererAmpersand{%
   \markdownRendererAmpersandPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { ampersand }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { ampersand }
   { 0 }
@@ -10434,10 +10434,10 @@ following text, where the middot (`·`) denotes a non-breaking space:
 \def\markdownRendererUnderscore{%
   \markdownRendererUnderscorePrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { underscore }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { underscore }
   { 0 }
@@ -10445,10 +10445,10 @@ following text, where the middot (`·`) denotes a non-breaking space:
 \def\markdownRendererHash{%
   \markdownRendererHashPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { hash }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { hash }
   { 0 }
@@ -10456,10 +10456,10 @@ following text, where the middot (`·`) denotes a non-breaking space:
 \def\markdownRendererCircumflex{%
   \markdownRendererCircumflexPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { circumflex }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { circumflex }
   { 0 }
@@ -10467,10 +10467,10 @@ following text, where the middot (`·`) denotes a non-breaking space:
 \def\markdownRendererBackslash{%
   \markdownRendererBackslashPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { backslash }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { backslash }
   { 0 }
@@ -10478,10 +10478,10 @@ following text, where the middot (`·`) denotes a non-breaking space:
 \def\markdownRendererTilde{%
   \markdownRendererTildePrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { tilde }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { tilde }
   { 0 }
@@ -10489,10 +10489,10 @@ following text, where the middot (`·`) denotes a non-breaking space:
 \def\markdownRendererPipe{%
   \markdownRendererPipePrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { pipe }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { pipe }
   { 0 }
@@ -10634,10 +10634,10 @@ following text:
 \def\markdownRendererCodeSpan{%
   \markdownRendererCodeSpanPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { codeSpan }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { codeSpan }
   { 1 }
@@ -10758,10 +10758,10 @@ following text:
 \def\markdownRendererLink{%
   \markdownRendererLinkPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { link }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { link }
   { 4 }
@@ -10848,10 +10848,10 @@ that the \TeX{} engine has shell access.
 \def\markdownRendererImage{%
   \markdownRendererImagePrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { image }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { image }
   { 4 }
@@ -10885,10 +10885,10 @@ and the title of the content block.
 \def\markdownRendererContentBlock{%
   \markdownRendererContentBlockPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { contentBlock }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { contentBlock }
   { 4 }
@@ -10918,10 +10918,10 @@ as \mref{markdownRendererContentBlock}.
 \def\markdownRendererContentBlockOnlineImage{%
   \markdownRendererContentBlockOnlineImagePrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { contentBlockOnlineImage }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { contentBlockOnlineImage }
   { 4 }
@@ -11113,10 +11113,10 @@ following text:
 \def\markdownRendererContentBlockCode{%
   \markdownRendererContentBlockCodePrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { contentBlockCode }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { contentBlockCode }
   { 5 }
@@ -11147,10 +11147,10 @@ list is not tight). The macro receives no arguments.
 \def\markdownRendererUlBegin{%
   \markdownRendererUlBeginPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { ulBegin }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { ulBegin }
   { 0 }
@@ -11181,10 +11181,10 @@ is disabled. The macro receives no arguments.
 \def\markdownRendererUlBeginTight{%
   \markdownRendererUlBeginTightPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { ulBeginTight }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { ulBeginTight }
   { 0 }
@@ -11213,10 +11213,10 @@ list. The macro receives no arguments.
 \def\markdownRendererUlItem{%
   \markdownRendererUlItemPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { ulItem }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { ulItem }
   { 0 }
@@ -11245,10 +11245,10 @@ bulleted list. The macro receives no arguments.
 \def\markdownRendererUlItemEnd{%
   \markdownRendererUlItemEndPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { ulItemEnd }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { ulItemEnd }
   { 0 }
@@ -11278,10 +11278,10 @@ tight). The macro receives no arguments.
 \def\markdownRendererUlEnd{%
   \markdownRendererUlEndPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { ulEnd }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { ulEnd }
   { 0 }
@@ -11514,10 +11514,10 @@ following text:
 \def\markdownRendererUlEndTight{%
   \markdownRendererUlEndTightPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { ulEndTight }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { ulEndTight }
   { 0 }
@@ -11549,10 +11549,10 @@ option is disabled. The macro receives no arguments.
 \def\markdownRendererOlBegin{%
   \markdownRendererOlBeginPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { olBegin }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { olBegin }
   { 0 }
@@ -11584,10 +11584,10 @@ receives no arguments.
 \def\markdownRendererOlBeginTight{%
   \markdownRendererOlBeginTightPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { olBeginTight }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { olBeginTight }
   { 0 }
@@ -11621,10 +11621,10 @@ and the style of delimiters between list item labels and texts (`Default`,
 \def\markdownRendererFancyOlBegin{%
   \markdownRendererFancyOlBeginPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { fancyOlBegin }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { fancyOlBegin }
   { 2 }
@@ -11658,10 +11658,10 @@ the valid style values.
 \def\markdownRendererFancyOlBeginTight{%
   \markdownRendererFancyOlBeginTightPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { fancyOlBeginTight }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { fancyOlBeginTight }
   { 2 }
@@ -11692,10 +11692,10 @@ arguments.
 \def\markdownRendererOlItem{%
   \markdownRendererOlItemPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { olItem }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { olItem }
   { 0 }
@@ -11725,10 +11725,10 @@ option is disabled. The macro receives no arguments.
 \def\markdownRendererOlItemEnd{%
   \markdownRendererOlItemEndPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { olItemEnd }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { olItemEnd }
   { 0 }
@@ -11759,10 +11759,10 @@ receives a single numeric argument that corresponds to the item number.
 \def\markdownRendererOlItemWithNumber{%
   \markdownRendererOlItemWithNumberPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { olItemWithNumber }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { olItemWithNumber }
   { 1 }
@@ -11793,10 +11793,10 @@ no arguments.
 \def\markdownRendererFancyOlItem{%
   \markdownRendererFancyOlItemPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { fancyOlItem }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { fancyOlItem }
   { 0 }
@@ -11826,10 +11826,10 @@ option is enabled. The macro receives no arguments.
 \def\markdownRendererFancyOlItemEnd{%
   \markdownRendererFancyOlItemEndPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { fancyOlItemEnd }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { fancyOlItemEnd }
   { 0 }
@@ -11860,10 +11860,10 @@ argument that corresponds to the item number.
 \def\markdownRendererFancyOlItemWithNumber{%
   \markdownRendererFancyOlItemWithNumberPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { fancyOlItemWithNumber }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { fancyOlItemWithNumber }
   { 1 }
@@ -11894,10 +11894,10 @@ disabled. The macro receives no arguments.
 \def\markdownRendererOlEnd{%
   \markdownRendererOlEndPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { olEnd }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { olEnd }
   { 0 }
@@ -11929,10 +11929,10 @@ arguments.
 \def\markdownRendererOlEndTight{%
   \markdownRendererOlEndTightPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { olEndTight }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { olEndTight }
   { 0 }
@@ -11963,10 +11963,10 @@ option is enabled. The macro receives no arguments.
 \def\markdownRendererFancyOlEnd{%
   \markdownRendererFancyOlEndPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { fancyOlEnd }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { fancyOlEnd }
   { 0 }
@@ -12254,10 +12254,10 @@ following text:
 \def\markdownRendererFancyOlEndTight{%
   \markdownRendererFancyOlEndTightPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { fancyOlEndTight }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { fancyOlEndTight }
   { 0 }
@@ -12291,10 +12291,10 @@ list is not tight). The macro receives no arguments.
 \def\markdownRendererDlBegin{%
   \markdownRendererDlBeginPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { dlBegin }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { dlBegin }
   { 0 }
@@ -12325,10 +12325,10 @@ list is not tight). This macro will only be produced, when the
 \def\markdownRendererDlBeginTight{%
   \markdownRendererDlBeginTightPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { dlBeginTight }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { dlBeginTight }
   { 0 }
@@ -12358,10 +12358,10 @@ being defined.
 \def\markdownRendererDlItem{%
   \markdownRendererDlItemPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { dlItem }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { dlItem }
   { 1 }
@@ -12390,10 +12390,10 @@ definitions for a single term.
 \def\markdownRendererDlItemEnd{%
   \markdownRendererDlItemEndPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { dlItemEnd }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { dlItemEnd }
   { 0 }
@@ -12423,10 +12423,10 @@ a single term.
 \def\markdownRendererDlDefinitionBegin{%
   \markdownRendererDlDefinitionBeginPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { dlDefinitionBegin }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { dlDefinitionBegin }
   { 0 }
@@ -12456,10 +12456,10 @@ single term.
 \def\markdownRendererDlDefinitionEnd{%
   \markdownRendererDlDefinitionEndPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { dlDefinitionEnd }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { dlDefinitionEnd }
   { 0 }
@@ -12489,10 +12489,10 @@ tight). The macro receives no arguments.
 \def\markdownRendererDlEnd{%
   \markdownRendererDlEndPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { dlEnd }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { dlEnd }
   { 0 }
@@ -12858,10 +12858,10 @@ following text:
 \def\markdownRendererDlEndTight{%
   \markdownRendererDlEndTightPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { dlEndTight }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { dlEndTight }
   { 0 }
@@ -12978,10 +12978,10 @@ following text:
 \def\markdownRendererEmphasis{%
   \markdownRendererEmphasisPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { emphasis }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { emphasis }
   { 1 }
@@ -13011,10 +13011,10 @@ corresponds to the emphasized span of text.
 \def\markdownRendererStrongEmphasis{%
   \markdownRendererStrongEmphasisPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { strongEmphasis }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { strongEmphasis }
   { 1 }
@@ -13044,10 +13044,10 @@ a block quote. The macro receives no arguments.
 \def\markdownRendererBlockQuoteBegin{%
   \markdownRendererBlockQuoteBeginPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { blockQuoteBegin }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { blockQuoteBegin }
   { 0 }
@@ -13189,10 +13189,10 @@ following text:
 \def\markdownRendererBlockQuoteEnd{%
   \markdownRendererBlockQuoteEndPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { blockQuoteEnd }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { blockQuoteEnd }
   { 0 }
@@ -13223,10 +13223,10 @@ filename of a file contaning the code block contents.
 \def\markdownRendererInputVerbatim{%
   \markdownRendererInputVerbatimPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { inputVerbatim }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { inputVerbatim }
   { 1 }
@@ -13339,10 +13339,10 @@ following text except for the filename, which may differ:
 \def\markdownRendererInputFencedCode{%
   \markdownRendererInputFencedCodePrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { inputFencedCode }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { inputFencedCode }
   { 2 }
@@ -13373,10 +13373,10 @@ option is enabled. The macro receives no arguments.
 \def\markdownRendererJekyllDataBegin{%
   \markdownRendererJekyllDataBeginPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { jekyllDataBegin }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { jekyllDataBegin }
   { 0 }
@@ -13406,10 +13406,10 @@ The \mdef{markdownRendererJekyllDataEnd} macro represents the end of a
 \def\markdownRendererJekyllDataEnd{%
   \markdownRendererJekyllDataEndPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { jekyllDataEnd }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { jekyllDataEnd }
   { 0 }
@@ -13441,10 +13441,10 @@ arguments: the scalar key in the parent structure, cast to a string following
 \def\markdownRendererJekyllDataMappingBegin{%
   \markdownRendererJekyllDataMappingBeginPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { jekyllDataMappingBegin }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { jekyllDataMappingBegin }
   { 2 }
@@ -13474,10 +13474,10 @@ when the \Opt{jekyllData} option is enabled. The macro receives no arguments.
 \def\markdownRendererJekyllDataMappingEnd{%
   \markdownRendererJekyllDataMappingEndPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { jekyllDataMappingEnd }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { jekyllDataMappingEnd }
   { 0 }
@@ -13509,10 +13509,10 @@ arguments: the scalar key in the parent structure, cast to a string following
 \def\markdownRendererJekyllDataSequenceBegin{%
   \markdownRendererJekyllDataSequenceBeginPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { jekyllDataSequenceBegin }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { jekyllDataSequenceBegin }
   { 2 }
@@ -13542,10 +13542,10 @@ when the \Opt{jekyllData} option is enabled. The macro receives no arguments.
 \def\markdownRendererJekyllDataSequenceEnd{%
   \markdownRendererJekyllDataSequenceEndPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { jekyllDataSequenceEnd }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { jekyllDataSequenceEnd }
   { 0 }
@@ -13577,10 +13577,10 @@ following \acro{yaml} serialization rules.
 \def\markdownRendererJekyllDataBoolean{%
   \markdownRendererJekyllDataBooleanPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { jekyllDataBoolean }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { jekyllDataBoolean }
   { 2 }
@@ -13612,10 +13612,10 @@ following \acro{yaml} serialization rules.
 \def\markdownRendererJekyllDataNumber{%
   \markdownRendererJekyllDataNumberPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { jekyllDataNumber }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { jekyllDataNumber }
   { 2 }
@@ -13647,10 +13647,10 @@ serialization rules, and the scalar value.
 \def\markdownRendererJekyllDataString{%
   \markdownRendererJekyllDataStringPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { jekyllDataString }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { jekyllDataString }
   { 2 }
@@ -13686,10 +13686,10 @@ serialization rules.
 \def\markdownRendererJekyllDataEmpty{%
   \markdownRendererJekyllDataEmptyPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { jekyllDataEmpty }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { jekyllDataEmpty }
   { 1 }
@@ -13813,10 +13813,10 @@ The macro receives a single argument that corresponds to the heading text.
 \def\markdownRendererHeadingOne{%
   \markdownRendererHeadingOnePrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { headingOne }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { headingOne }
   { 1 }
@@ -13846,10 +13846,10 @@ text.
 \def\markdownRendererHeadingTwo{%
   \markdownRendererHeadingTwoPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { headingTwo }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { headingTwo }
   { 1 }
@@ -13879,10 +13879,10 @@ text.
 \def\markdownRendererHeadingThree{%
   \markdownRendererHeadingThreePrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { headingThree }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { headingThree }
   { 1 }
@@ -13912,10 +13912,10 @@ text.
 \def\markdownRendererHeadingFour{%
   \markdownRendererHeadingFourPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { headingFour }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { headingFour }
   { 1 }
@@ -13945,10 +13945,10 @@ text.
 \def\markdownRendererHeadingFive{%
   \markdownRendererHeadingFivePrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { headingFive }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { headingFive }
   { 1 }
@@ -14079,10 +14079,10 @@ following text:
 \def\markdownRendererHeadingSix{%
   \markdownRendererHeadingSixPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { headingSix }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { headingSix }
   { 1 }
@@ -14207,10 +14207,10 @@ following text:
 \def\markdownRendererHorizontalRule{%
   \markdownRendererHorizontalRulePrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { horizontalRule }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { horizontalRule }
   { 0 }
@@ -14329,10 +14329,10 @@ following text:
 \def\markdownRendererFootnote{%
   \markdownRendererFootnotePrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { footnote }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { footnote }
   { 1 }
@@ -14426,10 +14426,10 @@ following text:
 \def\markdownRendererCite{%
   \markdownRendererCitePrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { cite }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { cite }
   { 1 }
@@ -14518,10 +14518,10 @@ following text:
 \def\markdownRendererTextCite{%
   \markdownRendererTextCitePrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { textCite }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { textCite }
   { 1 }
@@ -14645,10 +14645,10 @@ following text:
 \def\markdownRendererTable{%
   \markdownRendererTablePrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { table }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { table }
   { 3 }
@@ -14739,10 +14739,10 @@ The horizontal margins should contain the following text:
 \def\markdownRendererInlineHtmlComment{%
   \markdownRendererInlineHtmlCommentPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { inlineHtmlComment }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { inlineHtmlComment }
   { 1 }
@@ -14750,10 +14750,10 @@ The horizontal margins should contain the following text:
 \def\markdownRendererBlockHtmlCommentBegin{%
   \markdownRendererBlockHtmlCommentBeginPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { blockHtmlCommentBegin }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { blockHtmlCommentBegin }
   { 0 }
@@ -14761,10 +14761,10 @@ The horizontal margins should contain the following text:
 \def\markdownRendererBlockHtmlCommentEnd{%
   \markdownRendererBlockHtmlCommentEndPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { blockHtmlCommentEnd }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { blockHtmlCommentEnd }
   { 0 }
@@ -14838,10 +14838,10 @@ following body text:
 \def\markdownRendererInlineHtmlTag{%
   \markdownRendererInlineHtmlTagPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { inlineHtmlTag }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { inlineHtmlTag }
   { 1 }
@@ -14849,10 +14849,10 @@ following body text:
 \def\markdownRendererInputBlockHtmlElement{%
   \markdownRendererInputBlockHtmlElementPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { inputBlockHtmlElement }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { inputBlockHtmlElement }
   { 1 }
@@ -14956,10 +14956,10 @@ following text:
 \def\markdownRendererAttributeIdentifier{%
   \markdownRendererAttributeIdentifierPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { attributeIdentifier }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { attributeIdentifier }
   { 1 }
@@ -14967,10 +14967,10 @@ following text:
 \def\markdownRendererAttributeClassName{%
   \markdownRendererAttributeClassNamePrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { attributeClassName }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { attributeClassName }
   { 1 }
@@ -14978,10 +14978,10 @@ following text:
 \def\markdownRendererAttributeKeyValue{%
   \markdownRendererAttributeKeyValuePrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { attributeKeyValue }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { attributeKeyValue }
   { 2 }
@@ -15071,10 +15071,10 @@ following text:
 \def\markdownRendererHeaderAttributeContextBegin{%
   \markdownRendererHeaderAttributeContextBeginPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { headerAttributeContextBegin }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { headerAttributeContextBegin }
   { 0 }
@@ -15082,10 +15082,10 @@ following text:
 \def\markdownRendererHeaderAttributeContextEnd{%
   \markdownRendererHeaderAttributeContextEndPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { headerAttributeContextEnd }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { headerAttributeContextEnd }
   { 0 }
@@ -15192,10 +15192,10 @@ following text:
 \def\markdownRendererStrikeThrough{%
   \markdownRendererStrikeThroughPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { strikeThrough }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { strikeThrough }
   { 1 }
@@ -15300,10 +15300,10 @@ following text:
 \def\markdownRendererSuperscript{%
   \markdownRendererSuperscriptPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { superscript }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { superscript }
   { 1 }
@@ -15408,10 +15408,10 @@ following text:
 \def\markdownRendererSubscript{%
   \markdownRendererSubscriptPrototype}%
 \ExplSyntaxOn
-\seq_put_right:Nn
+\seq_gput_right:Nn
   \g_@@_renderers_seq
   { subscript }
-\prop_put:Nnn
+\prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { subscript }
   { 1 }
@@ -16144,7 +16144,7 @@ document:
 \prop_new:N \g_@@_latex_option_types_prop
 \prop_new:N \g_@@_default_latex_options_prop
 \tl_const:Nn \c_@@_option_layer_latex_tl { latex }
-\seq_put_right:NV \g_@@_option_layers_seq \c_@@_option_layer_latex_tl
+\seq_gput_right:NV \g_@@_option_layers_seq \c_@@_option_layer_latex_tl
 \cs_new:Nn
   \@@_add_latex_option:nnn
   {
@@ -17262,7 +17262,7 @@ texexec --passon=--shell-escape document.tex
       #1
       { #1 }
   }
-\seq_put_right:Nn \g_@@_cases_seq { @@_caseless:N }
+\seq_gput_right:Nn \g_@@_cases_seq { @@_caseless:N }
 \cs_new:Nn \@@_context_define_option_keyval:nnn
   {
     \prop_get:cnN
@@ -25080,13 +25080,13 @@ end
 %  \begin{macrocode}
 \newcommand\markdownLaTeXThemeName{}
 \seq_new:N \g_@@_latex_themes_seq
-\seq_put_right:NV
+\seq_gput_right:NV
   \g_@@_latex_themes_seq
   \markdownLaTeXThemeName
 \newcommand\markdownLaTeXThemeLoad[2]{
   \def\@tempa{%
     \def\markdownLaTeXThemeName{#2}
-    \seq_put_right:NV
+    \seq_gput_right:NV
       \g_@@_latex_themes_seq
       \markdownLaTeXThemeName
     \RequirePackage{#1}
