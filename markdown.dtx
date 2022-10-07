@@ -17263,6 +17263,14 @@ texexec --passon=--shell-escape document.tex
           }
       }
   }
+%    \end{macrocode}
+% \begin{markdown}
+%
+% Furthermore, we also accept caseless variants of options in line with the
+% style of \Hologo{ConTeXt}.
+%
+% \end{markdown}
+%  \begin{macrocode}
 \cs_new:Nn \@@_caseless:N
   {
     \regex_replace_all:nnN
