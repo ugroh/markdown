@@ -4,8 +4,8 @@
 
 Development:
 
-- Accept snake_case and snakecase variants of options in `\markdownSetup` and
-  `\setupmarkdown`. (#193, #194)
+- Accept snake\_case variants of options in addition to camelCase variants in
+  `\markdownSetup` and Lua CLI. (#193, #194, #196, #198)
 
 ## 2.17.1 (2022-10-03)
 
