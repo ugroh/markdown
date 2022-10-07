@@ -8703,12 +8703,18 @@ end
 %
 % \end{markdown}
 %  \begin{macrocode}
-local function camel_case(s)
-  return s:gsub("_(%l)", function(m) return m[2]:upper() end)
+local function camel_case(option_name)
+  local cased_option_name = option_name:gsub("_(%l)", function(match)
+    return match:sub(2, 2):upper()
+  end)
+  return cased_option_name
 end
 
-local function snake_case(s)
-  return s:gsub("%l%u", function(m) return m[1] .. "_" .. m[2]:lower() end)
+local function snake_case(option_name)
+  local cased_option_name = option_name:gsub("%l%u", function(match)
+    return match:sub(1, 1) .. "_" .. match:sub(2, 2):lower()
+  end)
+  return cased_option_name
 end
 
 local cases = {camel_case, snake_case}
