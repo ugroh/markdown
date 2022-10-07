@@ -766,9 +766,16 @@ abbr {
   subtitle  = {A \TeX nician's Reference},
   isbn      = {0-201-56882-0},
   pagetotal = {307},
-  date = {1992-02-01},
-  location = {Wokingham, England},
+  date      = {1992-02-01},
+  location  = {Wokingham, England},
   publisher = {Addison-Wesley}}
+@inproceedings{sharif10,
+  author    = {Sharif, Bonita and Maletic, Jonathan I.},
+  booktitle = {2010 IEEE 18th International Conference on Program Comprehension},
+  title     = {An Eye Tracking Study on camelCase and under\_score Identifier Styles},
+  year      = {2010},
+  pages     = {196-205},
+  doi       = {10.1109/ICPC.2010.41}}
 %</techdoc-bibliography>
 %<*latex-themes-witiko-markdown-techdoc>
 \ProvidesPackage{markdownthemewitiko_markdown_techdoc}[2022/02/23]
@@ -16715,8 +16722,10 @@ The following ordered list will be preceded by roman numerals:
 % \begin{markdown}
 %
 % To make it easier to copy-and-paste options from Pandoc [@macfarlane22] such
-% as `fancy_lists`, `header_attributes`, and `pipe_tables`, we accept both
-% snake\\\_case and camelCase variants of options.
+% as `fancy_lists`, `header_attributes`, and `pipe_tables`, we accept
+% snake\\\_case in addition to camelCase variants of options. As a bonus,
+% studies [@sharif10] also show that snake\\\_case is faster to read than
+% camelCase.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -17236,8 +17245,10 @@ texexec --passon=--shell-escape document.tex
 % \begin{markdown}
 %
 % To make it easier to copy-and-paste options from Pandoc [@macfarlane22] such
-% as `fancy_lists`, `header_attributes`, and `pipe_tables`, we accept both
-% snake\\\_case and camelCase variants of options.
+% as `fancy_lists`, `header_attributes`, and `pipe_tables`, we accept
+% snake\\\_case in addition to camelCase variants of options. As a bonus,
+% studies [@sharif10] also show that snake\\\_case is faster to read than
+% camelCase.
 %
 % \end{markdown}
 %  \begin{macrocode}
