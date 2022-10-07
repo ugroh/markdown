@@ -4,8 +4,9 @@
 
 Development:
 
-- Accept snake_case and snakecase variants of options in `\markdownSetup` and
-  `\setupmarkdown`. (#193, #194)
+- Accept snake\_case variants of options in addition to camelCase variants in
+  `\markdownSetup`. Accept snake\_case and caseless variants of options in
+  `\setupmarkdown`. (#193, #194, #195, #197)
 
 ## 2.17.1 (2022-10-03)
 
