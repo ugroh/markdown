@@ -8690,7 +8690,40 @@ local function warn(s)
 
 local function error(s)
   io.stderr:write("Error: " .. s .. "\n")
-  os.exit(1) end
+  os.exit(1)
+end
+%    \end{macrocode}
+% \begin{markdown}
+%
+% To make it easier to copy-and-paste options from Pandoc [@macfarlane22] such
+% as `fancy_lists`, `header_attributes`, and `pipe_tables`, we accept
+% snake\\\_case in addition to camelCase variants of options. As a bonus,
+% studies [@sharif10] also show that snake\\\_case is faster to read than
+% camelCase.
+%
+% \end{markdown}
+%  \begin{macrocode}
+local function camel_case(option_name)
+  local cased_option_name = option_name:gsub("_(%l)", function(match)
+    return match:sub(2, 2):upper()
+  end)
+  return cased_option_name
+end
+
+local function snake_case(option_name)
+  local cased_option_name = option_name:gsub("%l%u", function(match)
+    return match:sub(1, 1) .. "_" .. match:sub(2, 2):lower()
+  end)
+  return cased_option_name
+end
+
+local cases = {camel_case, snake_case}
+local various_case_options = {}
+for option_name, _ in pairs(defaultOptions) do
+  for _, case in ipairs(cases) do
+    various_case_options[case(option_name)] = option_name
+  end
+end
 
 local process_options = true
 local options = {}
@@ -8719,10 +8752,13 @@ for i = 1, #arg do
 %  \begin{macrocode}
     elseif arg[i]:match("=") then
       local key, value = arg[i]:match("(.-)=(.*)")
+      if defaultOptions[key] == nil then
+        key = various_case_options[key]
+      end
 %    \end{macrocode}
 % \begin{markdown}
 % The \luamref{defaultOptions} table is consulted to identify whether \meta{value}
-% should be parsed as a string or as a boolean.
+% should be parsed as a string, number, table, or boolean.
 % \end{markdown}
 %  \begin{macrocode}
       local default_type = type(defaultOptions[key])
