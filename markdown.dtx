@@ -109,14 +109,14 @@
 
 % Set up the catcodes.
 \catcode`\_=12 % We won't be typesetting much math and Lua contains lots of `_`.
-\catcode`\^^B=8 % When we occasionally need subscripts , we will use `^^B` (STX).
+\catcode`\^^B=8 % When we occasionally need subscripts, we will use `^^B` (STX).
 
 % Set up the title page.
 \begin{markdown}
 ---
 title:    A Markdown Interpreter for \TeX
 url:      https://github.com/witiko/markdown
-author:   Vít Novotný
+authors:  [Vít Novotný]
 email:    witiko@mail.muni.cz
 revision: \markdownVersion
 date:     \markdownLastModified
@@ -821,7 +821,7 @@ abbr {
     },
   },
   jekyllDataRenderers = {
-    author = {%
+    /authors/* = {%
       \gdef\ltd@title@author{#1}%
       \hypersetup{pdfauthor={#1}}%
     },
