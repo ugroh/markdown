@@ -1,6 +1,6 @@
 local strike_through = {
   api_version = 2,
-  grammar_version = 1,
+  grammar_version = 2,
   finalize_grammar = function(reader)
     local nonspacechar = lpeg.P(1) - lpeg.S("\t ")
     local doubleslashes = lpeg.P("//")

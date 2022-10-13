@@ -513,10 +513,10 @@ it's also easy to use Markdown to write about Markdown's own syntax.
 
 ### Horizontal Rules
 
-You can produce a horizontal rule tag (`<hr />`) by placing three or
+You can produce a thematic break tag (`<hr />`) by placing three or
 more hyphens, asterisks, or underscores on a line by themselves. If you
 wish, you may use spaces between the hyphens or asterisks. Each of the
-following lines will produce a horizontal rule:
+following lines will produce a thematic break:
 
     * * *
 
@@ -1037,7 +1037,7 @@ BEGIN link
 - title: 
 END link
 interblockSeparator
-horizontalRule
+thematicBreak
 interblockSeparator
 headingTwo: Overview
 interblockSeparator
@@ -1147,7 +1147,7 @@ emphasis: always
 codeSpan: <
 codeSpan: (ampersand)
 interblockSeparator
-horizontalRule
+thematicBreak
 interblockSeparator
 headingTwo: Block Elements
 interblockSeparator
@@ -1317,7 +1317,7 @@ codeSpan: <hr />
 interblockSeparator
 inputVerbatim: ./_markdown_test/7b1097924e84f9f8a3fdd03ac0f4293a.verbatim
 interblockSeparator
-horizontalRule
+thematicBreak
 interblockSeparator
 headingTwo: Span Elements
 interblockSeparator
@@ -1489,7 +1489,7 @@ inputVerbatim: ./_markdown_test/128ef25040ed261c713730bf70f16fa3.verbatim
 interblockSeparator
 codeSpan: <img>
 interblockSeparator
-horizontalRule
+thematicBreak
 interblockSeparator
 headingTwo: Miscellaneous
 interblockSeparator

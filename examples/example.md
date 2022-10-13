@@ -10,7 +10,7 @@
 
 ###### This is an H6
 
-This is a text paragraph containing an ellipsis ... and followed by a horizontal rule.
+This is a text paragraph containing an ellipsis ... and followed by a thematic break.
 
 ***
 

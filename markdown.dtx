@@ -1634,7 +1634,7 @@ local walkable_syntax = {
   Block = {
     "Blockquote",
     "Verbatim",
-    "HorizontalRule",
+    "ThematicBreak",
     "BulletList",
     "OrderedList",
     "Heading",
@@ -4347,7 +4347,7 @@ following content:
 ``` lua
 local strike_through = {
   api_version = 2,
-  grammar_version = 1,
+  grammar_version = 2,
   finalize_grammar = function(reader)
     local nonspacechar = lpeg.P(1) - lpeg.S("\t ")
     local doubleslashes = lpeg.P("//")
@@ -4399,7 +4399,7 @@ be produced and contain the following text:
     "Block": [
         "Blockquote",
         "Verbatim",
-        "HorizontalRule",
+        "ThematicBreak",
         "BulletList",
         "OrderedList",
         "Heading",
@@ -4713,7 +4713,7 @@ defaultOptions.eagerCache = true
 %    ``` lua
 %    local strike_through = {
 %      api_version = 2,
-%      grammar_version = 1,
+%      grammar_version = 2,
 %      finalize_grammar = function(reader)
 %        local nonspacechar = lpeg.P(1) - lpeg.S("\t ")
 %        local doubleslashes = lpeg.P("//")
@@ -4748,7 +4748,7 @@ defaultOptions.eagerCache = true
 % \fi
 %  \begin{macrocode}
 metadata.user_extension_api_version = 2
-metadata.grammar_version = 1
+metadata.grammar_version = 2
 %    \end{macrocode}
 % \iffalse
 %</lua>
@@ -4778,7 +4778,7 @@ following content:
 ``` lua
 local strike_through = {
   api_version = 2,
-  grammar_version = 1,
+  grammar_version = 2,
   finalize_grammar = function(reader)
     local nonspacechar = lpeg.P(1) - lpeg.S("\t ")
     local doubleslashes = lpeg.P("//")
@@ -14140,8 +14140,8 @@ following text:
 %
 % \begin{markdown}
 
-#### Horizontal Rule Renderer
-The \mdef{markdownRendererHorizontalRule} macro represents a horizontal rule.
+#### Thematic Break Renderer
+The \mdef{markdownRendererThematicBreak} macro represents a thematic break.
 The macro receives no arguments.
 
 % \end{markdown}
@@ -14154,7 +14154,7 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \input markdown
-\def\markdownRendererHorizontalRule{\vfil\break}
+\def\markdownRendererThematicBreak{\vfil\break}
 \markdownBegin
 This is the first page.
 
@@ -14186,7 +14186,7 @@ following content:
 \usepackage{markdown}
 \markdownSetup{
   renderers = {
-    horizontalRule = \newpage,
+    thematicBreak = \newpage,
   },
 }
 \begin{document}
@@ -14218,7 +14218,7 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \usemodule[t][markdown]
-\def\markdownRendererHorizontalRule{\page[yes]}
+\def\markdownRendererThematicBreak{\page[yes]}
 \starttext
 \startmarkdown
 This is the first page.
@@ -14245,17 +14245,57 @@ following text:
 %</manual-tokens>
 %<*tex>
 % \fi
+% \begin{markdown}
 %
+% The \mdef{markdownRendererHorizontalRule} and
+% \mdef{markdownRendererHorizontalRulePrototype} macros have been deprecated
+% and will be removed in Markdown 3.0.0.
+%
+% \end{markdown}
 %  \begin{macrocode}
-\def\markdownRendererHorizontalRule{%
-  \markdownRendererHorizontalRulePrototype}%
 \ExplSyntaxOn
+\cs_new:Npn
+  \markdownRendererThematicBreak
+  {
+    \cs_if_exist:NTF
+      \markdownRendererHorizontalRule
+      {
+        \markdownWarning
+          {
+            Horizontal~rule~renderer~has~been~deprecated,~
+            to~be~removed~in~Markdown~3.0.0
+          }
+        \markdownRendererHorizontalRule
+      }
+      {
+        \cs_if_exist:NTF
+          \markdownRendererHorizontalRulePrototype
+          {
+            \markdownWarning
+              {
+                Horizontal~rule~renderer~prototype~has~been~deprecated,~
+                to~be~removed~in~Markdown~3.0.0
+              }
+            \markdownRendererHorizontalRulePrototype
+          }
+          {
+            \markdownRendererThematicBreakPrototype
+          }
+      }
+  }
 \seq_gput_right:Nn
   \g_@@_renderers_seq
   { horizontalRule }
 \prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { horizontalRule }
+  { 0 }
+\seq_gput_right:Nn
+  \g_@@_renderers_seq
+  { thematicBreak }
+\prop_gput:Nnn
+  \g_@@_renderer_arities_prop
+  { thematicBreak }
   { 0 }
 \ExplSyntaxOff
 %    \end{macrocode}
@@ -20020,13 +20060,14 @@ function M.writer.new(options)
 % \par
 % \begin{markdown}
 %
-% Define \luamdef{writer->hrule} as the output format of a horizontal rule.
+% Define \luamdef{writer->thematic_break} as the output format of a thematic
+% break.
 %
 % \end{markdown}
 %  \begin{macrocode}
-  function self.hrule()
+  function self.thematic_break()
     if not self.is_writing then return "" end
-    return "\\markdownRendererHorizontalRule{}"
+    return "\\markdownRendererThematicBreak{}"
   end
 %    \end{macrocode}
 % \par
@@ -21702,10 +21743,10 @@ function M.reader.new(writer, options)
                        / self.parser_functions.parse_blocks_nested
                        / writer.blockquote
 
-  parsers.HorizontalRule = ( parsers.lineof(parsers.asterisk)
-                           + parsers.lineof(parsers.dash)
-                           + parsers.lineof(parsers.underscore)
-                           ) / writer.hrule
+  parsers.ThematicBreak = ( parsers.lineof(parsers.asterisk)
+                          + parsers.lineof(parsers.dash)
+                          + parsers.lineof(parsers.underscore)
+                          ) / writer.thematic_break
 
   parsers.Reference    = parsers.define_reference_parser / register_link
 
@@ -21756,14 +21797,14 @@ function M.reader.new(writer, options)
                                 * parsers.ListBlock
 
   parsers.TightListItem = function(starter)
-      return -parsers.HorizontalRule
+      return -parsers.ThematicBreak
              * (Cs(starter / "" * parsers.tickbox^-1 * parsers.ListBlock * parsers.NestedList^-1)
                / self.parser_functions.parse_blocks_nested)
              * -(parsers.blanklines * parsers.indent)
   end
 
   parsers.LooseListItem = function(starter)
-      return -parsers.HorizontalRule
+      return -parsers.ThematicBreak
              * Cs( starter / "" * parsers.tickbox^-1 * parsers.ListBlock * Cc("\n")
                * (parsers.NestedList + parsers.ListContinuationBlock^0)
                * (parsers.blanklines / "\n\n")
@@ -21946,7 +21987,7 @@ function M.reader.new(writer, options)
 
         Blockquote            = parsers.Blockquote,
         Verbatim              = parsers.Verbatim,
-        HorizontalRule        = parsers.HorizontalRule,
+        ThematicBreak         = parsers.ThematicBreak,
         BulletList            = parsers.BulletList,
         OrderedList           = parsers.OrderedList,
         Heading               = parsers.Heading,
@@ -23187,14 +23228,14 @@ M.extensions.jekyll_data = function(expect_jekyll_data)
       local UnexpectedJekyllData
                     = P("---")
                     * parsers.blankline / 0
-                    * #(-parsers.blankline)  -- if followed by blank, it's an hrule
+                    * #(-parsers.blankline)  -- if followed by blank, it's thematic break
                     * JekyllData
                     * (P("---") + P("..."))
 
       local ExpectedJekyllData
                     = ( P("---")
                       * parsers.blankline / 0
-                      * #(-parsers.blankline)  -- if followed by blank, it's an hrule
+                      * #(-parsers.blankline)  -- if followed by blank, it's thematic break
                       )^-1
                     * JekyllData
                     * (P("---") + P("..."))^-1
@@ -23608,14 +23649,14 @@ M.extensions.fancy_lists = function()
                                   * ListBlock
 
       local TightListItem = function(starter)
-          return -parsers.HorizontalRule
+          return -parsers.ThematicBreak
                  * (Cs(starter / "" * parsers.tickbox^-1 * ListBlock * NestedList^-1)
                    / self.parser_functions.parse_blocks_nested)
                  * -(parsers.blanklines * parsers.indent)
       end
 
       local LooseListItem = function(starter)
-          return -parsers.HorizontalRule
+          return -parsers.ThematicBreak
                  * Cs( starter / "" * parsers.tickbox^-1 * ListBlock * Cc("\n")
                    * (NestedList + ListContinuationBlock^0)
                    * (parsers.blanklines / "\n\n")
@@ -24082,7 +24123,7 @@ end
 \def\markdownRendererHeadingFourPrototype#1{#1}%
 \def\markdownRendererHeadingFivePrototype#1{#1}%
 \def\markdownRendererHeadingSixPrototype#1{#1}%
-\def\markdownRendererHorizontalRulePrototype{}%
+\def\markdownRendererThematicBreakPrototype{}%
 \def\markdownRendererFootnotePrototype#1{#1}%
 \def\markdownRendererCitePrototype#1{}%
 \def\markdownRendererTextCitePrototype#1{}%
@@ -25853,7 +25894,7 @@ end
         \catcode`\#=12\relax
       }%
     \fi},
-  horizontalRule = {\noindent\rule[0.5ex]{\linewidth}{1pt}},
+  thematicBreak = {\noindent\rule[0.5ex]{\linewidth}{1pt}},
   footnote = {\footnote{#1}}}}
 %    \end{macrocode}
 % \par
@@ -26704,7 +26745,7 @@ end
 \def\markdownRendererHeadingFourPrototype#1{\subsubsection{#1}}%
 \def\markdownRendererHeadingFivePrototype#1{\subsubsubsection{#1}}%
 \def\markdownRendererHeadingSixPrototype#1{\subsubsubsubsection{#1}}%
-\def\markdownRendererHorizontalRulePrototype{%
+\def\markdownRendererThematicBreakPrototype{%
   \blackrule[height=1pt, width=\hsize]}%
 \def\markdownRendererFootnotePrototype#1{\footnote{#1}}%
 \def\markdownRendererTickedBoxPrototype{$\boxtimes$}

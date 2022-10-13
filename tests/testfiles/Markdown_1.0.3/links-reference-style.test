@@ -114,7 +114,7 @@ interblockSeparator
 interblockSeparator
 inputVerbatim: ./_markdown_test/1d6cdc132aafa7c2999b741379103fae.verbatim
 interblockSeparator
-horizontalRule
+thematicBreak
 interblockSeparator
 BEGIN link
 - label: this
@@ -168,7 +168,7 @@ BEGIN link
 END link
 interblockSeparator
 interblockSeparator
-horizontalRule
+thematicBreak
 interblockSeparator
 BEGIN link
 - label: link breaks
