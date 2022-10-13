@@ -8,6 +8,11 @@ Development:
   `\markdownSetup` and Lua CLI. Accept snake\_case and caseless variants of
   options in `\setupmarkdown`. (#193, #194, #195, #196, #197, #198)
 
+Fixes:
+
+- Fix missing support for forward slashes in
+  `\markdownSetup{jekyllDataRenderers = {...}}` keys. (#199, #200)
+
 ## 2.17.1 (2022-10-03)
 
 Fixes:
