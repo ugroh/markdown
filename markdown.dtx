@@ -25461,9 +25461,27 @@ end
       { markdown/latex-options }
       {
         #1 .code:n = {
-          \keys_set:nn
-            { markdown/latex-options/jekyll-data-renderers }
+          \tl_set:Nn
+            \l_tmpa_tl
             { ##1 }
+%    \end{macrocode}
+% \begin{markdown}
+%
+% To ensure that keys containing forward slashes get passed correctly, we
+% replace all forward slashes in the nput with backslash tokens with category
+% code letter and then undo the replacement. This means that if any unbraced
+% backslash tokens with category code letter exist in the input, they will be
+% replaced with forward slashes. However, this should be extremely rare.
+%
+% \end{markdown}
+%  \begin{macrocode}
+          \tl_replace_all:NnV
+            \l_tmpa_tl
+            { / }
+            \c_backslash_str
+          \keys_set:nV
+            { markdown/latex-options/jekyll-data-renderers }
+            \l_tmpa_tl
         },
       }
   }
@@ -25474,6 +25492,10 @@ end
       \tl_set_eq:NN
         \l_tmpa_tl
         \l_keys_key_str
+      \tl_replace_all:NVn
+        \l_tmpa_tl
+        \c_backslash_str
+        { / }
       \tl_put_right:Nn
         \l_tmpa_tl
         {
@@ -25487,6 +25509,12 @@ end
 \cs_generate_variant:Nn
   \keys_define:nn
   { nV }
+\cs_generate_variant:Nn
+  \tl_replace_all:Nnn
+  { NVn }
+\cs_generate_variant:Nn
+  \tl_replace_all:Nnn
+  { NnV }
 \ExplSyntaxOff
 %    \end{macrocode}
 % \par
