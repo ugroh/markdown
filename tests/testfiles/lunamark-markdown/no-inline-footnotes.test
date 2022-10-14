@@ -1,14 +1,14 @@
 <<<
-This test ensures that the Lua `inlineFootnotes` option is disabled by default.
-The following inline footnotes should resolve to footnotes.
+This test ensures that the Lua `inlineNotes` option is disabled by default.
+The following inline notes should resolve to notes.
 
-^[Here is the footnote.  It can go anywhere after the footnote
+^[Here is the note.  It can go anywhere after the note
 reference.  It need *not* be placed at the end of the document.]
 
-\^[This should *not* be a footnote, because it has been escaped.]
+\^[This should *not* be a note, because it has been escaped.]
 >>>
 documentBegin
-codeSpan: inlineFootnotes
+codeSpan: inlineNotes
 interblockSeparator
 circumflex
 emphasis: not

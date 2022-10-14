@@ -630,7 +630,7 @@ And then define the link:
 Link definitions can be placed anywhere in your Markdown document. I
 tend to put them immediately after each paragraph in which they're
 used, but if you want, you can put them all at the end of your
-document, sort of like footnotes.
+document, sort of like notes.
 
 Here's an example of reference links in action:
 

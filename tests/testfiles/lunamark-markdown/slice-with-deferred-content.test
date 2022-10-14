@@ -1,15 +1,15 @@
-\def\markdownOptionFootnotes{true}
+\def\markdownOptionNotes{true}
 \def\markdownOptionHeaderAttributes{true}
 \def\markdownOptionSlice{section-with-deferred-content}
 <<<
 # This is a section
 # This is another section {#section-with-deferred-content}
-Here is a [^footnote], a [link][], and an ![image][].
+Here is a [^note], a [link][], and an ![image][].
 
 # This is yet another section
 Here are the definitions:
 
- [^footnote]: This is the text of the footnote.
+ [^note]: This is the text of the note.
 
  [link]: http://link (This is the title of the link.)
 
@@ -20,7 +20,7 @@ headerAttributeContextBegin
 attributeIdentifier: section-with-deferred-content
 headingOne: This is another section
 interblockSeparator
-footnote: This is the text of the footnote.
+note: This is the text of the note.
 BEGIN link
 - label: link
 - URI: http://link

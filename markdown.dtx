@@ -79,11 +79,11 @@
   citations,
   definitionLists,
   fencedCode,
-  footnotes,
+  notes,
   headerAttributes,
   html,
   hybrid,
-  inlineFootnotes,
+  inlineNotes,
   jekyllData,
   relativeReferences,
   stripPercentSigns,
@@ -1053,7 +1053,7 @@ local lpeg = require("lpeg")
 % \pkg{Selene Unicode}
 %
 %:    A library that provides support for the processing of wide strings. It is
-%     used by the \pkg{Lunamark} library to cast image, link, and footnote tags
+%     used by the \pkg{Lunamark} library to cast image, link, and note tags
 %     to the lower case. \pkg{Selene Unicode} is included in all releases of
 %     Lua\TeX{} (\TeX Live${}\geq{}2008$).
 %
@@ -5401,33 +5401,33 @@ defaultOptions.finalizeCache = false
 %</lua,lua-cli>
 %<*manual-options>
 
-#### Option `footnotes`
+#### Option `notes`
 
-`footnotes` (default value: `false`)
+`notes` (default value: `false`)
 
 % \fi
 % \begin{markdown}
 %
-% \Optitem[false]{footnotes}{\opt{true}, \opt{false}}
+% \Optitem[false]{notes}{\opt{true}, \opt{false}}
 %
 :    true
 
-     :  Enable the Pandoc footnote syntax extension:
+     :  Enable the Pandoc note syntax extension:
 
         ``` md
-        Here is a footnote reference,[^1] and another.[^longnote]
+        Here is a note reference,[^1] and another.[^longnote]
 
-        [^1]: Here is the footnote.
+        [^1]: Here is the note.
 
         [^longnote]: Here's one with multiple blocks.
 
             Subsequent paragraphs are indented to show that they
-        belong to the previous footnote.
+        belong to the previous note.
 
                 { some.code }
 
             The whole paragraph can be indented, or just the
-            first line.  In this way, multi-paragraph footnotes
+            first line.  In this way, multi-paragraph notes
             work like multi-paragraph list items.
 
         This paragraph won't be part of the note, because it
@@ -5436,7 +5436,7 @@ defaultOptions.finalizeCache = false
 
 :    false
 
-     :    Disable the Pandoc footnote syntax extension.
+     :    Disable the Pandoc note syntax extension.
 
 % \end{markdown}
 % \iffalse
@@ -5447,22 +5447,22 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \documentclass{article}
-\usepackage[footnotes]{markdown}
+\usepackage[notes]{markdown}
 \begin{document}
 \begin{markdown}
-Here is a footnote reference,[^1] and another.[^longnote]
+Here is a note reference,[^1] and another.[^longnote]
 
-[^1]: Here is the footnote.
+[^1]: Here is the note.
 
 [^longnote]: Here's one with multiple blocks.
 
     Subsequent paragraphs are indented to show that they
-belong to the previous footnote.
+belong to the previous note.
 
         { some.code }
 
     The whole paragraph can be indented, or just the
-    first line.  In this way, multi-paragraph footnotes
+    first line.  In this way, multi-paragraph notes
     work like multi-paragraph list items.
 
 This paragraph won't be part of the note, because it
@@ -5477,19 +5477,19 @@ lualatex document.tex
 A PDF document named `document.pdf` should be produced and contain the
 following text:
 
-> Here is a footnote reference,[^1] and another.[^longnote]
+> Here is a note reference,[^1] and another.[^longnote]
 > 
-> [^1]: Here is the footnote.
+> [^1]: Here is the note.
 > 
 > [^longnote]: Here's one with multiple blocks.
 > 
 >     Subsequent paragraphs are indented to show that they
-> belong to the previous footnote.
+> belong to the previous note.
 > 
 >         { some.code }
 > 
 >     The whole paragraph can be indented, or just the
->     first line.  In this way, multi-paragraph footnotes
+>     first line.  In this way, multi-paragraph notes
 >     work like multi-paragraph list items.
 > 
 > This paragraph won't be part of the note, because it
@@ -5501,22 +5501,22 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \usemodule[t][markdown]
-\setupmarkdown[footnotes = yes]
+\setupmarkdown[notes = yes]
 \starttext
 \startmarkdown
-Here is a footnote reference,[^1] and another.[^longnote]
+Here is a note reference,[^1] and another.[^longnote]
 
-[^1]: Here is the footnote.
+[^1]: Here is the note.
 
 [^longnote]: Here's one with multiple blocks.
 
     Subsequent paragraphs are indented to show that they
-belong to the previous footnote.
+belong to the previous note.
 
         { some.code }
 
     The whole paragraph can be indented, or just the
-    first line.  In this way, multi-paragraph footnotes
+    first line.  In this way, multi-paragraph notes
     work like multi-paragraph list items.
 
 This paragraph won't be part of the note, because it
@@ -5531,19 +5531,19 @@ context document.tex
 A PDF document named `document.pdf` should be produced and contain the
 following text:
 
-> Here is a footnote reference,[^1] and another.[^longnote]
+> Here is a note reference,[^1] and another.[^longnote]
 > 
-> [^1]: Here is the footnote.
+> [^1]: Here is the note.
 > 
 > [^longnote]: Here's one with multiple blocks.
 > 
 >     Subsequent paragraphs are indented to show that they
-> belong to the previous footnote.
+> belong to the previous note.
 > 
 >         { some.code }
 > 
 >     The whole paragraph can be indented, or just the
->     first line.  In this way, multi-paragraph footnotes
+>     first line.  In this way, multi-paragraph notes
 >     work like multi-paragraph list items.
 > 
 > This paragraph won't be part of the note, because it
@@ -5552,9 +5552,19 @@ following text:
 %</manual-options>
 %<*tex>
 % \fi
+% \begin{markdown}
+%
+% The footnotes option has been deprecated and will be removed in
+% Markdown 3.0.0.
+%
+% \end{markdown}
 %  \begin{macrocode}
 \@@_add_lua_option:nnn
   { footnotes }
+  { boolean }
+  { false }
+\@@_add_lua_option:nnn
+  { notes }
   { boolean }
   { false }
 %    \end{macrocode}
@@ -5564,6 +5574,7 @@ following text:
 % \fi
 %  \begin{macrocode}
 defaultOptions.footnotes = false
+defaultOptions.notes = false
 %    \end{macrocode}
 % \par
 % \iffalse
@@ -6378,18 +6389,18 @@ defaultOptions.hybrid = false
 %</lua,lua-cli>
 %<*manual-options>
 
-#### Option `inlineFootnotes`
+#### Option `inlineNotes`
 
-`inlineFootnotes` (default value: `false`)
+`inlineNotes` (default value: `false`)
 
 % \fi
 % \begin{markdown}
 %
-% \Optitem[false]{inlineFootnotes}{\opt{true}, \opt{false}}
+% \Optitem[false]{inlineNotes}{\opt{true}, \opt{false}}
 %
 :    true
 
-     :  Enable the Pandoc inline footnote syntax extension:
+     :  Enable the Pandoc inline note syntax extension:
 
         ``` md
         Here is an inline note.^[Inlines notes are easier to
@@ -6399,7 +6410,7 @@ defaultOptions.hybrid = false
 
 :    false
 
-     :  Disable the Pandoc inline footnote syntax extension.
+     :  Disable the Pandoc inline note syntax extension.
 
 % \end{markdown}
 % \iffalse
@@ -6410,7 +6421,7 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \documentclass{article}
-\usepackage[inlineFootnotes]{markdown}
+\usepackage[inlineNotes]{markdown}
 \begin{document}
 \begin{markdown}
 Here is an inline note.^[Inlines notes are easier to
@@ -6436,7 +6447,7 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \usemodule[t][markdown]
-\setupmarkdown[inlineFootnotes = yes]
+\setupmarkdown[inlineNotes = yes]
 \starttext
 \startmarkdown
 Here is an inline note.^[Inlines notes are easier to
@@ -6459,9 +6470,19 @@ following text:
 %</manual-options>
 %<*tex>
 % \fi
+% \begin{markdown}
+%
+% The inlineFootnotes option has been deprecated and will be removed in
+% Markdown 3.0.0.
+%
+% \end{markdown}
 %  \begin{macrocode}
 \@@_add_lua_option:nnn
   { inlineFootnotes }
+  { boolean }
+  { false }
+\@@_add_lua_option:nnn
+  { inlineNotes }
   { boolean }
   { false }
 %    \end{macrocode}
@@ -6471,6 +6492,7 @@ following text:
 % \fi
 %  \begin{macrocode}
 defaultOptions.inlineFootnotes = false
+defaultOptions.inlineNotes = false
 %    \end{macrocode}
 % \par
 % \iffalse
@@ -10982,8 +11004,8 @@ as \mref{markdownRendererContentBlock}.
 The \mdef{markdownRendererContentBlockCode} macro represents an iA\,Writer
 content block that was recognized as a file in a known programming language
 by its filename extension $s$. If any `markdown-languages.json` file found
-by \pkg{kpathsea}\footnote{Filenames other than `markdown-languages.json` may
-be specified using the `contentBlocksLanguageMap` Lua option.} contains a
+by \pkg{kpathsea}^[Filenames other than `markdown-languages.json` may
+be specified using the `contentBlocksLanguageMap` Lua option.] contains a
 record $(k, v)$, then a non-online-image content block with the filename
 extension $s, s$`:lower()`${}=k$ is considered to be in a known programming
 language $v$.
@@ -14308,10 +14330,10 @@ following text:
 %
 % \begin{markdown}
 
-#### Footnote Renderer
-The \mdef{markdownRendererFootnote} macro represents a footnote. This macro
-will only be produced, when the \Opt{footnotes} option is enabled.  The
-macro receives a single argument that corresponds to the footnote text.
+#### Note Renderer
+The \mdef{markdownRendererNote} macro represents a note. This macro
+will only be produced, when the \Opt{notes} option is enabled. The
+macro receives a single argument that corresponds to the note text.
 
 % \end{markdown}
 %
@@ -14323,14 +14345,14 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \input markdown
-\def\markdownOptionFootnotes{true}
-\def\markdownRendererFootnote#1{ (and \lowercase{#1})}
+\def\markdownOptionNotes{true}
+\def\markdownRendererNote#1{ (and \lowercase{#1})}
 \markdownBegin
 This is some text[^1] and this is some other text[^2].
 
- [^1]: this is a footnote
+ [^1]: this is a note
 
- [^2]: this is some other footnote
+ [^2]: this is some other note
 \markdownEnd
 \bye
 ```````
@@ -14341,8 +14363,8 @@ luatex document.tex
 A PDF document named `document.pdf` should be produced and contain the
 following text:
 
-> This is some text (and this is a footnote) and this is some other
-> text (and this is some other footnote).
+> This is some text (and this is a note) and this is some other
+> text (and this is some other note).
 
 ##### \LaTeX{} Example {.unnumbered}
 
@@ -14350,19 +14372,19 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \documentclass{article}
-\usepackage[footnotes]{markdown}
+\usepackage[notes]{markdown}
 \markdownSetup{
   renderers = {
-    footnote = { (and \MakeLowercase{#1})},
+    note = { (and \MakeLowercase{#1})},
   },
 }
 \begin{document}
 \begin{markdown}
 This is some text[^1] and this is some other text[^2].
 
- [^1]: this is a footnote
+ [^1]: this is a note
 
- [^2]: this is some other footnote
+ [^2]: this is some other note
 \end{markdown}
 \end{document}
 ```````
@@ -14373,8 +14395,8 @@ lualatex document.tex
 A PDF document named `document.pdf` should be produced and contain the
 following text:
 
-> This is some text (and this is a footnote) and this is some other
-> text (and this is some other footnote).
+> This is some text (and this is a note) and this is some other
+> text (and this is some other note).
 
 ##### \Hologo{ConTeXt} Example {.unnumbered}
 
@@ -14382,15 +14404,15 @@ Using a text editor, create a text document named `document.tex` with the
 following content:
 ``` tex
 \usemodule[t][markdown]
-\setupmarkdown[footnotes = yes]
-\def\markdownRendererFootnote#1{ (and \lowercase{#1})}
+\setupmarkdown[notes = yes]
+\def\markdownRendererNote#1{ (and \lowercase{#1})}
 \starttext
 \startmarkdown
 This is some text[^1] and this is some other text[^2].
 
- [^1]: this is a footnote
+ [^1]: this is a note
 
- [^2]: this is some other footnote
+ [^2]: this is some other note
 \stopmarkdown
 \stoptext
 ```````
@@ -14401,23 +14423,63 @@ context document.tex
 A PDF document named `document.pdf` should be produced and contain the
 following text:
 
-> This is some text (and this is a footnote) and this is some other
-> text (and this is some other footnote).
+> This is some text (and this is a note) and this is some other
+> text (and this is some other note).
 
 %</manual-tokens>
 %<*tex>
 % \fi
+% \begin{markdown}
 %
+% The \mdef{markdownRendererFootnote} and
+% \mdef{markdownRendererFootnotePrototype} macros have been deprecated
+% and will be removed in Markdown 3.0.0.
+%
+% \end{markdown}
 %  \begin{macrocode}
-\def\markdownRendererFootnote{%
-  \markdownRendererFootnotePrototype}%
 \ExplSyntaxOn
+\cs_new:Npn
+  \markdownRendererNote
+  {
+    \cs_if_exist:NTF
+      \markdownRendererFootnote
+      {
+        \markdownWarning
+          {
+            Footnote~renderer~has~been~deprecated,~
+            to~be~removed~in~Markdown~3.0.0
+          }
+        \markdownRendererFootnote
+      }
+      {
+        \cs_if_exist:NTF
+          \markdownRendererFootnotePrototype
+          {
+            \markdownWarning
+              {
+                Footnote~renderer~prototype~has~been~deprecated,~
+                to~be~removed~in~Markdown~3.0.0
+              }
+            \markdownRendererFootnotePrototype
+          }
+          {
+            \markdownRendererNotePrototype
+          }
+      }
+  }
 \seq_gput_right:Nn
   \g_@@_renderers_seq
   { footnote }
 \prop_gput:Nnn
   \g_@@_renderer_arities_prop
   { footnote }
+  { 1 }
+\seq_gput_right:Nn
+  \g_@@_renderers_seq
+  { note }
+\prop_gput:Nnn
+  \g_@@_renderer_arities_prop
+  { note }
   { 1 }
 \ExplSyntaxOff
 %    \end{macrocode}
@@ -14780,7 +14842,7 @@ following content:
 \begin{markdown}
 A useful use of inline HTML comments are side notes.
 <!-- Side notes are displayed in the horizontal margins next to the relevant
-passages, which makes them *easier for the reader to find* than footnotes. -->
+passages, which makes them *easier for the reader to find* than notes. -->
 
 We can render block HTML comments as blockquotes:
 
@@ -14812,7 +14874,7 @@ following body text:
 The horizontal margins should contain the following text:
 
 > Side notes are displayed in the horizontal margins next to the relevant
-> passages, which makes them *easier for the reader to find* than footnotes.
+> passages, which makes them *easier for the reader to find* than notes.
 
 %</manual-tokens>
 %<*tex>
@@ -21467,7 +21529,7 @@ function M.reader.new(writer, options)
                             * (-(parsers.leader * parsers.more
                                 + parsers.blankline) * parsers.linechar^1
                               * parsers.newline)^0
-                            
+
   if not options.breakableBlockquotes then
     parsers.blockquote_body = parsers.blockquote_body
                             * (parsers.blankline^0 / "")
@@ -21476,7 +21538,7 @@ function M.reader.new(writer, options)
 % \par
 % \begin{markdown}
 %
-%#### Parsers Used for Footnotes (local)
+%#### Parsers Used for Notes (local)
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -22938,38 +23000,38 @@ end
 %    \end{macrocode}
 % \begin{markdown}
 %
-%#### Footnotes
+%#### Notes
 %
-% The \luamdef{extensions.footnotes} function implements the Pandoc footnote
-% and inline footnote syntax extensions. When the `footnote` parameter is
-% `true`, the Pandoc footnote syntax extension will be enabled.  When the
-% `inline_footnotes` parameter is `true`, the Pandoc inline footnote syntax
+% The \luamdef{extensions.notes} function implements the Pandoc note
+% and inline note syntax extensions. When the `note` parameter is
+% `true`, the Pandoc note syntax extension will be enabled.  When the
+% `inline_notes` parameter is `true`, the Pandoc inline note syntax
 % extension will be enabled.
 %
 % \end{markdown}
 %  \begin{macrocode}
-M.extensions.footnotes = function(footnotes, inline_footnotes)
-  assert(footnotes or inline_footnotes)
+M.extensions.notes = function(notes, inline_notes)
+  assert(notes or inline_notes)
   return {
-    name = "built-in footnotes syntax extension",
+    name = "built-in notes syntax extension",
     extend_writer = function(self)
 %    \end{macrocode}
 % \par
 % \begin{markdown}
 %
 % Define \luamdef{writer->note} as a function that will transform an
-% input footnote `s` to the output format.
+% input note `s` to the output format.
 %
 % \end{markdown}
 %  \begin{macrocode}
       function self.note(s)
-        return {"\\markdownRendererFootnote{",s,"}"}
+        return {"\\markdownRendererNote{",s,"}"}
       end
     end, extend_reader = function(self)
       local parsers = self.parsers
       local writer = self.writer
 
-      if inline_footnotes then
+      if inline_notes then
         local InlineNote
                     = parsers.circumflex
                     * (parsers.tag / self.parser_functions.parse_inlines_no_inline_note)
@@ -22978,7 +23040,7 @@ M.extensions.footnotes = function(footnotes, inline_footnotes)
         self.insert_pattern("Inline after Emph",
                             InlineNote, "InlineNote")
       end
-      if footnotes then
+      if notes then
         local function strip_first_char(s)
           return s:sub(2)
         end
@@ -23819,10 +23881,20 @@ function M.new(options)
     table.insert(extensions, superscript_extension)
   end
 
-  if options.footnotes or options.inlineFootnotes then
-    local footnotes_extension = M.extensions.footnotes(
-      options.footnotes, options.inlineFootnotes)
-    table.insert(extensions, footnotes_extension)
+%    \end{macrocode}
+% \begin{markdown}
+%
+% The footnotes and inlineFootnotes option has been deprecated and will be
+% removed in Markdown 3.0.0.
+%
+% \end{markdown}
+%  \begin{macrocode}
+  if options.footnotes or options.inlineFootnotes or
+     options.notes or options.inlineNotes then
+    local notes_extension = M.extensions.notes(
+      options.footnotes or options.notes,
+      options.inlineFootnotes or options.inlineNotes)
+    table.insert(extensions, notes_extension)
   end
 
   if options.citations then
@@ -24124,7 +24196,7 @@ end
 \def\markdownRendererHeadingFivePrototype#1{#1}%
 \def\markdownRendererHeadingSixPrototype#1{#1}%
 \def\markdownRendererThematicBreakPrototype{}%
-\def\markdownRendererFootnotePrototype#1{#1}%
+\def\markdownRendererNotePrototype#1{#1}%
 \def\markdownRendererCitePrototype#1{}%
 \def\markdownRendererTextCitePrototype#1{}%
 \def\markdownRendererTickedBoxPrototype{[X]}%
@@ -25895,7 +25967,7 @@ end
       }%
     \fi},
   thematicBreak = {\noindent\rule[0.5ex]{\linewidth}{1pt}},
-  footnote = {\footnote{#1}}}}
+  note = {\footnote{#1}}}}
 %    \end{macrocode}
 % \par
 % \begin{markdown}
@@ -26747,7 +26819,7 @@ end
 \def\markdownRendererHeadingSixPrototype#1{\subsubsubsubsection{#1}}%
 \def\markdownRendererThematicBreakPrototype{%
   \blackrule[height=1pt, width=\hsize]}%
-\def\markdownRendererFootnotePrototype#1{\footnote{#1}}%
+\def\markdownRendererNotePrototype#1{\footnote{#1}}%
 \def\markdownRendererTickedBoxPrototype{$\boxtimes$}
 \def\markdownRendererHalfTickedBoxPrototype{$\boxdot$}
 \def\markdownRendererUntickedBoxPrototype{$\square$}
