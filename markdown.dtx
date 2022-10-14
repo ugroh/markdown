@@ -15811,7 +15811,6 @@ following text:
   { }
 \ExplSyntaxOff
 %    \end{macrocode}
-%
 % \begin{markdown}
 %
 % The following \TeX{} macros provide definitions for the token renderers (see
@@ -15833,6 +15832,28 @@ following text:
     \let\markdownRendererBlockHtmlCommentBegin=\iffalse
     \let\markdownRendererBlockHtmlCommentEndPrototype=\fi
     \let\markdownRendererBlockHtmlCommentEnd=\fi
+%    \end{macrocode}
+% \begin{markdown}
+%
+% The \mdef{markdownRendererFootnote} and
+% \mdef{markdownRendererFootnotePrototype} macros have been deprecated
+% and will be removed in Markdown 3.0.0.
+%
+% \end{markdown}
+%  \begin{macrocode}
+    \cs_undefine:N \markdownRendererFootnote
+    \cs_undefine:N \markdownRendererFootnotePrototype
+%    \end{macrocode}
+% \begin{markdown}
+%
+% The \mdef{markdownRendererHorizontalRule} and
+% \mdef{markdownRendererHorizontalRulePrototype} macros have been deprecated
+% and will be removed in Markdown 3.0.0.
+%
+% \end{markdown}
+%  \begin{macrocode}
+    \cs_undefine:N \markdownRendererHorizontalRule
+    \cs_undefine:N \markdownRendererHorizontalRulePrototype
   }
 \cs_new:Nn \@@_plaintex_define_renderer_prototype:n
   {
