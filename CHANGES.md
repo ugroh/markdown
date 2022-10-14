@@ -13,6 +13,10 @@ Fixes:
 - Fix missing support for forward slashes in
   `\markdownSetup{jekyllDataRenderers = {...}}` keys. (#199, #200)
 
+Contributed Software:
+
+- Update `contributions/pandoc-to-markdown`. (contributed by @drehak, 3d5b8e5)
+
 ## 2.17.1 (2022-10-03)
 
 Fixes:
