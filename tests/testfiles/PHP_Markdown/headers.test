@@ -12,9 +12,9 @@ Paragraph
 documentBegin
 headingThree: Header
 interblockSeparator
-horizontalRule
+thematicBreak
 interblockSeparator
 interblockSeparator
-horizontalRule
+thematicBreak
 interblockSeparator
 documentEnd

@@ -7,6 +7,15 @@ Development:
 - Accept snake\_case variants of options in addition to camelCase variants in
   `\markdownSetup` and Lua CLI. Accept snake\_case and caseless variants of
   options in `\setupmarkdown`. (#193, #194, #195, #196, #197, #198)
+- Rename renderers, renderer prototypes and options based on the semantics of
+  elements: (#187, #201)
+  - Rename the `horizontalRule` and `footnote` renderers and renderer
+    prototypes to `thematicBreak` and `note`.
+  - Rename the `footnotes` and `inlineFootnotes` options to `notes` and
+    `inlineNotes`.
+  - Rename the `HorizontalRule` rule to `ThematicBreak` and increment
+    `grammar_version` to `2`. This change is no backwards-compatible with the
+    `grammar_version` of `1`.
 
 Fixes:
 
@@ -16,6 +25,11 @@ Fixes:
 Contributed Software:
 
 - Update `contributions/pandoc-to-markdown`. (contributed by @drehak, 3d5b8e5)
+
+Deprecation:
+
+- Deprecate `horizontalRule` and `footnote` renderers and renderer prototypes.
+  (#187, #201)
 
 ## 2.17.1 (2022-10-03)
 

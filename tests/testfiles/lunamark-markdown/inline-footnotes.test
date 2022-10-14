@@ -1,18 +1,18 @@
-\def\markdownOptionInlineFootnotes{true}
+\def\markdownOptionInlineNotes{true}
 <<<
-This test ensures that the Lua `footnotes` and `inlineFootnotes` options
+This test ensures that the Lua `notes` and `inlineNotes` options
 correctly propagate through the plain TeX interface.
 
-^[Here is the footnote.  It can go anywhere after the footnote
+^[Here is the note.  It can go anywhere after the note
 reference.  It need *not* be placed at the end of the document.]
 
-\^[This should *not* be a footnote, because it has been escaped.]
+\^[This should *not* be a note, because it has been escaped.]
 >>>
 documentBegin
-codeSpan: footnotes
-codeSpan: inlineFootnotes
+codeSpan: notes
+codeSpan: inlineNotes
 interblockSeparator
-footnote: Here is the footnote. It can go anywhere after the footnote reference. It need (emphasis: not) be placed at the end of the document.
+note: Here is the note. It can go anywhere after the note reference. It need (emphasis: not) be placed at the end of the document.
 interblockSeparator
 circumflex
 emphasis: not

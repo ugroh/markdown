@@ -14,7 +14,7 @@ This is an H2  {#first-h2}
 ##### This is an H5
 ###### This is an H6
 
-This is a text paragraph containing an ellipsis ... and followed by a horizontal rule.
+This is a text paragraph containing an ellipsis ... and followed by a thematic break.
 
 ***
 
@@ -113,22 +113,22 @@ This is a block quote:
 >
 > Back to the first level.
 
-Here is a footnote reference[^1] and another.[^longnote]
+Here is a note reference[^1] and another.[^longnote]
 Here is an inline note.^[Inlines notes are easier to
 write, since you don't have to pick an identifier and
 move down to type the note.]
   
-[^1]: Here is the footnote.
+[^1]: Here is the note.
 
 [^longnote]: Here's one with multiple blocks.
   
     Subsequent paragraphs are indented to show that they
-belong to the previous footnote.
+belong to the previous note.
   
         Some code
 
     The whole paragraph can be indented, or just the first
-    line.  In this way, multi-paragraph footnotes work like
+    line.  In this way, multi-paragraph notes work like
     multi-paragraph list items.
 >>>
 documentBegin
@@ -149,7 +149,7 @@ interblockSeparator
 headingSix: This is an H6
 interblockSeparator
 interblockSeparator
-horizontalRule
+thematicBreak
 interblockSeparator
 codeSpan: code
 BEGIN link
@@ -264,5 +264,5 @@ interblockSeparator
 inputVerbatim: ./_markdown_test/abbf8dcafba2274ed2400ea0c2d432ff.verbatim
 interblockSeparator
 interblockSeparator
-inputVerbatim: ./_markdown_test/4324ef83bdb683cdde1cdb28352a1ded.verbatim
+inputVerbatim: ./_markdown_test/3372369b5571c25af4e3298ee616142e.verbatim
 documentEnd

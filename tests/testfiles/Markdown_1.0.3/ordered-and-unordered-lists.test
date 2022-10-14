@@ -155,7 +155,7 @@ ulItem
 ulItemEnd
 ulEnd
 interblockSeparator
-horizontalRule
+thematicBreak
 interblockSeparator
 interblockSeparator
 ulBeginTight
@@ -177,7 +177,7 @@ ulItem
 ulItemEnd
 ulEnd
 interblockSeparator
-horizontalRule
+thematicBreak
 interblockSeparator
 interblockSeparator
 ulBeginTight

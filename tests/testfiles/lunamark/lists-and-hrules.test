@@ -16,5 +16,5 @@ ulEndTight
 ulItemEnd
 ulEnd
 interblockSeparator
-horizontalRule
+thematicBreak
 documentEnd

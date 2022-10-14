@@ -11,7 +11,7 @@ Horizontal rules:
  
 ___
 
-Not horizontal rules (testing for a bug in 1.0.1j):
+Not thematic breaks (testing for a bug in 1.0.1j):
 
 +++
 
@@ -32,15 +32,15 @@ n n n
 >>>
 documentBegin
 interblockSeparator
-horizontalRule
+thematicBreak
 interblockSeparator
-horizontalRule
+thematicBreak
 interblockSeparator
-horizontalRule
+thematicBreak
 interblockSeparator
-horizontalRule
+thematicBreak
 interblockSeparator
-horizontalRule
+thematicBreak
 interblockSeparator
 interblockSeparator
 interblockSeparator

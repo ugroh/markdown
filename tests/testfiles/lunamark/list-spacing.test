@@ -31,7 +31,7 @@ ulItem
 ulItemEnd
 ulEndTight
 interblockSeparator
-horizontalRule
+thematicBreak
 interblockSeparator
 olBeginTight
 olItemWithNumber: 8
