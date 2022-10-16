@@ -2518,13 +2518,13 @@ defaultOptions.contentBlocksLanguageMap = "markdown-languages.json"
      extensible subset of the \acro{peg} grammar of markdown
 %    (see the \luamref{walkable_syntax} hash table)
      after built-in syntax extensions
-%    (see Section <#luabuiltinextensions>)
+%    (see Section <#sec:luabuiltinextensions>)
 %    \iffalse
      (see options \Opt{citations}, \Opt{contentBlocks}, \Opt{definitionLists},
      etc.)
 %    \fi
      and user-defined syntax extensions
-%    (see Section <#luauserextensions>)
+%    (see Section <#sec:luauserextensions>)
 %    \iffalse
      (see option \Opt{extensions})
 %    \fi
@@ -4314,23 +4314,23 @@ defaultOptions.contentBlocks = false
 %
 :    true
 
-     :  Produce a \acro{JSON} file that will contain the
-        extensible subset of the \acro{peg} grammar of markdown
-%       (see the \luamref{walkable_syntax} hash table)
-        after built-in syntax extensions
-%       (see Section <#luabuiltinextensions>)
-%       \iffalse
-        (see options \Opt{citations}, \Opt{contentBlocks},
-        \Opt{definitionLists}, etc.)
-%       \fi
-        and user-defined syntax extensions
-%       (see Section <#luauserextensions>)
-%       \iffalse
-        (see option \Opt{extensions})
-%       \fi
-        have been applied. This helps you to see how the different
-        extensions interact. The name of the produced \acro{JSON} file is
-        controlled by the \Opt{debugExtensionsFileName} option.
+     :   Produce a \acro{JSON} file that will contain the
+         extensible subset of the \acro{peg} grammar of markdown
+%        (see the \luamref{walkable_syntax} hash table)
+         after built-in syntax extensions
+%        (see Section <#sec:luabuiltinextensions>)
+%        \iffalse
+         (see options \Opt{citations}, \Opt{contentBlocks},
+         \Opt{definitionLists}, etc.)
+%        \fi
+         and user-defined syntax extensions
+%        (see Section <#sec:luauserextensions>)
+%        \iffalse
+         (see option \Opt{extensions})
+%        \fi
+         have been applied. This helps you to see how the different
+         extensions interact. The name of the produced \acro{JSON} file is
+         controlled by the \Opt{debugExtensionsFileName} option.
 
 :    false
 
@@ -22245,7 +22245,7 @@ function M.reader.new(writer, options)
 % \begin{markdown}
 %
 % Although the interface of the \luamref{reader->insert_pattern} method does
-% document this (see Section <#luauserextensions>), we allow the
+% document this (see Section <#sec:luauserextensions>), we allow the
 % \luamref{reader->insert_pattern} and \luamref{reader->update_rule}
 % methods to insert not just \acro{peg} patterns, but also rule names that
 % reference the \acro{peg} grammar of Markdown.
@@ -23826,7 +23826,7 @@ end
 %
 % The \luamref{new} function returns a conversion function that takes a
 % markdown string and turns it into a plain \TeX{} output. See Section
-% <#luaconversion>.
+% <#sec:luaconversion>.
 %
 % \end{markdown}
 %  \begin{macrocode}
@@ -24010,7 +24010,7 @@ function M.new(options)
 %
 % Finally, cast the user-defined syntax extension to the internal format
 % of user extensions used by the Markdown package (see Section
-% <#luabuiltinextensions>.)
+% <#sec:luabuiltinextensions>.)
 %
 % \end{markdown}
 %  \begin{macrocode}
