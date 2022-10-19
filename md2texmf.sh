@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/zsh  
 
 mkdir -p ~/Library/texmf/tex/luatex/markdown
 mkdir -p ~/Library/texmf/tex/latex/markdown
