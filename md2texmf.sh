@@ -11,6 +11,6 @@ cp ./libraries/markdown-tinyyaml.lua 	~/Library/texmf/tex/luatex/markdown
 cp ./markdown-cli.lua 					~/Library/texmf/scripts/markdown
 cp ./markdown.tex						~/Library/texmf/tex/generic/markdown 		
 cp *.sty								~/Library/texmf/tex/latex/markdown
-cp ./t-markdown.t					~/Library/texmf/tex/context/third/markdown
+cp ./t-markdown.tex					~/Library/texmf/tex/context/third/markdown
 
 
